@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Icon, IconButton, Text } from 'opub-ui';
 
-import { DatasetSource, DatasetsURL } from '@/config/consts';
+import { DatasetSource, DatasetsURL, GithubRepoLink } from '@/config/consts';
 import Icons from '@/components/icons';
 
 export const DatasetInfoCard = ({
@@ -53,7 +53,7 @@ export const DatasetInfoCard = ({
               </div>
             </Link>
 
-            <Link href={homepage}>
+            <Link href={GithubRepoLink}>
               <div className="flex items-center gap-1">
                 <Text color="interactive" variant="bodyMd">
                   Go to Github Repo
