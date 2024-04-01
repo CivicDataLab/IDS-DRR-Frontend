@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Text } from 'opub-ui';
@@ -10,38 +12,33 @@ export const Footer = () => {
           src="/logo/IDSLogo.png"
           width={245}
           height={24}
-          alt="Assam DRR Dashboard"
+          alt="IDS-DRR Logo"
         />
-        <Image
-          src="/logo/Vector.svg"
-          width={60}
-          height={50}
-          alt="Assam DRR Dashboard"
-        />
+        <Image src="/logo/Vector.svg" width={60} height={50} alt="Divider" />
         <div className="flex flex-row items-center gap-2">
           <Image
             src="/logo/cdlofficiallogo.png"
             width={64}
             height={64}
-            alt="Assam DRR Dashboard"
+            alt="CivicDataLab Logo"
           />
           {/* <Image
             src="/logo/RockefellerLogo.png"
             width={106}
             height={64}
-            alt="Assam DRR Dashboard"
+            alt="Rockefeller Logo"
           /> */}
           {/* <Image
             src="/logo/ocp.png"
             width={91}
             height={40}
-            alt="Assam DRR Dashboard"
+            alt="OCP Logo"
           /> */}
           {/* <Image
             src="/logo/ASDMA2.png"
             width={59}
             height={54}
-            alt="Assam DRR Dashboard"
+            alt="ASDMA Logo"
           /> */}
         </div>
       </div>
