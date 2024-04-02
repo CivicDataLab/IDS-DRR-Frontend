@@ -1,3 +1,5 @@
+import React from 'react';
+import { AlertDialog, Button } from 'opub-ui';
 import { ClassNameValue, twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassNameValue[]) {
@@ -110,3 +112,54 @@ export const range = (len: number) => {
   }
   return arr;
 };
+
+export function handleRedirect(event: any, link: any) {
+  event.preventDefault();
+  const confirmation = window.confirm(
+    `You are being redirected to "${link}". `
+  );
+  if (confirmation) {
+    window.open(link, '_blank');
+  }
+}
+
+export function copyCurrentURL() {
+  const currentURL = window.location.href;
+
+  if (navigator.clipboard) {
+    navigator.clipboard
+      .writeText(currentURL)
+      .then(() => {
+        console.log('URL copied to clipboard:', currentURL);
+        alert('URL copied to clipboard!');
+      })
+      .catch((err) => {
+        console.error('Failed to copy URL:', err);
+        alert('Failed to copy URL.');
+      });
+  } else {
+    // For browsers not supporting clipboard API
+    const textArea = document.createElement('textarea');
+    textArea.value = currentURL;
+    textArea.style.position = 'fixed';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+      const success = document.execCommand('copy');
+      if (success) {
+        console.log('URL copied to clipboard:', currentURL);
+        alert('URL copied to clipboard!');
+      } else {
+        console.error('Failed to copy URL.');
+        alert('Failed to copy URL.');
+      }
+    } catch (err) {
+      console.error('Failed to copy URL:', err);
+      alert('Failed to copy URL.');
+    }
+
+    document.body.removeChild(textArea);
+  }
+}

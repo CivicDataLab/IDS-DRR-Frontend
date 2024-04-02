@@ -2,7 +2,9 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Text } from 'opub-ui';
+import { Button, Text } from 'opub-ui';
+
+import { handleRedirect } from '@/lib/utils';
 
 export const Footer = () => {
   return (
@@ -52,13 +54,16 @@ export const Footer = () => {
           className="mt-2 block md:mt-3"
         >
           a Data4Districts product by{' '}
-          <Link
-            className="underline"
-            target="_blank"
-            href="https://civicdatalab.in/"
+          <Button
+            size="slim"
+            className=" text-baseIndigoSolid1 underline"
+            kind="tertiary"
+            onClick={(event) =>
+              handleRedirect(event, 'https://civicdatalab.in/')
+            }
           >
             CivicDataLab
-          </Link>
+          </Button>
         </Text>
       </div>
     </footer>

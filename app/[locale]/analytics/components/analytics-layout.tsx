@@ -180,7 +180,8 @@ export function Content({
       const filteredDistrictOptions = DistrictDropDownOption?.filter((option) =>
         region?.includes(option.value)
       );
-            return filteredDistrictOptions;
+
+      return filteredDistrictOptions;
     }
   };
 
@@ -226,6 +227,14 @@ export function Content({
             selectedValue={filterOpt(boundary)}
             onChange={(selectedOptions: any) => {
               const val = selectedOptions.map((option: any) => option.value);
+              if (val.length > 4 && boundary === 'district') {
+                DistrictDropDownOption.forEach((item: any) => {
+                  if (!val.includes(item?.type)) {
+                    item.disabled = true;
+                  }
+                });
+                return;
+              }
               const group = selectedOptions.map(
                 (option: any) => option?.type ?? ''
               );
@@ -234,6 +243,11 @@ export function Content({
               setRegion(val);
             }}
           />
+          {boundary === 'district' && (
+            <div style={{ fontSize: 'small', color: 'grey' }}>
+              You can select upto 4 districts only
+            </div>
+          )}
         </div>
 
         <MonthPicker
