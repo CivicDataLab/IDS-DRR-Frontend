@@ -158,6 +158,28 @@ export function Content({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [geographiesData.data]);
 
+  function onComboboxChange(selectedOptions: any) {
+    const val = selectedOptions.map((option: any) => option.value);
+
+    const group = selectedOptions.map((option: any) => option?.type ?? '');
+
+    setSelectedGroup(group);
+    setRegion(val);
+  }
+
+  const getDistrictOptions = () => {
+    const updatedDistrictDropDownOption = DistrictDropDownOption.map(
+      (item: any) => {
+        if (region?.length === 4 && boundary === 'district') {
+          return { ...item, disabled: true };
+        }
+
+        return item;
+      }
+    );
+    return updatedDistrictDropDownOption;
+  };
+
   const filterOpt = (boundary: string) => {
     if (boundary === 'revenue-circle') {
       RevCircleDropdownOptions.forEach((item: any) => {
@@ -222,25 +244,11 @@ export function Content({
             list={
               boundary === 'revenue-circle'
                 ? RevCircleDropdownOptions
-                : DistrictDropDownOption
+                : getDistrictOptions()
             }
             selectedValue={filterOpt(boundary)}
             onChange={(selectedOptions: any) => {
-              const val = selectedOptions.map((option: any) => option.value);
-              if (val.length > 4 && boundary === 'district') {
-                DistrictDropDownOption.forEach((item: any) => {
-                  if (!val.includes(item?.type)) {
-                    item.disabled = true;
-                  }
-                });
-                return;
-              }
-              const group = selectedOptions.map(
-                (option: any) => option?.type ?? ''
-              );
-
-              setSelectedGroup(group);
-              setRegion(val);
+              onComboboxChange(selectedOptions);
             }}
           />
           {boundary === 'district' && (
