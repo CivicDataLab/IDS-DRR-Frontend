@@ -5,6 +5,9 @@ import {
   IconArrowRight,
   IconBarrierBlock,
   IconBellFilled,
+  IconBrandFacebook,
+  IconBrandLinkedin,
+  IconBrandX,
   IconChartInfographic,
   IconChevronDown,
   IconChevronLeft,
@@ -76,6 +79,9 @@ export const Icons: {
   externalLink: IconExternalLink,
   menu: IconMenu,
   cross: IconX,
+  IconBrandX: IconBrandX,
+  IconBrandFacebook: IconBrandFacebook,
+  IconBrandLinkedin: IconBrandLinkedin,
 };
 
 export default Icons;
