@@ -22,6 +22,7 @@ export function CollaboratingPartner() {
               height={190}
               width={230}
               alt="ASDMA Logo"
+              className=" object-contain "
             />
             <div className="flex flex-row items-center justify-between self-stretch">
               <Button

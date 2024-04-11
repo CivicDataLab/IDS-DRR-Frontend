@@ -79,7 +79,7 @@ export function DataStories() {
                     alt={blog.title}
                     height={80}
                     width={80}
-                    className="h-auto w-full items-center "
+                    className="h-auto w-full items-center object-contain "
                   />
                   <div className="flex w-full flex-col gap-4 ">
                     <div className="flex flex-row justify-between">

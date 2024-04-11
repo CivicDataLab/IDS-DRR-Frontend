@@ -20,9 +20,10 @@ export function SupportedBy() {
           <div className="flex flex-col items-center gap-4 text-surfaceDefault">
             <Image
               src="/logo/Rockefeller.png"
-              height={160}
+              height={190}
               width={230}
               alt="Rockefeller Logo"
+              className=" object-contain "
             />
             <div className="flex flex-row items-center justify-between self-stretch">
               <Button
@@ -87,9 +88,10 @@ export function SupportedBy() {
           <div className="flex flex-col items-center gap-4 text-surfaceDefault">
             <Image
               src="/logo/OpenContracting.png"
-              height={160}
+              height={190}
               width={230}
               alt="Open Contracting Partnership Logo"
+              className=" object-contain "
             />
             <div className="flex flex-row items-center justify-between self-stretch">
               <Button

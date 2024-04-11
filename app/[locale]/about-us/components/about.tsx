@@ -8,12 +8,12 @@ export function About() {
       <div className="flex w-[1440px] flex-col gap-10">
         <Text
           className=" font text-baseAmberSolid7"
-          variant="heading3xl"
+          variant="heading4xl"
           fontWeight="bold"
         >
           ABOUT US
         </Text>
-        <Text variant="bodyLg" fontWeight="regular" color="onBgDefault">
+        <Text variant="headingLg" fontWeight="regular" color="onBgDefault">
           {aboutUsText}
         </Text>
       </div>
