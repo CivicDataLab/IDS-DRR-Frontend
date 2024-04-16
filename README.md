@@ -1,6 +1,6 @@
 # IDS-DRR
 
-This is a frontend repository of IDS-DRR built using React and Next.js , GraphQl as the backend
+This is a frontend repository of IDS-DRR built using React and Next.js with GraphQL as the backend
 
 ## Dependencies
 The following dependencies must be available globally on your system:
@@ -9,16 +9,15 @@ The following dependencies must be available globally on your system:
 ## Installation
 1. Clone the repository 
 
-`git clone https://github.com/glific/glific`
+  `git clone https://github.com/glific/glific`
 
 2. Navigate to the project directory.
 
-`cd ids-drr`
+  `cd ids-drr`
 
 3. Install the dependencies.
 
-
- `npm run install`
+   `npm run install`
 
 ## Usage
 After completing the installation steps, you can run the project locally by executing:
