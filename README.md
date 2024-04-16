@@ -4,7 +4,7 @@ This is a frontend repository of IDS-DRR built using React and Next.js with Grap
 
 ## Dependencies
 The following dependencies must be available globally on your system:
-- Download and install [https://nodejs.org/en/](NodeJS LTS v18+) and npm
+- Download and install [NodeJS LTS v18+](https://nodejs.org/en/) and npm
 
 ## Installation
 1. Clone the repository 
