@@ -29,11 +29,11 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           source: .next2
-          target: opub-deploy
+          target: ids-drr
       - name: Update with new Build
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script: rm -rf opub-deploy/.next; mv opub-deploy/.next2 opub-deploy/.next; pm2 restart opub-deploy
+          script: rm -rf ids-drr/.next; mv ids-drr/.next2 ids-drr/.next; pm2 restart ids-drr
