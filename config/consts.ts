@@ -18,13 +18,14 @@ const UpdateFreq = 'Update Frequency';
 const datasetsPageHeader = 'Assam DRR : Datasets';
 const datasetsExplorerPageHeader = 'Assam DRR : Datasets';
 const DatasetsURL = `/datasets`;
+const GithubRepoLink = `https://github.com/CivicDataLab/IDS-DRR-Data-Sources/tree/main/Sources`;
 
 //analytics page
 const AnalyticsURL = `/analytics/?indicator=risk-score&time-period=2023_08&boundary=district`;
 
 //home page
 const AboutText = 'About IDS DRR';
-const AboutUsURL = '/';
+const AboutUsURL = '/about';
 const AboutTextContentOne =
   'Intelligent Data Solution for Disaster Risk Reduction (IDS-DRR) is an open-source platform that helps state-level and district-level Disaster Management Authorities to make timely data-driven decisions, prioritise expenditure of public funds and conduct public procurement in a manner that strengthens long-term disaster risk reduction and protects the most vulnerable people from the adverse effects of extreme weather events and climate change. ';
 
@@ -60,4 +61,5 @@ export {
   AnalyticsQuickLinksText,
   AboutUsURL,
   YouTubeLink,
+  GithubRepoLink,
 };

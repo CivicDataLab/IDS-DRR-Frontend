@@ -1,8 +1,12 @@
 import Link from 'next/link';
-import { Icon, IconButton, Text } from 'opub-ui';
+import { Button, Icon, IconButton, Menu, Text } from 'opub-ui';
 
-import { DatasetSource, DatasetsURL } from '@/config/consts';
+import { DatasetSource, DatasetsURL, GithubRepoLink } from '@/config/consts';
+import { copyCurrentURL, handleRedirect } from '@/lib/utils';
 import Icons from '@/components/icons';
+import styles from './styles.module.scss';
+
+const currentURL = typeof window !== 'undefined' ? window.location.href : '';
 
 export const DatasetInfoCard = ({
   title,
@@ -44,29 +48,76 @@ export const DatasetInfoCard = ({
             {description}
           </Text>
           <div className="flex items-center gap-6">
-            <Link href={homepage}>
+            <Button
+              monochrome={true}
+              kind="tertiary"
+              onClick={(event) => handleRedirect(event, homepage)}
+            >
               <div className="flex items-center gap-1">
                 <Text color="interactive" variant="bodyMd">
                   Visit source website
                 </Text>
                 <Icon source={Icons.externalLink} color="interactive" />
               </div>
-            </Link>
+            </Button>
 
-            <Link href={homepage}>
+            <Button
+              monochrome={true}
+              kind="tertiary"
+              onClick={(event) => handleRedirect(event, GithubRepoLink)}
+            >
               <div className="flex items-center gap-1">
                 <Text color="interactive" variant="bodyMd">
                   Go to Github Repo
                 </Text>
                 <Icon source={Icons.externalLink} color="interactive" />
               </div>
-            </Link>
+            </Button>
 
             <div className="flex items-center gap-1">
-              <Text color="interactive" variant="bodyMd">
-                Share Dataset
-              </Text>
-              <Icon source={Icons.share} color="interactive" />
+              <Menu
+                trigger={
+                  <Button monochrome={true} kind="tertiary">
+                    <div className="flex items-center gap-1">
+                      <Text color="interactive" variant="bodyMd">
+                        Share dataset
+                      </Text>
+                      <Icon source={Icons.share} color="interactive" />
+                    </div>
+                  </Button>
+                }
+                items={[
+                  {
+                    content: 'Facebook',
+                    icon: Icons.IconBrandFacebook,
+                    onAction: () =>
+                      window.open(
+                        `https://www.facebook.com/sharer.php?u=${currentURL}/`
+                      ),
+                  },
+                  {
+                    content: 'LinkedIn',
+                    icon: Icons.IconBrandLinkedin,
+                    onAction: () =>
+                      window.open(
+                        `https://www.linkedin.com/shareArticle?url=${currentURL}/`
+                      ),
+                  },
+                  {
+                    content: 'Twitter',
+                    icon: Icons.IconBrandX,
+                    onAction: () =>
+                      window.open(
+                        `https://twitter.com/intent/tweet?url=${currentURL}/`
+                      ),
+                  },
+                  {
+                    content: 'Copy Link',
+                    icon: Icons.link,
+                    onAction: () => copyCurrentURL(),
+                  },
+                ]}
+              />
             </div>
           </div>
         </div>

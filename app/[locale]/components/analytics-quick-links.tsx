@@ -29,7 +29,7 @@ export const QuickLinks = () => {
             src="/logo/analyticLinkPlaceholder2.png"
             height={252}
             width={364}
-            alt="Assam DRR Dashboard"
+            alt="snapshot comparing risk scores across various revenue circles"
             style={{ marginTop: '-30px' }}
           />
           <Image
@@ -37,7 +37,7 @@ export const QuickLinks = () => {
             className="object-contain"
             height={214}
             width={330}
-            alt="Assam DRR Dashboard"
+            alt="Map snapshot showcasing flood affected areas"
             style={{ marginLeft: '-190px', marginTop: '40px' }}
           />
 
@@ -46,7 +46,7 @@ export const QuickLinks = () => {
             src="/logo/analyticLinkPlaceholder3.png"
             height={152}
             width={360}
-            alt="Assam DRR Dashboard"
+            alt="snapshot showcasing risk scores for Mahmora revenue circle"
             style={{
               marginLeft: '-105px',
               marginBottom: '2px',

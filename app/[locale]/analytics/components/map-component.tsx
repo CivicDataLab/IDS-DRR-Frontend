@@ -70,7 +70,11 @@ export const MapComponent = ({
 
   const onMapClick = ({ layer }: { layer: string }) => {
     setRegion((prev: any) => {
-      return [...prev, layer];
+      if (prev === null) {
+        return [layer];
+      } else {
+        return [...prev, layer];
+      }
     });
   };
 

@@ -16,7 +16,7 @@ export function About() {
           src="/logo/climateAction.png"
           height={537}
           width={506}
-          alt="Assam DRR Dashboard"
+          alt="An image representing global climate action"
         />
 
         <div className="flex w-[661px] flex-col gap-5">

@@ -41,7 +41,7 @@ export const DownloadReport = () => {
       size="medium"
       image={svgURL}
       loading={isLoading}
-      alt="SVG"
+      alt="Download button"
       title="Share"
       props={{
         height: isDesktop ? 285 : 175,

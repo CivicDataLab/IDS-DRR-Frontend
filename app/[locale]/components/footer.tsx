@@ -1,6 +1,10 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import { Text } from 'opub-ui';
+import { Button, Text } from 'opub-ui';
+
+import { handleRedirect } from '@/lib/utils';
 
 export const Footer = () => {
   return (
@@ -10,38 +14,33 @@ export const Footer = () => {
           src="/logo/IDSLogo.png"
           width={245}
           height={24}
-          alt="Assam DRR Dashboard"
+          alt="IDS-DRR Logo"
         />
-        <Image
-          src="/logo/Vector.svg"
-          width={60}
-          height={50}
-          alt="Assam DRR Dashboard"
-        />
+        <Image src="/logo/Vector.svg" width={60} height={50} alt="Divider" />
         <div className="flex flex-row items-center gap-2">
           <Image
             src="/logo/cdlofficiallogo.png"
             width={64}
             height={64}
-            alt="Assam DRR Dashboard"
+            alt="CivicDataLab Logo"
           />
           {/* <Image
             src="/logo/RockefellerLogo.png"
             width={106}
             height={64}
-            alt="Assam DRR Dashboard"
+            alt="Rockefeller Logo"
           /> */}
           {/* <Image
             src="/logo/ocp.png"
             width={91}
             height={40}
-            alt="Assam DRR Dashboard"
+            alt="OCP Logo"
           /> */}
           {/* <Image
             src="/logo/ASDMA2.png"
             width={59}
             height={54}
-            alt="Assam DRR Dashboard"
+            alt="ASDMA Logo"
           /> */}
         </div>
       </div>
@@ -55,13 +54,16 @@ export const Footer = () => {
           className="mt-2 block md:mt-3"
         >
           a Data4Districts product by{' '}
-          <Link
-            className="underline"
-            target="_blank"
-            href="https://civicdatalab.in/"
+          <Button
+            size="slim"
+            className=" text-baseIndigoSolid1 underline"
+            kind="tertiary"
+            onClick={(event) =>
+              handleRedirect(event, 'https://civicdatalab.in/')
+            }
           >
             CivicDataLab
-          </Link>
+          </Button>
         </Text>
       </div>
     </footer>
