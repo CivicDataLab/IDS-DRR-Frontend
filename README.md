@@ -24,6 +24,8 @@ After completing the installation steps, you can run the project locally by exec
 
 `npm run dev`
 
+Open http://localhost:3000 to view it in the browser.
+
 ## Get Involved
 - Start by reading our Code of conduct
 - Get familiar with our contributor guidelines explaining the different ways in which you can support this project! We need your help!
