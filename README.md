@@ -9,7 +9,7 @@ The following dependencies must be available globally on your system:
 ## Installation
 1. Clone the repository 
 
-    `git clone https://github.com/glific/glific`
+    `https://github.com/CivicDataLab/ids-drr/`
 
 2. Navigate to the project directory.
 
