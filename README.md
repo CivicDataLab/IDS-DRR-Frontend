@@ -1,69 +1,32 @@
-# OPub Mono
+# IDS-DRR
 
-A WIP (work in progress) platform to speed up the development of Open Data Dashboards, aimed at simplifying the process of creating and managing data visualizations, enabling users to easily analyze and present complex data in a user-friendly and accessible way.
+This is a frontend repository of IDS-DRR built using React and Next.js , GraphQl as the backend
 
-[OPub UI](https://main--64004009fa0a900a3197549c.chromatic.com/)<br>
-[OPub Viz](https://main--64e5d546d7476f1d5b4cfa47.chromatic.com/?path=/story/components-barchart--default/)<br>
-[Dashboard](https://opub-www.vercel.app/dashboard)<br>
-[Documentation](https://opub-docs.netlify.app)
+## Dependencies
+The following dependencies must be available globally on your system:
+- Download and install [https://nodejs.org/en/](NodeJS LTS v18+) and npm
 
-## What's inside?
+## Installation
+1. Clone the repository 
 
-This repository, built using [Turborepo](https://github.com/vercel/turbo), utilizes [NPM](https://www.npmjs.com/) as its package manager and contains the following packages and applications:
+`git clone https://github.com/glific/glific`
 
-### Apps and Packages
+2. Navigate to the project directory.
 
-- `apps/www`: web application built using the [Next.js framework](https://github.com/vercel/next.js/)
-- `apps/docs`: documentation site built using [Nextra](https://github.com/shuding/nextra)
-- `packages/opub-ui`: a library of reusable React components used in both the web and docs applications.
-- `packages/eslint-config-custom`: `eslint` configurations for the eslint tool, including `eslint-config-next` and `eslint-config-prettier`.
-- `packages/tsconfig`: configuration files for [TypeScript](https://github.com/microsoft/TypeScript/) used throughout the repository.
+`cd ids-drr`
 
-### Build
+3. Install the dependencies.
 
-To build all apps and packages, run the following command:
 
-```
-cd opub-mono
-npm run build
-```
+ `npm run install`
 
-### Develop
+## Usage
+After completing the installation steps, you can run the project locally by executing:
 
-To develop all apps and packages, run the following command:
+`npm run dev`
 
-```
-cd opub-mono
-npm run dev
-```
+## Get Involved
+- Start by reading our Code of conduct
+- Get familiar with our contributor guidelines explaining the different ways in which you can support this project! We need your help!
 
-### Develop Only Specific Package
 
-To develop only package, let's say UI, run the following command:
-
-```
-cd opub-mono
-npm run dev --filter opub-ui
-```
-
-### New Component
-
-> Currently this might not working for Linux distros
-
-This repo includes a `npm run new-component` module to help create boilerplate for component creation.
-
-```
-npm run new-component Button
-```
-
-This will create a new component directory in `packages/opub-ui/src` with required files and also export the component in the index.ts
-
-```
-components/
-┣ Button/
-┃ ┣ Button.module.scss/
-┃ ┣ Button.stories.tsx/
-┃ ┣ Button.test.tsx/
-┃ ┣ Button.tsx/
-┃ ┣ index.ts/
-```
