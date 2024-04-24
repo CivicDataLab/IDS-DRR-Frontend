@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { Spinner, Text } from 'opub-ui';
@@ -22,6 +22,10 @@ interface DashboardLayoutProps {
 
 export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
   const [isClient, setIsClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // To prevent a hydration mismatch fix:https://nextjs.org/docs/messages/react-hydration-error.
   React.useEffect(() => {

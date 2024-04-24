@@ -3,11 +3,13 @@ import { dehydrate, Hydrate } from '@tanstack/react-query';
 
 import {
   ANALYTICS_FACTORS,
+  ANALYTICS_INDICATORS,
   ANALYTICS_TIME_PERIODS,
-  ANALYTICS_INDICATORS
 } from '@/config/graphql/analaytics-queries';
 import { getQueryClient, GraphQL } from '@/lib/api';
+import { MediaRendering } from '@/components/media-rendering';
 import { Content } from './components/analytics-layout';
+import { AnalyticsMobileLayout } from './components/analytics-mobile-layout';
 
 export default async function Home({
   searchParams,
@@ -24,17 +26,29 @@ export default async function Home({
     GraphQL('analytics', ANALYTICS_FACTORS)
   );
 
-  await queryClient.prefetchQuery([`indicators_${searchParams?.['indicator']}`], () =>
-  GraphQL('analytics', ANALYTICS_INDICATORS , {indcFilter : {slug : searchParams?.['indicator']}})
-);
+  await queryClient.prefetchQuery(
+    [`indicators_${searchParams?.['indicator']}`],
+    () =>
+      GraphQL('analytics', ANALYTICS_INDICATORS, {
+        indcFilter: { slug: searchParams?.['indicator'] },
+      })
+  );
 
   const dehydratedState = dehydrate(queryClient);
   return (
     <Hydrate state={dehydratedState}>
-      <Content
-        timePeriod={searchParams['time-period']}
-        indicator={searchParams?.indicator}
-      />
+      <MediaRendering minWidth={null} maxWidth="1023">
+        <AnalyticsMobileLayout
+          timePeriod={searchParams['time-period']}
+          indicator={searchParams?.indicator}
+        />
+      </MediaRendering>
+      <MediaRendering minWidth="1024" maxWidth={null}>
+        <Content
+          timePeriod={searchParams['time-period']}
+          indicator={searchParams?.indicator}
+        />
+      </MediaRendering>
     </Hydrate>
   );
 }
