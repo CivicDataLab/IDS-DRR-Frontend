@@ -33,15 +33,8 @@ export const mapPosition: {
 
 export const locales = ['en', 'hi'];
 
-export const gqlConfig: {
-  [key: string]: string;
-} = {
-  datasets: 'https://opub-backend.civicdatalab.in/graphql',
-  analytics: 'https://drr.backend.open-contracting.in/graphql',
-};
-
 export const backendUrl = {
-  datasets: 'https://opub-backend.civicdatalab.in',
+  datasets: process.env.BACKEND_URL,
 };
 
 export const elasticSearchParams = {

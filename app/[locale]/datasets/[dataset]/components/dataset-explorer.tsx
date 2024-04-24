@@ -13,7 +13,7 @@ import { MetadataCard } from './MetadataCard';
 
 export function Content({ slug }: { slug: string }) {
   const { data } = useQuery([`dataset_by_slug_${slug}`], () =>
-    GraphQL('datasets', DATASET_BY_SLUG, {
+    GraphQL(`${process.env.NEXT_PUBLIC_BACKEND_URL}/graphql`, DATASET_BY_SLUG, {
       dataset_slug: slug,
     })
   );

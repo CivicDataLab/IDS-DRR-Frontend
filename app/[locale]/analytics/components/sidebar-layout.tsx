@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useWindowSize } from '@/hooks/use-window-size';
 import {
   Exposure,
   FloodHazard,
@@ -22,18 +23,18 @@ import {
   Text,
   useScreenshot,
 } from 'opub-ui';
-import { useMediaQuery } from 'usehooks-ts';
 
 import { RiskColorMap } from '@/config/consts';
-import { ANALYTICS_TIME_TRENDS } from '@/config/graphql/analaytics-queries';
+import {
+  ANALYTICS_FACTORS,
+  ANALYTICS_TIME_TRENDS,
+} from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
-import { navigateEnd } from '@/lib/navigation';
 import { cn, deSlugify, formatDateString } from '@/lib/utils';
 import { DownloadReport } from './download-report';
 import { RevenueCircle, ScoreInfo } from './revenue-circle-accordion';
 import styles from './styles.module.scss';
 import { TimeTrends } from './time-trends';
-import { useWindowSize } from '@/hooks/use-window-size';
 
 export function SidebarLayout({ data, indicator, boundary }: any) {
   const searchParams = useSearchParams();
@@ -45,7 +46,7 @@ export function SidebarLayout({ data, indicator, boundary }: any) {
 
   const DEFAULT_PERIOD = '3M';
 
-  const { width,height } = useWindowSize();
+  const { width, height } = useWindowSize();
 
   const items = [
     {
@@ -67,11 +68,29 @@ export function SidebarLayout({ data, indicator, boundary }: any) {
   const chartData = useQuery(
     [`chartData_${boundary}_${indicator}_${timePeriod}_${region}_${period}`],
     () =>
-      GraphQL('analytics', ANALYTICS_TIME_TRENDS, {
-        indcFilter: { slug: indicatorIcon },
-        dataFilter: { dataPeriod: timePeriod, period: period },
-        geoFilter: { code: region?.split(',') },
-      }),
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_TIME_TRENDS,
+        {
+          indcFilter: { slug: indicatorIcon },
+          dataFilter: { dataPeriod: timePeriod, period: period },
+          geoFilter: { code: region?.split(',') },
+        }
+      ),
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
+
+  const factorData = useQuery(
+    [`factors`],
+    () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_FACTORS
+      ),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -110,22 +129,21 @@ export function SidebarLayout({ data, indicator, boundary }: any) {
   const [svgURL, setSvgURL] = React.useState<string>('');
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
-  const isDesktop = useMediaQuery('(min-width: 768px)');
   const { createSvg, svgToPngURL, downloadFile, domToUrl } = useScreenshot();
 
   async function generateImage() {
     setIsLoading(true);
 
-    const ele = window.document.querySelector('.opub-Tooltip ')
+    const ele = window.document.querySelector('.opub-Tooltip ');
 
-    const dataImgURL = await domToUrl(ele as HTMLElement , {
+    const dataImgURL = await domToUrl(ele as HTMLElement, {
       width: width,
       height: height,
       backgroundColor: 'white',
     });
 
     const svg = await createSvg(<Template data={dataImgURL} title={title} />, {
-      width: width
+      width: width,
     });
     const dataURL = await svgToPngURL(svg);
 
@@ -189,6 +207,7 @@ export function SidebarLayout({ data, indicator, boundary }: any) {
                 /5
               </div>
               <OtherFactorScores
+                factorData={factorData}
                 data={data}
                 boundary={boundary}
                 indicator={indicator}
@@ -212,6 +231,7 @@ export function SidebarLayout({ data, indicator, boundary }: any) {
               >
                 <RevenueCircle
                   revenueCircleData={revenueCircleData}
+                  factorData={factorData}
                   indicator={indicator}
                 />
               </AccordionContent>
@@ -265,7 +285,19 @@ export function SidebarLayout({ data, indicator, boundary }: any) {
   );
 }
 
-export function OtherFactorScores({ data, boundary, indicator }: any) {
+export function getFactorNameBySlug(factorData: any, slug: string) {
+  const factorName = factorData?.data?.getFactors?.filter(
+    (factor: { slug: string }) => factor.slug === slug
+  );
+  return factorName[0]?.name;
+}
+
+export function OtherFactorScores({
+  factorData,
+  data,
+  boundary,
+  indicator,
+}: any) {
   const clonedData = structuredClone(data);
   delete clonedData[boundary];
   delete clonedData[`${boundary}-code`];
@@ -277,7 +309,11 @@ export function OtherFactorScores({ data, boundary, indicator }: any) {
     <div key={scoreType} className="ml-3">
       <ScoreInfo
         indicator={indicator}
-        label={`${deSlugify(scoreType)}`}
+        label={
+          indicator === 'risk-score'
+            ? getFactorNameBySlug(factorData, scoreType)
+            : deSlugify(scoreType)
+        }
         value={data?.[scoreType]}
       />
     </div>
