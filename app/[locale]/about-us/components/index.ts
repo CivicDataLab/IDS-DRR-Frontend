@@ -5,6 +5,6 @@ export { Introduction } from './introduction';
 export { About } from './about';
 export { CollaboratingPartner } from './collaboratingPartner';
 export { SupportedBy } from './supportedBy';
-export { TheTeam } from './team';
+export { TheTeam } from './teams';
 export { Engagements } from './engagements';
 export { DataStories } from './dataStory';

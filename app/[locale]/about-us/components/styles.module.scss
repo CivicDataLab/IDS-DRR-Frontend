@@ -1,0 +1,54 @@
+.body {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 32px;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+// .card {
+//   width: 390px;
+//   height: 392px;
+//   // background: #93ec9e;
+//   background: #ffff;
+//   border-radius: 4px;
+//   overflow: hidden;
+// }
+
+.card {
+  width: 390px;
+  height: 342px;
+  background: #ffff;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-direction: column;
+  display: flex; /* Use flexbox */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+}
+
+.card img {
+  flex-direction: column;
+  display: flex;
+  justify-content: flex-start;
+  align-items: start;
+  object-fit: cover;
+  width: 80%;
+  height: 80%;
+}
+
+@media screen and (max-width: 640px) {
+  .grid {
+    justify-content: center;
+  }
+
+  .card {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+}
