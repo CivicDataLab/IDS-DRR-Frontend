@@ -4,7 +4,6 @@ import { Button, Icon, IconButton, Menu, Text } from 'opub-ui';
 import { DatasetSource, DatasetsURL, GithubRepoLink } from '@/config/consts';
 import { copyCurrentURL, handleRedirect } from '@/lib/utils';
 import Icons from '@/components/icons';
-import styles from './styles.module.scss';
 
 const currentURL = typeof window !== 'undefined' ? window.location.href : '';
 

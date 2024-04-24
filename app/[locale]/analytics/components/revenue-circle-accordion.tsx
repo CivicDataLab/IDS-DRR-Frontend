@@ -11,13 +11,16 @@ import {
 
 import { RiskColorMap } from '@/config/consts';
 import { deSlugify } from '@/lib/utils';
+import { getFactorNameBySlug } from './sidebar-layout';
 
 interface RevenueProps {
+  factorData: any;
   revenueCircleData: any;
   indicator: string;
 }
 
 export const RevenueCircle = ({
+  factorData,
   revenueCircleData,
   indicator,
 }: RevenueProps) => {
@@ -70,7 +73,11 @@ export const RevenueCircle = ({
                   <ScoreInfo
                     key={scoreType}
                     indicator={indicator}
-                    label={`${deSlugify(scoreType)} Score`}
+                    label={
+                      indicator === 'risk-score'
+                        ? getFactorNameBySlug(factorData, scoreType)
+                        : `${deSlugify(scoreType)}`
+                    }
                     value={item?.[scoreType]}
                   />
                 )

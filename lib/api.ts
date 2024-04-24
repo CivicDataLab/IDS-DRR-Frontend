@@ -3,16 +3,14 @@ import { type TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { QueryClient, useQuery } from '@tanstack/react-query';
 import { request } from 'graphql-request';
 
-import { gqlConfig } from '@/config/site';
-
 // create a wrapper function for graphql-request
 // that will be used by react-query
 export async function GraphQL<TResult, TVariables>(
-  type: string,
+  url: string,
   document: TypedDocumentNode<TResult, TVariables>,
   ...[variables]: TVariables extends Record<string, never> ? [] : [TVariables]
 ) {
-  const data = await request(gqlConfig[type], document, {
+  const data = await request(url, document, {
     ...variables,
   });
   return data;

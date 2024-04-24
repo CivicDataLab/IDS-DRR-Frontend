@@ -61,10 +61,14 @@ export function Content({
   const mapData = useQuery(
     [`mapQuery_${boundary}_${indicator}_${timePeriodSelected}`],
     () =>
-      GraphQL('analytics', mapQuery, {
-        indcFilter: { slug: indicator },
-        dataFilter: { dataPeriod: timePeriodSelected },
-      }),
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        mapQuery,
+        {
+          indcFilter: { slug: indicator },
+          dataFilter: { dataPeriod: timePeriodSelected },
+        }
+      ),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -75,9 +79,13 @@ export function Content({
   const geographiesData = useQuery(
     [`geographies_data_${boundary}`],
     () =>
-      GraphQL('analytics', ANALYTICS_GEOGRAPHY_DATA, {
-        geoFilter: { type: boundary },
-      }),
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_GEOGRAPHY_DATA,
+        {
+          geoFilter: { type: boundary },
+        }
+      ),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -87,7 +95,11 @@ export function Content({
 
   const timePeriods = useQuery(
     [`timePeriods`],
-    () => GraphQL('analytics', ANALYTICS_TIME_PERIODS),
+    () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_TIME_PERIODS
+      ),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,

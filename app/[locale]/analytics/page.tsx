@@ -19,19 +19,27 @@ export default async function Home({
   const queryClient = getQueryClient();
 
   await queryClient.prefetchQuery([`timePeriods`], () =>
-    GraphQL('analytics', ANALYTICS_TIME_PERIODS)
+    GraphQL(
+      `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
+      ANALYTICS_TIME_PERIODS
+    )
   );
 
-  await queryClient.prefetchQuery([`factorScores`], () =>
-    GraphQL('analytics', ANALYTICS_FACTORS)
+  await queryClient.prefetchQuery([`factors`], () =>
+    GraphQL(
+      `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
+      ANALYTICS_FACTORS
+    )
   );
 
   await queryClient.prefetchQuery(
     [`indicators_${searchParams?.['indicator']}`],
     () =>
-      GraphQL('analytics', ANALYTICS_INDICATORS, {
-        indcFilter: { slug: searchParams?.['indicator'] },
-      })
+      GraphQL(
+        `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_INDICATORS,
+        { indcFilter: { slug: searchParams?.['indicator'] } }
+      )
   );
 
   const dehydratedState = dehydrate(queryClient);

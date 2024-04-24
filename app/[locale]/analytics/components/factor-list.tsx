@@ -20,8 +20,12 @@ import styles from './styles.module.scss';
 
 export function FactorList() {
   const factorData = useQuery(
-    [`factorScores`],
-    () => GraphQL('analytics', ANALYTICS_FACTORS),
+    [`factors`],
+    () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_FACTORS
+      ),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,

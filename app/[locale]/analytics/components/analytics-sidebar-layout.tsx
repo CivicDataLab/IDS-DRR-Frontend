@@ -71,16 +71,21 @@ function SidePaneLayout() {
     boundary === 'district'
       ? ANALYTICS_DISTRICT_DATA
       : ANALYTICS_REVENUE_TABLE_DATA;
+
   const sidePaneData: any = useQuery(
     [
       `sidePaneData_${indicator}_${region?.split(',')}_${boundary}_${time_period}`,
     ],
     () =>
-      GraphQL('analytics', sidePaneQuery, {
-        indcFilter: { slug: indicator },
-        dataFilter: { dataPeriod: time_period },
-        ...(region && { geoFilter: { code: region?.split(',') } }),
-      }),
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        sidePaneQuery,
+        {
+          indcFilter: { slug: indicator },
+          dataFilter: { dataPeriod: time_period },
+          ...(region && { geoFilter: { code: region?.split(',') } }),
+        }
+      ),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -91,9 +96,13 @@ function SidePaneLayout() {
   const indicatorDescriptions: any = useQuery(
     [`indicators_${indicator}`],
     () =>
-      GraphQL('analytics', ANALYTICS_INDICATORS, {
-        indcFilter: { slug: indicator },
-      }),
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_INDICATORS,
+        {
+          indcFilter: { slug: indicator },
+        }
+      ),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
