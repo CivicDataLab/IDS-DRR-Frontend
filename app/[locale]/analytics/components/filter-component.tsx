@@ -13,11 +13,11 @@ import {
   DrawerTitle,
   Icon,
   IconButton,
-  MonthPicker,
   RadioGroup,
   RadioItem,
   Text,
   TextField,
+  YearCalendar,
 } from 'opub-ui';
 
 import {
@@ -27,20 +27,26 @@ import {
 import { GraphQL } from '@/lib/api';
 import { cn, formatDate } from '@/lib/utils';
 import Icons from '@/components/icons';
+import {
+  MobileFilterBox,
+  MobileFilterContent,
+} from '@/components/MobileFilterBox';
+import styles from './styles.module.scss';
 
-export function FilterComp({
-  timePeriod,
-  indicator,
-}: {
-  timePeriod: string;
-  indicator: string;
-}) {
+export function FilterComp({ timePeriod }: { timePeriod: string }) {
   interface Option {
     disabled?: boolean;
     value: string;
     label: string;
     type?: string;
   }
+
+  type FilterButtonOption = {
+    title: string;
+    value: string;
+    options?: Option[];
+    type: string;
+  }[];
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -135,7 +141,7 @@ export function FilterComp({
     }
   }, [geographiesData.data, getRegionOptions, boundarySelected]);
 
-  const FilterOptions = [
+  const FilterOptions: FilterButtonOption = [
     {
       title: 'Boundary',
       value: 'boundary',
@@ -190,77 +196,29 @@ export function FilterComp({
         <Icon source={Icons.filter} />
       </Button>
 
-      <Drawer open={isDrawerOpen}>
-        <DrawerContent>
-          <DrawerHeader className=" h-[56px] border-b-1 border-solid border-[#C9CCCF]">
-            <DrawerTitle className="flex justify-between ">
-              <Text variant="headingMd">Options</Text>
-              <IconButton
-                icon={Icons.cross}
-                onClick={toggleDrawer}
-                color="default"
-              >
-                Close
-              </IconButton>
-            </DrawerTitle>
-          </DrawerHeader>
-          <DrawerDescription className="flex h-[276px]">
-            <div className="flex flex-col gap-3 border-x-1 border-solid border-borderSubdued p-4">
-              {FilterOptions.map((item, index) => (
-                <div key={`${item.value}-${index}`}>
-                  <Button
-                    className={cn('min-w-[40px] text-textDefault')}
-                    size="slim"
-                    fullWidth
-                    kind="tertiary"
-                    variant="interactive"
-                    // onClick={() => boundarySelection()}
-                    onClick={() => setSelectedOption(item?.value)}
-                  >
-                    <Text>{item.title}</Text>
-                  </Button>
-                </div>
-              ))}
-            </div>
-            <div className="w-full overflow-x-auto p-4">
-              <RenderOptions
-                filterOptions={FilterOptions}
-                selectedOption={selectedOption}
-                boundary={boundary}
-                timePeriod={timePeriod}
-                timePeriodData={timePeriods}
-                setBoundarySelected={setBoundarySelected}
-                setRegionSelected={setRegionSelected}
-                setTimePeriodSelected={setTimePeriodSelected}
-                handleInputChangeCallback={(value: string) =>
-                  handleSearchChange(value)
-                }
-              />
-            </div>
-          </DrawerDescription>
-          <DrawerFooter className="flex flex-row justify-between border-t-1 border-solid border-[#BDBDBD]">
-            <Button
-              className=" border-1 border-[#71E57D] bg-[#ffffff]"
-              size="large"
-            >
-              <Text variant="bodyLg" fontWeight="bold" color="default">
-                Clear All
-              </Text>
-            </Button>
-            <DrawerClose onClick={toggleDrawer} asChild>
-              <Button
-                onClick={handleApplyFilters}
-                className=" bg-[#71E57D]"
-                size="large"
-              >
-                <Text variant="bodyLg" fontWeight="bold" color="default">
-                  Apply
-                </Text>
-              </Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
+      <MobileFilterBox
+        filterOptions={FilterOptions}
+        handleApplyFilters={handleApplyFilters}
+        onSelectedOption={(selectedOption) => setSelectedOption(selectedOption)}
+        open={isDrawerOpen}
+        toggleDrawerCallback={toggleDrawer}
+      >
+        <MobileFilterContent>
+          <RenderOptions
+            filterOptions={FilterOptions}
+            selectedOption={selectedOption}
+            boundary={boundary}
+            timePeriod={timePeriod}
+            timePeriodData={timePeriods}
+            setBoundarySelected={setBoundarySelected}
+            setRegionSelected={setRegionSelected}
+            setTimePeriodSelected={setTimePeriodSelected}
+            handleInputChangeCallback={(value: string) =>
+              handleSearchChange(value)
+            }
+          />
+        </MobileFilterContent>
+      </MobileFilterBox>
     </>
   );
 }
@@ -269,7 +227,6 @@ export const RenderOptions = ({
   filterOptions,
   selectedOption,
   boundary,
-  timePeriod,
   timePeriodData,
   handleInputChangeCallback,
   setBoundarySelected,
@@ -344,18 +301,18 @@ export const RenderOptions = ({
       );
     case 'month-picker':
       return (
-        <MonthPicker
-          name="time-period-select"
-          defaultValue={parseDate('2023-08-01')}
-          label="Select Month"
-          minValue={parseDate(minDate || '2023-01-04')}
-          maxValue={parseDate(maxDate || '2023-01-04')}
-          onChange={(date) => {
-            setTimePeriodSelected(
-              `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`
-            );
-          }}
-        />
+        <div className=" self-center">
+          <YearCalendar
+            defaultValue={parseDate('2023-08-01')}
+            minValue={parseDate(minDate || '2023-01-04')}
+            maxValue={parseDate(maxDate || '2023-01-04')}
+            onChange={(date) => {
+              setTimePeriodSelected(
+                `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`
+              );
+            }}
+          />
+        </div>
       );
   }
 };

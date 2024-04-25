@@ -6,9 +6,9 @@ import { Button, Icon, Text } from 'opub-ui';
 import { copyCurrentURL } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { Content } from './analytics-layout';
-import { AnalyticsDashboardLayout } from './analytics-sidebar-layout';
+import { OutputWindowComponent } from './analytics-sidebar-layout';
 import { FactorList } from './factor-list';
-import { FilterComp } from './filter-comp';
+import { FilterComp } from './filter-component';
 
 export function AnalyticsMobileLayout({
   timePeriod,
@@ -18,7 +18,7 @@ export function AnalyticsMobileLayout({
   indicator: string;
 }) {
   const [componentToShow, setComponentToShow] = useState(
-    <AnalyticsDashboardLayout />
+    <OutputWindowComponent />
   );
 
   const handleMapClick = () => {
@@ -28,7 +28,7 @@ export function AnalyticsMobileLayout({
   };
 
   const handleAnalyticsClick = () => {
-    setComponentToShow(<AnalyticsDashboardLayout />);
+    setComponentToShow(<OutputWindowComponent />);
   };
 
   const buttons = [
@@ -52,9 +52,9 @@ export function AnalyticsMobileLayout({
   return (
     <section className="flex h-full w-full flex-col items-center justify-center gap-0 bg-[#FFFF]">
       <div className="flex h-[110vh] w-[95vw] flex-grow flex-col overflow-auto overflow-y-scroll">
-        <div className="flex h-[70px] flex-row items-center">
+        <div className="flex items-center">
           <FactorList />
-          <FilterComp timePeriod={timePeriod} indicator={indicator} />
+          <FilterComp timePeriod={timePeriod} />
         </div>
         {componentToShow}
       </div>

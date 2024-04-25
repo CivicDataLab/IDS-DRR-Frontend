@@ -11,7 +11,7 @@ import {
 
 import { RiskColorMap } from '@/config/consts';
 import { deSlugify } from '@/lib/utils';
-import { getFactorNameBySlug } from './sidebar-layout';
+import { getFactorNameBySlug } from './output-window';
 
 interface RevenueProps {
   factorData: any;

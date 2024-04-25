@@ -16,7 +16,7 @@ import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import { DownloadReport } from './download-report';
 
-export function SidebarDefaultLayout({
+export function DefaultWindow({
   chartData,
   indicatorDescriptions,
   indicator,
