@@ -81,7 +81,7 @@ export function DefaultWindow({
         </aside>
       </MediaRendering>
       <MediaRendering minWidth={null} maxWidth="767">
-        <div className="h-full bg-surfaceDefault p-4 shadow-basicMd">
+        <div className="h-full overflow-y-scroll bg-surfaceDefault p-4 shadow-basicMd">
           <Text
             variant="headingXl"
             fontWeight="semibold"
