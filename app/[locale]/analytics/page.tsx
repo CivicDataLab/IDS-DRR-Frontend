@@ -49,6 +49,7 @@ export default async function Home({
         <AnalyticsMobileLayout
           timePeriod={searchParams['time-period']}
           indicator={searchParams?.indicator}
+          boundary={searchParams?.boundary}
         />
       </MediaRendering>
       <MediaRendering minWidth="1024" maxWidth={null}>

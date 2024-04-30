@@ -4,18 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 import { parseAsString, useQueryState } from 'next-usequerystate';
 import {
   Button,
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
   Icon,
-  IconButton,
   RadioGroup,
   RadioItem,
-  Text,
   TextField,
   YearCalendar,
 } from 'opub-ui';
@@ -25,13 +16,13 @@ import {
   ANALYTICS_TIME_PERIODS,
 } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
-import { cn, formatDate } from '@/lib/utils';
+import { formatDate } from '@/lib/utils';
 import Icons from '@/components/icons';
 import {
   MobileFilterBox,
   MobileFilterContent,
 } from '@/components/MobileFilterBox';
-import styles from './styles.module.scss';
+import { constructRegionOptions } from '../utils/utils';
 
 export function FilterComp({ timePeriod }: { timePeriod: string }) {
   interface Option {
@@ -104,42 +95,12 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
   );
 
   const getRegionOptions = React.useCallback(() => {
-    let RevCircleDropdownOptions: Option[] = [];
-    let DistrictDropDownOption: Option[] = [];
-    if (boundarySelected === 'revenue-circle') {
-      let rawData = geographiesData?.data?.getDistrictRevCircle;
-      if (rawData) {
-        for (const district in rawData) {
-          const revenueCircles = rawData[district];
-          revenueCircles.forEach(
-            (circle: { 'revenue-circle': string; code: string }) => {
-              RevCircleDropdownOptions.push({
-                label: circle['revenue-circle'],
-                value: circle.code,
-              });
-            }
-          );
-        }
-      }
-      return RevCircleDropdownOptions;
-    }
-    geographiesData.data?.getDistrictRevCircle?.forEach(
-      (geography: { district: string; code: string }) => {
-        DistrictDropDownOption.push({
-          label: geography.district,
-          value: geography.code ? geography.code : 'NA',
-        });
-      }
+    const regionOptions = constructRegionOptions(
+      boundarySelected,
+      geographiesData
     );
-    return DistrictDropDownOption;
-  }, [geographiesData.data?.getDistrictRevCircle, boundarySelected]);
-
-  React.useEffect(() => {
-    if (geographiesData.data) {
-      const regionOptions = getRegionOptions();
-      setRegionOptions(regionOptions);
-    }
-  }, [geographiesData.data, getRegionOptions, boundarySelected]);
+    return regionOptions;
+  }, [boundarySelected, geographiesData]);
 
   const FilterOptions: FilterButtonOption = [
     {
@@ -154,7 +115,7 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
     {
       title: 'Region',
       value: 'region',
-      options: regionOptions,
+      options: getRegionOptions(),
       type: 'radio-button',
     },
     {
@@ -189,7 +150,7 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
   return (
     <>
       <Button
-        className="border-1 border-solid border-[#8C9196]"
+        className="m-0 ml-auto border-1 border-solid border-[#8C9196]"
         kind="tertiary"
         onClick={toggleDrawer}
       >

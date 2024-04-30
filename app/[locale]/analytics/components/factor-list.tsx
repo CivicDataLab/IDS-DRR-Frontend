@@ -65,30 +65,28 @@ export function FactorList() {
   return (
     <>
       <MediaRendering minWidth={null} maxWidth="1023">
-        <div className=" w-[90%] ">
-          {factorData.isFetched && (
-            <Select
-              value={selectedIndicator}
-              onChange={handleChange}
-              label=""
-              className="w-[276px]  p-2"
-              name="boundary-select"
-              labelInline
-              options={
-                factorData.data?.getFactors.map((item: any) => ({
-                  label: (
-                    <>
-                      <div className=" flex flex-row items-center gap-4 pl-2">
-                        {getIcon(item.slug)} {item.name}
-                      </div>
-                    </>
-                  ),
-                  value: item.slug,
-                })) || []
-              }
-            />
-          )}
-        </div>
+        {factorData.isFetched && (
+          <Select
+            value={selectedIndicator}
+            onChange={handleChange}
+            label=""
+            className="w-[276px]  p-2"
+            name="boundary-select"
+            labelInline
+            options={
+              factorData.data?.getFactors.map((item: any) => ({
+                label: (
+                  <>
+                    <div className=" flex flex-row items-center gap-4 pl-2">
+                      {getIcon(item.slug)} {item.name}
+                    </div>
+                  </>
+                ),
+                value: item.slug,
+              })) || []
+            }
+          />
+        )}
       </MediaRendering>
       <MediaRendering minWidth="1024" maxWidth={null}>
         <div
