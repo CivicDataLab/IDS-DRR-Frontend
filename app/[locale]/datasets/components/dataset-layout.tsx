@@ -5,19 +5,13 @@ import React from 'react';
 import SearchSvg from '@/public/Search';
 import { Datasets, FilterProps } from '@/types';
 import { useQueryState } from 'next-usequerystate';
-import { Button, Divider, Icon, SearchInput, Select, Text } from 'opub-ui';
+import { Button, SearchInput, Select, Text } from 'opub-ui';
 
 import { datasetsPageHeader } from '@/config/consts';
-import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
-import {
-  MobileFilterBox,
-  MobileFilterContent,
-} from '@/components/MobileFilterBox';
-import { RenderOptions } from '../../analytics/components/filter-component';
-import { DatasetsFilterComp } from '../[dataset]/components/filterComponent';
 import { DatasetCard } from './DatasetCard';
 import { FilterBox } from './FilterBox';
+import { MobileFilter } from './MobileFilter';
 
 export function Content({
   count,
@@ -156,10 +150,7 @@ export function Content({
               Showing {count} datasets
             </Text>
 
-            <DatasetsFilterComp
-              filters={filters}
-              selectedFilters={selectedFilters}
-            />
+            <MobileFilter filters={filters} selectedFilters={selectedFilters} />
           </div>
 
           <div className="rounded flex flex-col gap-4 border-solid">

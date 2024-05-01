@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { type TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -46,8 +46,8 @@ export function AnalyticsMobileLayout({
     },
     {
       icon: Icons.IconChartBar,
-      title: 'Analytics',
-      value: 'analytics',
+      title: 'Insights',
+      value: 'insights',
     },
     {
       icon: Icons.share,
@@ -56,8 +56,10 @@ export function AnalyticsMobileLayout({
     },
   ];
 
-  const [selectedView, setSelectedView] = useState('analytics');
-
+  const [view, setView] = useQueryState(
+    'view',
+    parseAsString.withDefault('insights')
+  );
   const mapQuery: TypedDocumentNode<any, any> =
     boundary === 'district'
       ? ANALYTICS_DISTRICT_MAP_DATA
@@ -124,11 +126,8 @@ export function AnalyticsMobileLayout({
             }
           />
         );
-      case 'analytics':
+      case 'insights':
         return <OutputWindowComponent />;
-      case 'share':
-        copyCurrentURL();
-        break;
       default:
         return null;
     }
@@ -141,17 +140,21 @@ export function AnalyticsMobileLayout({
           <FactorList />
           <FilterComp timePeriod={timePeriod} />
         </div>
-        <RenderView selectedView={selectedView} />
+        <RenderView selectedView={view} />
       </div>
 
-      <div className="flex w-full flex-row  justify-between bg-baseIndigoSolid1 ">
+      <div className=" border-borderSubdue flex w-full  flex-row justify-between  border-solid ">
         {buttons.map((button, index) => (
           <Button
             key={index}
             size="slim"
-            className="basis-1/3 border-t-1 border-solid  border-borderSubdued py-4"
+            className="basis-1/3 border-t-1 py-4"
             kind="tertiary"
-            onClick={() => setSelectedView(button.value)}
+            onClick={() =>
+              button.value === 'share'
+                ? copyCurrentURL()
+                : setView(button.value, { shallow: false })
+            }
           >
             <div className="flex flex-col items-center justify-center gap-1">
               <Icon source={button.icon} size={24} />

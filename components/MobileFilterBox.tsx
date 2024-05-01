@@ -17,7 +17,7 @@ import Icons from './icons';
 type FilterButtonOption = {
   title: string;
   value: string;
-  options?: { label: string; value: string }[];
+  options?: { label: string; value: string }[] | string[];
   type: string;
 }[];
 
@@ -27,6 +27,7 @@ export const MobileFilterBox = ({
   filterOptions,
   onSelectedOption,
   handleApplyFilters,
+  handleClearFilters,
   toggleDrawerCallback,
 }: {
   open: boolean;
@@ -34,6 +35,7 @@ export const MobileFilterBox = ({
   filterOptions: FilterButtonOption;
   onSelectedOption: (val: string) => void;
   handleApplyFilters: () => void;
+  handleClearFilters: () => void;
   toggleDrawerCallback: () => void;
 }) => {
   const toggleDrawer = () => {
@@ -84,6 +86,7 @@ export const MobileFilterBox = ({
         </DrawerDescription>
         <DrawerFooter className="flex flex-row border-t-1 border-solid border-[#BDBDBD]">
           <Button
+            onClick={handleClearFilters}
             className=" basis-1/2 border-1 border-[#71E57D] bg-[#ffffff]"
             size="large"
           >

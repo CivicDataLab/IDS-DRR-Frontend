@@ -147,6 +147,13 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
     setTimePeriod(timePeriodSelected, { shallow: false });
   };
 
+  const handleClearAllFilters = () => {
+    toggleDrawer();
+    setBoundarySelected(boundary);
+    setRegionSelected('');
+    setTimePeriodSelected(timePeriod);
+  };
+
   return (
     <>
       <Button
@@ -162,6 +169,7 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
         handleApplyFilters={handleApplyFilters}
         onSelectedOption={(selectedOption) => setSelectedOption(selectedOption)}
         open={isDrawerOpen}
+        handleClearFilters={handleClearAllFilters}
         toggleDrawerCallback={toggleDrawer}
       >
         <MobileFilterContent>
