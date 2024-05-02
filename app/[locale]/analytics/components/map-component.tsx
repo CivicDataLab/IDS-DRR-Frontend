@@ -145,7 +145,7 @@ export const MapComponent = ({
   return (
     <>
       <MediaRendering minWidth={null} maxWidth="1023">
-        <div className="h-full">
+        <div className="relative h-[90%] w-full">
           <MapChart
             features={mapData?.features}
             mapZoom={6}

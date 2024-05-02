@@ -52,11 +52,11 @@ export function OutputWindow({ data, indicator, boundary }: any) {
   const items = [
     {
       value: '3M',
-      label: 'Past 3 months',
+      label: '3 months',
     },
     {
       value: '1Y',
-      label: 'Past 1 year',
+      label: '1 year',
     },
     {
       value: 'ALL',
@@ -221,7 +221,7 @@ export function OutputWindow({ data, indicator, boundary }: any) {
               </div>
             ))}
           </section>
-          <Accordion type="single" defaultValue="time-trends" collapsible>
+          <Accordion type="single" defaultValue="revenue-circle" collapsible>
             <AccordionItem value="revenue-circle" className="mt-4">
               {districtData.length === 1 && (
                 <div className="mt-7">
@@ -290,27 +290,8 @@ export function OutputWindow({ data, indicator, boundary }: any) {
       </MediaRendering>
       <MediaRendering minWidth={null} maxWidth="1023">
         <div className={cn('p-4', 'bg-surfaceDefault')}>
-          <div className="mb-5 mt-4 flex items-center justify-between">
-            <Text
-              variant="heading2xl"
-              fontWeight="regular"
-              className="flex items-center gap-2"
-            >
-              {IconMap[indicatorIcon || 'risk-score']}
-              {deSlugify(indicatorIcon)}
-            </Text>
-            <DownloadReport />
-          </div>
-          <Divider className="mt-2" />
-          {(data.length === 1 || districtData.length === 1) && (
-            <div className=" mb-2 mt-5 flex flex-col">
-              <Text variant="heading2xl" fontWeight="regular">
-                {RegionName} {GeographyMap[boundary]}
-              </Text>
-            </div>
-          )}
-          <div className="flex items-center justify-between self-stretch">
-            <div className="mt-4 flex items-center gap-4">
+          <div className="flex items-center justify-items-stretch">
+            <div className="mt-4 flex items-center justify-between gap-4">
               <Text variant="bodyMd" color="subdued" fontWeight="regular">
                 Cumulative till {formattedTimePeriod}
               </Text>
@@ -348,7 +329,7 @@ export function OutputWindow({ data, indicator, boundary }: any) {
               </div>
             ))}
           </section>
-          <Accordion type="single" defaultValue="time-trends" collapsible>
+          <Accordion type="single" defaultValue="revenue-circle" collapsible>
             <AccordionItem value="revenue-circle" className="mt-4">
               {districtData.length === 1 && (
                 <div className="mt-7">
@@ -420,6 +401,7 @@ export function OutputWindow({ data, indicator, boundary }: any) {
 }
 
 export function getFactorNameBySlug(factorData: any, slug: string) {
+  // console.log("--###--", )
   const factorName = factorData?.data?.getFactors?.filter(
     (factor: { slug: string }) => factor.slug === slug
   );
@@ -449,6 +431,7 @@ export function OtherFactorScores({
             : deSlugify(scoreType)
         }
         value={data?.[scoreType]}
+        scoreType={scoreType}
       />
     </div>
   ));

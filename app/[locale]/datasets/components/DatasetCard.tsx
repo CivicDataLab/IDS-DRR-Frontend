@@ -96,25 +96,37 @@ export const DatasetCard = ({
               </div>
             </div>
 
-            <div className="flex w-[256px] flex-col">
+            <div className="flex w-[280px] flex-col">
               <Text
-                className="line-clamp-3"
+                className={showMore ? '' : 'line-clamp-3'}
                 variant="bodyMd"
                 as="p"
                 color="default"
-                truncate={!showMore}
               >
                 {description}
               </Text>
-              <Button
-                className="self-end"
-                onClick={() => setShowMore(!showMore)}
-                variant="interactive"
-                size="slim"
-                kind="tertiary"
-              >
-                {showMore ? 'Show less' : 'Show more'}
-              </Button>
+              {!showMore && (
+                <Button
+                  className="self-end"
+                  onClick={() => setShowMore(true)}
+                  variant="interactive"
+                  size="slim"
+                  kind="tertiary"
+                >
+                  Show more
+                </Button>
+              )}
+              {showMore && (
+                <Button
+                  className="self-end"
+                  onClick={() => setShowMore(false)}
+                  variant="interactive"
+                  size="slim"
+                  kind="tertiary"
+                >
+                  Show less
+                </Button>
+              )}
             </div>
           </div>
         </div>

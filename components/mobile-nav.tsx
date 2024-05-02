@@ -11,6 +11,9 @@ import { Icons } from '@/components/icons';
 
 export function MobileNav({ data }: { data: MainConfig }) {
   const [open, setOpen] = React.useState(false);
+  const toggleMenu = () => {
+    setOpen((prevState) => !prevState);
+  };
 
   React.useEffect(() => {
     if (open) {
@@ -69,6 +72,7 @@ export function MobileNav({ data }: { data: MainConfig }) {
                     href={link.href || ''}
                     icon={link.icon || ''}
                     text={link.title || ''}
+                    onClick={toggleMenu}
                   />
                 ))}
               </div>
@@ -84,16 +88,25 @@ const ExploreLink = ({
   href,
   icon,
   text,
+  onClick,
 }: {
   href: string;
   icon: string;
   text: string;
+  onClick: () => void;
 }) => {
+  const handleClick = () => {
+    onClick();
+  };
   return (
     <Link href={href}>
-      <div className="flex items-center gap-6 rounded-1 px-2 py-2 sm:px-3">
+      <div
+        className="flex items-center gap-6 rounded-1 px-2 py-2 sm:px-3"
+        onClick={handleClick}
+      >
         {/* {Icons[icon] && <Icon color="default" source={Icons[icon]} />} */}
         {/* <Icon source={Icons.diamond} color="onBgDefault" size={12} /> */}
+
         <Text
           variant="headingXl"
           fontWeight="medium"

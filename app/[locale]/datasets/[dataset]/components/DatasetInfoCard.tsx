@@ -39,11 +39,11 @@ export const DatasetInfoCard = ({
 
         <div className="shadow-card flex grow border-r-1 border-solid border-borderDisabled px-2  py-4">
           <div className="flex grow flex-col gap-2">
-            <Text variant="headingLg" fontWeight="semibold">
+            <Text variant="headingLg" fontWeight="semibold" color="subdued">
               {title}
             </Text>
             <Text
-              variant="headingMd"
+              variant="bodySm"
               fontWeight="medium"
               className="text-textSubdued"
             >
@@ -52,22 +52,34 @@ export const DatasetInfoCard = ({
             <div className="flex flex-col gap-4">
               <div className="flex w-[256px] flex-col">
                 <Text
-                  className="mb-3 mt-3"
+                  className={`mb-3 mt-3 ${!showMore ? 'line-clamp-3' : ''}`}
                   variant="bodyMd"
                   fontWeight="regular"
-                  truncate={!showMore}
                 >
                   {description}
                 </Text>
-                <Button
-                  className="self-end"
-                  onClick={() => setShowMore(!showMore)}
-                  variant="interactive"
-                  size="slim"
-                  kind="tertiary"
-                >
-                  {showMore ? 'Show less' : 'Show more'}
-                </Button>
+                {!showMore && (
+                  <Button
+                    className="self-end"
+                    onClick={() => setShowMore(true)}
+                    variant="interactive"
+                    size="slim"
+                    kind="tertiary"
+                  >
+                    Show more
+                  </Button>
+                )}
+                {showMore && (
+                  <Button
+                    className="self-end"
+                    onClick={() => setShowMore(false)}
+                    variant="interactive"
+                    size="slim"
+                    kind="tertiary"
+                  >
+                    Show less
+                  </Button>
+                )}
               </div>
               <div className="flex flex-col  gap-2">
                 <div className="flex flex-row flex-wrap content-start items-start gap-4 self-stretch">
