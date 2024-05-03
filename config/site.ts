@@ -68,10 +68,10 @@ export const mainConfig: MainConfig = {
       title: 'Datasets',
       href: DatasetsURL,
     },
-    {
-      title: 'Resources',
-      href: '/',
-    },
+    // {
+    //   title: 'Resources',
+    //   href: '/',
+    // },
     {
       title: 'About us',
       href: AboutUsURL,

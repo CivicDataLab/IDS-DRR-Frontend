@@ -37,6 +37,7 @@ import {
   IconSquareRoundedArrowRight,
   IconSquareRoundedChevronLeftFilled,
   IconUserCog,
+  IconWorld,
   IconX,
   TablerIconsProps,
 } from '@tabler/icons-react';
@@ -82,6 +83,7 @@ export const Icons: {
   IconBrandX: IconBrandX,
   IconBrandFacebook: IconBrandFacebook,
   IconBrandLinkedin: IconBrandLinkedin,
+  IconWorld: IconWorld,
 };
 
 export default Icons;
