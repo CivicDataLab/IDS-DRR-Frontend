@@ -8,6 +8,7 @@ import {
   IconBrandFacebook,
   IconBrandLinkedin,
   IconBrandX,
+  IconChartBar,
   IconChartInfographic,
   IconChevronDown,
   IconChevronLeft,
@@ -23,12 +24,14 @@ import {
   IconDiamondsFilled,
   IconDownload,
   IconExternalLink,
+  IconFilter,
   IconHome,
   IconInfoCircleFilled,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarLeftExpand,
   IconLink,
   IconListSearch,
+  IconMap,
   IconMenu,
   IconReport,
   IconReportSearch,
@@ -84,6 +87,9 @@ export const Icons: {
   IconBrandFacebook: IconBrandFacebook,
   IconBrandLinkedin: IconBrandLinkedin,
   IconWorld: IconWorld,
+  IconMap: IconMap,
+  IconChartBar: IconChartBar,
+  filter: IconFilter,
 };
 
 export default Icons;

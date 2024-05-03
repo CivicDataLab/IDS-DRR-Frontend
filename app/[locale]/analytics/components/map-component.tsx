@@ -4,6 +4,7 @@ import React from 'react';
 import { Spinner, Text } from 'opub-ui';
 
 import MapChart from '@/components/MapChart';
+import { MediaRendering } from '@/components/media-rendering';
 import { FactorList } from './factor-list';
 
 export const MapComponent = ({
@@ -142,27 +143,52 @@ export const MapComponent = ({
     );
 
   return (
-    <div className=" relative h-[90%] w-full py-4">
-      <FactorList />
-      <MapChart
-        features={mapData?.features}
-        mapZoom={7.7}
-        mapProperty={indicator}
-        zoomOnClick={false}
-        legendData={legendData}
-        minZoom={6}
-        maxZoom={8}
-        mapDataFn={mapDataFn}
-        click={(layer) =>
-          onMapClick({
-            layer: layer.feature?.properties.code,
-          })
-        }
-        fillOpacity={1}
-        setMap={setMap}
-        resetZoom
-        scroolWheelZoom={false}
-      />
-    </div>
+    <>
+      <MediaRendering minWidth={null} maxWidth="1023">
+        <div className="relative h-[90%] w-full">
+          <MapChart
+            features={mapData?.features}
+            mapZoom={6}
+            mapProperty={indicator}
+            zoomOnClick={false}
+            legendData={legendData}
+            mapDataFn={mapDataFn}
+            click={(layer) =>
+              onMapClick({
+                layer: layer.feature?.properties.code,
+              })
+            }
+            fillOpacity={1}
+            setMap={setMap}
+            resetZoom
+            scroolWheelZoom={false}
+          />
+        </div>
+      </MediaRendering>
+      <MediaRendering minWidth="1024" maxWidth={null}>
+        <div className=" relative h-[90%] w-full py-4">
+          <FactorList />
+          <MapChart
+            features={mapData?.features}
+            mapZoom={6.1}
+            mapProperty={indicator}
+            zoomOnClick={false}
+            legendData={legendData}
+            minZoom={6}
+            maxZoom={8}
+            mapDataFn={mapDataFn}
+            click={(layer) =>
+              onMapClick({
+                layer: layer.feature?.properties.code,
+              })
+            }
+            fillOpacity={1}
+            setMap={setMap}
+            resetZoom
+            scroolWheelZoom={false}
+          />
+        </div>
+      </MediaRendering>
+    </>
   );
 };

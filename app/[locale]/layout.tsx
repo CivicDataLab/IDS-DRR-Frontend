@@ -1,10 +1,13 @@
 import React from 'react';
 import { Inter as FontSans } from 'next/font/google';
 import { notFound } from 'next/navigation';
+import { useWindowSize } from '@/hooks/use-window-size';
 import { NextIntlClientProvider } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
 
 import { mainConfig, siteConfig } from '@/config/site';
+import { MainNav } from '@/components/main-nav';
+import { MediaRendering } from '@/components/media-rendering';
 import { MobileNav } from '@/components/mobile-nav';
 import Provider from '@/components/provider';
 import locales from '../../config/locales';
@@ -72,14 +75,26 @@ export default async function LocaleLayout({
   }
   unstable_setRequestLocale(locale);
 
+  // const { width } = useWindowSize();
+  // const isDesktop = width >= 1025;
+
   return (
     <html lang={locale}>
       <body className={fontSans.className}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Provider>
-            <MobileNav data={mainConfig} />
+            <MediaRendering minWidth={null} maxWidth="1023">
+              <MobileNav data={mainConfig} />
+            </MediaRendering>
+            <MediaRendering minWidth="1024" maxWidth={null}>
+              <MainNav data={mainConfig} />
+            </MediaRendering>
+
             {children}
-            <Footer />
+
+            <MediaRendering minWidth="1024" maxWidth={null}>
+              <Footer />
+            </MediaRendering>
           </Provider>
         </NextIntlClientProvider>
       </body>

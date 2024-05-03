@@ -1,4 +1,6 @@
 import React from 'react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import {
   Accordion,
   AccordionContent,
@@ -11,7 +13,7 @@ import {
 
 import { RiskColorMap } from '@/config/consts';
 import { deSlugify } from '@/lib/utils';
-import { getFactorNameBySlug } from './sidebar-layout';
+import { getFactorNameBySlug } from './output-window';
 
 interface RevenueProps {
   factorData: any;
@@ -32,7 +34,7 @@ export const RevenueCircle = ({
   const FactorVariables = Object.keys(clonedRevenueCircleData);
 
   return (
-    <Accordion type="single" collapsible>
+    <Accordion type="single" defaultValue={`revenue-circle-0`} collapsible>
       {revenueCircleData.map((item: any, index: number) => (
         <AccordionItem
           key={`revenue-circle-${index}`}
@@ -79,6 +81,7 @@ export const RevenueCircle = ({
                         : `${deSlugify(scoreType)}`
                     }
                     value={item?.[scoreType]}
+                    scoreType={scoreType}
                   />
                 )
             )}
@@ -93,15 +96,36 @@ interface ScoreProps {
   label: string;
   value: string;
   indicator: string;
+  scoreType?: string;
 }
 
-export const ScoreInfo = ({ label, value, indicator }: ScoreProps) => (
-  <div className="mt-2">
-    {label} :{' '}
-    {indicator === 'risk-score' ? (
-      <strong className="pl-2">{parseInt(value)}/5</strong>
-    ) : (
-      <strong className="pl-2">{value}</strong>
-    )}
-  </div>
-);
+export const ScoreInfo = ({
+  label,
+  value,
+  indicator,
+  scoreType,
+}: ScoreProps) => {
+  const searchParams = useSearchParams();
+  const time_period = searchParams.get('time-period') || '2023_08';
+  const boundary = searchParams.get('boundary') || 'district';
+  const region = searchParams.get('region') || '';
+  return (
+    <div className="mt-2">
+      {indicator === 'risk-score' ? (
+        <Link
+          href={`?indicator=${scoreType}&time-period=${time_period}&boundary=${boundary}&region=${region}`}
+        >
+          <Text color="interactive">{label}</Text>
+        </Link>
+      ) : (
+        <span>{label}</span>
+      )}
+      :{' '}
+      {indicator === 'risk-score' ? (
+        <strong className="pl-2">{parseInt(value)}/5</strong>
+      ) : (
+        <strong className="pl-2">{value}</strong>
+      )}
+    </div>
+  );
+};
