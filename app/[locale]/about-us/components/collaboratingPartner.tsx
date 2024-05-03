@@ -10,12 +10,12 @@ import Icons from '@/components/icons';
 
 export function CollaboratingPartner() {
   return (
-    <section className="flex h-[549px] flex-col flex-wrap py-14 ">
-      <div className="flex flex-col gap-8">
+    <section className="flex h-full flex-col flex-wrap py-14 ">
+      <div className="container flex flex-col gap-8">
         <Text variant="heading2xl" fontWeight="bold" color="default">
           Collaborating partner
         </Text>
-        <div className="flex h-[402px] w-[1440px] flex-row items-center gap-10 bg-baseIndigoSolid1 p-9 ">
+        <div className="flex h-full basis-1/3 flex-wrap items-center gap-10 bg-baseIndigoSolid1 p-9 ">
           <div className="flex flex-col items-center gap-4 text-surfaceDefault">
             <Image
               src="/logo/ASDMA.png"
@@ -54,7 +54,7 @@ export function CollaboratingPartner() {
               </Button>
             </div>
           </div>
-          <div className=" flex flex-col gap-3">
+          <div className=" flex basis-3/4 flex-col gap-3">
             <Text variant="headingXl" fontWeight="medium" color="default">
               Assam State Disaster Management Authority
             </Text>

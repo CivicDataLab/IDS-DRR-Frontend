@@ -12,11 +12,11 @@ import Icons from '@/components/icons';
 export function SupportedBy() {
   return (
     <section className="flex  flex-col flex-wrap py-14 ">
-      <div className="mb-2 flex flex-col gap-8 ">
+      <div className="container mb-2 flex flex-col gap-8 ">
         <Text variant="heading2xl" fontWeight="bold" color="default">
           Supported By
         </Text>
-        <div className="flex h-[402px] w-[1440px] flex-row items-center gap-10 bg-baseIndigoSolid1 p-9 ">
+        <div className="flex h-full flex-wrap  items-center gap-10 bg-baseIndigoSolid1 p-9 ">
           <div className="flex flex-col items-center gap-4 text-surfaceDefault">
             <Image
               src="/logo/Rockefeller.png"
@@ -25,7 +25,7 @@ export function SupportedBy() {
               alt="Rockefeller Logo"
               className=" object-contain "
             />
-            <div className="flex flex-row items-center justify-between self-stretch">
+            <div className="flex items-center justify-between self-stretch">
               <Button
                 monochrome={true}
                 kind="tertiary"
@@ -58,7 +58,7 @@ export function SupportedBy() {
               </Button>
             </div>
           </div>
-          <div className=" flex flex-col gap-3">
+          <div className=" flex  basis-3/4 flex-col gap-3">
             <Text variant="headingXl" fontWeight="medium" color="default">
               The Rockefeller Foundation
             </Text>
@@ -84,7 +84,7 @@ export function SupportedBy() {
             </div>
           </div>
         </div>
-        <div className="flex h-[402px] w-[1440px] flex-row items-center gap-10 bg-baseIndigoSolid1 p-9 ">
+        <div className="flex  h-full flex-wrap items-center gap-10 bg-baseIndigoSolid1 p-9 ">
           <div className="flex flex-col items-center gap-4 text-surfaceDefault">
             <Image
               src="/logo/OpenContracting.png"
@@ -126,7 +126,7 @@ export function SupportedBy() {
               </Button>
             </div>
           </div>
-          <div className=" flex flex-col gap-3">
+          <div className=" flex basis-3/4 flex-col gap-3">
             <Text variant="headingXl" fontWeight="medium" color="default">
               Open Contracting Partnership
             </Text>

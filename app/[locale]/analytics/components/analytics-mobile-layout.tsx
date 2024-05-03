@@ -141,7 +141,7 @@ export function AnalyticsMobileLayout({
           'relative h-[100vh] max-h-[calc(100vh_-_66px_-_56px)] min-h-[calc(100vh_-_66px_-_56px)] w-full flex-grow flex-col gap-3 overflow-y-scroll pb-3'
         )}
       >
-        <div className="sticky top-0 flex h-[64px] items-center bg-[#FFFF] px-4">
+        <div className="sticky top-0 z-max flex  items-center bg-[#FFFF] px-4">
           <FactorList />
           <FilterComp timePeriod={timePeriod} />
         </div>

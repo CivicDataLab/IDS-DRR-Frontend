@@ -48,7 +48,7 @@ const teamMembers: TeamMember[] = [
 export function TheTeam() {
   return (
     <section className="flex flex-col flex-wrap py-14 ">
-      <div className="mb-2 flex w-[1440px] flex-col gap-8 ">
+      <div className="container mb-2 flex flex-col gap-8 ">
         <Text variant="heading2xl" fontWeight="bold" color="default">
           The Team
         </Text>
