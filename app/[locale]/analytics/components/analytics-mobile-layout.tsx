@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { type TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -46,6 +46,7 @@ export function AnalyticsMobileLayout({
     },
     {
       icon: Icons.IconChartBar,
+
       title: 'Insights',
       value: 'insights',
     },
@@ -110,6 +111,8 @@ export function AnalyticsMobileLayout({
     return filteredDistrictOptions;
   };
 
+  const [activeButton, setActiveButton] = useState('');
+
   const RenderView = ({ selectedView }: any) => {
     switch (selectedView) {
       case 'map':
@@ -135,37 +138,43 @@ export function AnalyticsMobileLayout({
   };
 
   return (
-    <section className="flex flex-col items-center justify-center gap-3 bg-[#FFFF] pb-3">
+    <section className="flex max-h-[calc(100vh_-_45px)] min-h-[calc(100vh_-_45px)] flex-col items-center justify-center gap-2 bg-[#FFFF]">
       <div
         className={cn(
-          'relative h-[100vh] max-h-[calc(100vh_-_66px_-_56px)] min-h-[calc(100vh_-_66px_-_56px)] w-full flex-grow flex-col gap-3 overflow-y-scroll pb-3'
+          'relative h-[100vh] max-h-[calc(100vh_-_115px)] min-h-[calc(100vh_-_115px)] w-full flex-grow flex-col gap-3 overflow-y-scroll '
         )}
       >
-        <div className="sticky top-0 flex h-[64px] items-center bg-[#FFFF] px-4">
+        <div className="sticky top-0 flex h-[62px] items-center bg-[#FFFF] px-4">
           <FactorList />
           <FilterComp timePeriod={timePeriod} />
         </div>
+
         <RenderView selectedView={view} />
       </div>
 
-      <div className=" bottom-0 flex h-[66px] w-full flex-row justify-between gap-1 ">
+      <div className=" sticky bottom-0 flex h-[66px] w-full flex-row justify-between gap-1 p-1">
         {buttons.map((button, index) => (
           <Button
             key={index}
             size="slim"
-            className="basis-1/3 border-t-1 py-4"
+            className="basis-1/3 border-t-1  py-4"
             kind="tertiary"
-            onClick={() =>
+            onClick={() => {
+              setActiveButton(button.value);
               button.value === 'share'
                 ? copyCurrentURL()
-                : setView(button.value, { shallow: false })
-            }
+                : setView(button.value, { shallow: false });
+            }}
           >
-            <div className="sticky bottom-0 flex h-[66px] w-full  flex-col items-center justify-center bg-baseIndigoSolid1">
-              <Icon source={button.icon} size={24} />
+            <div className="flex flex-col items-center justify-center gap-1 bg-baseIndigoSolid1 ">
+              <Icon
+                source={button.icon}
+                size={24}
+                stroke={activeButton === button.value ? 3 : 2}
+              />
               <Text
                 variant="headingMd"
-                fontWeight="medium"
+                fontWeight={activeButton === button.value ? 'bold' : 'medium'}
                 className="text-textSubdued"
               >
                 {button.title}
