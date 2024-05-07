@@ -19,7 +19,6 @@ import {
   AccordionTrigger,
   Divider,
   ProgressBar,
-  ShareDialog,
   Text,
   useScreenshot,
 } from 'opub-ui';
@@ -170,7 +169,7 @@ export function OutputWindow({ data, indicator, boundary }: any) {
               className="flex items-center gap-2"
             >
               {IconMap[indicatorIcon || 'risk-score']}
-              {deSlugify(indicatorIcon)}
+              {getFactorNameBySlug(factorData, indicatorIcon)}
             </Text>
             <DownloadReport />
           </header>

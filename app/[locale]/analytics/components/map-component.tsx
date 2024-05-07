@@ -170,7 +170,7 @@ export const MapComponent = ({
           <FactorList />
           <MapChart
             features={mapData?.features}
-            mapZoom={6.1}
+            mapZoom={7.4}
             mapProperty={indicator}
             zoomOnClick={false}
             legendData={legendData}
