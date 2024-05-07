@@ -11,21 +11,11 @@
   gap: 40px;
 }
 
-// .card {
-//   width: 390px;
-//   height: 392px;
-//   // background: #93ec9e;
-//   background: #ffff;
-//   border-radius: 4px;
-//   overflow: hidden;
-// }
-
 .card {
   width: 390px;
-  height: 342px;
+  height: 450px;
   background: #ffff;
-  border-radius: 8px;
-  overflow: hidden;
+  border-radius: 4px;
   flex-direction: column;
   display: flex; /* Use flexbox */
   justify-content: center; /* Center horizontally */
@@ -34,12 +24,13 @@
 
 .card img {
   flex-direction: column;
+  border-radius: 4x;
   display: flex;
   justify-content: flex-start;
   align-items: start;
   object-fit: cover;
-  width: 80%;
-  height: 80%;
+  width: 83%;
+  height: 70%;
 }
 
 @media screen and (max-width: 640px) {
@@ -49,6 +40,6 @@
 
   .card {
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
   }
 }
