@@ -61,8 +61,9 @@ export function TheTeam() {
                 alt={member.name}
                 height={100}
                 width={200}
+                className="object-contain pt-4 "
               />
-              <div className="flex w-full flex-col gap-4 p-4">
+              <div className="flex w-full flex-col gap-2 pl-8 pt-4 ">
                 <Text variant="headingLg" fontWeight="semibold" color="default">
                   {member.name}
                 </Text>
