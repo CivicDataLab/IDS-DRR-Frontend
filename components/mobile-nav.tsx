@@ -62,7 +62,7 @@ export function MobileNav({ data }: { data: MainConfig }) {
         </div>
       </header>
       {open && (
-        <div className="h-screen overflow-y-auto border-t-1 border-solid border-baseGraySlateSolid11 bg-backgroundSolidDark text-textOnBGDefault">
+        <div className="relative z-10 h-screen overflow-y-auto border-t-1 border-solid border-baseGraySlateSolid11 bg-backgroundSolidDark text-textOnBGDefault">
           <div className="flex items-center gap-3 p-3 pr-5">
             {data.mainNav.length > 0 && (
               <div>

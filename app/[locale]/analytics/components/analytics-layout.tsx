@@ -19,7 +19,6 @@ import {
 } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
-import { MediaRendering } from '@/components/media-rendering';
 import { MapComponent } from './map-component';
 
 export function Content({
@@ -222,95 +221,80 @@ export function Content({
 
   return (
     <React.Fragment>
-      <MediaRendering minWidth={null} maxWidth="1023">
-        <MapComponent
-          indicator={indicator}
-          regions={filterOpt(boundary)}
-          mapDataloading={mapData?.isFetching}
-          setRegion={setRegion}
-          mapData={
-            boundary === 'district'
-              ? mapData?.data?.districtMapData
-              : mapData?.data?.revCircleMapData
-          }
+      <div className="mb-2 flex items-start justify-evenly gap-3">
+        <Select
+          defaultValue="revenue-circle"
+          label="Select Boundary"
+          value={boundary || 'district'}
+          className="min-w-36 grow"
+          name="boundary-select"
+          onChange={(e) => {
+            setBoundary(e, { shallow: false });
+            setRegion([]);
+            setSelectedGroup([]);
+          }}
+          options={[
+            {
+              label: 'Revenue Circle',
+              value: 'revenue-circle',
+            },
+            {
+              label: 'District',
+              value: 'district',
+            },
+          ]}
         />
-      </MediaRendering>
-      <MediaRendering minWidth="1024" maxWidth={null}>
-        <div className="mb-2 flex items-start justify-evenly gap-3">
-          <Select
-            defaultValue="revenue-circle"
-            label="Select Boundary"
-            value={boundary || 'district'}
-            className="min-w-36 grow"
-            name="boundary-select"
-            onChange={(e) => {
-              setBoundary(e, { shallow: false });
-              setRegion([]);
-              setSelectedGroup([]);
-            }}
-            options={[
-              {
-                label: 'Revenue Circle',
-                value: 'revenue-circle',
-              },
-              {
-                label: 'District',
-                value: 'district',
-              },
-            ]}
-          />
 
-          <div className="z-max grow-[3]">
-            <Combobox
-              key={JSON.stringify(filterOpt(boundary))}
-              name="select region"
-              group
-              displaySelected
-              placeholder={`Enter ${boundary === 'district' ? 'District' : 'Revenue Circle'} name...`}
-              label="Select one or more region"
-              list={
-                boundary === 'revenue-circle'
-                  ? RevCircleDropdownOptions
-                  : getDistrictOptions()
-              }
-              selectedValue={filterOpt(boundary)}
-              onChange={(selectedOptions: any) => {
-                onComboboxChange(selectedOptions);
-              }}
-            />
-            {boundary === 'district' && (
-              <div style={{ fontSize: 'small', color: 'grey' }}>
-                You can select upto 4 districts only
-              </div>
-            )}
-          </div>
-
-          <MonthPicker
-            name="time-period-select"
-            defaultValue={parseDate('2023-08-01')}
-            label="Select Month"
-            minValue={parseDate(minDate || '2023-01-04')}
-            maxValue={parseDate(maxDate || '2023-01-04')}
-            onChange={(date) => {
-              setTimePeriod(
-                `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`,
-                { shallow: false }
-              );
+        <div className=" z-9 grow-[3]">
+          <Combobox
+            key={JSON.stringify(filterOpt(boundary))}
+            name="select region"
+            group
+            displaySelected
+            placeholder={`Enter ${boundary === 'district' ? 'District' : 'Revenue Circle'} name...`}
+            label="Select one or more region"
+            list={
+              boundary === 'revenue-circle'
+                ? RevCircleDropdownOptions
+                : getDistrictOptions()
+            }
+            selectedValue={filterOpt(boundary)}
+            onChange={(selectedOptions: any) => {
+              onComboboxChange(selectedOptions);
             }}
           />
+          {boundary === 'district' && (
+            <div style={{ fontSize: 'small', color: 'grey' }}>
+              You can select upto 4 districts only
+            </div>
+          )}
         </div>
-        <MapComponent
-          indicator={indicator}
-          regions={filterOpt(boundary)}
-          mapDataloading={mapData?.isFetching}
-          setRegion={setRegion}
-          mapData={
-            boundary === 'district'
-              ? mapData?.data?.districtMapData
-              : mapData?.data?.revCircleMapData
-          }
+
+        <MonthPicker
+          name="time-period-select"
+          defaultValue={parseDate('2023-08-01')}
+          label="Select Month"
+          minValue={parseDate(minDate || '2023-01-04')}
+          maxValue={parseDate(maxDate || '2023-01-04')}
+          onChange={(date) => {
+            setTimePeriod(
+              `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`,
+              { shallow: false }
+            );
+          }}
         />
-      </MediaRendering>
+      </div>
+      <MapComponent
+        indicator={indicator}
+        regions={filterOpt(boundary)}
+        mapDataloading={mapData?.isFetching}
+        setRegion={setRegion}
+        mapData={
+          boundary === 'district'
+            ? mapData?.data?.districtMapData
+            : mapData?.data?.revCircleMapData
+        }
+      />
     </React.Fragment>
   );
 }

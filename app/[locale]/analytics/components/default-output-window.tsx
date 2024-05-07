@@ -80,15 +80,8 @@ export function DefaultWindow({
           <RenderSidebarContent />
         </aside>
       </MediaRendering>
-      <MediaRendering minWidth={null} maxWidth="767">
-        <div className="h-full bg-surfaceDefault p-4">
-          <Text
-            variant="headingXl"
-            fontWeight="semibold"
-            className="flex items-center gap-2"
-          >
-            Data Insights
-          </Text>
+      <MediaRendering minWidth={null} maxWidth="1023">
+        <div className="h-full bg-surfaceDefault px-4">
           <RenderSidebarContent />
         </div>
       </MediaRendering>
@@ -98,7 +91,7 @@ export function DefaultWindow({
   function RenderSidebarContent() {
     return (
       <>
-        <div className="mb-5 mt-5 flex flex-col">
+        <div className="mb-5 flex flex-col">
           <Text variant="headingMd" fontWeight="bold" className=" mt-3">
             HIGH RISK DISTRICTS
           </Text>

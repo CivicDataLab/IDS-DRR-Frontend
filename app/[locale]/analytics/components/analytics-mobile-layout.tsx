@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useLockBody } from '@/hooks/use-lock-body';
 import { type TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -33,6 +34,9 @@ export function AnalyticsMobileLayout({
   indicator: string;
   boundary: string;
 }) {
+  //Remove default page scroll to make only the content scrollable
+  useLockBody();
+
   const [region, setRegion] = useQueryState(
     'region',
     parseAsArrayOf(parseAsString)
@@ -111,7 +115,7 @@ export function AnalyticsMobileLayout({
     return filteredDistrictOptions;
   };
 
-  const [activeButton, setActiveButton] = useState('');
+  const [activeButton, setActiveButton] = useState(view);
 
   const RenderView = ({ selectedView }: any) => {
     switch (selectedView) {
@@ -131,20 +135,24 @@ export function AnalyticsMobileLayout({
         );
 
       case 'insights':
-        return <OutputWindowComponent />;
+        return (
+          <div className="pt-[62px]">
+            <OutputWindowComponent />
+          </div>
+        );
       default:
         return null;
     }
   };
 
   return (
-    <section className="flex max-h-[calc(100vh_-_45px)] min-h-[calc(100vh_-_45px)] flex-col items-center justify-center gap-2 bg-[#FFFF]">
+    <section className="flex h-full flex-col items-center justify-center gap-2 bg-[#FFFF]">
       <div
         className={cn(
-          'relative h-[100vh] max-h-[calc(100vh_-_115px)] min-h-[calc(100vh_-_115px)] w-full flex-grow flex-col gap-3 overflow-y-scroll '
+          'relative h-[calc(100dvh_-_130px)] w-full flex-grow flex-col gap-3 overflow-y-scroll '
         )}
       >
-        <div className="sticky top-0 flex h-[62px] items-center bg-[#FFFF] px-4">
+        <div className="fixed top-[56px] z-9 flex w-full items-center bg-[#FFFF] px-4">
           <FactorList />
           <FilterComp timePeriod={timePeriod} />
         </div>
@@ -152,7 +160,7 @@ export function AnalyticsMobileLayout({
         <RenderView selectedView={view} />
       </div>
 
-      <div className=" sticky bottom-0 flex h-[66px] w-full flex-row justify-between gap-1 p-1">
+      <div className=" sticky bottom-0 flex h-[66px] w-full flex-row justify-between gap-1 bg-baseIndigoSolid1 p-1">
         {buttons.map((button, index) => (
           <Button
             key={index}

@@ -152,6 +152,9 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
     setBoundarySelected(boundary);
     setRegionSelected('');
     setTimePeriodSelected(timePeriod);
+    setRegion('', { shallow: false });
+    setBoundary(boundary, { shallow: false });
+    setTimePeriod(timePeriod, { shallow: false });
   };
 
   return (
