@@ -62,7 +62,7 @@ const blogArray: BlogArray[] = [
 export function DataStories() {
   return (
     <section className="flex h-[549px] flex-col flex-wrap py-8 ">
-      <div className="mb-2 flex w-[1440px] flex-col gap-4  ">
+      <div className="container mb-2 flex flex-col gap-4  ">
         <Text variant="heading2xl" fontWeight="bold" color="default">
           Data Stories
         </Text>

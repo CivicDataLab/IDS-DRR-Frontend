@@ -4,8 +4,8 @@ import { aboutUsText } from '@/config/consts';
 
 export function About() {
   return (
-    <section className="flex h-[319px] w-full items-center  justify-center bg-backgroundSolidDark">
-      <div className="flex w-[1440px] flex-col gap-10">
+    <section className="flex h-[320px] w-full items-center  justify-center bg-backgroundSolidDark">
+      <div className="container flex flex-col gap-10">
         <Text
           className=" font text-baseAmberSolid7"
           variant="heading4xl"

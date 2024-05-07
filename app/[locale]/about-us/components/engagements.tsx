@@ -26,7 +26,7 @@ const engagements: EngagementsArr[] = [
 export function Engagements() {
   return (
     <section className="flex flex-col py-14">
-      <div className="flex w-[1440px] flex-col gap-8">
+      <div className="container flex flex-col gap-8">
         <Text variant="heading2xl" fontWeight="bold" color="default">
           Our engagements
         </Text>

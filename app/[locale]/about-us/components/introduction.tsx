@@ -8,8 +8,8 @@ import {
 
 export const Introduction = () => {
   return (
-    <section className="h-[389px] flex-wrap">
-      <div className="flex h-full w-[1440px] gap-5">
+    <section>
+      <div className="container flex h-full gap-5 py-8">
         <div className="flex flex-col justify-center gap-8 ">
           <Text variant="heading2xl" fontWeight="bold" color="default">
             Introducing IDS-DRR

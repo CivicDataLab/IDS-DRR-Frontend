@@ -6,9 +6,9 @@ import { AnalyticsQuickLinksText, AnalyticsURL } from '@/config/consts';
 
 export const QuickLinks = () => {
   return (
-    <section className="h-[389px] flex-wrap">
-      <div className="flex h-full w-[1300px] items-center justify-center gap-3">
-        <div className="flex flex-col justify-center gap-8 px-6 ">
+    <section className="container h-[400px]">
+      <div className=" flex h-full flex-wrap gap-4">
+        <div className="flex flex-col justify-center gap-8 md:basis-2/6">
           <Text variant="heading3xl" fontWeight="bold" color="default">
             Analytics Dashboard
           </Text>
@@ -23,7 +23,7 @@ export const QuickLinks = () => {
             </Button>
           </Link>
         </div>
-        <div className="relative flex items-center justify-center ">
+        <div className=" m-auto  hidden basis-2/6 items-center md:flex">
           <Image
             className="object-contain"
             src="/logo/analyticLinkPlaceholder2.png"

@@ -17,7 +17,7 @@ export const HeroSection = () => {
         />
 
         <Text
-          className="w-[692px] text-surfaceDefault"
+          className="p-4 text-surfaceDefault md:basis-1/2"
           variant="headingXl"
           fontWeight="medium"
         >
