@@ -42,7 +42,7 @@ export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
       }
     >
       {isClient ? (
-        <div className="relative max-h-[calc(100vh_-_60px)] min-h-[calc(100vh_-_60px)] grow gap-1 overflow-y-hidden pt-[60px] md:flex">
+        <div className="relative max-h-[calc(100vh_-_60px)] min-h-[calc(100vh_-_60px)] grow gap-1 overflow-y-hidden md:flex">
           <main className={cn(styles.Main, 'px-4', 'py-6')}>{children}</main>
           <OutputWindowComponent />
         </div>
