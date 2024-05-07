@@ -11,7 +11,7 @@ import styles from './styles.module.scss';
 
 export function About() {
   return (
-    <section className="flex h-full w-full bg-backgroundSolidDark md:p-6">
+    <section className="h-full w-full bg-backgroundSolidDark md:p-6">
       <div className="flex flex-wrap place-content-center items-center text-surfaceDefault">
         <Image
           src="/logo/climateAction.png"
