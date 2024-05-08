@@ -124,6 +124,7 @@ export function AnalyticsMobileLayout({
           <MapComponent
             indicator={indicator}
             regions={filterOpt(boundary)}
+            boundary={boundary}
             mapDataloading={mapData?.isFetching}
             setRegion={setRegion}
             mapData={

@@ -289,6 +289,7 @@ export function Content({
         regions={filterOpt(boundary)}
         mapDataloading={mapData?.isFetching}
         setRegion={setRegion}
+        boundary={boundary}
         mapData={
           boundary === 'district'
             ? mapData?.data?.districtMapData

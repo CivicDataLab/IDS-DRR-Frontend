@@ -13,12 +13,14 @@ export const MapComponent = ({
   mapDataloading,
   mapData,
   setRegion,
+  boundary,
 }: {
   indicator: string;
   regions: { label: string; value: string }[];
   mapDataloading: boolean;
   mapData: any;
   setRegion: any;
+  boundary: string;
 }) => {
   const [map, setMap] = React.useState<any>(null);
   const mapDataFn = (value: number) => {
@@ -71,6 +73,10 @@ export const MapComponent = ({
 
   const onMapClick = ({ layer }: { layer: string }) => {
     setRegion((prev: any) => {
+      if (prev.length >= 4 && boundary === 'district') {
+        alert('Only 4 regions are allowed');
+        return [...prev];
+      }
       if (prev === null) {
         return [layer];
       } else {
@@ -144,6 +150,7 @@ export const MapComponent = ({
 
   return (
     <>
+      {/* Mobile View */}
       <MediaRendering minWidth={null} maxWidth="1023">
         <div className="relative h-full w-full pt-[62px]">
           <MapChart
