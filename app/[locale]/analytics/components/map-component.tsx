@@ -1,9 +1,11 @@
 'use client';
 
 import React from 'react';
+import { useWindowSize } from '@/hooks/use-window-size';
 import { Spinner, Text } from 'opub-ui';
 
 import MapChart from '@/components/MapChart';
+import { MediaRendering } from '@/components/media-rendering';
 import { FactorList } from './factor-list';
 
 export const MapComponent = ({
@@ -12,14 +14,17 @@ export const MapComponent = ({
   mapDataloading,
   mapData,
   setRegion,
+  boundary,
 }: {
   indicator: string;
   regions: { label: string; value: string }[];
   mapDataloading: boolean;
   mapData: any;
   setRegion: any;
+  boundary: string;
 }) => {
   const [map, setMap] = React.useState<any>(null);
+  const { width } = useWindowSize();
   const mapDataFn = (value: number) => {
     let colorString;
     switch (value) {
@@ -70,6 +75,13 @@ export const MapComponent = ({
 
   const onMapClick = ({ layer }: { layer: string }) => {
     setRegion((prev: any) => {
+      if (prev.length >= 4) {
+        alert('Only 4 regions are allowed');
+        return [...prev];
+      }
+      if (width < 768) {
+        return [layer];
+      }
       if (prev === null) {
         return [layer];
       } else {
@@ -85,6 +97,7 @@ export const MapComponent = ({
     });
 
     if (map) {
+      map.dragging.disable();
       const openPopups: any[] = [];
       map.options.maxZoon = 10;
 
@@ -142,27 +155,55 @@ export const MapComponent = ({
     );
 
   return (
-    <div className=" relative h-[90%] w-full py-4">
-      <FactorList />
-      <MapChart
-        features={mapData?.features}
-        mapZoom={7.7}
-        mapProperty={indicator}
-        zoomOnClick={false}
-        legendData={legendData}
-        minZoom={6}
-        maxZoom={8}
-        mapDataFn={mapDataFn}
-        click={(layer) =>
-          onMapClick({
-            layer: layer.feature?.properties.code,
-          })
-        }
-        fillOpacity={1}
-        setMap={setMap}
-        resetZoom
-        scroolWheelZoom={false}
-      />
-    </div>
+    <>
+      {/* Mobile View */}
+      <MediaRendering minWidth={null} maxWidth="1023">
+        <div className="relative h-full w-full pt-[62px]">
+          <MapChart
+            features={mapData?.features}
+            mapZoom={6}
+            minZoom={5}
+            maxZoom={8}
+            mapProperty={indicator}
+            zoomOnClick={false}
+            legendData={legendData}
+            mapDataFn={mapDataFn}
+            click={(layer) =>
+              onMapClick({
+                layer: layer.feature?.properties.code,
+              })
+            }
+            fillOpacity={1}
+            setMap={setMap}
+            resetZoom
+            scroolWheelZoom={false}
+          />
+        </div>
+      </MediaRendering>
+      <MediaRendering minWidth="1024" maxWidth={null}>
+        <div className=" relative h-[90%] w-full py-4">
+          <FactorList />
+          <MapChart
+            features={mapData?.features}
+            mapZoom={7.4}
+            mapProperty={indicator}
+            zoomOnClick={false}
+            legendData={legendData}
+            minZoom={6}
+            maxZoom={8}
+            mapDataFn={mapDataFn}
+            click={(layer) =>
+              onMapClick({
+                layer: layer.feature?.properties.code,
+              })
+            }
+            fillOpacity={1}
+            setMap={setMap}
+            resetZoom
+            scroolWheelZoom={false}
+          />
+        </div>
+      </MediaRendering>
+    </>
   );
 };

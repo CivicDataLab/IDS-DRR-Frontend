@@ -1,19 +1,17 @@
 import type { CodegenConfig } from '@graphql-codegen/cli';
 
-import { gqlConfig } from './site';
-
 const config: CodegenConfig = {
   overwrite: true,
   generates: {
     './gql/generated/datasets/': {
       documents: 'config/**/dataset-queries.ts',
-      schema: gqlConfig.datasets ,
+      schema: `${process.env.BACKEND_URL}/graphql`,
       preset: 'client',
       plugins: [],
     },
     './gql/generated/analytics/': {
       documents: 'config/**/analaytics-queries.ts',
-      schema: gqlConfig.analytics ,
+      schema: `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
       preset: 'client',
       plugins: [],
     },

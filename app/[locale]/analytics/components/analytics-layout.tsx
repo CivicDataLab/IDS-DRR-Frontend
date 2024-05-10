@@ -60,10 +60,14 @@ export function Content({
   const mapData = useQuery(
     [`mapQuery_${boundary}_${indicator}_${timePeriodSelected}`],
     () =>
-      GraphQL('analytics', mapQuery, {
-        indcFilter: { slug: indicator },
-        dataFilter: { dataPeriod: timePeriodSelected },
-      }),
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        mapQuery,
+        {
+          indcFilter: { slug: indicator },
+          dataFilter: { dataPeriod: timePeriodSelected },
+        }
+      ),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -74,9 +78,13 @@ export function Content({
   const geographiesData = useQuery(
     [`geographies_data_${boundary}`],
     () =>
-      GraphQL('analytics', ANALYTICS_GEOGRAPHY_DATA, {
-        geoFilter: { type: boundary },
-      }),
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_GEOGRAPHY_DATA,
+        {
+          geoFilter: { type: boundary },
+        }
+      ),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -86,7 +94,11 @@ export function Content({
 
   const timePeriods = useQuery(
     [`timePeriods`],
-    () => GraphQL('analytics', ANALYTICS_TIME_PERIODS),
+    () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_TIME_PERIODS
+      ),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -180,6 +192,19 @@ export function Content({
     return updatedDistrictDropDownOption;
   };
 
+  const getRevenueOptions = () => {
+    const updatedRevenueDropDownOption = RevCircleDropdownOptions.map(
+      (item: any) => {
+        if (region?.length === 4 && boundary === 'revenue-circle') {
+          return { ...item, disabled: true };
+        }
+
+        return item;
+      }
+    );
+    return updatedRevenueDropDownOption;
+  };
+
   const filterOpt = (boundary: string) => {
     if (boundary === 'revenue-circle') {
       RevCircleDropdownOptions.forEach((item: any) => {
@@ -233,7 +258,7 @@ export function Content({
           ]}
         />
 
-        <div className="z-max grow-[3]">
+        <div className=" z-9 grow-[3]">
           <Combobox
             key={JSON.stringify(filterOpt(boundary))}
             name="select region"
@@ -243,7 +268,7 @@ export function Content({
             label="Select one or more region"
             list={
               boundary === 'revenue-circle'
-                ? RevCircleDropdownOptions
+                ? getRevenueOptions()
                 : getDistrictOptions()
             }
             selectedValue={filterOpt(boundary)}
@@ -254,6 +279,11 @@ export function Content({
           {boundary === 'district' && (
             <div style={{ fontSize: 'small', color: 'grey' }}>
               You can select upto 4 districts only
+            </div>
+          )}
+          {boundary === 'revenue-circle' && (
+            <div style={{ fontSize: 'small', color: 'grey' }}>
+              You can select upto 4 revenue circles only
             </div>
           )}
         </div>
@@ -277,6 +307,7 @@ export function Content({
         regions={filterOpt(boundary)}
         mapDataloading={mapData?.isFetching}
         setRegion={setRegion}
+        boundary={boundary}
         mapData={
           boundary === 'district'
             ? mapData?.data?.districtMapData

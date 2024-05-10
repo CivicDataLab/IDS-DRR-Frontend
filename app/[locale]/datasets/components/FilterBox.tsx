@@ -53,14 +53,27 @@ export const FilterBox = ({
     });
   };
 
-  const categoryIndex = filters.findIndex((obj) =>
+  const filteredFilters = filters.filter(
+    (filter) => !Object.prototype.hasOwnProperty.call(filter, 'geography')
+  );
+
+  const categoryIndex = filteredFilters.findIndex((obj) =>
     Object.prototype.hasOwnProperty.call(obj, 'category')
   );
 
   // If "category" exists and it's not already the first object, move it to the beginning
   if (categoryIndex !== -1 && categoryIndex !== 0) {
-    const categoryObj = filters.splice(categoryIndex, 1)[0]; // Remove the category object
-    filters.unshift(categoryObj); // Add it to the beginning
+    const categoryObj = filteredFilters.splice(categoryIndex, 1)[0]; // Remove the category object
+    filteredFilters.unshift(categoryObj); // Add it to the beginning
+  }
+
+  const sourceIndex = filteredFilters.findIndex((obj) =>
+    Object.prototype.hasOwnProperty.call(obj, 'source')
+  );
+
+  if (sourceIndex !== -1 && sourceIndex !== 1) {
+    const sourceObj = filteredFilters.splice(sourceIndex, 1)[0];
+    filteredFilters.splice(1, 0, sourceObj); // Insert it at the second positionx
   }
 
   return (
@@ -68,7 +81,7 @@ export const FilterBox = ({
       <Text className="text-[#8B8D98] " variant="bodyMd" fontWeight="medium">
         FILTERS
       </Text>
-      {filters.map((item, index) => (
+      {filteredFilters.map((item, index) => (
         <div key={index}>
           {Object.entries(item).map(
             ([key, value], keyIndex) =>

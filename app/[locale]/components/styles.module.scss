@@ -10,3 +10,10 @@
   justify-content: center;
   display: flex;
 }
+
+@media (max-width: 768px) {
+  .about__img {
+    width: 400px;
+    height: 400px;
+  }
+}

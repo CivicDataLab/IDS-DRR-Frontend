@@ -8,7 +8,7 @@ import styles from './styles.module.scss';
 export const HeroSection = () => {
   return (
     <section className={cn(styles.HeroSection)}>
-      <div className=" flex w-fit flex-wrap items-center justify-center gap-6 bg-baseGraySlateSolid12 bg-opacity-20 p-4">
+      <div className=" flex w-full flex-wrap items-center justify-center gap-6 bg-baseGraySlateSolid12 bg-opacity-20 p-4">
         <Image
           src="/logo/assamDRRLogo.svg"
           width={400}
@@ -17,7 +17,7 @@ export const HeroSection = () => {
         />
 
         <Text
-          className="w-[692px] text-surfaceDefault"
+          className="p-4 text-surfaceDefault md:basis-1/2"
           variant="headingXl"
           fontWeight="medium"
         >

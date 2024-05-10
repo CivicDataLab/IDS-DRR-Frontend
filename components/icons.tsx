@@ -8,6 +8,7 @@ import {
   IconBrandFacebook,
   IconBrandLinkedin,
   IconBrandX,
+  IconChartBar,
   IconChartInfographic,
   IconChevronDown,
   IconChevronLeft,
@@ -23,12 +24,14 @@ import {
   IconDiamondsFilled,
   IconDownload,
   IconExternalLink,
+  IconFilter,
   IconHome,
   IconInfoCircleFilled,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarLeftExpand,
   IconLink,
   IconListSearch,
+  IconMap,
   IconMenu,
   IconReport,
   IconReportSearch,
@@ -37,6 +40,7 @@ import {
   IconSquareRoundedArrowRight,
   IconSquareRoundedChevronLeftFilled,
   IconUserCog,
+  IconWorld,
   IconX,
   TablerIconsProps,
 } from '@tabler/icons-react';
@@ -82,6 +86,10 @@ export const Icons: {
   IconBrandX: IconBrandX,
   IconBrandFacebook: IconBrandFacebook,
   IconBrandLinkedin: IconBrandLinkedin,
+  IconWorld: IconWorld,
+  IconMap: IconMap,
+  IconChartBar: IconChartBar,
+  filter: IconFilter,
 };
 
 export default Icons;

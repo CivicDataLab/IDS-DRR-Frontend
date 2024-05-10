@@ -7,19 +7,21 @@ import {
   AboutTextContentThree,
   AboutTextContentTwo,
 } from '@/config/consts';
+import styles from './styles.module.scss';
 
 export function About() {
   return (
-    <section className="flex h-[649px] w-full justify-center gap-3 bg-backgroundSolidDark">
-      <div className="flex items-center gap-20 text-surfaceDefault">
+    <section className="h-full w-full bg-backgroundSolidDark md:p-6">
+      <div className="flex flex-wrap place-content-center items-center text-surfaceDefault">
         <Image
           src="/logo/climateAction.png"
-          height={537}
-          width={506}
+          width={520}
+          height={500}
+          objectFit="contain"
+          className={styles.about__img}
           alt="An image representing global climate action"
         />
-
-        <div className="flex w-[661px] flex-col gap-5">
+        <div className="flex basis-11/12 flex-col gap-5 p-4 md:basis-1/2">
           <Text
             className=" text-baseAmberSolid7"
             variant="heading3xl"

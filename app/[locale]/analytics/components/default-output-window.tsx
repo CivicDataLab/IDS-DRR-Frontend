@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import Link from 'next/link';
 import {
@@ -15,9 +13,10 @@ import { Divider, Icon, ProgressBar, Text } from 'opub-ui';
 import { RiskColorMap } from '@/config/consts';
 import { cn, deSlugify } from '@/lib/utils';
 import Icons from '@/components/icons';
+import { MediaRendering } from '@/components/media-rendering';
 import { DownloadReport } from './download-report';
 
-export function SidebarDefaultLayout({
+export function DefaultWindow({
   chartData,
   indicatorDescriptions,
   indicator,
@@ -54,66 +53,83 @@ export function SidebarDefaultLayout({
   }
 
   return (
-    <aside
-      className={cn(
-        'p-4 pr-8',
-        'bg-surfaceDefault shadow-basicMd',
-        'shadow-inset z-1 hidden w-[500px] shrink-0 md:block',
-        'border-r-1 border-solid border-borderSubdued',
-        'overflow-y-auto'
-      )}
-    >
-      <div className="mb-5 mt-4 flex items-center justify-between">
-        <Text
-          variant="heading2xl"
-          fontWeight="regular"
-          className="flex items-center gap-2"
+    <>
+      <MediaRendering minWidth="1024" maxWidth={null}>
+        <aside
+          className={cn(
+            'p-4 pr-8',
+            'bg-surfaceDefault shadow-basicMd',
+            'shadow-inset z-1 hidden w-[500px] shrink-0 md:block',
+            'border-r-1 border-solid border-borderSubdued',
+            'overflow-y-auto'
+          )}
         >
-          {IconMap[indicator || 'risk-score']}
-          {deSlugify(indicator)}
-        </Text>
-        <DownloadReport />
-      </div>
-
-      <Divider className="mt-2" />
-      <div className="mb-5 mt-5 flex flex-col">
-        <Text variant="headingMd" fontWeight="bold" className=" mt-3">
-          HIGH RISK DISTRICTS
-        </Text>
-        {chartData && (
-          <div className="flex flex-col pt-3">
-            {chartData
-              .slice(0, 5)
-              .map(
-                (
-                  item: { [x: string]: string },
-                  index: React.Key | null | undefined
-                ): any => (
-                  <DistrictBar
-                    key={index}
-                    district={item[boundary]}
-                    value={item[indicator]}
-                  />
-                )
-              )}
+          <div className="mb-5 mt-4 flex items-center justify-between">
+            <Text
+              variant="heading2xl"
+              fontWeight="regular"
+              className="flex items-center gap-2"
+            >
+              {IconMap[indicator || 'risk-score']}
+              {deSlugify(indicator)}
+            </Text>
+            {/* <DownloadReport /> */}
           </div>
-        )}
-        <Text variant="headingMd" fontWeight="bold" className="mt-4">
-          LEARN MORE
-        </Text>
-        <div className="mt-2">
-          {list.map((indicator, index) => (
-            <IndicatorDescription
-              key={index}
-              title={indicator.title}
-              slug={indicator.slug}
-              desc={indicator.description}
-            />
-          ))}
+
+          <Divider className="mt-2" />
+          <RenderSidebarContent />
+        </aside>
+      </MediaRendering>
+      <MediaRendering minWidth={null} maxWidth="1023">
+        <div className="h-full bg-surfaceDefault px-4">
+          <RenderSidebarContent />
         </div>
-      </div>
-    </aside>
+      </MediaRendering>
+    </>
   );
+
+  function RenderSidebarContent() {
+    return (
+      <>
+        <div className="mb-5 flex flex-col">
+          <Text variant="headingMd" fontWeight="bold" className=" mt-3">
+            HIGH RISK DISTRICTS
+          </Text>
+          {chartData && (
+            <div className="flex flex-col pt-3">
+              {chartData
+                .slice(0, 5)
+                .map(
+                  (
+                    item: { [x: string]: string },
+                    index: React.Key | null | undefined
+                  ): any => (
+                    <DistrictBar
+                      key={index}
+                      district={item[boundary]}
+                      value={item[indicator]}
+                    />
+                  )
+                )}
+            </div>
+          )}
+          <Text variant="headingMd" fontWeight="bold" className="mt-4">
+            LEARN MORE
+          </Text>
+          <div className="mt-2">
+            {list.map((indicator, index) => (
+              <IndicatorDescription
+                key={index}
+                title={indicator.title}
+                slug={indicator.slug}
+                desc={indicator.description}
+              />
+            ))}
+          </div>
+        </div>
+      </>
+    );
+  }
 }
 
 export const DistrictBar = ({
@@ -142,6 +158,7 @@ export const DistrictBar = ({
     </div>
   );
 };
+
 export const IndicatorDescription = ({
   title,
   slug,

@@ -12,8 +12,8 @@ import {
 } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { cn } from '@/lib/utils';
-import { SidebarLayout } from './sidebar-layout';
-import { SidebarDefaultLayout } from './SidebarDefaultLayout';
+import { DefaultWindow } from './default-output-window';
+import { OutputWindow } from './output-window';
 import styles from './styles.module.scss';
 
 interface DashboardLayoutProps {
@@ -22,6 +22,10 @@ interface DashboardLayoutProps {
 
 export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
   const [isClient, setIsClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // To prevent a hydration mismatch fix:https://nextjs.org/docs/messages/react-hydration-error.
   React.useEffect(() => {
@@ -38,13 +42,9 @@ export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
       }
     >
       {isClient ? (
-        <div
-          className={cn(
-            'relative max-h-[calc(100vh_-_60px)] min-h-[calc(100vh_-_60px)] grow gap-1 overflow-y-hidden md:flex'
-          )}
-        >
+        <div className="relative max-h-[calc(100vh_-_60px)] min-h-[calc(100vh_-_60px)] grow gap-1 overflow-y-hidden md:flex">
           <main className={cn(styles.Main, 'px-4', 'py-6')}>{children}</main>
-          <SidePaneLayout />
+          <OutputWindowComponent />
         </div>
       ) : (
         <div className="flex h-[100vh] flex-col  place-content-center items-center">
@@ -56,7 +56,7 @@ export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
   );
 }
 
-function SidePaneLayout() {
+export function OutputWindowComponent() {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator');
   const time_period = searchParams.get('time-period') || '2023_08';
@@ -67,16 +67,21 @@ function SidePaneLayout() {
     boundary === 'district'
       ? ANALYTICS_DISTRICT_DATA
       : ANALYTICS_REVENUE_TABLE_DATA;
+
   const sidePaneData: any = useQuery(
     [
       `sidePaneData_${indicator}_${region?.split(',')}_${boundary}_${time_period}`,
     ],
     () =>
-      GraphQL('analytics', sidePaneQuery, {
-        indcFilter: { slug: indicator },
-        dataFilter: { dataPeriod: time_period },
-        ...(region && { geoFilter: { code: region?.split(',') } }),
-      }),
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        sidePaneQuery,
+        {
+          indcFilter: { slug: indicator },
+          dataFilter: { dataPeriod: time_period },
+          ...(region && { geoFilter: { code: region?.split(',') } }),
+        }
+      ),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -87,9 +92,13 @@ function SidePaneLayout() {
   const indicatorDescriptions: any = useQuery(
     [`indicators_${indicator}`],
     () =>
-      GraphQL('analytics', ANALYTICS_INDICATORS, {
-        indcFilter: { slug: indicator },
-      }),
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_INDICATORS,
+        {
+          indcFilter: { slug: indicator },
+        }
+      ),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -99,25 +108,26 @@ function SidePaneLayout() {
 
   if (!sidePaneData.isFetched)
     return (
-      <div className="flex min-w-[500px] flex-col place-content-center items-center border-solid border-borderSubdued bg-surfaceDefault shadow-basicMd">
+      <div className="flex min-w-[500px] flex-col place-content-center items-center border-solid border-borderSubdued bg-surfaceDefault">
         <Spinner color="highlight" />
         <Text className="text-center">Loading...</Text>
       </div>
     );
   return region !== null && region.length > 0
     ? sidePaneData.isFetched && (
-        <SidebarLayout
+        <OutputWindow
           data={
             sidePaneData?.data[
               boundary === 'district' ? 'districtViewData' : 'revCircleViewData'
             ]?.table_data
           }
+          indicatorDescriptions={indicatorDescriptions?.data?.indicators}
           indicator={indicator}
           boundary={boundary}
         />
       )
     : sidePaneData.isFetched && (
-        <SidebarDefaultLayout
+        <DefaultWindow
           chartData={
             sidePaneData?.data[
               boundary === 'district' ? 'districtViewData' : 'revCircleViewData'
