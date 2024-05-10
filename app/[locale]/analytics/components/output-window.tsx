@@ -209,21 +209,6 @@ export function OutputWindow({
                         ? indicatorDescriptions[4].long_description
                         : indicatorDescriptions[0].long_description}
                     </Text>
-
-                    {indicator !== 'risk-score' && (
-                      <Link
-                        className="ml-auto flex "
-                        href={`/datasets/?category=${
-                          CategoryMap[
-                            indicator === 'government-response'
-                              ? indicatorDescriptions[4].slug
-                              : indicatorDescriptions[0].slug
-                          ]
-                        }`}
-                      >
-                        <Text color="interactive">Link to the datasets</Text>
-                      </Link>
-                    )}
                   </>
                 }
                 side="right"
