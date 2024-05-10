@@ -75,7 +75,7 @@ export const MapComponent = ({
 
   const onMapClick = ({ layer }: { layer: string }) => {
     setRegion((prev: any) => {
-      if (prev.length >= 4) {
+      if (prev?.length >= 4) {
         alert('Only 4 regions are allowed');
         return [...prev];
       }
