@@ -121,6 +121,7 @@ export function OutputWindowComponent() {
               boundary === 'district' ? 'districtViewData' : 'revCircleViewData'
             ]?.table_data
           }
+          indicatorDescriptions={indicatorDescriptions?.data?.indicators}
           indicator={indicator}
           boundary={boundary}
         />

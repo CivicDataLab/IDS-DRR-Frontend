@@ -73,7 +73,7 @@ export function DefaultWindow({
               {IconMap[indicator || 'risk-score']}
               {deSlugify(indicator)}
             </Text>
-            <DownloadReport />
+            {/* <DownloadReport /> */}
           </div>
 
           <Divider className="mt-2" />
