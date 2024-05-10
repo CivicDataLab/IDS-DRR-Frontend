@@ -192,6 +192,19 @@ export function Content({
     return updatedDistrictDropDownOption;
   };
 
+  const getRevenueOptions = () => {
+    const updatedRevenueDropDownOption = RevCircleDropdownOptions.map(
+      (item: any) => {
+        if (region?.length === 4 && boundary === 'revenue-circle') {
+          return { ...item, disabled: true };
+        }
+
+        return item;
+      }
+    );
+    return updatedRevenueDropDownOption;
+  };
+
   const filterOpt = (boundary: string) => {
     if (boundary === 'revenue-circle') {
       RevCircleDropdownOptions.forEach((item: any) => {
@@ -255,7 +268,7 @@ export function Content({
             label="Select one or more region"
             list={
               boundary === 'revenue-circle'
-                ? RevCircleDropdownOptions
+                ? getRevenueOptions()
                 : getDistrictOptions()
             }
             selectedValue={filterOpt(boundary)}
@@ -266,6 +279,11 @@ export function Content({
           {boundary === 'district' && (
             <div style={{ fontSize: 'small', color: 'grey' }}>
               You can select upto 4 districts only
+            </div>
+          )}
+          {boundary === 'revenue-circle' && (
+            <div style={{ fontSize: 'small', color: 'grey' }}>
+              You can select upto 4 revenue circles only
             </div>
           )}
         </div>

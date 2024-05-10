@@ -75,7 +75,7 @@ export const MapComponent = ({
 
   const onMapClick = ({ layer }: { layer: string }) => {
     setRegion((prev: any) => {
-      if (prev.length >= 4 && boundary === 'district') {
+      if (prev.length >= 4) {
         alert('Only 4 regions are allowed');
         return [...prev];
       }
@@ -162,6 +162,8 @@ export const MapComponent = ({
           <MapChart
             features={mapData?.features}
             mapZoom={6}
+            minZoom={5}
+            maxZoom={8}
             mapProperty={indicator}
             zoomOnClick={false}
             legendData={legendData}

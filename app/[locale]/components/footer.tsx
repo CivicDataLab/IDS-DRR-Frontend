@@ -17,31 +17,45 @@ export const Footer = () => {
           alt="IDS-DRR Logo"
         />
         <Image src="/logo/Vector.svg" width={60} height={50} alt="Divider" />
-        <div className="flex flex-row items-center gap-2">
+        <div className="flex flex-row items-center gap-5">
           <Image
             src="/logo/cdlofficiallogo.png"
             width={64}
             height={64}
             alt="CivicDataLab Logo"
+            className="object-contain"
           />
-          {/* <Image
-            src="/logo/RockefellerLogo.png"
-            width={106}
-            height={64}
-            alt="Rockefeller Logo"
-          /> */}
-          {/* <Image
-            src="/logo/ocp.png"
-            width={91}
-            height={40}
-            alt="OCP Logo"
-          /> */}
-          {/* <Image
-            src="/logo/ASDMA2.png"
-            width={59}
-            height={54}
-            alt="ASDMA Logo"
-          /> */}
+          <div className="flex flex-row items-center gap-2">
+            <Text variant="bodySm" color="onBgDefault">
+              In collaobration with:
+            </Text>
+            <Image
+              src="/logo/ASDMA2.png"
+              width={59}
+              height={54}
+              alt="ASDMA Logo"
+              className="object-contain"
+            />
+          </div>
+          <div className="flex flex-row items-center gap-2">
+            <Text variant="bodySm" color="onBgDefault">
+              Supported by:
+            </Text>
+            <Image
+              src="/logo/RockefellerLogo.png"
+              width={106}
+              height={64}
+              alt="Rockefeller Logo"
+              className="object-contain"
+            />
+            <Image
+              src="/logo/ocp.png"
+              width={91}
+              height={40}
+              alt="OCP Logo"
+              className="object-contain"
+            />
+          </div>
         </div>
       </div>
       <div className="text-center md:text-right">

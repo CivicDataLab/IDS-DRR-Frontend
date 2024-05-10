@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useWindowSize } from '@/hooks/use-window-size';
 import {
@@ -20,6 +21,7 @@ import {
   Divider,
   ProgressBar,
   Text,
+  Tooltip,
   useScreenshot,
 } from 'opub-ui';
 
@@ -36,7 +38,12 @@ import { RevenueCircle, ScoreInfo } from './revenue-circle-accordion';
 import styles from './styles.module.scss';
 import { TimeTrends } from './time-trends';
 
-export function OutputWindow({ data, indicator, boundary }: any) {
+export function OutputWindow({
+  data,
+  indicatorDescriptions,
+  indicator,
+  boundary,
+}: any) {
   const searchParams = useSearchParams();
   const indicatorIcon = searchParams.get('indicator') || 'risk-score';
   const timePeriod = searchParams.get('time-period') || '2023_08';
@@ -150,6 +157,13 @@ export function OutputWindow({ data, indicator, boundary }: any) {
     setSvgURL(dataURL);
     setIsLoading(false);
   }
+  const CategoryMap: { [key: string]: string } = {
+    'flood-hazard': 'Hazard',
+    'government-response': 'Government Response',
+    exposure: 'Exposure',
+    vulnerability: 'Vulnerability',
+  };
+  const [tooltipOpen, setTooltipOpen] = React.useState(false);
 
   return (
     <>
@@ -171,7 +185,7 @@ export function OutputWindow({ data, indicator, boundary }: any) {
               {IconMap[indicatorIcon || 'risk-score']}
               {getFactorNameBySlug(factorData, indicatorIcon)}
             </Text>
-            <DownloadReport />
+            {/* <DownloadReport /> */}
           </header>
           <Divider className="mt-2" />
           {(data.length === 1 || districtData.length === 1) && (
@@ -186,7 +200,39 @@ export function OutputWindow({ data, indicator, boundary }: any) {
               <Text variant="bodyMd" color="subdued" fontWeight="regular">
                 Cumulative till {formattedTimePeriod}
               </Text>
-              <InfoSquare color="#6A6A6A" />
+
+              <Tooltip
+                content={
+                  <>
+                    <Text>
+                      {indicator === 'government-response'
+                        ? indicatorDescriptions[4].long_description
+                        : indicatorDescriptions[0].long_description}
+                    </Text>
+
+                    {indicator !== 'risk-score' && (
+                      <Link
+                        className="ml-auto flex "
+                        href={`/datasets/?category=${
+                          CategoryMap[
+                            indicator === 'government-response'
+                              ? indicatorDescriptions[4].slug
+                              : indicatorDescriptions[0].slug
+                          ]
+                        }`}
+                      >
+                        <Text color="interactive">Link to the datasets</Text>
+                      </Link>
+                    )}
+                  </>
+                }
+                side="right"
+                defaultOpen={tooltipOpen}
+                open={tooltipOpen}
+                onOpenChange={(isOpen) => setTooltipOpen(isOpen)}
+              >
+                {<InfoSquare color="#6A6A6A" />}
+              </Tooltip>
             </div>
           </div>
 
@@ -400,7 +446,6 @@ export function OutputWindow({ data, indicator, boundary }: any) {
 }
 
 export function getFactorNameBySlug(factorData: any, slug: string) {
-  // console.log("--###--", )
   const factorName = factorData?.data?.getFactors?.filter(
     (factor: { slug: string }) => factor.slug === slug
   );

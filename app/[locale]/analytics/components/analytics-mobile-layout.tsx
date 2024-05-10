@@ -63,7 +63,7 @@ export function AnalyticsMobileLayout({
 
   const [view, setView] = useQueryState(
     'view',
-    parseAsString.withDefault('insights')
+    parseAsString.withDefault('map')
   );
   const mapQuery: TypedDocumentNode<any, any> =
     boundary === 'district'

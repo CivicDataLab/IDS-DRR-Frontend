@@ -139,7 +139,8 @@ export function FactorList() {
                     >
                       &nbsp;
                       {item.name}
-                      <InfoCircle color={isActive ? '#71E57D' : '#E2E2E2'} />
+                      &nbsp;
+                      {/* <InfoCircle color={isActive ? '#71E57D' : '#E2E2E2'} /> */}
                     </span>
                   </div>
                 </Link>
