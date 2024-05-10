@@ -107,7 +107,7 @@ export const DatasetResources = ({
 
             <Button
               onClick={() =>
-                (window.location.href = `${backendUrl.datasets}/download/${parseInt(id)}/`)
+                (window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/download/${parseInt(id)}/`)
               }
               className="w-[136px] bg-[#71E57D] text-baseGraySlateSolid12 shadow-insetButton "
             >
