@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useWindowSize } from '@/hooks/use-window-size';
 import { Spinner, Text } from 'opub-ui';
 
 import MapChart from '@/components/MapChart';
@@ -23,6 +24,7 @@ export const MapComponent = ({
   boundary: string;
 }) => {
   const [map, setMap] = React.useState<any>(null);
+  const { width } = useWindowSize();
   const mapDataFn = (value: number) => {
     let colorString;
     switch (value) {
@@ -77,6 +79,9 @@ export const MapComponent = ({
         alert('Only 4 regions are allowed');
         return [...prev];
       }
+      if (width < 768) {
+        return [layer];
+      }
       if (prev === null) {
         return [layer];
       } else {
@@ -92,6 +97,7 @@ export const MapComponent = ({
     });
 
     if (map) {
+      map.dragging.disable();
       const openPopups: any[] = [];
       map.options.maxZoon = 10;
 
