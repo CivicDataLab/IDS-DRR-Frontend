@@ -85,7 +85,7 @@ export const MapComponent = ({
       if (prev === null) {
         return [layer];
       } else {
-        return [...prev, layer];
+        return [...new Set([...prev, layer])];
       }
     });
   };
