@@ -45,10 +45,8 @@ export function OutputWindow({
   boundary,
 }: any) {
   const searchParams = useSearchParams();
-  const indicatorIcon = searchParams.get('indicator') || 'risk-score';
   const timePeriod = searchParams.get('time-period') || '2023_08';
   const formattedTimePeriod = formatDateString(timePeriod);
-  const color = '#000000';
   const region = searchParams.get('region') || '1';
 
   const DEFAULT_PERIOD = '3M';
@@ -79,7 +77,7 @@ export function OutputWindow({
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_TIME_TRENDS,
         {
-          indcFilter: { slug: indicatorIcon },
+          indcFilter: { slug: indicator },
           dataFilter: { dataPeriod: timePeriod, period: period },
           geoFilter: { code: region?.split(',') },
         }
@@ -104,14 +102,6 @@ export function OutputWindow({
       refetchOnReconnect: false,
     }
   );
-
-  const IconMap: { [key: string]: React.ReactNode } = {
-    'risk-score': <RiskScore color={color} />,
-    vulnerability: <Vulnerability color={color} />,
-    'flood-hazard': <FloodHazard color={color} />,
-    exposure: <Exposure color={color} />,
-    'government-response': <GovtResponse color={color} />,
-  };
 
   const districtData = data.filter((item: any) =>
     Object.hasOwnProperty.call(item, 'district')
@@ -157,12 +147,6 @@ export function OutputWindow({
     setSvgURL(dataURL);
     setIsLoading(false);
   }
-  const CategoryMap: { [key: string]: string } = {
-    'flood-hazard': 'Hazard',
-    'government-response': 'Government Response',
-    exposure: 'Exposure',
-    vulnerability: 'Vulnerability',
-  };
   const [tooltipOpen, setTooltipOpen] = React.useState(false);
 
   return (
@@ -176,17 +160,7 @@ export function OutputWindow({
             'overflow-y-auto border-r-1 border-solid border-borderSubdued'
           )}
         >
-          <header className="mb-5 mt-4 flex items-center justify-between">
-            <Text
-              variant="heading2xl"
-              fontWeight="regular"
-              className="flex items-center gap-2"
-            >
-              {IconMap[indicatorIcon || 'risk-score']}
-              {getFactorNameBySlug(factorData, indicatorIcon)}
-            </Text>
-            {/* <DownloadReport /> */}
-          </header>
+          <OutputWindowHeader indicator={indicator} factorData={factorData} />
           <Divider className="mt-2" />
           {(data.length === 1 || districtData.length === 1) && (
             <div className=" mb-2 mt-5 flex flex-col">
@@ -308,7 +282,7 @@ export function OutputWindow({
                   {chartData.isFetched ? (
                     <TimeTrends
                       chartData={chartData?.data?.getTimeTrends}
-                      indicator={indicatorIcon}
+                      indicator={indicator}
                       boundary={boundary}
                     />
                   ) : null}
@@ -416,7 +390,7 @@ export function OutputWindow({
                   {chartData.isFetched ? (
                     <TimeTrends
                       chartData={chartData?.data?.getTimeTrends}
-                      indicator={indicatorIcon}
+                      indicator={indicator}
                       boundary={boundary}
                     />
                   ) : null}
@@ -435,6 +409,31 @@ export function getFactorNameBySlug(factorData: any, slug: string) {
     (factor: { slug: string }) => factor.slug === slug
   );
   return factorName[0]?.name;
+}
+
+export function OutputWindowHeader({ factorData, indicator }: any) {
+  const color = '#000';
+  const IconMap: { [key: string]: React.ReactNode } = {
+    'risk-score': <RiskScore color={color} />,
+    vulnerability: <Vulnerability color={color} />,
+    'flood-hazard': <FloodHazard color={color} />,
+    exposure: <Exposure color={color} />,
+    'government-response': <GovtResponse color={color} />,
+  };
+
+  return (
+    <div className="mb-5 mt-4 flex items-center justify-between">
+      <Text
+        variant="heading2xl"
+        fontWeight="regular"
+        className="flex items-center gap-2"
+      >
+        {IconMap[indicator || 'risk-score']}
+        {getFactorNameBySlug(factorData, indicator)}
+      </Text>
+      {/* <DownloadReport /> */}
+    </div>
+  );
 }
 
 export function OtherFactorScores({
