@@ -97,7 +97,7 @@ export const MapComponent = ({
     });
 
     if (map) {
-      map.dragging.disable();
+      map.setMaxBounds(map.getBounds());
       const openPopups: any[] = [];
       map.options.maxZoon = 10;
 
