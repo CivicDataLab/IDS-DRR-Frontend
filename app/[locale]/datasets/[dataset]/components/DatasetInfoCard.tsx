@@ -52,7 +52,7 @@ export const DatasetInfoCard = ({
             <div className="flex flex-col gap-4">
               <div className="flex w-[256px] flex-col">
                 <Text
-                  className={`mb-3 mt-3 ${!showMore ? 'line-clamp-3' : ''}`}
+                  className={`mb-0 mt-3 ${!showMore ? 'line-clamp-3' : ''}`}
                   variant="bodyMd"
                   fontWeight="regular"
                 >
@@ -60,7 +60,7 @@ export const DatasetInfoCard = ({
                 </Text>
                 {!showMore && (
                   <Button
-                    className="self-end"
+                    className="self-start p-2"
                     onClick={() => setShowMore(true)}
                     variant="interactive"
                     size="slim"
@@ -71,7 +71,7 @@ export const DatasetInfoCard = ({
                 )}
                 {showMore && (
                   <Button
-                    className="self-end"
+                    className="self-start p-2"
                     onClick={() => setShowMore(false)}
                     variant="interactive"
                     size="slim"
@@ -227,26 +227,48 @@ export const DatasetInfoCard = ({
                     {
                       content: 'Facebook',
                       icon: Icons.IconBrandFacebook,
-                      onAction: () =>
-                        window.open(
-                          `https://www.facebook.com/sharer.php?u=${currentURL}/`
-                        ),
+
+                      onAction: () => {
+                        const confirmation = window.confirm(
+                          `You are being redirected to "${`https://www.facebook.com/sharer.php?u=${currentURL}/`}". `
+                        );
+                        if (confirmation) {
+                          window.open(
+                            `https://www.facebook.com/sharer.php?u=${currentURL}/`,
+                            '_blank'
+                          );
+                        }
+                      },
                     },
                     {
                       content: 'LinkedIn',
                       icon: Icons.IconBrandLinkedin,
-                      onAction: () =>
-                        window.open(
-                          `https://www.linkedin.com/shareArticle?url=${currentURL}/`
-                        ),
+                      onAction: () => {
+                        const confirmation = window.confirm(
+                          `You are being redirected to "${`https://www.linkedin.com/shareArticle?url=${currentURL}/`}". `
+                        );
+                        if (confirmation) {
+                          window.open(
+                            `https://www.linkedin.com/shareArticle?url=${currentURL}/`,
+                            '_blank'
+                          );
+                        }
+                      },
                     },
                     {
                       content: 'Twitter',
                       icon: Icons.IconBrandX,
-                      onAction: () =>
-                        window.open(
-                          `https://twitter.com/intent/tweet?url=${currentURL}/`
-                        ),
+                      onAction: () => {
+                        const confirmation = window.confirm(
+                          `You are being redirected to "${`https://twitter.com/intent/tweet?url=${currentURL}/`}". `
+                        );
+                        if (confirmation) {
+                          window.open(
+                            `https://twitter.com/intent/tweet?url=${currentURL}/`,
+                            '_blank'
+                          );
+                        }
+                      },
                     },
                     {
                       content: 'Copy Link',

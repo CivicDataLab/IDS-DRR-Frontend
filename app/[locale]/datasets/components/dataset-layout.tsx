@@ -5,7 +5,7 @@ import React from 'react';
 import SearchSvg from '@/public/Search';
 import { Datasets, FilterProps } from '@/types';
 import { useQueryState } from 'next-usequerystate';
-import { Button, SearchInput, Select, Text } from 'opub-ui';
+import { Button, SearchInput, Select, Text, TextField } from 'opub-ui';
 
 import { datasetsPageHeader } from '@/config/consts';
 import { MediaRendering } from '@/components/media-rendering';
@@ -26,7 +26,43 @@ export function Content({
 }) {
   const [queryString, setQueryString] = useQueryState('search');
 
-  const [searchValue, setSearchValue] = React.useState('');
+  // const [searchValue, setSearchValue] = React.useState('');
+
+  const [sortedData, setSortedData] = React.useState(data); // State to hold sorted data
+  const [sortOption, setSortOption] = React.useState('');
+
+  const [searchQuery, setSearchQuery] = React.useState('');
+
+  // Function to handle sorting
+  const handleSort = (option: string) => {
+    if (option === 'A-Z') {
+      const sorted = [...data].sort((a, b) => (a.title < b.title ? -1 : 1));
+
+      setSortedData(sorted);
+      setSortOption('A-Z');
+    } else if (option === 'Recent') {
+      const sorted = [...data].sort(
+        (a, b) =>
+          new Date(b?.metaData?.lastUpdated).getTime() -
+          new Date(a?.metaData?.lastUpdated).getTime()
+      );
+      setSortedData(sorted);
+      setSortOption('Recent');
+    }
+  };
+
+  // Effect to re-sort data when data prop changes
+  React.useEffect(() => {
+    setSortedData(data);
+  }, [data]);
+
+  const handleSearchChange = (value: string) => {
+    const filteredData = data.filter((dataset) =>
+      dataset.title.toLowerCase().includes(value.toLowerCase())
+    );
+    setSortedData(filteredData);
+    // setSearchQuery(value);
+  };
 
   return (
     <>
@@ -53,7 +89,7 @@ export function Content({
               <div className="flex w-4/5 flex-row items-stretch justify-between gap-8  ">
                 <div className="flex h-[36px] w-[700px] items-center justify-start gap-2 pl-6">
                   <form className="flex-1">
-                    <SearchInput
+                    {/* <SearchInput
                       name="search"
                       placeholder="Search by title, description..."
                       onSubmit={() => setQueryString('', { shallow: false })}
@@ -61,12 +97,21 @@ export function Content({
                       onChange={(value) => setSearchValue(value)}
                       defaultValue={queryString || ''}
                       onClear={() => setQueryString('', { shallow: false })}
+                    /> */}
+                    <TextField
+                      label=""
+                      name="name"
+                      value={searchQuery}
+                      onChange={(e) => {
+                        setSearchQuery(e);
+                        handleSearchChange(e);
+                      }}
                     />
                   </form>
                   <Button
-                    onClick={() =>
-                      setQueryString(searchValue, { shallow: false })
-                    }
+                    onClick={() => {
+                      handleSearchChange(searchQuery);
+                    }}
                     className="rounded-1 bg-baseIndigoSolid1 p-1 hover:bg-baseIndigoSolid1"
                   >
                     <SearchSvg />
@@ -88,6 +133,10 @@ export function Content({
                     name="Sort-by"
                     options={[
                       {
+                        label: 'Default',
+                        value: 'Default',
+                      },
+                      {
                         label: 'A-Z',
                         value: 'A-Z',
                       },
@@ -96,6 +145,7 @@ export function Content({
                         value: 'Recent',
                       },
                     ]}
+                    onChange={(option) => handleSort(option)}
                   />
                 </div>
               </div>
@@ -107,7 +157,7 @@ export function Content({
               <FilterBox filters={filters} selectedFilters={selectedFilters} />
             </div>
             <div className="rounded flex w-4/5 flex-col gap-4 border-solid p-6">
-              {data.map((dataset, index) => (
+              {sortedData.map((dataset, index) => (
                 <DatasetCard
                   key={index}
                   keyIndex={index}
@@ -130,14 +180,14 @@ export function Content({
         {/* mobile */}
         <div className="flex flex-col gap-6 px-8 py-10">
           <form className="flex-1">
-            <SearchInput
-              name="search"
-              placeholder="Search by title, description..."
-              onSubmit={() => setQueryString('', { shallow: false })}
-              label="Search"
-              onChange={(value) => setSearchValue(value)}
-              defaultValue={queryString || ''}
-              onClear={() => setQueryString('', { shallow: false })}
+            <TextField
+              label=""
+              name="name"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e);
+                handleSearchChange(e);
+              }}
             />
           </form>
           <div className="flex items-center justify-between self-stretch border-b-2 border-solid border-borderSubdued px-1 pb-4 ">
@@ -154,7 +204,7 @@ export function Content({
           </div>
 
           <div className="rounded flex flex-col gap-4 border-solid">
-            {data.map((dataset, index) => (
+            {sortedData.map((dataset, index) => (
               <DatasetCard
                 key={index}
                 keyIndex={index}

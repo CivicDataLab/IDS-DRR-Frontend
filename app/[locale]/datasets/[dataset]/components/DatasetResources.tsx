@@ -45,7 +45,7 @@ export const DatasetResources = ({
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 pr-1">
+          <div className="flex flex-col gap-0 pr-1">
             <Text
               className={!showMore ? 'line-clamp-2' : ''}
               variant="bodySm"
@@ -56,7 +56,7 @@ export const DatasetResources = ({
             </Text>
             {!showMore && (
               <Button
-                className="self-end"
+                className=" self-start p-2"
                 onClick={() => setShowMore(true)}
                 variant="interactive"
                 size="slim"
@@ -67,7 +67,7 @@ export const DatasetResources = ({
             )}
             {showMore && (
               <Button
-                className="self-end"
+                className="self-start p-2"
                 onClick={() => setShowMore(false)}
                 variant="interactive"
                 size="slim"
@@ -125,7 +125,7 @@ export const DatasetResources = ({
               {description}
             </Text>
             <Button
-              className="self-end"
+              className="self-start p-2"
               onClick={() => setShowMore(!showMore)}
               variant="interactive"
               size="slim"

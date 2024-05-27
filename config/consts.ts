@@ -27,19 +27,18 @@ const AnalyticsURL = `/analytics/?indicator=risk-score&time-period=2023_08&bound
 const AboutText = 'About IDS DRR';
 const AboutUsURL = '/about-us';
 const AboutTextContentOne =
-  'Intelligent Data Solution for Disaster Risk Reduction (IDS-DRR) is an open-source platform that helps state-level and district-level Disaster Management Authorities to make timely data-driven decisions, prioritise expenditure of public funds and conduct public procurement in a manner that strengthens long-term disaster risk reduction and protects the most vulnerable people from the adverse effects of extreme weather events and climate change. ';
+  'CivicDataLab along with Open Contracting Partnership, supported by The Rockefeller Foundation and the Patrick J McGovern Foundation, has developed a data driven framework - Intelligent Data Solution for Disaster Risk Reduction (IDS-DRR).  ';
 
 const AboutTextContentTwo =
-  'In this platform, we bring together diverse high-value datasets from satellite, environmental, social, economic, demographic, infrastructure, loss & damages to data regarding government response to derive timely insights.';
+  'It is a data analytics and risk mapping platform to help make informed and impactful decisions, prioritise resource allocation, plan and manage funds intended for disaster risk reduction and climate mitigation. The platform enables effective solutions and sustainable action for  vulnerable geographies.';
 
-const AboutTextContentThree =
-  'This 4-year project led by CivicDataLab & Open Contracting Partnership is planned to improve disaster risk reduction processes & practices in the state of Assam. It is supported by the Rockefeller Foundation.';
+const AboutTextContentThree = 'We have a 3-pronged approach: ';
 
 const HeroSectionText =
-  'A dashboard for data-driven disaster risk reduction. Discover insights, assess risks, and empower action towards disaster resilience!';
+  'Discover insights, assess risks and build disaster resilience for data-driven disaster risk reduction (DRR)';
 
 const AnalyticsQuickLinksText =
-  'Browse data analytics for a range of flood risk indicators and scores from our data model, to understand the disaster risk of your region.';
+  'Gain insights from the IDS-DRR data model to compare and identify risk profiles of revenue circles and districts in Assam.';
 
 const YouTubeLink = 'https://www.youtube.com/watch?v=gTqcyUQ7esg';
 
@@ -66,10 +65,10 @@ const TheRockefellerFoundationTextOne =
 const TheRockefellerFoundationTextTwo =
   'For more information, sign up for their newsletter at rockefellerfoundation.org and follow them on X @RockefellerFdn.';
 const OpenContractingPartnershipTextOne =
-  'The Open Contracting Partnership is an independent non-profit public charity 501(c)(3) working in over 50 countries.';
+  'Open Contracting Partnership is an independent non-profit working in over 50 countries. OCP is a silo-busting collaboration across governments, businesses, civil society, and technologists to improve public procurement by designing goal-driven reforms, building coalitions of change and co-creating digital solutions, powered by open data. ';
 
 const OpenContractingPartnershipTextTwo =
-  'We are a silo-busting collaboration across governments, businesses, civil society, and technologists to open up and transform government contracting worldwide. Bringing open data and open government together, we make sure public money is spent openly, fairly and effectively on public contracts, the single biggest item of spending by most governments. They are a government’s number one corruption risk and they are vital to make sure citizens get the services that they deserve.';
+  'OCP is unique in bringing these three approaches together and at scale. OCP makes sure public money is spent openly, fairly and effectively on public contracts, delivering fundamentally better public spending outcomes that benefit people and protect the planet.';
 
 export {
   platformName,

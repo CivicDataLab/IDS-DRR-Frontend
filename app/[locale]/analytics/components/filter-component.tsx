@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SearchSvg from '@/public/Search';
 import { parseDate } from '@internationalized/date';
 import { useQuery } from '@tanstack/react-query';
 import { parseAsString, useQueryState } from 'next-usequerystate';
@@ -7,6 +8,7 @@ import {
   Icon,
   RadioGroup,
   RadioItem,
+  SearchInput,
   TextField,
   YearCalendar,
 } from 'opub-ui';
@@ -130,14 +132,18 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
   };
 
   const handleSearchChange = (value: string) => {
-    if (value) {
-      const filtered = regionOptions.filter((item) =>
-        item?.label?.toLowerCase().includes(value?.toLowerCase())
-      );
-      setRegionOptions(filtered);
-    } else {
-      const regionOptions = getRegionOptions();
-      setRegionOptions(regionOptions);
+    // const regionOptions = getRegionOptions();
+    const regionOptions = FilterOptions[1].options;
+    if (regionOptions) {
+      if (value) {
+        const filtered = regionOptions.filter((item) =>
+          item?.label?.toLowerCase().includes(value?.toLowerCase())
+        );
+
+        setRegionOptions(filtered);
+      } else {
+        setRegionOptions(regionOptions);
+      }
     }
   };
 
@@ -188,6 +194,7 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
             handleInputChangeCallback={(value: string) =>
               handleSearchChange(value)
             }
+            regionOptions={regionOptions}
           />
         </MobileFilterContent>
       </MobileFilterBox>
@@ -204,6 +211,7 @@ export const RenderOptions = ({
   setBoundarySelected,
   setRegionSelected,
   setTimePeriodSelected,
+  regionOptions,
 }: any) => {
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -213,6 +221,10 @@ export const RenderOptions = ({
   const type = findSelectedValue[0]['type'];
   const value = findSelectedValue[0]['value'];
   const options = findSelectedValue[0]['options'];
+
+  const filteredFindOption = regionOptions.filter(
+    (opt: { value: string }) => opt.value === selectedOption
+  );
 
   const onRadioButtonChange = (selectedValue: string, value: string) => {
     if (value === 'boundary') {
@@ -261,13 +273,37 @@ export const RenderOptions = ({
             name={value}
             defaultValue={boundary}
           >
-            {options?.map(
+            {/* {options?.map(
               (item: { value: string; label: string }, index: number) => (
                 <RadioItem key={`${item.value}-${index}`} value={item.value}>
                   {item.label}
                 </RadioItem>
               )
-            )}
+            )} */}
+
+            {searchQuery === ''
+              ? // Render original options if search query is empty
+                options?.map(
+                  (item: { value: string; label: string }, index: number) => (
+                    <RadioItem
+                      key={`${item.value}-${index}`}
+                      value={item.value}
+                    >
+                      {item.label}
+                    </RadioItem>
+                  )
+                )
+              : // Render filtered options if there's a search query
+                regionOptions.map(
+                  (item: { value: string; label: string }, index: number) => (
+                    <RadioItem
+                      key={`${item.value}-${index}`}
+                      value={item.value}
+                    >
+                      {item.label}
+                    </RadioItem>
+                  )
+                )}
           </RadioGroup>
         </React.Fragment>
       );
