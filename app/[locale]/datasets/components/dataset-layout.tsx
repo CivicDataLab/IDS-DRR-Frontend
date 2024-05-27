@@ -89,16 +89,21 @@ export function Content({
               <div className="flex w-4/5 flex-row items-stretch justify-between gap-8  ">
                 <div className="flex h-[36px] w-[700px] items-center justify-start gap-2 pl-6">
                   <form className="flex-1">
-                    {/* <SearchInput
+                    <SearchInput
                       name="search"
                       placeholder="Search by title, description..."
-                      onSubmit={() => setQueryString('', { shallow: false })}
                       label="Search"
-                      onChange={(value) => setSearchValue(value)}
-                      defaultValue={queryString || ''}
-                      onClear={() => setQueryString('', { shallow: false })}
-                    /> */}
-                    <TextField
+                      defaultValue={searchQuery || ''}
+                      onChange={(value) => {
+                        setSearchQuery(value);
+                        handleSearchChange(value);
+                      }}
+                      onClear={() => {
+                        setSearchQuery('');
+                        handleSearchChange('');
+                      }}
+                    />
+                    {/* <TextField
                       label=""
                       name="name"
                       value={searchQuery}
@@ -106,7 +111,7 @@ export function Content({
                         setSearchQuery(e);
                         handleSearchChange(e);
                       }}
-                    />
+                    /> */}
                   </form>
                   <Button
                     onClick={() => {
