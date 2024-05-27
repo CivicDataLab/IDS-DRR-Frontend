@@ -30,7 +30,7 @@ export const Footer = () => {
               In collaobration with:
             </Text>
             <Image
-              src="/logo/ASDMA2.png"
+              src="/logo/ASDMA3.png"
               width={59}
               height={54}
               alt="ASDMA Logo"
@@ -42,7 +42,7 @@ export const Footer = () => {
               Supported by:
             </Text>
             <Image
-              src="/logo/RockefellerLogo.png"
+              src="/logo/RFLogo.png"
               width={106}
               height={64}
               alt="Rockefeller Logo"
@@ -60,14 +60,14 @@ export const Footer = () => {
       </div>
       <div className="text-center md:text-right">
         <Text variant="headingSmSpaced" color="onBgDefault">
-          made with ❤ in india️
+          <strong>made with ❤ in india️</strong>
         </Text>
         <Text
           variant="bodySm"
           color="onBgDefault"
           className="mt-2 block md:mt-3"
         >
-          a Data4Districts product by{' '}
+          A Data4Districts product by{' '}
           <Button
             size="slim"
             className=" text-baseIndigoSolid1 underline"
