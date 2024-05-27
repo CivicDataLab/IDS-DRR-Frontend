@@ -119,7 +119,8 @@ export function About() {
               <li>
                 1. Build an Open Access Disaster Data Repository <br />
                 <br />
-                2. Co-Create Intelligent Data Model & Platform  <br />
+                2. Co-Create Intelligent Data Model & Platform
+                <br />
                 <br />
                 3.Enhance Data Capacity of State & District Management
                 Authorities <br />
