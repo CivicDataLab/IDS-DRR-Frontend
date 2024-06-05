@@ -72,7 +72,7 @@ export function Content({ slug }: { slug: string }) {
             <DatasetInfoCard
               title={explorerData?.title || 'NA'}
               description={explorerData?.description || 'NA'}
-              source={explorerData?.catalog?.organization?.title || 'NA'}
+              source={explorerData?.source || 'NA'}
               homepage={explorerData?.catalog?.organization?.homepage || '#'}
             />
 
