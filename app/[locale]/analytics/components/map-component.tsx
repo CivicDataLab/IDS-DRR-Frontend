@@ -97,9 +97,7 @@ export const MapComponent = ({
     });
 
     if (map) {
-      map.setMaxBounds(map.getBounds());
       const openPopups: any[] = [];
-      map.options.maxZoon = 10;
 
       map.eachLayer((layer: any) => {
         const regionName = layer.feature?.properties.name;
