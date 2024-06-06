@@ -79,7 +79,7 @@ export function Content({ slug }: { slug: string }) {
             <div className="bg-surface flex items-start gap-3 ">
               <div className="flex h-[100%] grow gap-1  bg-surfaceDefault shadow-elementCard ">
                 <Tabs className="w-[100%]" defaultValue="data-resources">
-                  <TabList className=" bg-[#96E79E] shadow-insetButton">
+                  <TabList className=" bg-[#96E79E] bg-opacity-90 shadow-insetButton">
                     <div className="flex flex-1  justify-center py-3 ">
                       <Text
                         variant="headingLg"
@@ -126,7 +126,7 @@ export function Content({ slug }: { slug: string }) {
             <DatasetInfoCard
               title={explorerData?.title || 'NA'}
               description={explorerData?.description || 'NA'}
-              source={explorerData?.catalog?.organization?.title || 'NA'}
+              source={explorerData?.source || 'NA'}
               homepage={explorerData?.catalog?.organization?.homepage || '#'}
             />
           </div>

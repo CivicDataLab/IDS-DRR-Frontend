@@ -91,7 +91,7 @@ export const FilterBox = ({
                   defaultOpen
                   className="rounded-1 border-1 border-solid border-borderSubdued"
                 >
-                  <div className=" bg-surfaceNeutral border-t-0 min-w-max max-w-full rounded-1 border-1 border-solid border-borderSubdued bg-[#96E79E]">
+                  <div className=" bg-surfaceNeutral border-t-0 min-w-max max-w-full rounded-1 border-1 border-solid border-borderSubdued bg-[#96E79E]  bg-opacity-90">
                     <CollapsibleTrigger className={styles.CollapseTrigger}>
                       <Text
                         className="capitalize text-[#1C2024]"

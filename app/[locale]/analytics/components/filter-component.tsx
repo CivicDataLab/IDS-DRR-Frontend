@@ -190,6 +190,7 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
             timePeriodData={timePeriods}
             setBoundarySelected={setBoundarySelected}
             setRegionSelected={setRegionSelected}
+            regionSelected={regionSelected}
             setTimePeriodSelected={setTimePeriodSelected}
             handleInputChangeCallback={(value: string) =>
               handleSearchChange(value)
@@ -212,6 +213,7 @@ export const RenderOptions = ({
   setRegionSelected,
   setTimePeriodSelected,
   regionOptions,
+  regionSelected,
 }: any) => {
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -271,7 +273,7 @@ export const RenderOptions = ({
               onRadioButtonChange(e, value);
             }}
             name={value}
-            defaultValue={boundary}
+            defaultValue={value === 'boundary' ? boundary : regionSelected}
           >
             {/* {options?.map(
               (item: { value: string; label: string }, index: number) => (
