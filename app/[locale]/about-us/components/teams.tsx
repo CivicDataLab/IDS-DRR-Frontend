@@ -15,7 +15,7 @@ const teamMembers: TeamMember[] = [
   { name: 'Aashim', role: 'Frontend Engineer', imageUrl: '/teams/aashim.jpg' },
   { name: 'Archit', role: 'Backend Engineer', imageUrl: '/teams/archit.jpg' },
   { name: 'Deepthi', role: 'Founder', imageUrl: '/teams/dc.jpg' },
-  { name: 'Jeeno', role: 'Senior Researcher', imageUrl: '/teams/Jeeno.jpg' },
+  { name: 'Jeeno', role: 'Senior Researcher', imageUrl: '/teams/jeeno.jpg' },
   { name: 'Kabeer', role: 'Initiative Lead', imageUrl: '/teams/kabeer.jpg' },
   {
     name: 'Kakoli',
