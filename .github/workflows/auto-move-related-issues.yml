@@ -2,13 +2,15 @@ name: "Auto move related issue"
 on:
   pull_request:
     types: [closed]
+    branches: ['dev']
 
 jobs:
   auto-move-related-issue:
     runs-on: ubuntu-latest
     steps:
       - uses: 1natsu172/github-action-auto-move-related-issue@v1
-        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'dev'
+
         id: auto-move-related-issue_action
         with:
           github_token: "${{ secrets.GITHUB_TOKEN }}"
