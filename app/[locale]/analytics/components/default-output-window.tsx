@@ -110,9 +110,10 @@ export function DefaultWindow({
                 )}
             </div>
           )}
-          <Text variant="headingMd" fontWeight="bold" className="mt-4">
+          <br />
+          {/* <Text variant="headingMd" fontWeight="bold" className="mt-4">
             LEARN MORE
-          </Text>
+          </Text> */}
           <div className="mt-2">
             {list.map((indicator, index) => (
               <IndicatorDescription

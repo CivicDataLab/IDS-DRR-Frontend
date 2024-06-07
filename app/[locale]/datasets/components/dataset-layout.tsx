@@ -74,7 +74,7 @@ export function Content({
           </div>
 
           <div className=" container  ">
-            <div className="mr-6 flex flex-row items-center justify-end gap-6 border-b-1 bg-[#96E79E] px-8 py-3">
+            <div className=" mr-6 flex flex-row items-center justify-end gap-6 border-b-1 bg-[#96E79E] bg-opacity-90 px-8 py-3 ">
               <div className="flex w-1/5 justify-start">
                 <Text
                   className="shrink-0"

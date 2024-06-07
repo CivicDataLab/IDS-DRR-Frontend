@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import {
@@ -38,6 +38,10 @@ export function FactorList() {
   const boundary = searchParams.get('boundary') || 'district';
   const region = searchParams.get('region') || '';
   const [selectedIndicator, setSelectedIndicator] = useState(indicator || '');
+
+  useEffect(() => {
+    setSelectedIndicator(indicator || '');
+  }, [indicator]);
 
   const handleChange = (selected: string, _name?: string) => {
     setSelectedIndicator(selected);

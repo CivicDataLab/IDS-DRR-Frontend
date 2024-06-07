@@ -60,10 +60,10 @@ export const navbarConfig = {
 export const mainConfig: MainConfig = {
   homeUrl: '/',
   mainNav: [
-    // {
-    //   title: 'Home',
-    //   href: 'https://drr-dev.open-contracting.in/en',
-    // },
+    {
+      title: 'Home',
+      href: '/',
+    },
     {
       title: 'Analytics',
       href: AnalyticsURL,
