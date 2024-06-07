@@ -1,0 +1,15 @@
+name: "Auto move related issue"
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  auto-move-related-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: 1natsu172/github-action-auto-move-related-issue@v1
+        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+        id: auto-move-related-issue_action
+        with:
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
+          config: "auto-move-related-issue-config.yml"
