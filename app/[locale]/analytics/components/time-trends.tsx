@@ -6,12 +6,14 @@ import { formatDateString } from '@/lib/utils';
 interface LineOptions {
   xAxis: {
     data: string[];
+    name: string;
   };
   yAxis: {
     type: string;
     minInterval: number;
     min: number;
     max: number;
+    name: string;
   };
   legend: {
     data: string[];
@@ -40,12 +42,14 @@ export function TimeTrends({
       data: Object.keys(chartData[indicator]).map((item) =>
         formatDateString(item)
       ),
+      name: 'Date',
     },
     yAxis: {
       type: 'value',
       minInterval: 1,
       min: 0,
       max: 5,
+      name: 'Value',
     },
     legend: {
       data: [],
@@ -95,7 +99,7 @@ export function TimeTrends({
 
   return (
     <div className="mt-4">
-      <BarChart options={lineOptions} height="400px" />
+      <BarChart options={lineOptions} height="400px" showLabel={true} />
     </div>
   );
 }
