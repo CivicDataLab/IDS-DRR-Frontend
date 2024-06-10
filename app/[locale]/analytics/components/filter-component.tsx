@@ -101,6 +101,27 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
       boundarySelected,
       geographiesData
     );
+    if (boundarySelected === 'revenue-circle' && geographiesData.data) {
+      const rawData = geographiesData?.data?.getDistrictRevCircle;
+      const formattedOptions = [];
+      for (const district in rawData) {
+        formattedOptions.push({
+          label: district,
+          value: district,
+          type: 'group',
+        });
+        rawData[district].forEach(
+          (circle: { 'revenue-circle': string; code: string }) => {
+            formattedOptions.push({
+              label: circle['revenue-circle'],
+              value: circle.code,
+              type: 'item',
+            });
+          }
+        );
+      }
+      return formattedOptions;
+    }
     return regionOptions;
   }, [boundarySelected, geographiesData]);
 
@@ -275,36 +296,54 @@ export const RenderOptions = ({
             name={value}
             defaultValue={value === 'boundary' ? boundary : regionSelected}
           >
-            {/* {options?.map(
-              (item: { value: string; label: string }, index: number) => (
-                <RadioItem key={`${item.value}-${index}`} value={item.value}>
-                  {item.label}
-                </RadioItem>
-              )
-            )} */}
-
             {searchQuery === ''
               ? // Render original options if search query is empty
                 options?.map(
-                  (item: { value: string; label: string }, index: number) => (
-                    <RadioItem
-                      key={`${item.value}-${index}`}
-                      value={item.value}
-                    >
-                      {item.label}
-                    </RadioItem>
-                  )
+                  (
+                    item: { value: string; label: string; type: string },
+                    idx: number
+                  ) =>
+                    item.type === 'group' ? (
+                      <div
+                        key={idx}
+                        style={{
+                          backgroundColor: '#F7F7F8',
+                          padding: '4px',
+                          marginTop: '15px',
+                          fontWeight: 'bold',
+                          // textDecoration: 'underline',
+                        }}
+                      >
+                        <span>{item.label}</span>
+                      </div>
+                    ) : (
+                      <RadioItem key={idx} value={item.value}>
+                        {item.label}
+                      </RadioItem>
+                    )
                 )
-              : // Render filtered options if there's a search query
-                regionOptions.map(
-                  (item: { value: string; label: string }, index: number) => (
-                    <RadioItem
-                      key={`${item.value}-${index}`}
-                      value={item.value}
-                    >
-                      {item.label}
-                    </RadioItem>
-                  )
+              : // Render filtered options based on search query
+                regionOptions?.map(
+                  (
+                    item: { value: string; label: string; type: string },
+                    idx: number
+                  ) =>
+                    item.type === 'group' ? (
+                      <div
+                        key={idx}
+                        style={{
+                          backgroundColor: '#F7F7F8',
+                          padding: '10px',
+                          marginTop: '15px',
+                        }}
+                      >
+                        <span>{item.label}</span>
+                      </div>
+                    ) : (
+                      <RadioItem key={idx} value={item.value}>
+                        {item.label}
+                      </RadioItem>
+                    )
                 )}
           </RadioGroup>
         </React.Fragment>
