@@ -42,7 +42,7 @@ export const Footer = () => {
               Supported by:
             </Text>
             <Image
-              src="/logo/RFLogo.png"
+              src="/logo/RockefellerLogo.png"
               width={106}
               height={64}
               alt="Rockefeller Logo"
