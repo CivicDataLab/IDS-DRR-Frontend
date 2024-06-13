@@ -13,7 +13,17 @@ interface TeamMember {
 
 const teamMembers: TeamMember[] = [
   { name: 'Aashim', role: 'Frontend Engineer', imageUrl: '/teams/aashim.jpg' },
-  { name: 'Archit', role: 'Backend Engineer', imageUrl: '/teams/archit.jpg' },
+  {
+    name: 'Abhinandita',
+    role: 'Senior Product Designer',
+    imageUrl: '/teams/abhinandita.jpg',
+  },
+  {
+    name: 'Aparna',
+    role: 'Associate Product Designer',
+    imageUrl: '/teams/aparna.jpg',
+  },
+  { name: 'Archit', role: 'Backend Engineer', imageUrl: '/teams/archit1.jpg' },
   { name: 'Deepthi', role: 'Founder', imageUrl: '/teams/dc.jpg' },
   { name: 'Jeeno', role: 'Senior Researcher', imageUrl: '/teams/jeeno.jpg' },
   { name: 'Kabeer', role: 'Initiative Lead', imageUrl: '/teams/kabeer.jpg' },
@@ -34,6 +44,11 @@ const teamMembers: TeamMember[] = [
     imageUrl: '/teams/ruthvik.jpg',
   },
   {
+    name: 'Sai',
+    role: 'Senior Data Engineer',
+    imageUrl: '/teams/sai.png',
+  },
+  {
     name: 'Saqib',
     role: 'Quality Assurance Engineer',
     imageUrl: '/teams/saqib.jpg',
@@ -43,7 +58,7 @@ const teamMembers: TeamMember[] = [
     role: 'Senior Design Researcher',
     imageUrl: '/teams/sumit.jpg',
   },
-  { name: 'Swati', role: 'Frontend Engineer', imageUrl: '/teams/swati.jpg' },
+  { name: 'Swati', role: 'Frontend Engineer', imageUrl: '/teams/swati1.jpg' },
 ];
 
 export function TheTeam() {

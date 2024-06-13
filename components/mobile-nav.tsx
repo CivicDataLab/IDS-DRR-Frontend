@@ -140,7 +140,7 @@ export function MobileNav({ data }: { data: MainConfig }) {
                   </Text>
                   <div className="flex flex-row items-center justify-between gap-2 self-stretch ">
                     <Image
-                      src="/logo/RockefellerLogo.png"
+                      src="/logo/RockefellerLogoNew.png"
                       width={106}
                       height={64}
                       alt="Rockefeller Logo"
