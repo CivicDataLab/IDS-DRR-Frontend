@@ -54,60 +54,62 @@ export const DatasetCard = ({
                 >
                   {title}
                 </Text>
-              </Link>
 
-              <span className="flex flex-col items-start gap-1">
-                <Text
-                  color="default"
-                  className="  text-textSubdued  "
-                  variant="bodySm"
-                  fontWeight="regular"
-                >
-                  {DatasetSource} : {source}
-                </Text>
-                <Text
-                  color="default"
-                  className="  w-[280px] text-textSubdued "
-                  variant="bodySm"
-                  fontWeight="regular"
-                >
-                  Reference Period : {formatDate(period[0])} to{' '}
-                  {formatDate(period[1])}
-                </Text>
-              </span>
+                <span className="flex flex-col items-start gap-1">
+                  <Text
+                    color="default"
+                    className="  text-textSubdued  "
+                    variant="bodySm"
+                    fontWeight="regular"
+                  >
+                    {DatasetSource} : {source}
+                  </Text>
+                  <Text
+                    color="default"
+                    className="  w-[280px] text-textSubdued "
+                    variant="bodySm"
+                    fontWeight="regular"
+                  >
+                    Reference Period : {formatDate(period[0])} to{' '}
+                    {formatDate(period[1])}
+                  </Text>
+                </span>
 
-              <div className="flex w-[256px] flex-wrap">
-                <span className="flex flex-wrap items-center gap-2 py-1 pr-2">
-                  {fileTypesArray?.length > 0 &&
-                    fileTypesArray.map((fileType, index) => (
-                      <Tag key={index} background-color="#E1F0FF">
-                        {fileType}
-                      </Tag>
-                    ))}
-                  <span className="flex gap-2 py-1 pr-2">
-                    {categories?.length > 0 &&
-                      categories?.map((category, index) => (
+                <div className="flex w-[256px] flex-wrap">
+                  <span className="flex flex-wrap items-center gap-2 py-1 pr-2">
+                    {fileTypesArray?.length > 0 &&
+                      fileTypesArray.map((fileType, index) => (
                         <Tag key={index} background-color="#E1F0FF">
-                          {category}
+                          {fileType}
                         </Tag>
                       ))}
+                    <span className="flex gap-2 py-1 pr-2">
+                      {categories?.length > 0 &&
+                        categories?.map((category, index) => (
+                          <Tag key={index} background-color="#E1F0FF">
+                            {category}
+                          </Tag>
+                        ))}
+                    </span>
                   </span>
-                </span>
-              </div>
+                </div>
+              </Link>
             </div>
 
             <div className="flex w-[280px] flex-col">
-              <Text
-                className={showMore ? '' : 'line-clamp-3'}
-                variant="bodyMd"
-                as="p"
-                color="default"
-              >
-                {description}
-              </Text>
+              <Link href={`/datasets/${slug}`}>
+                <Text
+                  className={showMore ? '' : 'line-clamp-3'}
+                  variant="bodyMd"
+                  as="p"
+                  color="default"
+                >
+                  {description}
+                </Text>
+              </Link>
               {!showMore && (
                 <Button
-                  className="self-end"
+                  className="self-start p-2"
                   onClick={() => setShowMore(true)}
                   variant="interactive"
                   size="slim"
@@ -118,7 +120,7 @@ export const DatasetCard = ({
               )}
               {showMore && (
                 <Button
-                  className="self-end"
+                  className="self-start p-2"
                   onClick={() => setShowMore(false)}
                   variant="interactive"
                   size="slim"

@@ -16,8 +16,6 @@ export default function aboutUs() {
       <CollaboratingPartner />
       <SupportedBy />
       <TheTeam />
-      <Engagements />
-      <DataStories />
     </main>
   );
 }

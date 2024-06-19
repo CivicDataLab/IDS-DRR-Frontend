@@ -47,7 +47,7 @@ export const MobileFilterBox = ({
       <DrawerContent>
         <DrawerHeader className=" h-[56px] border-b-1 border-solid border-[#C9CCCF]">
           <DrawerTitle className="flex justify-between ">
-            <Text variant="headingMd">Options</Text>
+            <Text variant="headingMd">Filters</Text>
             <IconButton
               icon={Icons.cross}
               onClick={toggleDrawer}
@@ -58,12 +58,12 @@ export const MobileFilterBox = ({
           </DrawerTitle>
         </DrawerHeader>
         <DrawerDescription className="flex h-[276px]">
-          <div className="flex basis-auto flex-col items-start gap-3 border-x-1 border-solid border-borderSubdued p-4">
+          <div className="flex flex-col items-start gap-3 border-x-1 border-solid border-borderSubdued px-2 py-4">
             {filterOptions.map(
               (item: { value: string; title: string }, index: number) => (
                 <div key={`${item.value}-${index}`}>
                   <Button
-                    className={'min-w-[80px]  text-textDefault'}
+                    className="text-nowrap text-left"
                     size="slim"
                     fullWidth
                     kind="tertiary"
@@ -72,7 +72,7 @@ export const MobileFilterBox = ({
                       onSelectedOption(item?.value);
                     }}
                   >
-                    <Text className="text-left">{item.title}</Text>
+                    <Text className="">{item.title}</Text>
                   </Button>
                 </div>
               )

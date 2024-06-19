@@ -5,8 +5,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useKeyDetect } from '@/hooks/use-key-detect';
 import { MainConfig } from '@/types';
-import { Icon, IconButton, Text } from 'opub-ui';
+import { Button, Icon, IconButton, Text } from 'opub-ui';
 
+import { handleRedirect } from '@/lib/utils';
 import { Icons } from '@/components/icons';
 
 export function MobileNav({ data }: { data: MainConfig }) {
@@ -38,8 +39,8 @@ export function MobileNav({ data }: { data: MainConfig }) {
 
   return (
     <>
-      <header>
-        <div className="flex items-center justify-between bg-backgroundSolidDark px-5 py-3 text-textOnBGDefault md:hidden">
+      <header className="sticky top-0 z-2">
+        <div className=" flex items-center justify-between bg-backgroundSolidDark px-5 py-3 text-textOnBGDefault md:hidden">
           <Link href={data.homeUrl}>
             <div className="flex items-center gap-2">
               <Image
@@ -62,8 +63,8 @@ export function MobileNav({ data }: { data: MainConfig }) {
         </div>
       </header>
       {open && (
-        <div className="relative z-10 h-screen overflow-y-auto border-t-1 border-solid border-baseGraySlateSolid11 bg-backgroundSolidDark text-textOnBGDefault">
-          <div className="flex items-center gap-3 p-3 pr-5">
+        <div className="relative z-10  flex h-[95vh]  flex-shrink-0  flex-col items-start justify-between  border-t-1 border-solid border-baseGraySlateSolid11 bg-backgroundSolidDark px-5 py-8 text-textOnBGDefault">
+          <div className="flex w-full items-center gap-3 p-3 pr-5">
             {data.mainNav.length > 0 && (
               <div>
                 {data.mainNav.map((link) => (
@@ -78,6 +79,86 @@ export function MobileNav({ data }: { data: MainConfig }) {
               </div>
             )}
           </div>
+          <footer className="flex flex-col flex-wrap items-start gap-1 self-stretch bg-backgroundSolidDark px-5 py-4">
+            <div className="flex  items-center justify-between self-stretch">
+              <div className=" ">
+                <Text variant="headingSmSpaced" color="onBgDefault">
+                  <strong>made with ❤ in india️</strong>
+                </Text>
+                <Text
+                  variant="bodySm"
+                  color="onBgDefault"
+                  className="mt-2 block md:mt-3"
+                >
+                  A Data4Districts product by{' '}
+                  <a
+                    // size="slim"
+                    className=" font text-baseIndigoSolid1 underline"
+                    // kind="tertiary"
+                    onClick={(event) =>
+                      handleRedirect(event, 'https://civicdatalab.in/')
+                    }
+                  >
+                    CivicDataLab
+                  </a>
+                </Text>
+              </div>
+
+              <Image
+                src="/logo/cdlofficiallogo.png"
+                width={64}
+                height={64}
+                alt="CivicDataLab Logo"
+                className="object-contain"
+              />
+            </div>
+            <Image
+              src="/logo/Vector1.svg"
+              width={160}
+              height={50}
+              alt="Divider"
+              className="w-full"
+            />
+            <div className="flex flex-col items-center gap-3">
+              {/* <div className="flex flex-row items-center gap-3"> */}
+              <div className="flex flex-row justify-center gap-6">
+                <div className="flex flex-col items-start gap-2">
+                  <Text variant="bodySm" color="onBgDefault">
+                    In collaobration with:
+                  </Text>
+                  <Image
+                    src="/logo/ASDMA3.png"
+                    width={43}
+                    height={34}
+                    alt="ASDMA Logo"
+                    className="object-contain"
+                  />
+                </div>
+                <div className="flex flex-1 flex-col items-start justify-center gap-2 ">
+                  <Text variant="bodySm" color="onBgDefault">
+                    Supported by:
+                  </Text>
+                  <div className="flex flex-row items-center justify-between gap-2 self-stretch ">
+                    <Image
+                      src="/logo/RockefellerLogoNew.png"
+                      width={106}
+                      height={64}
+                      alt="Rockefeller Logo"
+                      className="object-contain"
+                    />
+                    <Image
+                      src="/logo/ocp.png"
+                      width={91}
+                      height={40}
+                      alt="OCP Logo"
+                      className="object-contain"
+                    />
+                  </div>
+                </div>
+              </div>
+              {/* </div> */}
+            </div>
+          </footer>
         </div>
       )}
     </>

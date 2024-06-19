@@ -8,13 +8,16 @@ import {
   RiskScore,
   Vulnerability,
 } from '@/public/FactorIcons';
+import { useQuery } from '@tanstack/react-query';
 import { Divider, Icon, ProgressBar, Text } from 'opub-ui';
 
 import { RiskColorMap } from '@/config/consts';
-import { cn, deSlugify } from '@/lib/utils';
+import { ANALYTICS_FACTORS } from '@/config/graphql/analaytics-queries';
+import { GraphQL } from '@/lib/api';
+import { cn } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
-import { DownloadReport } from './download-report';
+import { OutputWindowHeader } from './output-window';
 
 export function DefaultWindow({
   chartData,
@@ -23,16 +26,6 @@ export function DefaultWindow({
   boundary,
 }: any) {
   const list: { title: string; slug: string; description: string }[] = [];
-
-  const color = '#000000';
-
-  const IconMap: { [key: string]: React.ReactNode } = {
-    'risk-score': <RiskScore color={color} />,
-    vulnerability: <Vulnerability color={color} />,
-    'flood-hazard': <FloodHazard color={color} />,
-    exposure: <Exposure color={color} />,
-    'government-response': <GovtResponse color={color} />,
-  };
 
   if (indicatorDescriptions) {
     indicatorDescriptions.map(
@@ -52,6 +45,20 @@ export function DefaultWindow({
     );
   }
 
+  const factorData = useQuery(
+    [`factors`],
+    () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_FACTORS
+      ),
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
+
   return (
     <>
       <MediaRendering minWidth="1024" maxWidth={null}>
@@ -64,17 +71,7 @@ export function DefaultWindow({
             'overflow-y-auto'
           )}
         >
-          <div className="mb-5 mt-4 flex items-center justify-between">
-            <Text
-              variant="heading2xl"
-              fontWeight="regular"
-              className="flex items-center gap-2"
-            >
-              {IconMap[indicator || 'risk-score']}
-              {deSlugify(indicator)}
-            </Text>
-            {/* <DownloadReport /> */}
-          </div>
+          <OutputWindowHeader factorData={factorData} indicator={indicator} />
 
           <Divider className="mt-2" />
           <RenderSidebarContent />
@@ -93,29 +90,27 @@ export function DefaultWindow({
       <>
         <div className="mb-5 flex flex-col">
           <Text variant="headingMd" fontWeight="bold" className=" mt-3">
-            HIGH RISK DISTRICTS
+            {boundary === 'district'
+              ? 'HIGH RISK DISTRICTS'
+              : 'HIGH RISK REVENUE CIRCLES'}
           </Text>
           {chartData && (
             <div className="flex flex-col pt-3">
               {chartData
                 .slice(0, 5)
-                .map(
-                  (
-                    item: { [x: string]: string },
-                    index: React.Key | null | undefined
-                  ): any => (
-                    <DistrictBar
-                      key={index}
-                      district={item[boundary]}
-                      value={item[indicator]}
-                    />
-                  )
-                )}
+                .map((item: any, index: React.Key | null | undefined): any => (
+                  <DistrictBar
+                    key={index}
+                    district={item[boundary]}
+                    value={item[indicator]['value']}
+                  />
+                ))}
             </div>
           )}
-          <Text variant="headingMd" fontWeight="bold" className="mt-4">
+          <br />
+          {/* <Text variant="headingMd" fontWeight="bold" className="mt-4">
             LEARN MORE
-          </Text>
+          </Text> */}
           <div className="mt-2">
             {list.map((indicator, index) => (
               <IndicatorDescription

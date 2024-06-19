@@ -9,6 +9,7 @@ export const HeroSection = () => {
   return (
     <section className={cn(styles.HeroSection)}>
       <div className=" flex w-full flex-wrap items-center justify-center gap-6 bg-baseGraySlateSolid12 bg-opacity-20 p-4">
+        <div></div>
         <Image
           src="/logo/assamDRRLogo.svg"
           width={400}

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import SearchSvg from '@/public/Search';
 import { parseDate } from '@internationalized/date';
 import { useQuery } from '@tanstack/react-query';
 import { parseAsString, useQueryState } from 'next-usequerystate';
@@ -7,6 +8,7 @@ import {
   Icon,
   RadioGroup,
   RadioItem,
+  SearchInput,
   TextField,
   YearCalendar,
 } from 'opub-ui';
@@ -50,7 +52,7 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
     parseAsString.withDefault('district')
   );
 
-  const [, setTimePeriod] = useQueryState(
+  const [timePeriodParam, setTimePeriod] = useQueryState(
     'time-period',
     parseAsString.withDefault(timePeriod)
   );
@@ -59,9 +61,15 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
 
   const [boundarySelected, setBoundarySelected] = useState(boundary);
 
-  const [regionSelected, setRegionSelected] = useState('');
+  const [regionSelected, setRegionSelected] = useState(region);
 
-  const [timePeriodSelected, setTimePeriodSelected] = useState(timePeriod);
+  const [timePeriodSelected, setTimePeriodSelected] = useState(timePeriodParam);
+
+  useEffect(() => {
+    setBoundarySelected(boundary);
+    setRegionSelected(region || '');
+    setTimePeriodSelected(timePeriodParam);
+  }, [boundary, region, timePeriodParam]);
 
   const geographiesData = useQuery(
     [`geographies_data_${boundarySelected}`],
@@ -99,6 +107,27 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
       boundarySelected,
       geographiesData
     );
+    if (boundarySelected === 'revenue-circle' && geographiesData.data) {
+      const rawData = geographiesData?.data?.getDistrictRevCircle;
+      const formattedOptions = [];
+      for (const district in rawData) {
+        formattedOptions.push({
+          label: district,
+          value: district,
+          type: 'group',
+        });
+        rawData[district].forEach(
+          (circle: { 'revenue-circle': string; code: string }) => {
+            formattedOptions.push({
+              label: circle['revenue-circle'],
+              value: circle.code,
+              type: 'item',
+            });
+          }
+        );
+      }
+      return formattedOptions;
+    }
     return regionOptions;
   }, [boundarySelected, geographiesData]);
 
@@ -130,14 +159,18 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
   };
 
   const handleSearchChange = (value: string) => {
-    if (value) {
-      const filtered = regionOptions.filter((item) =>
-        item?.label?.toLowerCase().includes(value?.toLowerCase())
-      );
-      setRegionOptions(filtered);
-    } else {
-      const regionOptions = getRegionOptions();
-      setRegionOptions(regionOptions);
+    // const regionOptions = getRegionOptions();
+    const regionOptions = FilterOptions[1].options;
+    if (regionOptions) {
+      if (value) {
+        const filtered = regionOptions.filter((item) =>
+          item?.label?.toLowerCase().includes(value?.toLowerCase())
+        );
+
+        setRegionOptions(filtered);
+      } else {
+        setRegionOptions(regionOptions);
+      }
     }
   };
 
@@ -179,15 +212,17 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
           <RenderOptions
             filterOptions={FilterOptions}
             selectedOption={selectedOption}
-            boundary={boundary}
+            boundarySelected={boundarySelected}
             timePeriod={timePeriod}
             timePeriodData={timePeriods}
             setBoundarySelected={setBoundarySelected}
             setRegionSelected={setRegionSelected}
+            regionSelected={regionSelected}
             setTimePeriodSelected={setTimePeriodSelected}
             handleInputChangeCallback={(value: string) =>
               handleSearchChange(value)
             }
+            regionOptions={regionOptions}
           />
         </MobileFilterContent>
       </MobileFilterBox>
@@ -198,13 +233,16 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
 export const RenderOptions = ({
   filterOptions,
   selectedOption,
-  boundary,
+  boundarySelected,
   timePeriodData,
   handleInputChangeCallback,
   setBoundarySelected,
   setRegionSelected,
   setTimePeriodSelected,
+  regionOptions,
+  regionSelected,
 }: any) => {
+  // console.log('---', regionSelected, boundary, timePeriodData);
   const [searchQuery, setSearchQuery] = useState('');
 
   const findSelectedValue = filterOptions.filter(
@@ -213,6 +251,10 @@ export const RenderOptions = ({
   const type = findSelectedValue[0]['type'];
   const value = findSelectedValue[0]['value'];
   const options = findSelectedValue[0]['options'];
+
+  const filteredFindOption = regionOptions.filter(
+    (opt: { value: string }) => opt.value === selectedOption
+  );
 
   const onRadioButtonChange = (selectedValue: string, value: string) => {
     if (value === 'boundary') {
@@ -258,16 +300,59 @@ export const RenderOptions = ({
             onChange={(e) => {
               onRadioButtonChange(e, value);
             }}
+            // key={value === 'boundary' ? boundary : regionSelected}
             name={value}
-            defaultValue={boundary}
+            value={value === 'boundary' ? boundarySelected : regionSelected}
           >
-            {options?.map(
-              (item: { value: string; label: string }, index: number) => (
-                <RadioItem key={`${item.value}-${index}`} value={item.value}>
-                  {item.label}
-                </RadioItem>
-              )
-            )}
+            {searchQuery === ''
+              ? // Render original options if search query is empty
+                options?.map(
+                  (
+                    item: { value: string; label: string; type: string },
+                    idx: number
+                  ) =>
+                    item.type === 'group' ? (
+                      <div
+                        key={idx}
+                        style={{
+                          backgroundColor: '#F7F7F8',
+                          padding: '4px',
+                          marginTop: '15px',
+                          fontWeight: 'bold',
+                          // textDecoration: 'underline',
+                        }}
+                      >
+                        <span>{item.label}</span>
+                      </div>
+                    ) : (
+                      <RadioItem key={idx} value={item.value}>
+                        {item.label}
+                      </RadioItem>
+                    )
+                )
+              : // Render filtered options based on search query
+                regionOptions?.map(
+                  (
+                    item: { value: string; label: string; type: string },
+                    idx: number
+                  ) =>
+                    item.type === 'group' ? (
+                      <div
+                        key={idx}
+                        style={{
+                          backgroundColor: '#F7F7F8',
+                          padding: '10px',
+                          marginTop: '15px',
+                        }}
+                      >
+                        <span>{item.label}</span>
+                      </div>
+                    ) : (
+                      <RadioItem key={idx} value={item.value}>
+                        {item.label}
+                      </RadioItem>
+                    )
+                )}
           </RadioGroup>
         </React.Fragment>
       );

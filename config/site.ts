@@ -61,6 +61,10 @@ export const mainConfig: MainConfig = {
   homeUrl: '/',
   mainNav: [
     {
+      title: 'Home',
+      href: '/',
+    },
+    {
       title: 'Analytics',
       href: AnalyticsURL,
     },

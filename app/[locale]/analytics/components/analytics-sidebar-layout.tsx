@@ -119,7 +119,7 @@ export function OutputWindowComponent() {
           data={
             sidePaneData?.data[
               boundary === 'district' ? 'districtViewData' : 'revCircleViewData'
-            ]?.table_data
+            ]
           }
           indicatorDescriptions={indicatorDescriptions?.data?.indicators}
           indicator={indicator}
@@ -131,7 +131,7 @@ export function OutputWindowComponent() {
           chartData={
             sidePaneData?.data[
               boundary === 'district' ? 'districtViewData' : 'revCircleViewData'
-            ]?.table_data
+            ]
           }
           indicatorDescriptions={indicatorDescriptions?.data?.indicators}
           indicator={indicator}

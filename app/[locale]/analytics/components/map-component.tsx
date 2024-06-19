@@ -85,7 +85,7 @@ export const MapComponent = ({
       if (prev === null) {
         return [layer];
       } else {
-        return [...prev, layer];
+        return [...new Set([...prev, layer])];
       }
     });
   };
@@ -97,9 +97,7 @@ export const MapComponent = ({
     });
 
     if (map) {
-      map.dragging.disable();
       const openPopups: any[] = [];
-      map.options.maxZoon = 10;
 
       map.eachLayer((layer: any) => {
         const regionName = layer.feature?.properties.name;
