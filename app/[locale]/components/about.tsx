@@ -122,7 +122,7 @@ export function About() {
                 2. Co-Create Intelligent Data Model & Platform
                 <br />
                 <br />
-                3.Enhance Data Capacity of State & District Management
+                3. Enhance Data Capacity of State & District Management
                 Authorities <br />
                 <br />
               </li>

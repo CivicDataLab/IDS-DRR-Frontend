@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchSvg from '@/public/Search';
 import { parseDate } from '@internationalized/date';
 import { useQuery } from '@tanstack/react-query';
@@ -52,7 +52,7 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
     parseAsString.withDefault('district')
   );
 
-  const [, setTimePeriod] = useQueryState(
+  const [timePeriodParam, setTimePeriod] = useQueryState(
     'time-period',
     parseAsString.withDefault(timePeriod)
   );
@@ -61,9 +61,15 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
 
   const [boundarySelected, setBoundarySelected] = useState(boundary);
 
-  const [regionSelected, setRegionSelected] = useState('');
+  const [regionSelected, setRegionSelected] = useState(region);
 
-  const [timePeriodSelected, setTimePeriodSelected] = useState(timePeriod);
+  const [timePeriodSelected, setTimePeriodSelected] = useState(timePeriodParam);
+
+  useEffect(() => {
+    setBoundarySelected(boundary);
+    setRegionSelected(region || '');
+    setTimePeriodSelected(timePeriodParam);
+  }, [boundary, region, timePeriodParam]);
 
   const geographiesData = useQuery(
     [`geographies_data_${boundarySelected}`],
@@ -206,7 +212,7 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
           <RenderOptions
             filterOptions={FilterOptions}
             selectedOption={selectedOption}
-            boundary={boundary}
+            boundarySelected={boundarySelected}
             timePeriod={timePeriod}
             timePeriodData={timePeriods}
             setBoundarySelected={setBoundarySelected}
@@ -227,7 +233,7 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
 export const RenderOptions = ({
   filterOptions,
   selectedOption,
-  boundary,
+  boundarySelected,
   timePeriodData,
   handleInputChangeCallback,
   setBoundarySelected,
@@ -236,6 +242,7 @@ export const RenderOptions = ({
   regionOptions,
   regionSelected,
 }: any) => {
+  // console.log('---', regionSelected, boundary, timePeriodData);
   const [searchQuery, setSearchQuery] = useState('');
 
   const findSelectedValue = filterOptions.filter(
@@ -293,8 +300,9 @@ export const RenderOptions = ({
             onChange={(e) => {
               onRadioButtonChange(e, value);
             }}
+            // key={value === 'boundary' ? boundary : regionSelected}
             name={value}
-            defaultValue={value === 'boundary' ? boundary : regionSelected}
+            value={value === 'boundary' ? boundarySelected : regionSelected}
           >
             {searchQuery === ''
               ? // Render original options if search query is empty

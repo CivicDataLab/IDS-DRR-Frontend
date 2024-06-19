@@ -49,7 +49,7 @@ export function TimeTrends({
       minInterval: 1,
       min: 0,
       max: 5,
-      name: 'Value',
+      name: 'Risk Level',
     },
     legend: {
       data: [],

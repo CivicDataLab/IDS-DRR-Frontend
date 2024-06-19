@@ -12,12 +12,12 @@ interface TeamMember {
 }
 
 const teamMembers: TeamMember[] = [
-  { name: 'Aashim', role: 'Frontend Engineer', imageUrl: '/teams/aashim.jpg' },
   {
     name: 'Abhinandita',
     role: 'Senior Product Designer',
     imageUrl: '/teams/abhinandita.jpg',
   },
+  { name: 'Aashim', role: 'Frontend Engineer', imageUrl: '/teams/aashim.jpg' },
   {
     name: 'Aparna',
     role: 'Associate Product Designer',
@@ -71,33 +71,35 @@ export function TheTeam() {
             The Team
           </Text>
           <div className={styles.grid}>
-            {teamMembers.map((member, index) => (
-              <div key={index} className={styles.card}>
-                <Image
-                  src={member.imageUrl}
-                  alt={member.name}
-                  height={100}
-                  width={200}
-                  className="object-contain pt-4 "
-                />
-                <div className="flex w-full flex-col gap-2 pl-8 pt-4 ">
-                  <Text
-                    variant="headingLg"
-                    fontWeight="semibold"
-                    color="default"
-                  >
-                    {member.name}
-                  </Text>
-                  <Text
-                    variant="headingMd"
-                    fontWeight="regular"
-                    color="subdued"
-                  >
-                    {member.role}
-                  </Text>
+            {teamMembers
+              .sort((a: any, b: any) => a.name - b.name)
+              .map((member, index) => (
+                <div key={index} className={styles.card}>
+                  <Image
+                    src={member.imageUrl}
+                    alt={member.name}
+                    height={100}
+                    width={200}
+                    className="object-contain pt-4 "
+                  />
+                  <div className="flex w-full flex-col gap-2 pl-8 pt-4 ">
+                    <Text
+                      variant="headingLg"
+                      fontWeight="semibold"
+                      color="default"
+                    >
+                      {member.name}
+                    </Text>
+                    <Text
+                      variant="headingMd"
+                      fontWeight="regular"
+                      color="subdued"
+                    >
+                      {member.role}
+                    </Text>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </MediaRendering>
@@ -108,33 +110,35 @@ export function TheTeam() {
             The Team
           </Text>
           <div className={styles.grid}>
-            {teamMembers.map((member, index) => (
-              <div key={index} className={styles.card}>
-                <Image
-                  src={member.imageUrl}
-                  alt={member.name}
-                  height={100}
-                  width={200}
-                  className="object-contain pt-4 "
-                />
-                <div className="flex w-full flex-col gap-2 pl-8 pt-4 ">
-                  <Text
-                    variant="headingLg"
-                    fontWeight="semibold"
-                    color="default"
-                  >
-                    {member.name}
-                  </Text>
-                  <Text
-                    variant="headingMd"
-                    fontWeight="regular"
-                    color="subdued"
-                  >
-                    {member.role}
-                  </Text>
+            {teamMembers
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map((member, index) => (
+                <div key={index} className={styles.card}>
+                  <Image
+                    src={member.imageUrl}
+                    alt={member.name}
+                    height={100}
+                    width={200}
+                    className="object-contain pt-4 "
+                  />
+                  <div className="flex w-full flex-col gap-2 pl-8 pt-4 ">
+                    <Text
+                      variant="headingLg"
+                      fontWeight="semibold"
+                      color="default"
+                    >
+                      {member.name}
+                    </Text>
+                    <Text
+                      variant="headingMd"
+                      fontWeight="regular"
+                      color="subdued"
+                    >
+                      {member.role}
+                    </Text>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </MediaRendering>
