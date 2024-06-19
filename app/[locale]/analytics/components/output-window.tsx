@@ -206,12 +206,14 @@ export function OutputWindow({
                     <div className=" mr-3 basis-2/4">
                       <ProgressBar
                         size="small"
-                        customColor={RiskColorMap[parseInt(data[indicator])]}
-                        value={(parseInt(data[indicator]) / 5) * 100}
+                        customColor={
+                          RiskColorMap[parseInt(data[indicator]['value'])]
+                        }
+                        value={(parseInt(data[indicator]['value']) / 5) * 100}
                       />
                     </div>
                     <Text variant="heading2xl">
-                      {parseInt(data?.[indicator])}
+                      {parseInt(data?.[indicator]['value'])}
                     </Text>
                     /5
                   </div>
@@ -314,12 +316,14 @@ export function OutputWindow({
                     <div className=" mr-3 basis-2/4">
                       <ProgressBar
                         size="small"
-                        customColor={RiskColorMap[parseInt(data[indicator])]}
-                        value={(parseInt(data[indicator]) / 5) * 100}
+                        customColor={
+                          RiskColorMap[parseInt(data[indicator]['value'])]
+                        }
+                        value={(parseInt(data[indicator]['value']) / 5) * 100}
                       />
                     </div>
                     <Text variant="heading2xl">
-                      {parseInt(data?.[indicator])}
+                      {parseInt(data?.[indicator]['value'])}
                     </Text>
                     /5
                   </div>
@@ -456,9 +460,9 @@ export function OtherFactorScores({
         label={
           indicator === 'risk-score'
             ? getFactorNameBySlug(factorData, scoreType)
-            : deSlugify(scoreType)
+            : data?.[scoreType]['title']
         }
-        value={data?.[scoreType]}
+        value={data?.[scoreType]['value']}
         scoreType={scoreType}
       />
     </div>

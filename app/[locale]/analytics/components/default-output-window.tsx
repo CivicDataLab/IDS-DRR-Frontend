@@ -90,24 +90,21 @@ export function DefaultWindow({
       <>
         <div className="mb-5 flex flex-col">
           <Text variant="headingMd" fontWeight="bold" className=" mt-3">
-            HIGH RISK DISTRICTS
+            {boundary === 'district'
+              ? 'HIGH RISK DISTRICTS'
+              : 'HIGH RISK REVENUE CIRCLES'}
           </Text>
           {chartData && (
             <div className="flex flex-col pt-3">
               {chartData
                 .slice(0, 5)
-                .map(
-                  (
-                    item: { [x: string]: string },
-                    index: React.Key | null | undefined
-                  ): any => (
-                    <DistrictBar
-                      key={index}
-                      district={item[boundary]}
-                      value={item[indicator]}
-                    />
-                  )
-                )}
+                .map((item: any, index: React.Key | null | undefined): any => (
+                  <DistrictBar
+                    key={index}
+                    district={item[boundary]}
+                    value={item[indicator]['value']}
+                  />
+                ))}
             </div>
           )}
           <br />

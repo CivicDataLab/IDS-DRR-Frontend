@@ -51,14 +51,14 @@ export const RevenueCircle = ({
             </Text>
             <ProgressBar
               size="small"
-              customColor={RiskColorMap[parseInt(item?.[indicator])]}
-              value={(parseInt(item?.[indicator]) / 5) * 100}
+              customColor={RiskColorMap[parseInt(item?.[indicator]['value'])]}
+              value={(parseInt(item?.[indicator]['value']) / 5) * 100}
             />
             <Tooltip
               content={
                 <div className="flex flex-col px-2 py-1">
                   <Text variant="headingXl">
-                    {parseInt(item?.[indicator])} / 5{' '}
+                    {parseInt(item?.[indicator]['value'])} / 5{' '}
                   </Text>
                   <Text>HIGH RISK</Text>
                 </div>
@@ -78,9 +78,9 @@ export const RevenueCircle = ({
                     label={
                       indicator === 'risk-score'
                         ? getFactorNameBySlug(factorData, scoreType)
-                        : `${deSlugify(scoreType)}`
+                        : item?.[scoreType]['title']
                     }
-                    value={item?.[scoreType]}
+                    value={item?.[scoreType]['value']}
                     scoreType={scoreType}
                   />
                 )
