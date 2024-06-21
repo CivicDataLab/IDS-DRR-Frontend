@@ -57,12 +57,6 @@ export const ANALYTICS_REVENUE_MAP_DATA = graphql(`
   }
 `);
 
-export const ANALYTICS_FACTORS = graphql(`
-  query factors {
-    getFactors
-  }
-`);
-
 export const ANALYTICS_DISTRICT_MAP_DATA = graphql(`
   query districtMapData(
     $indcFilter: IndicatorFilter!

@@ -26,10 +26,7 @@ import {
 } from 'opub-ui';
 
 import { RiskColorMap } from '@/config/consts';
-import {
-  ANALYTICS_FACTORS,
-  ANALYTICS_TIME_TRENDS,
-} from '@/config/graphql/analaytics-queries';
+import { ANALYTICS_TIME_TRENDS } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { cn, deSlugify, formatDateString } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
@@ -89,19 +86,25 @@ export function OutputWindow({
     }
   );
 
-  const factorData = useQuery(
-    [`factors`],
-    () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_FACTORS
-      ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
+  const factorData: { title: string; slug: string; description: string }[] = [];
+
+  if (indicatorDescriptions) {
+    indicatorDescriptions.map(
+      (item: {
+        name: string;
+        slug: string;
+        long_description?: string;
+        short_description: string;
+      }) => {
+        factorData.push({
+          title: item?.name,
+          slug: item?.slug,
+          description:
+            item?.short_description || item?.long_description || 'NA',
+        });
+      }
+    );
+  }
 
   const districtData = data.filter((item: any) =>
     Object.hasOwnProperty.call(item, 'district')
@@ -409,10 +412,10 @@ export function OutputWindow({
 }
 
 export function getFactorNameBySlug(factorData: any, slug: string) {
-  const factorName = factorData?.data?.getFactors?.filter(
+  const factorName = factorData?.filter(
     (factor: { slug: string }) => factor.slug === slug
   );
-  return factorName[0]?.name;
+  return factorName[0]?.title;
 }
 
 export function OutputWindowHeader({ factorData, indicator }: any) {

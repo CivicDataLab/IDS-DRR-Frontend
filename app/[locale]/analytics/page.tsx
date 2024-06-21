@@ -2,7 +2,6 @@ import React from 'react';
 import { dehydrate, Hydrate } from '@tanstack/react-query';
 
 import {
-  ANALYTICS_FACTORS,
   ANALYTICS_INDICATORS,
   ANALYTICS_TIME_PERIODS,
 } from '@/config/graphql/analaytics-queries';
@@ -22,13 +21,6 @@ export default async function Home({
     GraphQL(
       `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
       ANALYTICS_TIME_PERIODS
-    )
-  );
-
-  await queryClient.prefetchQuery([`factors`], () =>
-    GraphQL(
-      `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
-      ANALYTICS_FACTORS
     )
   );
 
