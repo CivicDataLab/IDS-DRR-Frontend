@@ -12,19 +12,29 @@ import InfoCircle from '@/public/InfoCircle';
 import { useQuery } from '@tanstack/react-query';
 import { Select } from 'opub-ui';
 
-import { ANALYTICS_FACTORS } from '@/config/graphql/analaytics-queries';
+import { ANALYTICS_INDICATORS } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
 import styles from './styles.module.scss';
 
 export function FactorList() {
+  const searchParams = useSearchParams();
+  const indicator = searchParams.get('indicator');
+  const time_period = searchParams.get('time-period') || '2023_08';
+  const boundary = searchParams.get('boundary') || 'district';
+  const region = searchParams.get('region') || '';
+  const [selectedIndicator, setSelectedIndicator] = useState(indicator || '');
+
   const factorData = useQuery(
-    [`factors`],
+    [`indicators_risk-score`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_FACTORS
+        ANALYTICS_INDICATORS,
+        {
+          indcFilter: { slug: 'risk-score' },
+        }
       ),
     {
       refetchOnMount: false,
@@ -32,12 +42,6 @@ export function FactorList() {
       refetchOnReconnect: false,
     }
   );
-  const searchParams = useSearchParams();
-  const indicator = searchParams.get('indicator');
-  const time_period = searchParams.get('time-period') || '2023_08';
-  const boundary = searchParams.get('boundary') || 'district';
-  const region = searchParams.get('region') || '';
-  const [selectedIndicator, setSelectedIndicator] = useState(indicator || '');
 
   useEffect(() => {
     setSelectedIndicator(indicator || '');
@@ -78,7 +82,7 @@ export function FactorList() {
             name="boundary-select"
             labelInline
             options={
-              factorData.data?.getFactors.map((item: any) => ({
+              factorData.data?.indicators.map((item: any) => ({
                 label: (
                   <>
                     <div className=" flex flex-row items-center gap-4 pl-2">
@@ -100,7 +104,7 @@ export function FactorList() {
           )}
         >
           {factorData.isFetched &&
-            factorData.data?.getFactors.map((item: any, index: number) => {
+            factorData.data?.indicators.map((item: any, index: number) => {
               const isActive = item.slug === indicator;
 
               const IconMap: { [key: string]: React.ReactNode } = {

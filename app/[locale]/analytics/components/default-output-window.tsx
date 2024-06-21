@@ -12,8 +12,6 @@ import { useQuery } from '@tanstack/react-query';
 import { Divider, Icon, ProgressBar, Text } from 'opub-ui';
 
 import { RiskColorMap } from '@/config/consts';
-import { ANALYTICS_FACTORS } from '@/config/graphql/analaytics-queries';
-import { GraphQL } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
@@ -45,20 +43,6 @@ export function DefaultWindow({
     );
   }
 
-  const factorData = useQuery(
-    [`factors`],
-    () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_FACTORS
-      ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
-
   return (
     <>
       <MediaRendering minWidth="1024" maxWidth={null}>
@@ -71,7 +55,7 @@ export function DefaultWindow({
             'overflow-y-auto'
           )}
         >
-          <OutputWindowHeader factorData={factorData} indicator={indicator} />
+          <OutputWindowHeader factorData={list} indicator={indicator} />
 
           <Divider className="mt-2" />
           <RenderSidebarContent />

@@ -19,7 +19,6 @@ const documents = {
     "\n  query dataTimePeriods {\n    getDataTimePeriods {\n      value\n    }\n  }\n": types.DataTimePeriodsDocument,
     "\n  query getDistrictRevCircle($geoFilter: GeoFilter!) {\n    getDistrictRevCircle(geoFilter: $geoFilter)\n  }\n": types.GetDistrictRevCircleDocument,
     "\n  query revenueCircleMapData(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n  ) {\n    revCircleMapData(indcFilter: $indcFilter, dataFilter: $dataFilter)\n  }\n": types.RevenueCircleMapDataDocument,
-    "\n  query factors {\n    getFactors\n  }\n": types.FactorsDocument,
     "\n  query districtMapData(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n  ) {\n    districtMapData(indcFilter: $indcFilter, dataFilter: $dataFilter)\n  }\n": types.DistrictMapDataDocument,
     "\n  query getTimeTrends(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n    $geoFilter: GeoFilter!\n  ) {\n    getTimeTrends(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": types.GetTimeTrendsDocument,
 };
@@ -62,10 +61,6 @@ export function graphql(source: "\n  query getDistrictRevCircle($geoFilter: GeoF
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query revenueCircleMapData(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n  ) {\n    revCircleMapData(indcFilter: $indcFilter, dataFilter: $dataFilter)\n  }\n"): (typeof documents)["\n  query revenueCircleMapData(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n  ) {\n    revCircleMapData(indcFilter: $indcFilter, dataFilter: $dataFilter)\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  query factors {\n    getFactors\n  }\n"): (typeof documents)["\n  query factors {\n    getFactors\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
