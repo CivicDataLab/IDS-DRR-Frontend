@@ -152,9 +152,17 @@ export function OutputWindow({
   }
   const [tooltipOpen, setTooltipOpen] = React.useState(false);
 
+  function getDescription(indicatorSlug: string) {
+    const descriptionObject = factorData.find(
+      (desc: { slug: string }) => desc.slug === indicatorSlug
+    );
+    return descriptionObject ? descriptionObject.description : 'NA';
+  }
+
   return (
     <>
       <MediaRendering minWidth="1024" maxWidth={null}>
+        {/* window  */}
         <aside
           className={cn(
             'p-4',
@@ -181,11 +189,7 @@ export function OutputWindow({
               <Tooltip
                 content={
                   <>
-                    <Text>
-                      {indicator === 'government-response'
-                        ? indicatorDescriptions[4].long_description
-                        : indicatorDescriptions[0].long_description}
-                    </Text>
+                    <Text>{getDescription(indicator)}</Text>
                   </>
                 }
                 side="right"
@@ -204,6 +208,7 @@ export function OutputWindow({
                 <Text variant="headingXl" fontWeight="regular">
                   {data[boundary]}
                 </Text>
+
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center">
                     <div className=" mr-3 basis-2/4">
@@ -220,11 +225,14 @@ export function OutputWindow({
                     </Text>
                     /5
                   </div>
+
                   <OtherFactorScores
                     factorData={factorData}
                     data={data}
                     boundary={boundary}
                     indicator={indicator}
+                    indicatorDescription={indicatorDescriptions}
+                    getDescription={getDescription}
                   />
                 </div>
               </div>
@@ -247,6 +255,8 @@ export function OutputWindow({
                       revenueCircleData={revenueCircleData}
                       factorData={factorData}
                       indicator={indicator}
+                      indicatorDescriptions={indicatorDescriptions}
+                      getDescription={getDescription}
                     />
                   </AccordionContent>
                 </div>
@@ -298,13 +308,27 @@ export function OutputWindow({
         </aside>
       </MediaRendering>
       <MediaRendering minWidth={null} maxWidth="1023">
+        {/* MOBILE  */}
         <div className={cn('p-4', 'bg-surfaceDefault')}>
           <div className="flex items-center justify-items-stretch">
-            <div className="mt-4 flex items-center justify-between gap-4">
+            <div className="mt-4 flex items-center justify-between gap-3">
               <Text variant="bodyMd" color="subdued" fontWeight="regular">
                 Cumulative till {formattedTimePeriod}
               </Text>
-              <InfoSquare color="#6A6A6A" />
+
+              <Tooltip
+                content={
+                  <>
+                    <Text>{getDescription(indicator)}</Text>
+                  </>
+                }
+                side="right"
+                defaultOpen={tooltipOpen}
+                open={tooltipOpen}
+                onOpenChange={(isOpen) => setTooltipOpen(isOpen)}
+              >
+                {<InfoSquare color="#6A6A6A" />}
+              </Tooltip>
             </div>
           </div>
 
@@ -314,6 +338,7 @@ export function OutputWindow({
                 <Text variant="headingXl" fontWeight="regular">
                   {data[boundary]}
                 </Text>
+
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center">
                     <div className=" mr-3 basis-2/4">
@@ -335,6 +360,8 @@ export function OutputWindow({
                     data={data}
                     boundary={boundary}
                     indicator={indicator}
+                    indicatorDescription={indicatorDescriptions}
+                    getDescription={getDescription}
                   />
                 </div>
               </div>
@@ -357,6 +384,8 @@ export function OutputWindow({
                       revenueCircleData={revenueCircleData}
                       factorData={factorData}
                       indicator={indicator}
+                      indicatorDescriptions={indicatorDescriptions}
+                      getDescription={getDescription}
                     />
                   </AccordionContent>
                 </div>
@@ -448,6 +477,7 @@ export function OtherFactorScores({
   data,
   boundary,
   indicator,
+  getDescription,
 }: any) {
   const clonedData = structuredClone(data);
   delete clonedData[boundary];
@@ -467,6 +497,7 @@ export function OtherFactorScores({
         }
         value={data?.[scoreType]['value']}
         scoreType={scoreType}
+        indicatorDescription={getDescription(scoreType)}
       />
     </div>
   ));

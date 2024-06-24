@@ -18,7 +18,7 @@ const UpdateFreq = 'Update Frequency';
 const datasetsPageHeader = 'Assam DRR : Datasets';
 const datasetsExplorerPageHeader = 'Assam DRR : Datasets';
 const DatasetsURL = `/datasets`;
-const GithubRepoLink = `https://github.com/CivicDataLab/IDS-DRR-Data-Sources/tree/main/Sources`;
+const GithubRepoLink = `https://github.com/CivicDataLab/flood-data-ecosystem-Assam/tree/main/Sources`;
 
 //analytics page
 const AnalyticsURL = `/analytics/?indicator=risk-score&time-period=2023_08&boundary=district`;
