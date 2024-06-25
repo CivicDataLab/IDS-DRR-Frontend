@@ -2,7 +2,6 @@ import React from 'react';
 import { Inter as FontSans } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import Script from 'next/script';
-import { useWindowSize } from '@/hooks/use-window-size';
 import { NextIntlClientProvider } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
 
@@ -75,9 +74,6 @@ export default async function LocaleLayout({
     notFound();
   }
   unstable_setRequestLocale(locale);
-
-  // const { width } = useWindowSize();
-  // const isDesktop = width >= 1025;
 
   return (
     <html lang={locale}>

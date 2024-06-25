@@ -4,7 +4,16 @@
 
 @import url('opub-ui/dist/assets/styles.css');
 @import url('./tokens/_variables.css');
+@import url('nprogress/nprogress.css');
 
 body {
   background-color: var(--background-solid-subdued);
+}
+
+#nprogress .bar {
+  background: var(--action-primary-success-default) !important;
+}
+
+#nprogress .spinner .spinner-icon {
+  display: none;
 }
