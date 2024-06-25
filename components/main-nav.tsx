@@ -2,12 +2,12 @@
 
 import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useKeyDetect } from '@/hooks/use-key-detect';
 import { MainConfig } from '@/types';
 import { Icon, Text } from 'opub-ui';
 
 import { Icons } from '@/components/icons';
+import NavLink from './nav-link';
 
 export function MainNav({ data }: { data: MainConfig }) {
   const { key, metaKey } = useKeyDetect();
@@ -23,7 +23,7 @@ export function MainNav({ data }: { data: MainConfig }) {
     <header className="shadow-top-bar z-2 bg-backgroundSolidDark px-6 py-3 shadow-elementTopNav sm:py-3">
       <div className="flex flex-wrap items-center justify-center gap-1 sm:justify-between">
         <div className="flex items-center gap-1">
-          <Link href={data.homeUrl}>
+          <NavLink href={data.homeUrl}>
             <div className="flex items-center gap-2">
               <Image
                 src="/logo/IDSLogo.png"
@@ -33,7 +33,7 @@ export function MainNav({ data }: { data: MainConfig }) {
               />
               <div className="flex flex-col gap-1"></div>
             </div>
-          </Link>
+          </NavLink>
         </div>
 
         {data.mainNav.length > 0 && (
@@ -63,7 +63,7 @@ const ExploreLink = ({
   text: string;
 }) => {
   return (
-    <Link href={href}>
+    <NavLink href={href}>
       <div className="hover:bg-surfaceHovered flex gap-1 rounded-1 px-2 py-2 sm:px-3">
         {Icons[icon] && <Icon color="default" source={Icons[icon]} />}
         <Text
@@ -74,6 +74,6 @@ const ExploreLink = ({
           {text}
         </Text>
       </div>
-    </Link>
+    </NavLink>
   );
 };

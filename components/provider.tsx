@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import NextTopLoader from 'nextjs-toploader';
 import { Toaster, Tooltip } from 'opub-ui';
 
-import { RouterEvents } from '@/lib/navigation';
+import { HandleOnComplete } from '@/lib/router-events';
 
 export default function Provider({ children }: { children: React.ReactNode }) {
   const [client] = React.useState(
@@ -15,15 +15,11 @@ export default function Provider({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={client}>
       <React.Fragment>
-        <RouterEvents />
-        <NextTopLoader
-          color="var(--action-primary-success-default)"
-          showSpinner={false}
-        />
         <Tooltip.Provider>
           {children}
           <Toaster />
         </Tooltip.Provider>
+        <HandleOnComplete />
       </React.Fragment>
     </QueryClientProvider>
   );
