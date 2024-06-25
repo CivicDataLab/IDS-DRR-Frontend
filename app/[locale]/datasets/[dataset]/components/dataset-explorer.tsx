@@ -73,7 +73,8 @@ export function Content({ slug }: { slug: string }) {
               title={explorerData?.title || 'NA'}
               description={explorerData?.description || 'NA'}
               source={explorerData?.source || 'NA'}
-              homepage={explorerData?.catalog?.organization?.homepage || '#'}
+              // homepage={explorerData?.catalog?.organization?.homepage || '#'}
+              homepage={explorerData?.contact_point || '#'}
             />
 
             <div className="bg-surface flex items-start gap-3 ">
@@ -127,7 +128,8 @@ export function Content({ slug }: { slug: string }) {
               title={explorerData?.title || 'NA'}
               description={explorerData?.description || 'NA'}
               source={explorerData?.source || 'NA'}
-              homepage={explorerData?.catalog?.organization?.homepage || '#'}
+              // homepage={explorerData?.catalog?.organization?.homepage || '#'}
+              homepage={explorerData?.contact_point || '#'}
             />
           </div>
           <div className="px-3 py-3">

@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { InfoSquare } from '@/public/InfoCircle';
 import {
   Accordion,
   AccordionContent,
@@ -19,12 +20,16 @@ interface RevenueProps {
   factorData: any;
   revenueCircleData: any;
   indicator: string;
+  indicatorDescriptions: any;
+  getDescription: any;
 }
 
 export const RevenueCircle = ({
   factorData,
   revenueCircleData,
   indicator,
+  indicatorDescriptions,
+  getDescription,
 }: RevenueProps) => {
   const clonedRevenueCircleData = structuredClone(revenueCircleData[0]);
   delete clonedRevenueCircleData['revenue circle'];
@@ -82,6 +87,7 @@ export const RevenueCircle = ({
                     }
                     value={item?.[scoreType]['value']}
                     scoreType={scoreType}
+                    indicatorDescription={getDescription(scoreType)}
                   />
                 )
             )}
@@ -97,6 +103,7 @@ interface ScoreProps {
   value: string;
   indicator: string;
   scoreType?: string;
+  indicatorDescription?: string;
 }
 
 export const ScoreInfo = ({
@@ -104,22 +111,31 @@ export const ScoreInfo = ({
   value,
   indicator,
   scoreType,
+  indicatorDescription,
 }: ScoreProps) => {
   const searchParams = useSearchParams();
   const time_period = searchParams.get('time-period') || '2023_08';
   const boundary = searchParams.get('boundary') || 'district';
   const region = searchParams.get('region') || '';
+
   return (
     <div className="mt-2">
       {indicator === 'risk-score' ? (
-        <Link
-          href={`?indicator=${scoreType}&time-period=${time_period}&boundary=${boundary}&region=${region}`}
-        >
-          <Text color="interactive">{label}</Text>
-        </Link>
+        <div className="inline-flex  items-center gap-2">
+          <Link
+            href={`?indicator=${scoreType}&time-period=${time_period}&boundary=${boundary}&region=${region}`}
+          >
+            <Text color="interactive">{label}</Text>
+          </Link>
+          <Tooltip content={indicatorDescription || 'No description available'}>
+            <div>
+              <InfoSquare color="#6A6A6A" />
+            </div>
+          </Tooltip>
+        </div>
       ) : (
         <span>{label}</span>
-      )}
+      )}{' '}
       :{' '}
       {indicator === 'risk-score' ? (
         <strong className="pl-2">{parseInt(value)}/5</strong>

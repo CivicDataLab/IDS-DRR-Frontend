@@ -63,6 +63,7 @@ export const DATASET_BY_SLUG = graphql(`
       id
       title
       description
+      contact_point
       issued
       highlights
       remote_issued

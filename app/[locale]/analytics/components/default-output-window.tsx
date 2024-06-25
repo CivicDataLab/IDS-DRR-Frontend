@@ -92,9 +92,7 @@ export function DefaultWindow({
             </div>
           )}
           <br />
-          {/* <Text variant="headingMd" fontWeight="bold" className="mt-4">
-            LEARN MORE
-          </Text> */}
+
           <div className="mt-2">
             {list.map((indicator, index) => (
               <IndicatorDescription
@@ -105,6 +103,20 @@ export function DefaultWindow({
               />
             ))}
           </div>
+
+          <br />
+          <br />
+          <Link className="flex flex-row items-center gap-2" href={``}>
+            <Icon source={Icons.link} color="interactive" />
+            <Text
+              variant="headingMd"
+              fontWeight="bold"
+              // className="mt-4"
+              color="interactive"
+            >
+              LEARN MORE
+            </Text>
+          </Link>
         </div>
       </>
     );
