@@ -42,7 +42,7 @@ export function TimeTrends({
       data: Object.keys(chartData[indicator]).map((item) =>
         formatDateString(item)
       ),
-      name: 'Date',
+      name: 'Month',
     },
     yAxis: {
       type: 'value',
