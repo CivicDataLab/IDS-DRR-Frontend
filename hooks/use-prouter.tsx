@@ -1,5 +1,6 @@
-import { navigateStart } from '@/lib/navigation';
 import { useRouter } from 'next/navigation';
+
+import { onStart } from '@/lib/router-events/events';
 
 export const usePRouter = () => {
   const router = useRouter();
@@ -7,12 +8,12 @@ export const usePRouter = () => {
   const { push, replace } = router;
 
   router.replace = (href, options) => {
-    navigateStart();
+    onStart();
     replace(href, options);
   };
 
   router.push = (href, options) => {
-    navigateStart();
+    onStart();
     push(href, options);
   };
 

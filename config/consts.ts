@@ -22,6 +22,7 @@ const GithubRepoLink = `https://github.com/CivicDataLab/flood-data-ecosystem-Ass
 
 //analytics page
 const AnalyticsURL = `/analytics/?indicator=risk-score&time-period=2023_08&boundary=district`;
+const learnMoreLink = `https://drive.google.com/file/d/1TerjJtQrWxziKJ1E5BvfvRELtWJWRw2M/view?usp=drive_link`;
 
 //home page
 const AboutText = 'About IDS DRR';
@@ -99,4 +100,5 @@ export {
   OpenContractingPartnershipTextTwo,
   TheRockefellerFoundationTextOne,
   TheRockefellerFoundationTextTwo,
+  learnMoreLink,
 };

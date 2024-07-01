@@ -5,7 +5,7 @@ import { useWindowSize } from '@/hooks/use-window-size';
 import { ShareDialog, useScreenshot } from 'opub-ui';
 import { useMediaQuery } from 'usehooks-ts';
 
-import { navigateEnd } from '@/lib/navigation';
+import { onComplete } from '@/lib/router-events/events';
 
 export const DownloadReport = () => {
   const { width, height } = useWindowSize();
@@ -47,7 +47,7 @@ export const DownloadReport = () => {
         height: isDesktop ? 285 : 175,
       }}
       onOpen={generateImage}
-      onDownload={() => downloadFile(svgURL, 'Chart', () => navigateEnd())}
+      onDownload={() => downloadFile(svgURL, 'Chart', () => onComplete())}
     >
       Download
     </ShareDialog>

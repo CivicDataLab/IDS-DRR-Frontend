@@ -11,8 +11,8 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { Divider, Icon, ProgressBar, Text } from 'opub-ui';
 
-import { RiskColorMap } from '@/config/consts';
-import { cn } from '@/lib/utils';
+import { learnMoreLink, RiskColorMap } from '@/config/consts';
+import { cn, handleRedirect } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import { OutputWindowHeader } from './output-window';
@@ -106,7 +106,11 @@ export function DefaultWindow({
 
           <br />
           <br />
-          <Link className="flex flex-row items-center gap-2" href={``}>
+          <a
+            className="flex flex-row items-center gap-2"
+            href={learnMoreLink}
+            onClick={(event: any) => handleRedirect(event, learnMoreLink)}
+          >
             <Icon source={Icons.link} color="interactive" />
             <Text
               variant="headingMd"
@@ -116,7 +120,7 @@ export function DefaultWindow({
             >
               LEARN MORE
             </Text>
-          </Link>
+          </a>
         </div>
       </>
     );
