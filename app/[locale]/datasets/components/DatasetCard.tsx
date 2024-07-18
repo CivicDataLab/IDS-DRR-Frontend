@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { Button, Tag, Text } from 'opub-ui';
 
 import { DatasetSource, LastUpdated, UpdateFreq } from '@/config/consts';
 import { formatDate } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
+import NavLink from '@/components/nav-link';
 
 export interface DataProps {
   keyIndex: number;
@@ -44,7 +44,7 @@ export const DatasetCard = ({
         >
           <div className="flex flex-wrap items-start gap-6  ">
             <div className="flex flex-col items-start gap-3 ">
-              <Link href={`/datasets/${slug}`}>
+              <NavLink href={`/datasets/${slug}`}>
                 <Text
                   className=" text-textSubdued "
                   variant="headingLg"
@@ -93,11 +93,11 @@ export const DatasetCard = ({
                     </span>
                   </span>
                 </div>
-              </Link>
+              </NavLink>
             </div>
 
             <div className="flex w-[280px] flex-col">
-              <Link href={`/datasets/${slug}`}>
+              <NavLink href={`/datasets/${slug}`}>
                 <Text
                   className={showMore ? '' : 'line-clamp-3'}
                   variant="bodyMd"
@@ -106,7 +106,7 @@ export const DatasetCard = ({
                 >
                   {description}
                 </Text>
-              </Link>
+              </NavLink>
               {!showMore && (
                 <Button
                   className="self-start p-2"
@@ -135,7 +135,7 @@ export const DatasetCard = ({
       </MediaRendering>
       <MediaRendering minWidth="1024" maxWidth={null}>
         {/* WINDOW  */}
-        <Link href={`/datasets/${slug}`}>
+        <NavLink href={`/datasets/${slug}`}>
           <div
             key={keyIndex}
             className="rounded-1 bg-surfaceDefault p-6 shadow-elementCard "
@@ -210,7 +210,7 @@ export const DatasetCard = ({
               </div>
             </div>
           </div>
-        </Link>
+        </NavLink>
       </MediaRendering>
     </>
   );

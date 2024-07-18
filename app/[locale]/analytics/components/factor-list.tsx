@@ -13,6 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Select } from 'opub-ui';
 
 import { ANALYTICS_INDICATORS } from '@/config/graphql/analaytics-queries';
+import { deployment, serverUrl } from '@/config/site';
 import { GraphQL } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
@@ -30,7 +31,7 @@ export function FactorList() {
     [`indicators_risk-score`],
     () =>
       GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        `${serverUrl['data-management-url']}/graphql`,
         ANALYTICS_INDICATORS,
         {
           indcFilter: { slug: 'risk-score' },

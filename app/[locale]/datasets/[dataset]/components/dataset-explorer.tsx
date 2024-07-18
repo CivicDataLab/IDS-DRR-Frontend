@@ -14,6 +14,7 @@ import {
 
 import { datasetsExplorerPageHeader } from '@/config/consts';
 import { DATASET_BY_SLUG } from '@/config/graphql/dataset-queries';
+import { deployment, serverUrl } from '@/config/site';
 import { GraphQL } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
@@ -23,7 +24,7 @@ import { MetadataCard } from './MetadataCard';
 
 export function Content({ slug }: { slug: string }) {
   const { data } = useQuery([`dataset_by_slug_${slug}`], () =>
-    GraphQL(`${process.env.NEXT_PUBLIC_BACKEND_URL}/graphql`, DATASET_BY_SLUG, {
+    GraphQL(`${serverUrl['backend-url']}/graphql`, DATASET_BY_SLUG, {
       dataset_slug: slug,
     })
   );

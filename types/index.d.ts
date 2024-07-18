@@ -7,18 +7,19 @@ export type SiteConfig = {
   ogImage?: string;
 };
 
-export type MainConfig = {} & (
-  | {
-      homeUrl: string;
-      mainNav: MainNavItem[];
-      sidebarNav: SidebarNavItem[];
-    }
-  | {
-      homeUrl: string;
-      mainNav: [];
-      sidebarNav: SidebarNavItem[];
-    }
-);
+export type MainConfig = {
+  [key: string]: MainConfigItem;
+};
+
+export type ServerUrlConfig = {
+  'backend-url': string;
+  'data-management-url': string;
+};
+
+export type MainConfigItem = {} & {
+  homeUrl: string;
+  mainNav: MainNavItem[];
+};
 
 export type MainNavItem = {
   title?: string;

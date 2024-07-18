@@ -16,6 +16,7 @@ import {
   ANALYTICS_GEOGRAPHY_DATA,
   ANALYTICS_REVENUE_MAP_DATA,
 } from '@/config/graphql/analaytics-queries';
+import { deployment, serverUrl } from '@/config/site';
 import { GraphQL } from '@/lib/api';
 import { cn, copyCurrentURL } from '@/lib/utils';
 import Icons from '@/components/icons';
@@ -73,14 +74,10 @@ export function AnalyticsMobileLayout({
   const mapData = useQuery(
     [`mapQuery_${boundary}_${indicator}_${timePeriod}`],
     () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        mapQuery,
-        {
-          indcFilter: { slug: indicator },
-          dataFilter: { dataPeriod: timePeriod },
-        }
-      ),
+      GraphQL(`${serverUrl['data-management-url']}/graphql`, mapQuery, {
+        indcFilter: { slug: indicator },
+        dataFilter: { dataPeriod: timePeriod },
+      }),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -92,7 +89,7 @@ export function AnalyticsMobileLayout({
     [`geographies_data_${boundary}`],
     () =>
       GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        `${serverUrl['data-management-url']}/graphql`,
         ANALYTICS_GEOGRAPHY_DATA,
         {
           geoFilter: { type: boundary },

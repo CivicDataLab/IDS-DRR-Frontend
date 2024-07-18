@@ -5,6 +5,7 @@ import {
   ANALYTICS_INDICATORS,
   ANALYTICS_TIME_PERIODS,
 } from '@/config/graphql/analaytics-queries';
+import { deployment, serverUrl } from '@/config/site';
 import { getQueryClient, GraphQL } from '@/lib/api';
 import { MediaRendering } from '@/components/media-rendering';
 import { Content } from './components/analytics-layout';
@@ -19,7 +20,7 @@ export default async function Home({
 
   await queryClient.prefetchQuery([`timePeriods`], () =>
     GraphQL(
-      `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
+      `${serverUrl['data-management-url']}/graphql`,
       ANALYTICS_TIME_PERIODS
     )
   );
@@ -28,9 +29,11 @@ export default async function Home({
     [`indicators_${searchParams?.['indicator']}`],
     () =>
       GraphQL(
-        `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        `${serverUrl['data-management-url']}/graphql`,
         ANALYTICS_INDICATORS,
-        { indcFilter: { slug: searchParams?.['indicator'] } }
+        {
+          indcFilter: { slug: searchParams?.['indicator'] },
+        }
       )
   );
 

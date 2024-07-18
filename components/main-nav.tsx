@@ -3,13 +3,13 @@
 import React from 'react';
 import Image from 'next/image';
 import { useKeyDetect } from '@/hooks/use-key-detect';
-import { MainConfig } from '@/types';
+import {  MainConfigItem } from '@/types';
 import { Icon, Text } from 'opub-ui';
 
 import { Icons } from '@/components/icons';
 import NavLink from './nav-link';
 
-export function MainNav({ data }: { data: MainConfig }) {
+export function MainNav({ data }: { data: MainConfigItem }) {
   const { key, metaKey } = useKeyDetect();
   const searchRef = React.useRef<HTMLInputElement>(null);
 

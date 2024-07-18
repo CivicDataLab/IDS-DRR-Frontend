@@ -4,13 +4,13 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useKeyDetect } from '@/hooks/use-key-detect';
-import { MainConfig } from '@/types';
+import { MainConfigItem } from '@/types';
 import { Button, Icon, IconButton, Text } from 'opub-ui';
 
 import { handleRedirect } from '@/lib/utils';
 import { Icons } from '@/components/icons';
 
-export function MobileNav({ data }: { data: MainConfig }) {
+export function MobileNav({ data }: { data: MainConfigItem }) {
   const [open, setOpen] = React.useState(false);
   const toggleMenu = () => {
     setOpen((prevState) => !prevState);

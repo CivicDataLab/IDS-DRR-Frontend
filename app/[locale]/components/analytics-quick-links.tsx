@@ -3,7 +3,9 @@ import Link from 'next/link';
 import { Button, Text } from 'opub-ui';
 
 import { AnalyticsQuickLinksText, AnalyticsURL } from '@/config/consts';
+import { deployment } from '@/config/site';
 import { MediaRendering } from '@/components/media-rendering';
+import NavLink from '@/components/nav-link';
 
 export const QuickLinks = () => {
   return (
@@ -18,13 +20,24 @@ export const QuickLinks = () => {
             <Text variant="bodyLg" fontWeight="regular" color="default">
               {AnalyticsQuickLinksText}
             </Text>
-            <Link href={AnalyticsURL}>
-              <Button className=" bg-[#71E57D]" variant="success" size="large">
-                <Text variant="bodyLg" fontWeight="bold" color="default">
-                  Explore More
-                </Text>
-              </Button>
-            </Link>
+            {deployment === 'hp' && (
+              <Text variant="headingLg" fontWeight="bold" color="default">
+                Coming Soon
+              </Text>
+            )}
+            {deployment === 'as' && (
+              <NavLink href={AnalyticsURL}>
+                <Button
+                  className=" bg-[#71E57D]"
+                  variant="success"
+                  size="large"
+                >
+                  <Text variant="bodyLg" fontWeight="bold" color="default">
+                    Explore More
+                  </Text>
+                </Button>
+              </NavLink>
+            )}
           </div>
           <div className=" m-auto  hidden basis-2/6 items-center md:flex">
             <Image

@@ -17,6 +17,7 @@ import {
   ANALYTICS_GEOGRAPHY_DATA,
   ANALYTICS_TIME_PERIODS,
 } from '@/config/graphql/analaytics-queries';
+import { deployment, serverUrl } from '@/config/site';
 import { GraphQL } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
 import Icons from '@/components/icons';
@@ -75,7 +76,7 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
     [`geographies_data_${boundarySelected}`],
     () =>
       GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        `${serverUrl['data-management-url']}/graphql`,
         ANALYTICS_GEOGRAPHY_DATA,
         {
           geoFilter: { type: boundarySelected },
@@ -92,7 +93,7 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
     [`timePeriods`],
     () =>
       GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        `${serverUrl['data-management-url']}/graphql`,
         ANALYTICS_TIME_PERIODS
       ),
     {

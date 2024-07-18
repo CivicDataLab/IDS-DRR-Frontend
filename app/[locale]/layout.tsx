@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
 
-import { mainConfig, siteConfig } from '@/config/site';
+import { deployment, mainConfig, siteConfig } from '@/config/site';
 import { MainNav } from '@/components/main-nav';
 import { MediaRendering } from '@/components/media-rendering';
 import { MobileNav } from '@/components/mobile-nav';
@@ -80,10 +80,10 @@ export default async function LocaleLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Provider>
             <MediaRendering minWidth={null} maxWidth="1023">
-              <MobileNav data={mainConfig} />
+              <MobileNav data={mainConfig[deployment]} />
             </MediaRendering>
             <MediaRendering minWidth="1024" maxWidth={null}>
-              <MainNav data={mainConfig} />
+              <MainNav data={mainConfig[deployment]} />
             </MediaRendering>
 
             {children}

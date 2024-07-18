@@ -17,6 +17,7 @@ import {
   ANALYTICS_REVENUE_MAP_DATA,
   ANALYTICS_TIME_PERIODS,
 } from '@/config/graphql/analaytics-queries';
+import { deployment, serverUrl } from '@/config/site';
 import { GraphQL } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
 import { MapComponent } from './map-component';
@@ -60,14 +61,10 @@ export function Content({
   const mapData = useQuery(
     [`mapQuery_${boundary}_${indicator}_${timePeriodSelected}`],
     () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        mapQuery,
-        {
-          indcFilter: { slug: indicator },
-          dataFilter: { dataPeriod: timePeriodSelected },
-        }
-      ),
+      GraphQL(`${serverUrl['data-management-url']}/graphql`, mapQuery, {
+        indcFilter: { slug: indicator },
+        dataFilter: { dataPeriod: timePeriodSelected },
+      }),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -79,7 +76,7 @@ export function Content({
     [`geographies_data_${boundary}`],
     () =>
       GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        `${serverUrl['data-management-url']}/graphql`,
         ANALYTICS_GEOGRAPHY_DATA,
         {
           geoFilter: { type: boundary },
@@ -96,7 +93,7 @@ export function Content({
     [`timePeriods`],
     () =>
       GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        `${serverUrl['data-management-url']}/graphql`,
         ANALYTICS_TIME_PERIODS
       ),
     {

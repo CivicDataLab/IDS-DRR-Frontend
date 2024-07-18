@@ -27,6 +27,7 @@ import {
 
 import { RiskColorMap } from '@/config/consts';
 import { ANALYTICS_TIME_TRENDS } from '@/config/graphql/analaytics-queries';
+import { deployment, serverUrl } from '@/config/site';
 import { GraphQL } from '@/lib/api';
 import { cn, deSlugify, formatDateString } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
@@ -71,7 +72,7 @@ export function OutputWindow({
     [`chartData_${boundary}_${indicator}_${timePeriod}_${region}_${period}`],
     () =>
       GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        `${serverUrl['data-management-url']}/graphql`,
         ANALYTICS_TIME_TRENDS,
         {
           indcFilter: { slug: indicator },

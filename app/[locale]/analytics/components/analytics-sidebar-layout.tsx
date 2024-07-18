@@ -10,6 +10,7 @@ import {
   ANALYTICS_INDICATORS,
   ANALYTICS_REVENUE_TABLE_DATA,
 } from '@/config/graphql/analaytics-queries';
+import { deployment, serverUrl } from '@/config/site';
 import { GraphQL } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { DefaultWindow } from './default-output-window';
@@ -21,6 +22,8 @@ interface DashboardLayoutProps {
 }
 
 export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
+  console.log('Server url', serverUrl);
+
   const [isClient, setIsClient] = React.useState(false);
 
   React.useEffect(() => {
@@ -73,15 +76,11 @@ export function OutputWindowComponent() {
       `sidePaneData_${indicator}_${region?.split(',')}_${boundary}_${time_period}`,
     ],
     () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        sidePaneQuery,
-        {
-          indcFilter: { slug: indicator },
-          dataFilter: { dataPeriod: time_period },
-          ...(region && { geoFilter: { code: region?.split(',') } }),
-        }
-      ),
+      GraphQL(`${serverUrl['data-management-url']}/graphql`, sidePaneQuery, {
+        indcFilter: { slug: indicator },
+        dataFilter: { dataPeriod: time_period },
+        ...(region && { geoFilter: { code: region?.split(',') } }),
+      }),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -93,7 +92,7 @@ export function OutputWindowComponent() {
     [`indicators_${indicator}`],
     () =>
       GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        `${serverUrl['data-management-url']}/graphql`,
         ANALYTICS_INDICATORS,
         {
           indcFilter: { slug: indicator },
