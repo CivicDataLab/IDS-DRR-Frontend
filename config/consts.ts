@@ -1,3 +1,5 @@
+import { deployment } from './site';
+
 const platformName = 'Intelligent Data Solution';
 
 //General
@@ -37,8 +39,7 @@ const AboutTextContentThree = 'We have a 3-pronged approach: ';
 const HeroSectionText =
   'Discover insights, assess risks and build disaster resilience for data-driven disaster risk reduction (DRR)';
 
-const AnalyticsQuickLinksText =
-  'Gain insights from the IDS-DRR data model to compare and identify risk profiles of revenue circles and districts in Assam.';
+const AnalyticsQuickLinksText = `Gain insights from the IDS-DRR data model to compare and identify risk profiles of revenue circles and districts in Himachal Pradesh.`;
 
 const YouTubeLink = 'https://www.youtube.com/watch?v=gTqcyUQ7esg';
 
