@@ -8,6 +8,7 @@ import { useQueryState } from 'next-usequerystate';
 import { Button, SearchInput, Select, Text, TextField } from 'opub-ui';
 
 import { datasetsPageHeader } from '@/config/consts';
+import environment from '@/config/environment';
 import { MediaRendering } from '@/components/media-rendering';
 import { DatasetCard } from './DatasetCard';
 import { FilterBox } from './FilterBox';
@@ -70,7 +71,9 @@ export function Content({
         {/* window */}
         <div className="container mb-6 grid gap-4">
           <div className="mt-6 pl-5">
-            <Text variant="heading2xl">{datasetsPageHeader}</Text>
+            <Text variant="heading2xl">
+              {environment.STATE_NAME} {datasetsPageHeader}
+            </Text>
           </div>
 
           <div className=" container  ">

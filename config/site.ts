@@ -32,11 +32,6 @@ export const backendUrl = {
   datasets: process.env.BACKEND_URL,
 };
 
-export const elasticSearchParams: { [key: string]: string } = {
-  as: 'facets/?from=0&size=10&sort=desc&sort_by=relevance&q=Assam',
-  hp: 'facets/?from=0&size=10&sort=desc&sort_by=relevance&q=Himachal Pradesh',
-};
-
 export const navbarConfig = {
   homeUrl: '/',
   links: [
@@ -51,62 +46,4 @@ export const navbarConfig = {
       icon: 'scheme',
     },
   ],
-};
-
-export const mainConfig: MainConfig = {
-  as: {
-    homeUrl: '/',
-    mainNav: [
-      {
-        title: 'Home',
-        href: '/',
-      },
-      {
-        title: 'Analytics',
-        href: AnalyticsURL,
-      },
-      {
-        title: 'Datasets',
-        href: DatasetsURL,
-      },
-      {
-        title: 'About us',
-        href: AboutUsURL,
-      },
-    ],
-  },
-  od: {
-    homeUrl: '/',
-    mainNav: [
-      {
-        title: 'Home',
-        href: '/',
-      },
-      {
-        title: 'Datasets',
-        href: DatasetsURL,
-      },
-      {
-        title: 'About us',
-        href: AboutUsURL,
-      },
-    ],
-  },
-  hp: {
-    homeUrl: '/',
-    mainNav: [
-      {
-        title: 'Home',
-        href: '/',
-      },
-      {
-        title: 'Datasets',
-        href: DatasetsURL,
-      },
-      {
-        title: 'About us',
-        href: AboutUsURL,
-      },
-    ],
-  },
 };

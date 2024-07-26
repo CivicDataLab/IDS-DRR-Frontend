@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { Text } from 'opub-ui';
 
 import { HeroSectionText } from '@/config/consts';
-import { deployment } from '@/config/site';
+import environment from '@/config/environment';
 import { cn } from '@/lib/utils';
 import styles from './styles.module.scss';
 
@@ -29,10 +29,10 @@ export const HeroSection = () => {
     <section className={cn(styles.HeroSection)}>
       <div className=" flex w-full flex-wrap items-center justify-center gap-6 bg-baseGraySlateSolid12 bg-opacity-20 p-4">
         <Image
-          src={ImageMap[deployment]['image']}
+          src={environment.HERO_IMAGE.path}
           width={500}
           height={104}
-          alt={ImageMap[deployment]['altText']}
+          alt={environment.HERO_IMAGE.altText}
         />
 
         <Text

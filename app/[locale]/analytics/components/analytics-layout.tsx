@@ -11,16 +11,29 @@ import {
 } from 'next-usequerystate';
 import { Combobox, MonthPicker, Select } from 'opub-ui';
 
+import environment from '@/config/environment';
 import {
   ANALYTICS_DISTRICT_MAP_DATA,
   ANALYTICS_GEOGRAPHY_DATA,
   ANALYTICS_REVENUE_MAP_DATA,
   ANALYTICS_TIME_PERIODS,
 } from '@/config/graphql/analaytics-queries';
-import { deployment, serverUrl } from '@/config/site';
+import { serverUrl } from '@/config/site';
 import { GraphQL } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
 import { MapComponent } from './map-component';
+
+export type RevenueCircleData =
+  | {
+      'revenue-circle': string;
+      code: string;
+    }
+  | {
+      'sub-district': string;
+      code: string;
+    };
+
+export const REVENUE_CIRCLE_TYPES = ['revenue-circle', 'sub-district'];
 
 export function Content({
   timePeriod,
@@ -64,6 +77,7 @@ export function Content({
       GraphQL(`${serverUrl['data-management-url']}/graphql`, mapQuery, {
         indcFilter: { slug: indicator },
         dataFilter: { dataPeriod: timePeriodSelected },
+        geoFilter: { code: environment.STATE_CODE },
       }),
     {
       refetchOnMount: false,
@@ -79,7 +93,7 @@ export function Content({
         `${serverUrl['data-management-url']}/graphql`,
         ANALYTICS_GEOGRAPHY_DATA,
         {
-          geoFilter: { type: boundary },
+          geoFilter: { type: boundary, code: [environment.STATE_CODE] },
         }
       ),
     {
@@ -122,20 +136,26 @@ export function Content({
   let DistrictDropDownOption: Option[] = [];
 
   if (geographiesData.data && !geographiesData.isFetching) {
-    if (boundary === 'revenue-circle') {
+    if (REVENUE_CIRCLE_TYPES.includes(boundary)) {
       let rawData = geographiesData?.data?.getDistrictRevCircle;
       if (rawData) {
         for (const district in rawData) {
           const revenueCircles = rawData[district];
-          revenueCircles.forEach(
-            (circle: { 'revenue-circle': string; code: string }) => {
+          revenueCircles.forEach((circle: RevenueCircleData) => {
+            if ('revenue-circle' in circle) {
               RevCircleDropdownOptions.push({
                 label: circle['revenue-circle'],
                 value: circle.code,
                 type: district,
               });
+            } else if ('sub-district' in circle) {
+              RevCircleDropdownOptions.push({
+                label: circle['sub-district'],
+                value: circle.code,
+                type: district,
+              });
             }
-          );
+          });
         }
       }
     } else {
@@ -155,7 +175,7 @@ export function Content({
       region &&
       region.length > 0 &&
       geographiesData.data &&
-      boundary === 'revenue-circle'
+      REVENUE_CIRCLE_TYPES.includes(boundary)
     ) {
       const filteredItems = RevCircleDropdownOptions.filter((item) =>
         region.includes(item.value)
@@ -192,7 +212,7 @@ export function Content({
   const getRevenueOptions = () => {
     const updatedRevenueDropDownOption = RevCircleDropdownOptions.map(
       (item: any) => {
-        if (region?.length === 4 && boundary === 'revenue-circle') {
+        if (region?.length === 4 && REVENUE_CIRCLE_TYPES.includes(boundary)) {
           return { ...item, disabled: true };
         }
 
@@ -203,7 +223,7 @@ export function Content({
   };
 
   const filterOpt = (boundary: string) => {
-    if (boundary === 'revenue-circle') {
+    if (REVENUE_CIRCLE_TYPES.includes(boundary)) {
       RevCircleDropdownOptions.forEach((item: any) => {
         if (
           !selectedGroup.includes(item?.type || '') &&
@@ -246,11 +266,12 @@ export function Content({
           options={[
             {
               label: 'Revenue Circle',
-              value: 'revenue-circle',
+              value: environment.REVENUE_CIRCLE_TYPE,
             },
             {
               label: 'District',
               value: 'district',
+              disabled: true,
             },
           ]}
         />
@@ -264,7 +285,7 @@ export function Content({
             placeholder={`Enter ${boundary === 'district' ? 'District' : 'Revenue Circle'} name...`}
             label="Select one or more region"
             list={
-              boundary === 'revenue-circle'
+              REVENUE_CIRCLE_TYPES.includes(boundary)
                 ? getRevenueOptions()
                 : getDistrictOptions()
             }
@@ -278,7 +299,7 @@ export function Content({
               You can select upto 4 districts only
             </div>
           )}
-          {boundary === 'revenue-circle' && (
+          {REVENUE_CIRCLE_TYPES.includes(boundary) && (
             <div style={{ fontSize: 'small', color: 'grey' }}>
               You can select upto 4 revenue circles only
             </div>

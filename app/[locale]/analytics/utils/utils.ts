@@ -1,22 +1,32 @@
+import {
+  REVENUE_CIRCLE_TYPES,
+  RevenueCircleData,
+} from '../components/analytics-layout';
+
 export const constructRegionOptions = (
   boundary: string,
   geographiesData: any
 ) => {
   let RevCircleDropdownOptions: { label: string; value: string }[] = [];
   let DistrictDropDownOption: { label: string; value: string }[] = [];
-  if (boundary === 'revenue-circle') {
+  if (REVENUE_CIRCLE_TYPES.includes(boundary)) {
     let rawData = geographiesData?.data?.getDistrictRevCircle;
     if (rawData) {
       for (const district in rawData) {
         const revenueCircles = rawData[district];
-        revenueCircles.forEach(
-          (circle: { 'revenue-circle': string; code: string }) => {
+        revenueCircles.forEach((circle: RevenueCircleData) => {
+          if ('revenue-circle' in circle) {
             RevCircleDropdownOptions.push({
               label: circle['revenue-circle'],
               value: circle.code,
             });
+          } else if ('sub-district' in circle) {
+            RevCircleDropdownOptions.push({
+              label: circle['sub-district'],
+              value: circle.code,
+            });
           }
-        );
+        });
       }
     }
     return RevCircleDropdownOptions;

@@ -13,6 +13,7 @@ import {
   YearCalendar,
 } from 'opub-ui';
 
+import environment from '@/config/environment';
 import {
   ANALYTICS_GEOGRAPHY_DATA,
   ANALYTICS_TIME_PERIODS,
@@ -26,6 +27,7 @@ import {
   MobileFilterContent,
 } from '@/components/MobileFilterBox';
 import { constructRegionOptions } from '../utils/utils';
+import { REVENUE_CIRCLE_TYPES, RevenueCircleData } from './analytics-layout';
 
 export function FilterComp({ timePeriod }: { timePeriod: string }) {
   interface Option {
@@ -79,7 +81,7 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
         `${serverUrl['data-management-url']}/graphql`,
         ANALYTICS_GEOGRAPHY_DATA,
         {
-          geoFilter: { type: boundarySelected },
+          geoFilter: { type: boundarySelected, code: [environment.STATE_CODE] },
         }
       ),
     {
@@ -108,7 +110,7 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
       boundarySelected,
       geographiesData
     );
-    if (boundarySelected === 'revenue-circle' && geographiesData.data) {
+    if (REVENUE_CIRCLE_TYPES.includes(boundary) && geographiesData.data) {
       const rawData = geographiesData?.data?.getDistrictRevCircle;
       const formattedOptions = [];
       for (const district in rawData) {
@@ -117,15 +119,21 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
           value: district,
           type: 'group',
         });
-        rawData[district].forEach(
-          (circle: { 'revenue-circle': string; code: string }) => {
+        rawData[district].forEach((circle: RevenueCircleData) => {
+          if ('revenue-circle' in circle) {
             formattedOptions.push({
               label: circle['revenue-circle'],
               value: circle.code,
               type: 'item',
             });
+          } else if ('sub-district' in circle) {
+            formattedOptions.push({
+              label: circle['sub-district'],
+              value: circle.code,
+              type: 'item',
+            });
           }
-        );
+        });
       }
       return formattedOptions;
     }

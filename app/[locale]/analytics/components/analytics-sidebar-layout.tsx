@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { Spinner, Text } from 'opub-ui';
 
+import environment from '@/config/environment';
 import {
   ANALYTICS_DISTRICT_DATA,
   ANALYTICS_INDICATORS,
@@ -22,8 +23,6 @@ interface DashboardLayoutProps {
 }
 
 export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
-  console.log('Server url', serverUrl);
-
   const [isClient, setIsClient] = React.useState(false);
 
   React.useEffect(() => {
@@ -79,7 +78,12 @@ export function OutputWindowComponent() {
       GraphQL(`${serverUrl['data-management-url']}/graphql`, sidePaneQuery, {
         indcFilter: { slug: indicator },
         dataFilter: { dataPeriod: time_period },
-        ...(region && { geoFilter: { code: region?.split(',') } }),
+        geoFilter: {
+          ...(region && {
+            code: region?.split(','),
+          }),
+          stateCode: [environment.STATE_CODE],
+        },
       }),
     {
       refetchOnMount: false,

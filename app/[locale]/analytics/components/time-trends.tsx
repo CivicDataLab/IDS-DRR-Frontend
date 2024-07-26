@@ -35,8 +35,6 @@ export function TimeTrends({
   indicator: string;
   boundary: string;
 }) {
-  let boundaryVal = boundary === 'district' ? 'district' : 'revenue circle';
-
   let lineOptions: LineOptions = {
     xAxis: {
       data: Object.keys(chartData[indicator]).map((item) =>
@@ -60,8 +58,8 @@ export function TimeTrends({
   let boundaryNames: any = [];
   Object.values(chartData[indicator]).forEach((item: any) => {
     item.forEach((d: any) => {
-      if (!boundaryNames.includes(d[boundaryVal])) {
-        boundaryNames.push(d[boundaryVal]);
+      if (!boundaryNames.includes(d[boundary])) {
+        boundaryNames.push(d[boundary]);
       }
     });
   });
@@ -79,10 +77,10 @@ export function TimeTrends({
   ];
 
   // Create series for each district
-  boundaryNames.forEach((boundary: any, index: any) => {
+  boundaryNames.forEach((name: any, index: any) => {
     let seriesData = Object.keys(chartData[indicator]).map((key: any) => {
       let value = chartData[indicator][key].find(
-        (item: any) => item[boundaryVal] === boundary
+        (item: any) => item[boundary] === name
       );
       return value ? value[indicator] : 0;
     });

@@ -13,6 +13,7 @@ import {
 } from 'opub-ui';
 
 import { RiskColorMap } from '@/config/consts';
+import environment from '@/config/environment';
 import { deSlugify } from '@/lib/utils';
 import { getFactorNameBySlug } from './output-window';
 
@@ -32,8 +33,8 @@ export const RevenueCircle = ({
   getDescription,
 }: RevenueProps) => {
   const clonedRevenueCircleData = structuredClone(revenueCircleData[0]);
-  delete clonedRevenueCircleData['revenue circle'];
-  delete clonedRevenueCircleData['revenue-circle-code'];
+  delete clonedRevenueCircleData[environment.STATE_CODE];
+  delete clonedRevenueCircleData[`${environment.STATE_CODE}-code`];
   delete clonedRevenueCircleData[indicator];
 
   const FactorVariables = Object.keys(clonedRevenueCircleData);
@@ -52,7 +53,7 @@ export const RevenueCircle = ({
               fontWeight="regular"
               className=" basis-4/6"
             >
-              {item?.['revenue circle']}
+              {item?.[environment.STATE_CODE]}
             </Text>
             <ProgressBar
               size="small"

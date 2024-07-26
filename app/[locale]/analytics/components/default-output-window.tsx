@@ -70,6 +70,14 @@ export function DefaultWindow({
   );
 
   function RenderSidebarContent() {
+    if (!chartData.length) {
+      return (
+        <div className="flex min-w-[500px] flex-col place-content-center items-center border-solid border-borderSubdued bg-surfaceDefault">
+          <Text className="text-center">No Data Found</Text>
+        </div>
+      );
+    }
+
     return (
       <>
         <div className="mb-5 flex flex-col">

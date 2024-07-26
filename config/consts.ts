@@ -17,7 +17,7 @@ const RiskColorMap: {
 const DatasetSource = 'Source';
 const LastUpdated = 'Last Updated';
 const UpdateFreq = 'Update Frequency';
-const datasetsPageHeader = 'Assam DRR : Datasets';
+const datasetsPageHeader = 'DRR : Datasets';
 const datasetsExplorerPageHeader = 'Assam DRR : Datasets';
 const DatasetsURL = `/datasets`;
 const GithubRepoLink = `https://github.com/CivicDataLab/flood-data-ecosystem-Assam/tree/main/Sources`;
@@ -39,7 +39,7 @@ const AboutTextContentThree = 'We have a 3-pronged approach: ';
 const HeroSectionText =
   'Discover insights, assess risks and build disaster resilience for data-driven disaster risk reduction (DRR)';
 
-const AnalyticsQuickLinksText = `Gain insights from the IDS-DRR data model to compare and identify risk profiles of revenue circles and districts in Himachal Pradesh.`;
+const AnalyticsQuickLinksText = `Gain insights from the IDS-DRR data model to compare and identify risk profiles of revenue circles and districts in`;
 
 const YouTubeLink = 'https://www.youtube.com/watch?v=gTqcyUQ7esg';
 

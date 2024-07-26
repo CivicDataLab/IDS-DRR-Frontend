@@ -26,6 +26,7 @@ import {
 } from 'opub-ui';
 
 import { RiskColorMap } from '@/config/consts';
+import environment from '@/config/environment';
 import { ANALYTICS_TIME_TRENDS } from '@/config/graphql/analaytics-queries';
 import { deployment, serverUrl } from '@/config/site';
 import { GraphQL } from '@/lib/api';
@@ -77,7 +78,10 @@ export function OutputWindow({
         {
           indcFilter: { slug: indicator },
           dataFilter: { dataPeriod: timePeriod, period: period },
-          geoFilter: { code: region?.split(',') },
+          geoFilter: {
+            code: region?.split(','),
+            stateCode: [environment.STATE_CODE],
+          },
         }
       ),
     {
@@ -112,19 +116,20 @@ export function OutputWindow({
   );
   // To filter out revenue circles from the district data boundary
   const revenueCircleData = data.filter((item: any) =>
-    Object.hasOwnProperty.call(item, 'revenue circle')
+    Object.hasOwnProperty.call(item, 'revenue-circle')
   );
 
   const GeographyMap: { [key: string]: string } = {
     district: 'District',
     'revenue-circle': 'Revenue Circle',
+    'sub-district': 'Sub District',
   };
 
   const DataBasedOnBoundary = boundary === 'district' ? districtData : data;
   const RegionName =
     boundary === 'district'
       ? districtData[0]?.district
-      : data[0]?.['revenue-circle'];
+      : data[0]?.[environment.REVENUE_CIRCLE_TYPE];
 
   const title = 'IDS DRR';
   const [svgURL, setSvgURL] = React.useState<string>('');

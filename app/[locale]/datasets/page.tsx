@@ -2,7 +2,8 @@ import React from 'react';
 import { Datasets, FilterProps } from '@/types';
 import { Spinner, Text } from 'opub-ui';
 
-import { deployment, elasticSearchParams, serverUrl } from '@/config/site';
+import environment from '@/config/environment';
+import { serverUrl } from '@/config/site';
 import { getData } from '@/lib/api';
 import { Content } from './components/dataset-layout';
 
@@ -17,8 +18,8 @@ export default async function Home({
     .join('&');
 
   const urlToFetch = params
-    ? `${serverUrl['backend-url']}/${elasticSearchParams[deployment]}&${params}`
-    : `${serverUrl['backend-url']}/${elasticSearchParams[deployment]}`;
+    ? `${serverUrl['backend-url']}/facets/?q=${environment.STATE_NAME}&${params}`
+    : `${serverUrl['backend-url']}/facets/?q=${environment.STATE_NAME}`;
 
   const datasetData = await getData(urlToFetch);
 

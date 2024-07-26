@@ -11,6 +11,7 @@ import {
 } from 'next-usequerystate';
 import { Button, Icon, Text } from 'opub-ui';
 
+import environment from '@/config/environment';
 import {
   ANALYTICS_DISTRICT_MAP_DATA,
   ANALYTICS_GEOGRAPHY_DATA,
@@ -77,6 +78,7 @@ export function AnalyticsMobileLayout({
       GraphQL(`${serverUrl['data-management-url']}/graphql`, mapQuery, {
         indcFilter: { slug: indicator },
         dataFilter: { dataPeriod: timePeriod },
+        geoFilter: { code: environment.STATE_CODE },
       }),
     {
       refetchOnMount: false,
@@ -92,7 +94,7 @@ export function AnalyticsMobileLayout({
         `${serverUrl['data-management-url']}/graphql`,
         ANALYTICS_GEOGRAPHY_DATA,
         {
-          geoFilter: { type: boundary },
+          geoFilter: { type: boundary, code: [environment.STATE_CODE] },
         }
       ),
     {
