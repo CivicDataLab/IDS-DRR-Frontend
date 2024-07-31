@@ -15,6 +15,7 @@ import { learnMoreLink, RiskColorMap } from '@/config/consts';
 import { cn, handleRedirect } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
+import NavLink from '@/components/nav-link';
 import { OutputWindowHeader } from './output-window';
 
 export function DefaultWindow({
@@ -171,13 +172,6 @@ export const IndicatorDescription = ({
     'government-response': <GovtResponse color={'#000000'} />,
   };
 
-  const CategoryMap: { [key: string]: string } = {
-    'flood-hazard': 'Hazard',
-    'government-response': 'Government Response',
-    exposure: 'Exposure',
-    vulnerability: 'Vulnerability',
-  };
-
   return (
     <div className="flex flex-col">
       <div className="mb-2 mt-3 flex items-center">
@@ -185,14 +179,14 @@ export const IndicatorDescription = ({
         <Text fontWeight="bold" variant="headingMd" className="pl-2">
           {title}
         </Text>
-        {Object.keys(CategoryMap).includes(slug) && (
-          <Link
+        {slug !== 'risk-score' && (
+          <NavLink
             className="ml-auto flex gap-2"
-            href={`/datasets/?category=${CategoryMap[slug]}`}
+            href={`/datasets/?category=${title}`}
           >
             <Icon source={Icons.link} color="interactive" />
             <Text color="interactive">Link to the datasets</Text>
-          </Link>
+          </NavLink>
         )}
       </div>
       <Text>{desc}</Text>

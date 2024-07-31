@@ -7,10 +7,12 @@ import { Link } from '@/lib/router-events';
 export default function NavLink({
   href,
   children,
-}: React.PropsWithChildren<{ href: string }>) {
+  className,
+}: React.PropsWithChildren<{ href: string; className: string }>) {
   const pathname = usePathname();
   return (
     <Link
+      className={className}
       href={href}
       style={{ fontWeight: pathname === href ? 'bold' : undefined }}
     >
