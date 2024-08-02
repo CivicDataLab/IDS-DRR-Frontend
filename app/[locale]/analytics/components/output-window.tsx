@@ -201,17 +201,18 @@ export function OutputWindow({
               </Tooltip>
             </div>
           </div>
+          {/* //--------  */}
 
           <section className="mt-4">
-            {DataBasedOnBoundary.map((data: any, index: any) => (
-              <div key={index} className="mb-4">
-                <Text variant="headingXl" fontWeight="regular">
-                  {data[boundary]}
-                </Text>
+            <Accordion type="single" defaultValue="revenue-circle" collapsible>
+              <AccordionItem value="revenue-circle" className="border-none">
+                {DataBasedOnBoundary.map((data: any, index: any) => (
+                  <div>
+                    <div className="flex items-center gap-3">
+                      <Text variant="bodyLg" fontWeight="bold">
+                        {data[boundary]}
+                      </Text>
 
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center">
-                    <div className=" mr-3 basis-2/4">
                       <ProgressBar
                         size="small"
                         customColor={
@@ -219,25 +220,38 @@ export function OutputWindow({
                         }
                         value={(parseInt(data[indicator]['value']) / 5) * 100}
                       />
-                    </div>
-                    <Text variant="heading2xl">
-                      {parseInt(data?.[indicator]['value'])}
-                    </Text>
-                    /5
-                  </div>
 
-                  <OtherFactorScores
-                    factorData={factorData}
-                    data={data}
-                    boundary={boundary}
-                    indicator={indicator}
-                    indicatorDescription={indicatorDescriptions}
-                    getDescription={getDescription}
-                  />
-                </div>
-              </div>
-            ))}
+                      <div>
+                        <Text variant="heading2xl">
+                          {parseInt(data?.[indicator]['value'])}
+                        </Text>
+                        /5
+                      </div>
+                      {/* <AccordionTrigger /> */}
+                      {indicator === 'risk-score' ? (
+                        <AccordionTrigger />
+                      ) : (
+                        <div style={{ width: '40px', height: '54px' }}></div>
+                      )}
+                    </div>
+                    <AccordionContent className="px-3 pb-4 md:px-6">
+                      <div className="flex flex-col gap-1">
+                        <OtherFactorScores
+                          factorData={factorData}
+                          data={data}
+                          boundary={boundary}
+                          indicator={indicator}
+                          indicatorDescription={indicatorDescriptions}
+                          getDescription={getDescription}
+                        />
+                      </div>
+                    </AccordionContent>
+                  </div>
+                ))}
+              </AccordionItem>
+            </Accordion>
           </section>
+
           <Accordion type="single" defaultValue="revenue-circle" collapsible>
             <AccordionItem value="revenue-circle" className="mt-4">
               {districtData.length === 1 && (
