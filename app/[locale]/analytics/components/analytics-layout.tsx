@@ -170,6 +170,14 @@ export function Content({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [geographiesData.data]);
 
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const timePeriod = params.get('time-period');
+    if (timePeriod) {
+      setTimePeriod(timePeriod);
+    }
+  }, []);
+
   function onComboboxChange(selectedOptions: any) {
     const val = selectedOptions.map((option: any) => option.value);
 
@@ -290,7 +298,10 @@ export function Content({
 
         <MonthPicker
           name="time-period-select"
-          defaultValue={parseDate('2023-08-01')}
+          defaultValue={parseDate(
+            `${timePeriodSelected.split('_')[0]}-${timePeriodSelected.split('_')[1]}-01` ||
+              '23-08-01'
+          )}
           label="Select Month"
           minValue={parseDate(minDate || '2023-01-04')}
           maxValue={parseDate(maxDate || '2023-01-04')}
