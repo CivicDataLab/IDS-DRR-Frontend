@@ -42,7 +42,11 @@ export function OutputWindow({
   boundary,
 }: any) {
   const searchParams = useSearchParams();
-  const timePeriod = searchParams.get('time-period') || '2023_08';
+  if (!process.env.NEXT_PUBLIC_TIME_PERIOD) {
+    throw new Error('TIME_PERIOD is not defined');
+  }
+  const DEFAULT_TIME_PERIOD: string = process.env.NEXT_PUBLIC_TIME_PERIOD;
+  const timePeriod = searchParams.get('time-period') || DEFAULT_TIME_PERIOD;
   const formattedTimePeriod = formatDateString(timePeriod);
   const region = searchParams.get('region') || '1';
 

@@ -114,7 +114,11 @@ export const ScoreInfo = ({
   indicatorDescription,
 }: ScoreProps) => {
   const searchParams = useSearchParams();
-  const time_period = searchParams.get('time-period') || '2023_08';
+  if (!process.env.NEXT_PUBLIC_TIME_PERIOD) {
+    throw new Error('TIME_PERIOD not specified');
+  }
+  const time_period =
+    searchParams.get('time-period') || process.env.NEXT_PUBLIC_TIME_PERIOD;
   const boundary = searchParams.get('boundary') || 'district';
   const region = searchParams.get('region') || '';
 

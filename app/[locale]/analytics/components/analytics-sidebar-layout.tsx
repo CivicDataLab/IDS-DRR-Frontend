@@ -59,7 +59,7 @@ export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
 export function OutputWindowComponent() {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator');
-  const time_period = searchParams.get('time-period') || '2023_08';
+  const time_period = searchParams.get('time-period');
   const region = searchParams.get('region');
   const boundary = searchParams.get('boundary') || 'district';
 
