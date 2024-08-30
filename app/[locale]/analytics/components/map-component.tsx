@@ -40,7 +40,7 @@ export const MapComponent = ({
 
   const [dist, setDist] = React.useState('');
 
-  var rc: any;
+  let rc: any;
 
   const mapDataFn = (value: number) => {
     let colorString;
