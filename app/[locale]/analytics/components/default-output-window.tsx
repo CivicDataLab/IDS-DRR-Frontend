@@ -201,7 +201,7 @@ export const IndicatorDescription = ({
           className="mt-2 flex gap-2"
           target="_blank"
           href={
-            'https://superset.civicdatalab.in/superset/dashboard/flood-tenders-assam/ '
+            'https://supersetv2.civicdatalab.in/superset/dashboard/assam-flood-tenders/?native_filters_key=NiT_yLcIVMzL-nOJGo02alomiprcwM0IwriCvPw2Y8N0QeHG_VCDfeS19Z2X_dnS'
           }
         >
           <Text color="interactive">View procurement data dashboard</Text>

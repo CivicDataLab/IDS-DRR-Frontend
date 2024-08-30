@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { type TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { parseDate } from '@internationalized/date';
 import { useQuery } from '@tanstack/react-query';
@@ -124,12 +124,18 @@ export function Content({
   let RevCircleDropdownOptions: Option[] = [];
   let DistrictDropDownOption: Option[] = [];
 
+  const [districtDropDownOption, setDistrictDropDownOption] = useState<any[]>(
+    RevCircleDropdownOptions
+  ); // initialize with options
+
   if (geographiesData.data && !geographiesData.isFetching) {
     if (boundary === 'revenue-circle') {
       let rawData = geographiesData?.data?.getDistrictRevCircle;
+
       if (rawData) {
         for (const district in rawData) {
           const revenueCircles = rawData[district];
+
           revenueCircles.forEach(
             (circle: { 'revenue-circle': string; code: string }) => {
               RevCircleDropdownOptions.push({
@@ -319,11 +325,17 @@ export function Content({
         mapDataloading={mapData?.isFetching}
         setRegion={setRegion}
         boundary={boundary}
+        geographiesData={geographiesData}
         mapData={
           boundary === 'district'
             ? mapData?.data?.districtMapData
             : mapData?.data?.revCircleMapData
         }
+        RevCircleDropdownOptions={RevCircleDropdownOptions}
+        DistrictDropDownOption={DistrictDropDownOption}
+        selectedGroup={selectedGroup}
+        setSelectedGroup={setSelectedGroup} // Add this prop
+        setDistrictDropDownOption={setDistrictDropDownOption}
       />
     </React.Fragment>
   );
