@@ -15,10 +15,8 @@ export const MapComponent = ({
   mapData,
   setRegion,
   boundary,
-  geographiesData,
   RevCircleDropdownOptions,
   DistrictDropDownOption,
-  selectedGroup,
   setSelectedGroup,
   setDistrictDropDownOption,
 }: {
@@ -28,12 +26,10 @@ export const MapComponent = ({
   mapData: any;
   setRegion: any;
   boundary: string;
-  geographiesData: any;
-  RevCircleDropdownOptions: any;
-  DistrictDropDownOption: any;
-  selectedGroup: any;
-  setSelectedGroup: (group: string[]) => void; // New prop to update selectedGroup
-  setDistrictDropDownOption: (options: any[]) => void; // New prop to update dropdown
+  RevCircleDropdownOptions?: any;
+  DistrictDropDownOption?: any;
+  setSelectedGroup?: (group: string[]) => void; // New prop to update selectedGroup
+  setDistrictDropDownOption?: (options: any[]) => void; // New prop to update dropdown
 }) => {
   const [map, setMap] = React.useState<any>(null);
   const { width } = useWindowSize();
@@ -93,16 +89,30 @@ export const MapComponent = ({
 
         if (associatedDistrict) {
           // Update the selected group to include the associated district
-          setSelectedGroup([associatedDistrict]);
-          // setDist(associatedDistrict);
+
+          //***OLD *****/
+          // setSelectedGroup([associatedDistrict]);
+          if (setSelectedGroup) {
+            setSelectedGroup([associatedDistrict]);
+          }
 
           // Disable all districts except the associated one
-          setDistrictDropDownOption(
-            DistrictDropDownOption.map((option: any) => ({
-              ...option,
-              disabled: option.value !== associatedDistrict,
-            }))
-          );
+
+          //***OLD *****/
+          // setDistrictDropDownOption(
+          //   DistrictDropDownOption.map((option: any) => ({
+          //     ...option,
+          //     disabled: option.value !== associatedDistrict,
+          //   }))
+          // );
+          if (setDistrictDropDownOption) {
+            setDistrictDropDownOption(
+              DistrictDropDownOption.map((option: any) => ({
+                ...option,
+                disabled: option.value !== associatedDistrict,
+              }))
+            );
+          }
           rc = associatedDistrict;
         }
 

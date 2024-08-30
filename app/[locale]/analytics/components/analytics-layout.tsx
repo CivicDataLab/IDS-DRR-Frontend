@@ -325,7 +325,6 @@ export function Content({
         mapDataloading={mapData?.isFetching}
         setRegion={setRegion}
         boundary={boundary}
-        geographiesData={geographiesData}
         mapData={
           boundary === 'district'
             ? mapData?.data?.districtMapData
@@ -333,7 +332,6 @@ export function Content({
         }
         RevCircleDropdownOptions={RevCircleDropdownOptions}
         DistrictDropDownOption={DistrictDropDownOption}
-        selectedGroup={selectedGroup}
         setSelectedGroup={setSelectedGroup} // Add this prop
         setDistrictDropDownOption={setDistrictDropDownOption}
       />
