@@ -48,7 +48,7 @@ export function OutputWindow({
   const DEFAULT_TIME_PERIOD: string = process.env.NEXT_PUBLIC_TIME_PERIOD;
   const timePeriod = searchParams.get('time-period') || DEFAULT_TIME_PERIOD;
   const formattedTimePeriod = formatDateString(timePeriod);
-  const region = searchParams.get('region') || '1';
+  const region = searchParams.get('region');
 
   const DEFAULT_PERIOD = '3M';
 
@@ -172,7 +172,9 @@ export function OutputWindow({
             'p-4',
             'bg-surfaceDefault shadow-basicMd',
             'shadow-inset z-1 hidden min-w-[500px] max-w-[500px] shrink-0 md:block',
-            'overflow-y-auto border-r-1 border-solid border-borderSubdued'
+            'overflow-y-auto border-r-1 border-solid border-borderSubdued',
+            styles.Overlay,
+            region !== null && region.length > 0 && styles.OverlayActive
           )}
         >
           <OutputWindowHeader indicator={indicator} factorData={factorData} />

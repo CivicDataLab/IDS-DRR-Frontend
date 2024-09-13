@@ -13,6 +13,19 @@
   }
 }
 
+.Overlay {
+  position: fixed;
+  top: 60px;
+  right: -100%; /* Hide off-screen initially */
+  z-index: 99999;
+  height: 100%;
+  transition: right 0.4s ease; /* Smooth transition */
+}
+
+.OverlayActive {
+  right: 0; /* Moves overlay into view */
+}
+
 .IndicatorBtn {
   display: inline-flex;
   cursor: pointer;

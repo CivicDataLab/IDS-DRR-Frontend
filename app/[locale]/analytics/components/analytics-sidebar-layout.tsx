@@ -13,6 +13,7 @@ import {
 import { GraphQL } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { DefaultWindow } from './default-output-window';
+import { FactorList } from './factor-list';
 import { OutputWindow } from './output-window';
 import styles from './styles.module.scss';
 
@@ -42,9 +43,9 @@ export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
       }
     >
       {isClient ? (
-        <div className="relative max-h-[calc(100vh_-_60px)] min-h-[calc(100vh_-_60px)] grow gap-1 overflow-y-hidden md:flex">
+        <div className="relative max-h-[calc(100vh_-_60px)] min-h-[calc(100vh_-_60px)] grow flex-row-reverse gap-1 overflow-y-hidden md:flex">
           <main className={cn(styles.Main, 'px-4', 'py-6')}>{children}</main>
-          <OutputWindowComponent />
+          <IndicatorListWrapper />
         </div>
       ) : (
         <div className="flex h-[100vh] flex-col  place-content-center items-center">
@@ -53,6 +54,41 @@ export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
         </div>
       )}
     </React.Suspense>
+  );
+}
+
+export function IndicatorListWrapper({ factorData }: any) {
+  return (
+    <React.Fragment>
+      <aside
+        className={cn(
+          'overflow-hidden bg-surfaceDefault pr-0 shadow-basicMd',
+          'shadow-inset z-1 hidden shrink-0 basis-[320px] md:block',
+          // isCollapsed && 'basis-[32px]',
+          'border-r-1 border-solid border-borderSubdued',
+          styles.Collapse
+        )}
+      >
+        <div className="h-[90vh] overflow-x-hidden overflow-y-scroll pt-16">
+          <span
+            className={cn(
+              ' rounded items-center justify-end pl-0'
+              // isCollapsed && 'hidden'
+            )}
+          ></span>
+          <div>
+            <div className="bg-surfaceNeutral mb-5 min-w-max max-w-full border-b-1 border-solid border-borderSubdued bg-surfaceSelected pl-4">
+              <Text className="text-textSubdued" fontWeight="bold">
+                INDICATORS
+              </Text>
+            </div>
+
+            <FactorList />
+          </div>
+        </div>
+      </aside>
+      <OutputWindowComponent />
+    </React.Fragment>
   );
 }
 
@@ -113,29 +149,31 @@ export function OutputWindowComponent() {
         <Text className="text-center">Loading...</Text>
       </div>
     );
-  return region !== null && region.length > 0
-    ? sidePaneData.isFetched && (
-        <OutputWindow
-          data={
-            sidePaneData?.data[
-              boundary === 'district' ? 'districtViewData' : 'revCircleViewData'
-            ]
-          }
-          indicatorDescriptions={indicatorDescriptions?.data?.indicators}
-          indicator={indicator}
-          boundary={boundary}
-        />
-      )
-    : sidePaneData.isFetched && (
-        <DefaultWindow
-          chartData={
-            sidePaneData?.data[
-              boundary === 'district' ? 'districtViewData' : 'revCircleViewData'
-            ]
-          }
-          indicatorDescriptions={indicatorDescriptions?.data?.indicators}
-          indicator={indicator}
-          boundary={boundary}
-        />
-      );
+  return (
+    sidePaneData.isFetched && (
+      <OutputWindow
+        data={
+          sidePaneData?.data[
+            boundary === 'district' ? 'districtViewData' : 'revCircleViewData'
+          ]
+        }
+        indicatorDescriptions={indicatorDescriptions?.data?.indicators}
+        indicator={indicator}
+        boundary={boundary}
+      />
+    )
+  );
+
+  // : sidePaneData.isFetched && (
+  //     <DefaultWindow
+  //       chartData={
+  //         sidePaneData?.data[
+  //           boundary === 'district' ? 'districtViewData' : 'revCircleViewData'
+  //         ]
+  //       }
+  //       indicatorDescriptions={indicatorDescriptions?.data?.indicators}
+  //       indicator={indicator}
+  //       boundary={boundary}
+  //     />
+  //   );
 }

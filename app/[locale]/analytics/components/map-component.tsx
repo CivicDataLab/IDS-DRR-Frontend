@@ -180,7 +180,6 @@ export const MapComponent = ({
       </MediaRendering>
       <MediaRendering minWidth="1024" maxWidth={null}>
         <div className=" relative h-[90%] w-full py-4">
-          <FactorList />
           <MapChart
             features={mapData?.features}
             mapZoom={7.4}

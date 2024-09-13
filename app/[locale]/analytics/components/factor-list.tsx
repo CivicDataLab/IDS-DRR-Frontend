@@ -10,12 +10,13 @@ import {
 } from '@/public/FactorIcons';
 import InfoCircle from '@/public/InfoCircle';
 import { useQuery } from '@tanstack/react-query';
-import { Select } from 'opub-ui';
+import { Select, Text } from 'opub-ui';
 
 import { ANALYTICS_INDICATORS } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
+import RadioButton from './RadioButton';
 import styles from './styles.module.scss';
 
 export function FactorList() {
@@ -97,61 +98,37 @@ export function FactorList() {
         )}
       </MediaRendering>
       <MediaRendering minWidth="1024" maxWidth={null}>
-        <div
-          className={cn(
-            'absolute left-2 top-[140px] z-10 flex flex-col gap-3',
-            styles.FactorList
-          )}
-        >
+        <div className={cn(styles.FactorList)}>
           {factorData.isFetched &&
             factorData.data?.indicators.map((item: any, index: number) => {
               const isActive = item.slug === indicator;
 
-              const IconMap: { [key: string]: React.ReactNode } = {
-                'risk-score': (
-                  <RiskScore color={isActive ? '#71E57D' : '#E2E2E2'} />
-                ),
-                vulnerability: (
-                  <Vulnerability color={isActive ? '#71E57D' : '#E2E2E2'} />
-                ),
-                'flood-hazard': (
-                  <FloodHazard color={isActive ? '#71E57D' : '#E2E2E2'} />
-                ),
-                exposure: <Exposure color={isActive ? '#71E57D' : '#E2E2E2'} />,
-
-                'government-response': (
-                  <GovtResponse color={isActive ? '#71E57D' : '#E2E2E2'} />
-                ),
-              };
               return (
-                <Link
-                  key={`indicator_${index}`}
-                  href={`?indicator=${item.slug}&time-period=${time_period}&boundary=${boundary}&region=${region}`}
-                >
-                  <div
-                    className={cn(
-                      styles.IndicatorBtn,
-                      'group border-2 border-solid border-baseGraySlateSolid12 bg-[#050C17CC]',
-                      isActive && 'border-[#71E57D]'
-                    )}
+                <>
+                  <Link
+                    key={`indicator_${index}`}
+                    href={`?indicator=${item.slug}&time-period=${time_period}&boundary=${boundary}&region=${region}`}
                   >
-                    {IconMap[item?.slug] || (
-                      <RiskScore color={isActive ? '#71E57D' : '#E2E2E2'} />
-                    )}
-                    <span
+                    <div
                       className={cn(
-                        styles.IndicatorBtnText,
-                        'text-[#E2E2E2] group-hover:max-w-[350px]',
-                        isActive && 'text-[#71E57D]'
+                        'flex items-center gap-4  p-2',
+                        isActive && 'bg-[#71E57D]'
                       )}
                     >
-                      &nbsp;
-                      {item.name}
-                      &nbsp;
-                      {/* <InfoCircle color={isActive ? '#71E57D' : '#E2E2E2'} /> */}
-                    </span>
+                      {getIcon(item.slug)}
+                      <Text>{item.name}</Text>
+                    </div>
+                  </Link>
+                  <div className="mt-2 px-6">
+                    <RadioButton
+                      changed={() => {}}
+                      id="radio-btn"
+                      isSelected={false}
+                      label="Should be integrated"
+                      value="Should be integrated"
+                    />
                   </div>
-                </Link>
+                </>
               );
             })}
         </div>
