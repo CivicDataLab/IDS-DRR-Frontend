@@ -13,17 +13,24 @@ export const MapComponent = ({
   regions,
   mapDataloading,
   mapData,
+  revenueMapData,
   setRegion,
   boundary,
+  setBoundary,
 }: {
   indicator: string;
   regions: { label: string; value: string }[];
   mapDataloading: boolean;
   mapData: any;
+  revenueMapData: any;
   setRegion: any;
   boundary: string;
+  setBoundary: any;
 }) => {
   const [map, setMap] = React.useState<any>(null);
+  const [mapBounds, setMapBounds] = React.useState<any>(null);
+  const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
+
   const { width } = useWindowSize();
   const mapDataFn = (value: number) => {
     let colorString;
@@ -73,19 +80,36 @@ export const MapComponent = ({
     },
   ];
 
-  const onMapClick = ({ layer }: { layer: string }) => {
+  const onMapClick = ({
+    layer,
+    layerCode,
+    revenueMapData,
+  }: {
+    layer: any;
+    layerCode: string;
+    revenueMapData: any;
+  }) => {
+    const bounds = layer._bounds;
+    setMapBounds(bounds);
+    const filterMapData = revenueMapData.features.filter(
+      (feature: { properties: { [x: string]: string } }) =>
+        feature.properties['district-code'] === layerCode
+    );
+
+    setMapFeatures(filterMapData);
+
     setRegion((prev: any) => {
       if (prev?.length >= 4) {
         alert('Only 4 regions are allowed');
         return [...prev];
       }
       if (width < 768) {
-        return [layer];
+        return [layerCode];
       }
       if (prev === null) {
-        return [layer];
+        return [layerCode];
       } else {
-        return [...new Set([...prev, layer])];
+        return [...new Set([...prev, layerCode])];
       }
     });
   };
@@ -97,7 +121,18 @@ export const MapComponent = ({
     });
 
     if (map) {
+      if (regions.length === 0) {
+        console.log('Map center', map.getCenter());
+        // const center = map.getCenter();
+        setMapFeatures(mapData.features);
+        map.setView([26.193, 92.773], 7.4);
+      }
+      const Bounds = mapBounds || map.getBounds();
       const openPopups: any[] = [];
+      regions.length !== 0 &&
+        map.fitBounds(Bounds, {
+          padding: [500, 500], // Adds padding in pixels to all sides (e.g., 50px)
+        });
 
       map.eachLayer((layer: any) => {
         const regionName = layer.feature?.properties.name;
@@ -142,7 +177,7 @@ export const MapComponent = ({
         map.removeLayer(lastLayer);
       }
     }
-  }, [indicator, map, regions]);
+  }, [indicator, mapBounds, map, regions]);
 
   if (mapDataloading)
     return (
@@ -158,7 +193,7 @@ export const MapComponent = ({
       <MediaRendering minWidth={null} maxWidth="1023">
         <div className="relative h-full w-full pt-[62px]">
           <MapChart
-            features={mapData?.features}
+            features={mapFeatures || mapData.features}
             mapZoom={6}
             minZoom={5}
             maxZoom={8}
@@ -168,7 +203,9 @@ export const MapComponent = ({
             mapDataFn={mapDataFn}
             click={(layer) =>
               onMapClick({
-                layer: layer.feature?.properties.code,
+                layer: layer,
+                layerCode: layer.feature?.properties.code,
+                revenueMapData: revenueMapData,
               })
             }
             fillOpacity={1}
@@ -181,7 +218,7 @@ export const MapComponent = ({
       <MediaRendering minWidth="1024" maxWidth={null}>
         <div className=" relative h-[90%] w-full py-4">
           <MapChart
-            features={mapData?.features}
+            features={mapFeatures || mapData.features}
             mapZoom={7.4}
             mapProperty={indicator}
             zoomOnClick={false}
@@ -191,7 +228,9 @@ export const MapComponent = ({
             mapDataFn={mapDataFn}
             click={(layer) =>
               onMapClick({
-                layer: layer.feature?.properties.code,
+                layer: layer,
+                layerCode: layer.feature?.properties.code,
+                revenueMapData: revenueMapData,
               })
             }
             fillOpacity={1}

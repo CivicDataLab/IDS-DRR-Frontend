@@ -142,13 +142,6 @@ export function OutputWindowComponent() {
     }
   );
 
-  if (!sidePaneData.isFetched)
-    return (
-      <div className="flex min-w-[500px] flex-col place-content-center items-center border-solid border-borderSubdued bg-surfaceDefault">
-        <Spinner color="highlight" />
-        <Text className="text-center">Loading...</Text>
-      </div>
-    );
   return (
     sidePaneData.isFetched && (
       <OutputWindow

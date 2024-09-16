@@ -52,17 +52,30 @@ export function Content({
 
   const [selectedGroup, setSelectedGroup] = React.useState<string[]>([]);
 
-  const mapQuery: TypedDocumentNode<any, any> =
-    boundary === 'district'
-      ? ANALYTICS_DISTRICT_MAP_DATA
-      : ANALYTICS_REVENUE_MAP_DATA;
-
   const mapData = useQuery(
-    [`mapQuery_${boundary}_${indicator}_${timePeriodSelected}`],
+    [`mapQuery_district_${indicator}_${timePeriodSelected}`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        mapQuery,
+        ANALYTICS_DISTRICT_MAP_DATA,
+        {
+          indcFilter: { slug: indicator },
+          dataFilter: { dataPeriod: timePeriodSelected },
+        }
+      ),
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
+
+  const revenueMapData = useQuery(
+    [`mapQuery_revenue-circle_${indicator}_${timePeriodSelected}`],
+    () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_REVENUE_MAP_DATA,
         {
           indcFilter: { slug: indicator },
           dataFilter: { dataPeriod: timePeriodSelected },
@@ -313,18 +326,18 @@ export function Content({
           }}
         />
       </div>
-      <MapComponent
-        indicator={indicator}
-        regions={filterOpt(boundary)}
-        mapDataloading={mapData?.isFetching}
-        setRegion={setRegion}
-        boundary={boundary}
-        mapData={
-          boundary === 'district'
-            ? mapData?.data?.districtMapData
-            : mapData?.data?.revCircleMapData
-        }
-      />
+      {revenueMapData?.data && (
+        <MapComponent
+          indicator={indicator}
+          regions={filterOpt(boundary)}
+          mapDataloading={mapData?.isFetching}
+          setRegion={setRegion}
+          boundary={boundary}
+          setBoundary={setBoundary}
+          revenueMapData={revenueMapData?.data?.revCircleMapData}
+          mapData={mapData?.data?.districtMapData}
+        />
+      )}
     </React.Fragment>
   );
 }
