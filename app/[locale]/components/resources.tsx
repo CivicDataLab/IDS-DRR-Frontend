@@ -22,6 +22,7 @@ const Resources = () => {
       update_freq: 'monthly',
       ref_period: 'Aug 2013 to Aug2024',
       formats: ['CSV', 'XML'],
+      link: '/datasets/north-eastern-regional-node-for-disaster-risk-reduction-nerdrr_21',
     },
     {
       title: 'Rainfall data aggregate Assam',
@@ -30,6 +31,7 @@ const Resources = () => {
       update_freq: 'monthly',
       ref_period: 'Aug 2013 to Aug2024',
       formats: ['CSV', 'XML'],
+      link: '/datasets/north-eastern-regional-node-for-disaster-risk-reduction-nerdrr_21',
     },
     {
       title: 'Rainfall data aggregate Assam',
@@ -38,6 +40,7 @@ const Resources = () => {
       update_freq: 'monthly',
       ref_period: 'Aug 2013 to Aug2024',
       formats: ['CSV', 'XML'],
+      link: '/datasets/north-eastern-regional-node-for-disaster-risk-reduction-nerdrr_21',
     },
     {
       title: 'Rainfall data aggregate Assam',
@@ -46,6 +49,7 @@ const Resources = () => {
       update_freq: 'monthly',
       ref_period: 'Aug 2013 to Aug2024',
       formats: ['CSV', 'XML'],
+      link: '/datasets/north-eastern-regional-node-for-disaster-risk-reduction-nerdrr_21',
     },
   ];
   return (
@@ -70,53 +74,55 @@ const Resources = () => {
                 key={index}
                 className="ml-2 flex w-fit flex-col items-baseline justify-start gap-3 overflow-hidden rounded-2 bg-surfaceDefault p-3 md:basis-1/2 lg:ml-0 lg:basis-1/3  lg:p-6 "
               >
-                <div className=" flex flex-col gap-1 ">
-                  <Text variant="bodyLg">{item.title}</Text>
-                  <Text>Source: {item.source}</Text>
-                </div>
-                <div className="flex flex-col items-start gap-1">
-                  <div className=" flex flex-col gap-1  lg:flex-row">
+                <Link href={item.link}>
+                  <div className=" flex flex-col gap-1 ">
+                    <Text variant="bodyLg">{item.title}</Text>
+                    <Text>Source: {item.source}</Text>
+                  </div>
+                  <div className="flex flex-col items-start gap-1">
+                    <div className=" flex flex-col gap-1  lg:flex-row">
+                      <Text
+                        color="default"
+                        className="text-textSubdued"
+                        variant="bodySm"
+                        fontWeight="regular"
+                      >
+                        Last Updated: {item.last_updated}
+                      </Text>
+                      <Text
+                        color="default"
+                        className="hidden text-textSubdued  lg:block"
+                        variant="bodySm"
+                        fontWeight="regular"
+                      >
+                        |
+                      </Text>
+                      <Text
+                        color="default"
+                        className="text-textSubdued"
+                        variant="bodySm"
+                        fontWeight="regular"
+                      >
+                        Update Frequency: {item.update_freq}
+                      </Text>
+                    </div>
                     <Text
                       color="default"
-                      className="text-textSubdued"
+                      className=" text-textSubdued "
                       variant="bodySm"
                       fontWeight="regular"
                     >
-                      Last Updated: {item.last_updated}
-                    </Text>
-                    <Text
-                      color="default"
-                      className="hidden text-textSubdued  lg:block"
-                      variant="bodySm"
-                      fontWeight="regular"
-                    >
-                      |
-                    </Text>
-                    <Text
-                      color="default"
-                      className="text-textSubdued"
-                      variant="bodySm"
-                      fontWeight="regular"
-                    >
-                      Update Frequency: {item.update_freq}
+                      Reference Period: {item.ref_period}
                     </Text>
                   </div>
-                  <Text
-                    color="default"
-                    className=" text-textSubdued "
-                    variant="bodySm"
-                    fontWeight="regular"
-                  >
-                    Reference Period: {item.ref_period}
-                  </Text>
-                </div>
-                <div className=" flex gap-2">
-                  {item.formats.map((fileType, index) => (
-                    <Tag key={index} background-color="#E1F0FF">
-                      {fileType}
-                    </Tag>
-                  ))}
-                </div>
+                  <div className=" flex gap-2">
+                    {item.formats.map((fileType, index) => (
+                      <Tag key={index} background-color="#E1F0FF">
+                        {fileType}
+                      </Tag>
+                    ))}
+                  </div>
+                </Link>
               </CarouselItem>
             ))}
           </CarouselContent>
