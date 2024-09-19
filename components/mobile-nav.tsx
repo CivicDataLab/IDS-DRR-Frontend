@@ -83,7 +83,11 @@ export function MobileNav({ data }: { data: MainConfig }) {
             <div className="flex  items-center justify-between self-stretch">
               <div className=" ">
                 <Text variant="headingSmSpaced" color="onBgDefault">
-                  <strong>made with ❤ in india️</strong>
+                  <strong>
+                    made with{' '}
+                    <span className=" text-baseRedSolid11">&#10084; </span> in
+                    india️
+                  </strong>{' '}
                 </Text>
                 <Text
                   variant="bodySm"
@@ -111,52 +115,6 @@ export function MobileNav({ data }: { data: MainConfig }) {
                 alt="CivicDataLab Logo"
                 className="object-contain"
               />
-            </div>
-            <Image
-              src="/logo/Vector1.svg"
-              width={160}
-              height={50}
-              alt="Divider"
-              className="w-full"
-            />
-            <div className="flex flex-col items-center gap-3">
-              {/* <div className="flex flex-row items-center gap-3"> */}
-              <div className="flex flex-row justify-center gap-6">
-                <div className="flex flex-col items-start gap-2">
-                  <Text variant="bodySm" color="onBgDefault">
-                    In collaobration with:
-                  </Text>
-                  <Image
-                    src="/logo/ASDMA3.png"
-                    width={43}
-                    height={34}
-                    alt="ASDMA Logo"
-                    className="object-contain"
-                  />
-                </div>
-                <div className="flex flex-1 flex-col items-start justify-center gap-2 ">
-                  <Text variant="bodySm" color="onBgDefault">
-                    Supported by:
-                  </Text>
-                  <div className="flex flex-row items-center justify-between gap-2 self-stretch ">
-                    <Image
-                      src="/logo/RockefellerLogoW.png"
-                      width={106}
-                      height={64}
-                      alt="Rockefeller Logo"
-                      className="object-contain"
-                    />
-                    <Image
-                      src="/logo/ocp.png"
-                      width={91}
-                      height={40}
-                      alt="OCP Logo"
-                      className="object-contain"
-                    />
-                  </div>
-                </div>
-              </div>
-              {/* </div> */}
             </div>
           </footer>
         </div>
