@@ -80,7 +80,7 @@ export function TheTeam() {
         <Text variant="heading2xl" fontWeight="bold" color="default">
           The Team
         </Text>
-        <div className="mt-2 grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 ">
+        <div className="mt-6 grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 ">
           {teamMembers.map((member, index) => (
             <div key={index} className={styles.card}>
               <Image
