@@ -4,7 +4,6 @@ import { Button, Text } from 'opub-ui';
 
 import {
   AboutText,
-  AboutTextContentOne,
   AboutTextContentThree,
   AboutTextContentTwo,
 } from '@/config/consts';
@@ -14,7 +13,10 @@ import styles from './styles.module.scss';
 
 export function About() {
   return (
-    <section className="h-full w-full bg-backgroundSolidDark md:p-6">
+    <section
+      className="h-full w-full md:p-6"
+      style={{ backgroundColor: '#222136' }}
+    >
       <div className="flex flex-wrap place-content-center items-center text-surfaceDefault">
         <MediaRendering minWidth="1024" maxWidth={null}>
           {/* DESKTOP  */}
@@ -25,6 +27,7 @@ export function About() {
             objectFit="contain"
             className={styles.about__img}
             alt="An image representing global climate action"
+            style={{ width: '400px', height: '469px' }}
           />
         </MediaRendering>
         <MediaRendering minWidth={null} maxWidth="1023">
