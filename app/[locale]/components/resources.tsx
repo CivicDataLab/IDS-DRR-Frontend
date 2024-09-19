@@ -49,7 +49,7 @@ const Resources = () => {
     },
   ];
   return (
-    <section className="flex h-full w-full flex-col gap-10 bg-backgroundSolidDark px-5 py-6 lg:px-6 lg:py-20">
+    <section className="flex h-full w-full flex-col gap-10 bg-backgroundSolidDark px-5 py-6 lg:px-6 lg:py-14">
       <div className=" container flex flex-col gap-4 ">
         <Text variant="heading4xl" fontWeight="bold" color="onBgDefault">
           Resources{' '}
