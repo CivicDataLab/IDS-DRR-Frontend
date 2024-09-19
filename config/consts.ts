@@ -43,6 +43,8 @@ const AnalyticsQuickLinksText =
 
 const DatasetCatalogText = 'Explore and use high-value datasets';
 
+const ResourcesSectionText = 'Browse through our featured datasets';
+
 const YouTubeLink = 'https://www.youtube.com/watch?v=gTqcyUQ7esg';
 
 //about us page
@@ -104,4 +106,5 @@ export {
   TheRockefellerFoundationTextTwo,
   learnMoreLink,
   DatasetCatalogText,
+  ResourcesSectionText,
 };

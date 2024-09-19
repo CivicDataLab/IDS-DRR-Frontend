@@ -1,5 +1,6 @@
 import { About, HeroSection, QuickLinks, Video } from './components';
 import { DatasetCatalog } from './components/dataset-catalog';
+import Resources from './components/resources';
 
 export default function Home() {
   return (
@@ -8,6 +9,7 @@ export default function Home() {
         <HeroSection />
         <QuickLinks />
         <DatasetCatalog />
+        <Resources />
         <About />
         <Video />
       </div>
