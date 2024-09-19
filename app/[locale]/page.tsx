@@ -1,4 +1,5 @@
 import { About, HeroSection, QuickLinks, Video } from './components';
+import { DatasetCatalog } from './components/dataset-catalog';
 
 export default function Home() {
   return (
@@ -6,6 +7,7 @@ export default function Home() {
       <div className="inline-flex w-full flex-col items-center gap-1">
         <HeroSection />
         <QuickLinks />
+        <DatasetCatalog />
         <About />
         <Video />
       </div>

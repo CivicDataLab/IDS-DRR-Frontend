@@ -24,7 +24,7 @@ const teamMembers: TeamMember[] = [
     imageUrl: '/teams/aparna.jpg',
   },
   { name: 'Archit', role: 'Backend Engineer', imageUrl: '/teams/archit1.jpg' },
-  { name: 'Deepthi', role: 'Founder', imageUrl: '/teams/dc.jpg' },
+  { name: 'Deepthi Chand', role: 'Founder', imageUrl: '/teams/dc.jpg' },
   { name: 'Jeeno', role: 'Senior Researcher', imageUrl: '/teams/jeeno.jpg' },
   { name: 'Kabeer', role: 'Initiative Lead', imageUrl: '/teams/kabeer.jpg' },
   {
@@ -44,7 +44,7 @@ const teamMembers: TeamMember[] = [
     imageUrl: '/teams/ruthvik.jpg',
   },
   {
-    name: 'Sai',
+    name: 'Sai Krishna',
     role: 'Senior Data Engineer',
     imageUrl: '/teams/sai.png',
   },
