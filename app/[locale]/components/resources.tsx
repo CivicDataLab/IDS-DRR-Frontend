@@ -72,55 +72,57 @@ const Resources = () => {
             {Datasets.map((item, index) => (
               <CarouselItem
                 key={index}
-                className="ml-2 flex w-fit flex-col items-baseline justify-start gap-3 overflow-hidden rounded-2 bg-surfaceDefault p-3 md:basis-1/2 lg:ml-0 lg:basis-1/3  lg:p-6 "
+                className="ml-2  overflow-hidden rounded-2 bg-surfaceDefault p-3 md:basis-1/2 lg:ml-0 lg:basis-1/3  lg:p-6 "
               >
-                <Link href={item.link}>
-                  <div className=" flex flex-col gap-1 ">
-                    <Text variant="bodyLg">{item.title}</Text>
-                    <Text>Source: {item.source}</Text>
-                  </div>
-                  <div className="flex flex-col items-start gap-1">
-                    <div className=" flex flex-col gap-1  lg:flex-row">
+                <Link href={item.link} className="w-full">
+                  <div className="flex w-full flex-col items-baseline justify-start gap-3">
+                    <div className=" flex flex-col gap-1 ">
+                      <Text variant="bodyLg">{item.title}</Text>
+                      <Text>Source: {item.source}</Text>
+                    </div>
+                    <div className="flex flex-col items-start gap-1">
+                      <div className=" flex flex-col gap-1  lg:flex-row">
+                        <Text
+                          color="default"
+                          className="text-textSubdued"
+                          variant="bodySm"
+                          fontWeight="regular"
+                        >
+                          Last Updated: {item.last_updated}
+                        </Text>
+                        <Text
+                          color="default"
+                          className="hidden text-textSubdued  lg:block"
+                          variant="bodySm"
+                          fontWeight="regular"
+                        >
+                          |
+                        </Text>
+                        <Text
+                          color="default"
+                          className="text-textSubdued"
+                          variant="bodySm"
+                          fontWeight="regular"
+                        >
+                          Update Frequency: {item.update_freq}
+                        </Text>
+                      </div>
                       <Text
                         color="default"
-                        className="text-textSubdued"
+                        className=" text-textSubdued "
                         variant="bodySm"
                         fontWeight="regular"
                       >
-                        Last Updated: {item.last_updated}
-                      </Text>
-                      <Text
-                        color="default"
-                        className="hidden text-textSubdued  lg:block"
-                        variant="bodySm"
-                        fontWeight="regular"
-                      >
-                        |
-                      </Text>
-                      <Text
-                        color="default"
-                        className="text-textSubdued"
-                        variant="bodySm"
-                        fontWeight="regular"
-                      >
-                        Update Frequency: {item.update_freq}
+                        Reference Period: {item.ref_period}
                       </Text>
                     </div>
-                    <Text
-                      color="default"
-                      className=" text-textSubdued "
-                      variant="bodySm"
-                      fontWeight="regular"
-                    >
-                      Reference Period: {item.ref_period}
-                    </Text>
-                  </div>
-                  <div className=" flex gap-2">
-                    {item.formats.map((fileType, index) => (
-                      <Tag key={index} background-color="#E1F0FF">
-                        {fileType}
-                      </Tag>
-                    ))}
+                    <div className=" flex gap-2">
+                      {item.formats.map((fileType, index) => (
+                        <Tag key={index} background-color="#E1F0FF">
+                          {fileType}
+                        </Tag>
+                      ))}
+                    </div>
                   </div>
                 </Link>
               </CarouselItem>

@@ -45,6 +45,9 @@ const DatasetCatalogText = 'Explore and use high-value datasets';
 
 const ResourcesSectionText = 'Browse through our featured datasets';
 
+const DataStoriesText =
+  'Read about the impact, methods, and successes in using data for DRR.';
+
 const YouTubeLink = 'https://www.youtube.com/watch?v=gTqcyUQ7esg';
 
 //about us page
@@ -107,4 +110,5 @@ export {
   learnMoreLink,
   DatasetCatalogText,
   ResourcesSectionText,
+  DataStoriesText,
 };
