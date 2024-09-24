@@ -96,18 +96,16 @@ export function OutputWindowComponent() {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator');
   const time_period = searchParams.get('time-period');
-  const region = searchParams.get('region');
-  const boundary = searchParams.get('boundary') || 'district';
+  const region =
+    searchParams.get('revenue-code') || searchParams.get('district-code');
+  const boundary = searchParams.get('revenue-code') ? "revenue-circle" : "district";
 
-  const sidePaneQuery: any =
-    boundary === 'district'
-      ? ANALYTICS_DISTRICT_DATA
-      : ANALYTICS_REVENUE_TABLE_DATA;
+  const sidePaneQuery: any = !searchParams.get('revenue-code')
+    ? ANALYTICS_DISTRICT_DATA
+    : ANALYTICS_REVENUE_TABLE_DATA;
 
   const sidePaneData: any = useQuery(
-    [
-      `sidePaneData_${indicator}_${region?.split(',')}_${boundary}_${time_period}`,
-    ],
+    [`sidePaneData_${indicator}_${region}_${boundary}_${time_period}`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
@@ -115,7 +113,7 @@ export function OutputWindowComponent() {
         {
           indcFilter: { slug: indicator },
           dataFilter: { dataPeriod: time_period },
-          ...(region && { geoFilter: { code: region?.split(',') } }),
+          ...(region && { geoFilter: { code: region } }),
         }
       ),
     {
@@ -147,7 +145,9 @@ export function OutputWindowComponent() {
       <OutputWindow
         data={
           sidePaneData?.data[
-            boundary === 'district' ? 'districtViewData' : 'revCircleViewData'
+            !searchParams.get('revenue-code')
+              ? 'districtViewData'
+              : 'revCircleViewData'
           ]
         }
         indicatorDescriptions={indicatorDescriptions?.data?.indicators}

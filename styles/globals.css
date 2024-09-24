@@ -17,3 +17,8 @@ body {
 #nprogress .spinner .spinner-icon {
   display: none;
 }
+
+.opub-popup {
+  border-radius: var(--border-radius-1);
+  background-color: #fff !important;
+}

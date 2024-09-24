@@ -10,9 +10,13 @@ import {
 } from '@/public/FactorIcons';
 import InfoCircle from '@/public/InfoCircle';
 import { useQuery } from '@tanstack/react-query';
+import { useQueryState } from 'next-usequerystate';
 import { Select, Text } from 'opub-ui';
 
-import { ANALYTICS_INDICATORS } from '@/config/graphql/analaytics-queries';
+import {
+  ANALYTICS_INDICATORS,
+  ANALYTICS_INDICATORS_BY_CATEGORY,
+} from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
@@ -24,8 +28,13 @@ export function FactorList() {
   const indicator = searchParams.get('indicator');
   const time_period = searchParams.get('time-period');
   const boundary = searchParams.get('boundary') || 'district';
-  const region = searchParams.get('region') || '';
+  const districtRegion = searchParams.get('district-code') || '';
+  const revenueRegion = searchParams.get('revenue-code') || '';
+
   const [selectedIndicator, setSelectedIndicator] = useState(indicator || '');
+  const [subIndicator, setSubIndicator] = useQueryState('sub-indicator');
+  const [selectedRadioValue, setSelectedRadioValue] =
+    React.useState<string>('');
 
   const factorData = useQuery(
     [`indicators_risk-score`],
@@ -44,6 +53,58 @@ export function FactorList() {
     }
   );
 
+  const indicatorsQuery = useQuery(
+    [`indicatorsByCategory`],
+    () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_INDICATORS_BY_CATEGORY
+      ),
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
+
+  let convertedData: any = {};
+  const categories = indicatorsQuery?.data?.indicatorsByCategory;
+
+  //* To Get the Indicators in a particular format so that they can be used in URL formation check line no . 176 to 180
+
+  /* 
+    Sample on how convertedData would look 
+    {
+      'Damages and Losses': [
+        {
+          indicator: 'damages-and-losses',
+          'sub-indicator': null,
+        },
+        {
+          indicator: 'damages-and-losses',
+          'sub-indicator': 'population-affected',
+        },
+        {
+          indicator: 'damages-and-losses',
+          'sub-indicator': 'crop-area-affected',
+        },
+      ]
+    }
+  */
+
+  if (categories) {
+    categories.forEach((category: { [x: string]: any }) => {
+      const categoryName = Object.keys(category)[0]; // Extract the category name
+      const categoryItems = category[categoryName]; // Extract the sub-items
+
+      convertedData[categoryName] = Object.keys(categoryItems).map((key) => ({
+        name: key,
+        slug: categoryItems[key],
+        isSubIndicator: !getIcon(categoryItems[key]),
+      }));
+    });
+  }
+
   useEffect(() => {
     setSelectedIndicator(indicator || '');
   }, [indicator]);
@@ -52,7 +113,7 @@ export function FactorList() {
     setSelectedIndicator(selected);
     // Navigate to the selected indicator
     const selectedSlug = selected;
-    window.location.href = `?indicator=${selectedSlug}&time-period=${time_period}&boundary=${boundary}&region=${region}`;
+    window.location.href = `?indicator=${selectedSlug}&time-period=${time_period}&boundary=${boundary}&district-code=${districtRegion}&revenue-code=${revenueRegion}`;
   };
   function getIcon(slug: string) {
     switch (slug) {
@@ -99,38 +160,49 @@ export function FactorList() {
       </MediaRendering>
       <MediaRendering minWidth="1024" maxWidth={null}>
         <div className={cn(styles.FactorList)}>
-          {factorData.isFetched &&
-            factorData.data?.indicators.map((item: any, index: number) => {
-              const isActive = item.slug === indicator;
+          {indicatorsQuery.isFetched &&
+            convertedData &&
+            Object.keys(convertedData).map((item) =>
+              convertedData[item].map(
+                (
+                  ind: { name: string; slug: string; isSubIndicator: boolean },
+                  index: number
+                ) => {
+                  const isActive = ind.slug === indicator;
+                  return (
+                    <React.Fragment key={`indicator_${ind.slug}_${index}`}>
+                      <Link
+                        href={`?indicator=${ind.slug}&time-period=${time_period}&boundary=${boundary}&district-code=${districtRegion}&revenue-code=${revenueRegion}`}
+                      >
+                        {!ind.isSubIndicator ? (
+                          <div
+                            className={cn(
+                              'flex items-center gap-4  p-2',
+                              isActive && 'bg-[#71E57D]'
+                            )}
+                          >
+                            {getIcon(ind.slug)}
 
-              return (
-                <>
-                  <Link
-                    key={`indicator_${index}`}
-                    href={`?indicator=${item.slug}&time-period=${time_period}&boundary=${boundary}&region=${region}`}
-                  >
-                    <div
-                      className={cn(
-                        'flex items-center gap-4  p-2',
-                        isActive && 'bg-[#71E57D]'
-                      )}
-                    >
-                      {getIcon(item.slug)}
-                      <Text>{item.name}</Text>
-                    </div>
-                  </Link>
-                  <div className="mt-2 px-6">
-                    <RadioButton
-                      changed={() => {}}
-                      id="radio-btn"
-                      isSelected={false}
-                      label="Should be integrated"
-                      value="Should be integrated"
-                    />
-                  </div>
-                </>
-              );
-            })}
+                            <Text>{ind.name}</Text>
+                          </div>
+                        ) : (
+                          <div className="mt-2 px-6">
+                            <RadioButton
+                              changed={(value: string) => {
+                                console.log('cvalue', ind.slug);
+                              }}
+                              isSelected={indicator === ind.slug}
+                              label={ind.name}
+                              value={ind.slug}
+                            />
+                          </div>
+                        )}
+                      </Link>
+                    </React.Fragment>
+                  );
+                }
+              )
+            )}
         </div>
       </MediaRendering>
     </>

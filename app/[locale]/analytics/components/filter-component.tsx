@@ -242,7 +242,6 @@ export const RenderOptions = ({
   regionOptions,
   regionSelected,
 }: any) => {
-  // console.log('---', regionSelected, boundary, timePeriodData);
   const [searchQuery, setSearchQuery] = useState('');
 
   const findSelectedValue = filterOptions.filter(

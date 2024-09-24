@@ -2,13 +2,53 @@ const platformName = 'Intelligent Data Solution';
 
 //General
 const RiskColorMap: {
-  [key: number]: { backgroundColor: string; indicatorColor: string };
+  [key: number]: {
+    backgroundColor: string;
+    indicatorColor: string;
+  };
 } = {
-  5: { backgroundColor: '#d416057a', indicatorColor: '#D41505' },
-  4: { backgroundColor: '#fb8b357a', indicatorColor: '#FB8C35' },
-  3: { backgroundColor: '#ffee6e82', indicatorColor: '#FFED6E' },
-  2: { backgroundColor: '#65a4bd77', indicatorColor: '#65A4BD' },
-  1: { backgroundColor: '#4575b480', indicatorColor: '#4575b4' },
+  5: {
+    backgroundColor: '#d416057a',
+    indicatorColor: '#D41505',
+  },
+  4: {
+    backgroundColor: '#fb8b357a',
+    indicatorColor: '#FB8C35',
+  },
+  3: {
+    backgroundColor: '#ffee6e82',
+    indicatorColor: '#FFED6E',
+  },
+  2: {
+    backgroundColor: '#65a4bd77',
+    indicatorColor: '#65A4BD',
+  },
+  1: {
+    backgroundColor: '#4575b480',
+    indicatorColor: '#4575B4',
+  },
+};
+
+const RiskText: {
+  [key: number]: {
+    indicatorText: string;
+  };
+} = {
+  5: {
+    indicatorText: 'Very High Risk',
+  },
+  4: {
+    indicatorText: 'High Risk',
+  },
+  3: {
+    indicatorText: 'Medium  Risk',
+  },
+  2: {
+    indicatorText: 'Low Risk',
+  },
+  1: {
+    indicatorText: 'Very Low Risk',
+  },
 };
 
 // Datasets page
@@ -86,6 +126,7 @@ export {
   AboutTextContentThree,
   HeroSectionText,
   RiskColorMap,
+  RiskText,
   AnalyticsQuickLinksText,
   AboutUsURL,
   YouTubeLink,

@@ -2,18 +2,31 @@ export const constructRegionOptions = (
   boundary: string,
   geographiesData: any
 ) => {
-  let RevCircleDropdownOptions: { label: string; value: string }[] = [];
-  let DistrictDropDownOption: { label: string; value: string }[] = [];
+  let RevCircleDropdownOptions: {
+    label: string;
+    value: string;
+    districtCode: string;
+  }[] = [];
+  let DistrictDropDownOption: {
+    label: string;
+    value: string;
+    districtCode?: string;
+  }[] = [];
   if (boundary === 'revenue-circle') {
     let rawData = geographiesData?.data?.getDistrictRevCircle;
     if (rawData) {
       for (const district in rawData) {
         const revenueCircles = rawData[district];
         revenueCircles.forEach(
-          (circle: { 'revenue-circle': string; code: string }) => {
+          (circle: {
+            'revenue-circle': string;
+            code: string;
+            district_code: string;
+          }) => {
             RevCircleDropdownOptions.push({
               label: circle['revenue-circle'],
               value: circle.code,
+              districtCode: circle['district_code'],
             });
           }
         );

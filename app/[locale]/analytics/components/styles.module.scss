@@ -14,11 +14,11 @@
 }
 
 .Overlay {
-  position: fixed;
-  top: 190px;
+  position: absolute;
+  top: 115px;
   right: -100%; /* Hide off-screen initially */
   z-index: 99999;
-  height: 100%;
+  height: calc(100% - 20%);
   transition: right 0.4s ease; /* Smooth transition */
 }
 

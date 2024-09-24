@@ -4,6 +4,8 @@ import React from 'react';
 import { useWindowSize } from '@/hooks/use-window-size';
 import { Spinner, Text } from 'opub-ui';
 
+import { RiskText } from '@/config/consts';
+import { deSlugify } from '@/lib/utils';
 import MapChart from '@/components/MapChart';
 import { MediaRendering } from '@/components/media-rendering';
 import { FactorList } from './factor-list';
@@ -15,8 +17,7 @@ export const MapComponent = ({
   mapData,
   revenueMapData,
   setRegion,
-  boundary,
-  setBoundary,
+  setRevenueRegion,
 }: {
   indicator: string;
   regions: { label: string; value: string }[];
@@ -24,12 +25,13 @@ export const MapComponent = ({
   mapData: any;
   revenueMapData: any;
   setRegion: any;
-  boundary: string;
-  setBoundary: any;
+  setRevenueRegion: any;
 }) => {
   const [map, setMap] = React.useState<any>(null);
   const [mapBounds, setMapBounds] = React.useState<any>(null);
   const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
+  const params = new URLSearchParams(window.location.search);
+  const districtCode = params.get('district-code');
 
   const { width } = useWindowSize();
   const mapDataFn = (value: number) => {
@@ -63,15 +65,15 @@ export const MapComponent = ({
       color: '#D41505',
     },
     {
-      label: 'High Risk',
+      label: '',
       color: '#FB8C35',
     },
     {
-      label: 'Medium Risk',
+      label: '',
       color: '#FFED6E',
     },
     {
-      label: 'Low Risk',
+      label: '',
       color: '#65A4BD',
     },
     {
@@ -80,39 +82,64 @@ export const MapComponent = ({
     },
   ];
 
+  const colorMap: { [key: number]: string } = {
+    1: 'var(--mapRiskVeryLow)',
+    2: 'var(--mapRiskLow)',
+    3: 'var(--mapRiskMedium)',
+    4: 'var(--mapRiskHigh)',
+    5: 'var(--mapRiskVeryHigh)',
+  };
+
+  const factors = [
+    'risk-score',
+    'flood-hazard',
+    'vulnerability',
+    'government-response',
+    'exposure',
+  ];
+
   const onMapClick = ({
     layer,
     layerCode,
-    revenueMapData,
   }: {
     layer: any;
     layerCode: string;
     revenueMapData: any;
   }) => {
-    const bounds = layer._bounds;
-    setMapBounds(bounds);
-    const filterMapData = revenueMapData.features.filter(
-      (feature: { properties: { [x: string]: string } }) =>
-        feature.properties['district-code'] === layerCode
-    );
+    if (!districtCode) {
+      const bounds = layer._bounds;
+      setMapBounds(bounds);
+      setRegion(layerCode);
+    }
 
-    setMapFeatures(filterMapData);
-
-    setRegion((prev: any) => {
-      if (prev?.length >= 4) {
-        alert('Only 4 regions are allowed');
-        return [...prev];
-      }
-      if (width < 768) {
-        return [layerCode];
-      }
-      if (prev === null) {
-        return [layerCode];
-      } else {
-        return [...new Set([...prev, layerCode])];
-      }
-    });
+    if (districtCode) {
+      setRevenueRegion(layerCode);
+      setRegion(districtCode);
+    }
   };
+
+  React.useEffect(() => {
+    if (map) {
+      if (mapBounds) {
+        map.fitBounds(mapBounds);
+        const filterMapData = revenueMapData.features.filter(
+          (feature: { properties: { [x: string]: string } }) =>
+            feature.properties['district-code'] === districtCode
+        );
+        setMapFeatures(filterMapData);
+      }
+      if (!districtCode) {
+        map.setView([26.193, 92.773], 7.4);
+        setMapFeatures(mapData.features);
+      }
+    }
+  }, [districtCode, map, mapBounds]);
+
+  React.useEffect(() => {
+    if (mapData.features) {
+      setMapFeatures(mapData.features);
+    }
+  }, [mapData]);
 
   React.useEffect(() => {
     const regionsArray: string[] = [];
@@ -121,23 +148,21 @@ export const MapComponent = ({
     });
 
     if (map) {
-      if (regions.length === 0) {
-        console.log('Map center', map.getCenter());
-        // const center = map.getCenter();
-        setMapFeatures(mapData.features);
-        map.setView([26.193, 92.773], 7.4);
-      }
-      const Bounds = mapBounds || map.getBounds();
       const openPopups: any[] = [];
-      regions.length !== 0 &&
-        map.fitBounds(Bounds, {
-          padding: [500, 500], // Adds padding in pixels to all sides (e.g., 50px)
-        });
-
       map.eachLayer((layer: any) => {
         const regionName = layer.feature?.properties.name;
         const regionCode = layer.feature?.properties.code;
         const riskValue = layer.feature?.properties?.[indicator];
+
+        const riskText = [
+          'risk-score',
+          'flood-hazard',
+          'exposure',
+          'vulnerability',
+          'government-response',
+        ].includes(indicator)
+          ? RiskText[riskValue]?.indicatorText
+          : riskValue;
 
         if (regionsArray.includes(regionCode)) {
           const popup = layer.getPopup();
@@ -147,7 +172,11 @@ export const MapComponent = ({
             layer
               .bindPopup(
                 () => {
-                  return `<span>${regionName}: ${riskValue}<br/></span>`;
+                  return `
+                  <div>
+                  <strong>${regionName.toUpperCase()}</strong><br/>
+                  <span>${deSlugify(indicator)}:<span style="color: ${colorMap[riskValue]}; text-transform: uppercase;">${riskText}</span></span>
+                  </div>`;
                 },
                 {
                   maxWidth: 200,
@@ -156,7 +185,7 @@ export const MapComponent = ({
                   closeOnEscapeKey: false,
                   closeOnClick: false,
                   id: `${regionName}`,
-                  className: 'opub-leaflet-popup',
+                  className: 'opub-popup',
                 }
               )
               .openPopup();
@@ -177,7 +206,7 @@ export const MapComponent = ({
         map.removeLayer(lastLayer);
       }
     }
-  }, [indicator, mapBounds, map, regions]);
+  }, [indicator, map, regions]);
 
   if (mapDataloading)
     return (
@@ -221,11 +250,50 @@ export const MapComponent = ({
             features={mapFeatures || mapData.features}
             mapZoom={7.4}
             mapProperty={indicator}
+            horizontalLegend
             zoomOnClick={false}
+            // isSequentialLegend={!factors.includes(indicator)}
             legendData={legendData}
             minZoom={6}
             maxZoom={8}
             mapDataFn={mapDataFn}
+            mouseover={(layer) => {
+              const regionName = layer.feature?.properties.name;
+              const riskValue = layer.feature?.properties?.[indicator];
+              const riskText = [
+                'risk-score',
+                'flood-hazard',
+                'exposure',
+                'vulnerability',
+                'government-response',
+              ].includes(indicator)
+                ? RiskText[riskValue]?.indicatorText
+                : riskValue;
+              layer
+                .bindPopup(
+                  () => {
+                    return `
+                    <div>
+                    <strong>${regionName.toUpperCase()}</strong><br/>
+                    <span>${deSlugify(indicator)} : <span style="color: ${colorMap[riskValue]}; font-weight: bold; text-transform: uppercase;">${riskText}</span></span>
+                    </div>`;
+                  },
+                  {
+                    maxWidth: 200,
+                    closeButton: false,
+                    autoClose: false,
+                    closeOnEscapeKey: false,
+                    closeOnClick: false,
+                    id: `${regionName}`,
+                    className: 'opub-popup',
+                  }
+                )
+                .openPopup();
+            }}
+            mouseout={(layer) => {
+              layer.closePopup();
+              layer.unbindPopup();
+            }}
             click={(layer) =>
               onMapClick({
                 layer: layer,

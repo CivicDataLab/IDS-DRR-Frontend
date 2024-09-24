@@ -1,14 +1,16 @@
 import React from 'react';
 
 import './RadioButton.scss';
+
 import { Text } from 'opub-ui';
 
 const RadioButton = (props: any) => {
   return (
     <div className="RadioButton">
       <input
-        id={props.id}
-        onChange={props.changed}
+        onChange={(e) => {
+          props.changed(e.target.value);
+        }}
         value={props.value}
         type="radio"
         checked={props.isSelected}

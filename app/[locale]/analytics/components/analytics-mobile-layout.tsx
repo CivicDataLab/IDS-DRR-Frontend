@@ -37,10 +37,8 @@ export function AnalyticsMobileLayout({
   //Remove default page scroll to make only the content scrollable
   useLockBody();
 
-  const [region, setRegion] = useQueryState(
-    'region',
-    parseAsArrayOf(parseAsString)
-  );
+  const [districtCode, setDistrictCode] = useQueryState('district-code');
+  const [revenueCode, setRevenueCode] = useQueryState('revenue-code');
 
   const buttons = [
     {
@@ -88,6 +86,24 @@ export function AnalyticsMobileLayout({
     }
   );
 
+  const revenueMapData = useQuery(
+    [`mapQuery_revenue-circle_${indicator}_${timePeriod}`],
+    () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_REVENUE_MAP_DATA,
+        {
+          indcFilter: { slug: indicator },
+          dataFilter: { dataPeriod: timePeriod },
+        }
+      ),
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
+
   const geographiesData = useQuery(
     [`geographies_data_${boundary}`],
     () =>
@@ -108,8 +124,14 @@ export function AnalyticsMobileLayout({
   const filterOpt = (boundary: string) => {
     const regionOptions = constructRegionOptions(boundary, geographiesData);
 
-    const filteredDistrictOptions = regionOptions?.filter((option) =>
-      region?.includes(option.value)
+    if (boundary === 'revenue-circle') {
+      const filterRevenueCircles = regionOptions.filter(
+        (option) => option.districtCode === districtCode
+      );
+      return filterRevenueCircles;
+    }
+    const filteredDistrictOptions = regionOptions?.filter(
+      (option) => option.value === districtCode
     );
 
     return filteredDistrictOptions;
@@ -124,14 +146,11 @@ export function AnalyticsMobileLayout({
           <MapComponent
             indicator={indicator}
             regions={filterOpt(boundary)}
-            boundary={boundary}
+            setRegion={setDistrictCode}
+            setRevenueRegion={setRevenueCode}
+            revenueMapData={revenueMapData?.data?.revCircleMapData}
             mapDataloading={mapData?.isFetching}
-            setRegion={setRegion}
-            mapData={
-              boundary === 'district'
-                ? mapData?.data?.districtMapData
-                : mapData?.data?.revCircleMapData
-            }
+            mapData={mapData?.data?.districtMapData}
           />
         );
 
