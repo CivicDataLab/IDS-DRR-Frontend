@@ -28,7 +28,7 @@ import {
   useScreenshot,
 } from 'opub-ui';
 
-import { RiskColorMap, RiskText } from '@/config/consts';
+import { Factors, RiskColorMap, RiskText } from '@/config/consts';
 import { ANALYTICS_TIME_TRENDS } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { cn, deSlugify, formatDateString } from '@/lib/utils';
@@ -200,7 +200,12 @@ export function OutputWindow({
           )}
         >
           <div className="flex gap-2">
-            <Button onClick={() => {setDistrictCode(null) , setRevenueCode(null)}} kind="tertiary">
+            <Button
+              onClick={() => {
+                setDistrictCode(null), setRevenueCode(null);
+              }}
+              kind="tertiary"
+            >
               <Icon source={Icons.back} />
             </Button>
 
@@ -232,6 +237,9 @@ export function OutputWindow({
                     <Text variant="bodyLg" fontWeight="bold">
                       {getFactorNameBySlug(factorData, indicator)}
                     </Text>
+                    {!Factors.includes(indicator) && (
+                      <Text variant="bodyMd">{data[indicator]['value']}</Text>
+                    )}
                   </div>
                   <div className="flex items-center gap-4">
                     <Text
@@ -241,11 +249,10 @@ export function OutputWindow({
                       )}
                       fontWeight="semibold"
                     >
-                      {
+                      {Factors.includes(indicator) &&
                         RiskText[parseInt(data[indicator]['value'])][
                           'indicatorText'
-                        ]
-                      }
+                        ]}
                     </Text>
                     <Tooltip
                       content={
@@ -262,21 +269,23 @@ export function OutputWindow({
                     </Tooltip>
                   </div>
                 </div>
-                <div className="mt-5 flex flex-col gap-2">
-                  <Text className="text-baseGraySlateSolid11">
-                    Some of the indicators contributing to{' '}
-                    {getFactorNameBySlug(factorData, indicator)} are -
-                  </Text>
-                  <OtherFactorScores
-                    factorData={factorData}
-                    data={data}
-                    boundary={boundary}
-                    IconMap={IconMap}
-                    indicator={indicator}
-                    indicatorDescription={indicatorDescriptions}
-                    getDescription={getDescription}
-                  />
-                </div>
+                {Factors.includes(indicator) && (
+                  <div className="mt-5 flex flex-col gap-2">
+                    <Text className="text-baseGraySlateSolid11">
+                      Some of the indicators contributing to{' '}
+                      {getFactorNameBySlug(factorData, indicator)} are -
+                    </Text>
+                    <OtherFactorScores
+                      factorData={factorData}
+                      data={data}
+                      boundary={boundary}
+                      IconMap={IconMap}
+                      indicator={indicator}
+                      indicatorDescription={indicatorDescriptions}
+                      getDescription={getDescription}
+                    />
+                  </div>
+                )}
               </div>
             ))}
           </section>
@@ -478,9 +487,11 @@ export function OtherFactorScores({
   return FactorVariables.map((scoreType) => (
     <div key={scoreType} className=" flex  items-center  gap-4">
       {IconMap[scoreType]}
-      <Text className="shrink-1 min-w-[200px]">
-        {getFactorNameBySlug(factorData, scoreType)}
-      </Text>
+      {indicator === 'risk-score' && (
+        <Text className="shrink-1 min-w-[200px]">
+          {getFactorNameBySlug(factorData, scoreType)}
+        </Text>
+      )}
 
       <ScoreInfo
         indicator={indicator}

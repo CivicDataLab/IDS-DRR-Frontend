@@ -29,6 +29,14 @@ const RiskColorMap: {
   },
 };
 
+const Factors = [
+  'risk-score',
+  'flood-hazard',
+  'vulnerability',
+  'government-response',
+  'exposure',
+];
+
 const RiskText: {
   [key: number]: {
     indicatorText: string;
@@ -134,6 +142,7 @@ export {
   HeroSectionText,
   RiskColorMap,
   RiskText,
+  Factors,
   AnalyticsQuickLinksText,
   AboutUsURL,
   YouTubeLink,

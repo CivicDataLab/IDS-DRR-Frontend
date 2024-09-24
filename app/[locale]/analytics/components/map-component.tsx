@@ -2,9 +2,11 @@
 
 import React from 'react';
 import { useWindowSize } from '@/hooks/use-window-size';
+import * as d3 from 'd3-scale';
+import { interpolateBlues } from 'd3-scale-chromatic';
 import { Spinner, Text } from 'opub-ui';
 
-import { RiskText } from '@/config/consts';
+import { Factors, RiskText } from '@/config/consts';
 import { deSlugify } from '@/lib/utils';
 import MapChart from '@/components/MapChart';
 import { MediaRendering } from '@/components/media-rendering';
@@ -33,7 +35,37 @@ export const MapComponent = ({
   const params = new URLSearchParams(window.location.search);
   const districtCode = params.get('district-code');
 
-  const { width } = useWindowSize();
+  const values = [];
+  for (let i = 0; i < mapFeatures.length; i++) {
+    if (mapFeatures[i].properties[indicator] == null) continue;
+    values.push(mapFeatures[i].properties[indicator]);
+  }
+
+  const customLegendData = [];
+
+  // Set the sequential scale properties
+  const colorScale = d3
+    .scaleSequential()
+    .domain([Math.min(...values), Math.max(...values)])
+    .interpolator(interpolateBlues);
+
+  if (!Factors.includes(indicator)) {
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const step = (max - min) / 3;
+    const grades = Array.from({ length: 3 + 1 }, (_, i) => min + step * i);
+
+    for (let i = 0; i < grades.length; i++) {
+      const from = grades[i];
+      const to = grades[i + 1] || Math.max(...values);
+
+      customLegendData.push({
+        color: colorScale(from),
+        label: `${Math.round(from)} - ${to ? `${Math.round(to)}` : '+'}`,
+      });
+    }
+  }
+
   const mapDataFn = (value: number) => {
     let colorString;
     switch (value) {
@@ -65,15 +97,15 @@ export const MapComponent = ({
       color: '#D41505',
     },
     {
-      label: '',
+      label: 'High Risk',
       color: '#FB8C35',
     },
     {
-      label: '',
+      label: 'Medium Risk',
       color: '#FFED6E',
     },
     {
-      label: '',
+      label: 'Low Risk',
       color: '#65A4BD',
     },
     {
@@ -89,14 +121,6 @@ export const MapComponent = ({
     4: 'var(--mapRiskHigh)',
     5: 'var(--mapRiskVeryHigh)',
   };
-
-  const factors = [
-    'risk-score',
-    'flood-hazard',
-    'vulnerability',
-    'government-response',
-    'exposure',
-  ];
 
   const onMapClick = ({
     layer,
@@ -154,13 +178,7 @@ export const MapComponent = ({
         const regionCode = layer.feature?.properties.code;
         const riskValue = layer.feature?.properties?.[indicator];
 
-        const riskText = [
-          'risk-score',
-          'flood-hazard',
-          'exposure',
-          'vulnerability',
-          'government-response',
-        ].includes(indicator)
+        const riskText = Factors.includes(indicator)
           ? RiskText[riskValue]?.indicatorText
           : riskValue;
 
@@ -245,28 +263,22 @@ export const MapComponent = ({
         </div>
       </MediaRendering>
       <MediaRendering minWidth="1024" maxWidth={null}>
-        <div className=" relative h-[90%] w-full py-4">
+        <div className=" relative h-[90%] w-full">
           <MapChart
             features={mapFeatures || mapData.features}
             mapZoom={7.4}
             mapProperty={indicator}
-            horizontalLegend
             zoomOnClick={false}
-            // isSequentialLegend={!factors.includes(indicator)}
-            legendData={legendData}
+            isCustomColor={!Factors.includes(indicator)}
+            customColor={colorScale}
+            legendData={Factors.includes(indicator) ? legendData : undefined}
             minZoom={6}
             maxZoom={8}
             mapDataFn={mapDataFn}
             mouseover={(layer) => {
               const regionName = layer.feature?.properties.name;
               const riskValue = layer.feature?.properties?.[indicator];
-              const riskText = [
-                'risk-score',
-                'flood-hazard',
-                'exposure',
-                'vulnerability',
-                'government-response',
-              ].includes(indicator)
+              const riskText = Factors.includes(indicator)
                 ? RiskText[riskValue]?.indicatorText
                 : riskValue;
               layer

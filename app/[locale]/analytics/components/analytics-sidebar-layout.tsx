@@ -44,7 +44,7 @@ export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
     >
       {isClient ? (
         <div className="relative max-h-[calc(100vh_-_60px)] min-h-[calc(100vh_-_60px)] grow flex-row-reverse gap-1 overflow-y-hidden md:flex">
-          <main className={cn(styles.Main, 'px-4', 'py-6')}>{children}</main>
+          <main className={cn(styles.Main, 'p-4')}>{children}</main>
           <IndicatorListWrapper />
         </div>
       ) : (
@@ -69,7 +69,7 @@ export function IndicatorListWrapper({ factorData }: any) {
           styles.Collapse
         )}
       >
-        <div className="h-[90vh] overflow-x-hidden overflow-y-scroll pt-16">
+        <div className="h-[90vh] overflow-x-hidden overflow-y-scroll pt-6">
           <span
             className={cn(
               ' rounded items-center justify-end pl-0'
@@ -98,7 +98,9 @@ export function OutputWindowComponent() {
   const time_period = searchParams.get('time-period');
   const region =
     searchParams.get('revenue-code') || searchParams.get('district-code');
-  const boundary = searchParams.get('revenue-code') ? "revenue-circle" : "district";
+  const boundary = searchParams.get('revenue-code')
+    ? 'revenue-circle'
+    : 'district';
 
   const sidePaneQuery: any = !searchParams.get('revenue-code')
     ? ANALYTICS_DISTRICT_DATA
