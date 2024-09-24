@@ -9,7 +9,7 @@ import {
   Text,
 } from 'opub-ui';
 
-import { AnalyticsQuickLinksText } from '@/config/consts';
+import { AnalyticsQuickLinksText, AnalyticsURL } from '@/config/consts';
 
 export const QuickLinks = () => {
   const Analytics = [
@@ -17,7 +17,7 @@ export const QuickLinks = () => {
       name: 'Assam',
       status: 'active',
       icon: '/logo/statemap.svg',
-      link: 'analytics',
+      link: AnalyticsURL,
     },
     {
       name: 'Himachal Pradesh',

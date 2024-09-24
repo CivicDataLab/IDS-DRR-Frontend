@@ -37,7 +37,11 @@ export const MapComponent = ({
 
   const values = [];
   for (let i = 0; i < mapFeatures.length; i++) {
-    if (mapFeatures[i].properties[indicator] == null) continue;
+    if (
+      mapFeatures[i].properties[indicator] == null ||
+      mapFeatures[i].properties[indicator] === 0
+    )
+      continue;
     values.push(mapFeatures[i].properties[indicator]);
   }
 
@@ -54,14 +58,13 @@ export const MapComponent = ({
     const max = Math.max(...values);
     const step = (max - min) / 3;
     const grades = Array.from({ length: 3 + 1 }, (_, i) => min + step * i);
-
     for (let i = 0; i < grades.length; i++) {
       const from = grades[i];
-      const to = grades[i + 1] || Math.max(...values);
+      const to = grades[i + 1];
 
       customLegendData.push({
         color: colorScale(from),
-        label: `${Math.round(from)} - ${to ? `${Math.round(to)}` : '+'}`,
+        label: `${Math.round(from)}${to ? ` - ${Math.round(to)}` : '+'}`,
       });
     }
   }
@@ -132,7 +135,6 @@ export const MapComponent = ({
   }) => {
     if (!districtCode) {
       const bounds = layer._bounds;
-      setMapBounds(bounds);
       setRegion(layerCode);
     }
 
@@ -144,8 +146,19 @@ export const MapComponent = ({
 
   React.useEffect(() => {
     if (map) {
-      if (mapBounds) {
-        map.fitBounds(mapBounds);
+      if (mapData.features) {
+        setMapFeatures(mapData.features);
+        console.log(
+          'districtCode',
+          districtCode,
+          mapData.features[0].properties
+        );
+        const getBoundsData = mapData.features.filter(
+          (feature: { properties: { [x: string]: string } }) =>
+            feature.properties['code'] === districtCode
+        );
+        getBoundsData.length > 0 &&
+          map.fitBounds(getBoundsData[0].properties.bounds);
         const filterMapData = revenueMapData.features.filter(
           (feature: { properties: { [x: string]: string } }) =>
             feature.properties['district-code'] === districtCode
@@ -157,13 +170,13 @@ export const MapComponent = ({
         setMapFeatures(mapData.features);
       }
     }
-  }, [districtCode, map, mapBounds]);
+  }, [districtCode, map, mapData, mapBounds]);
 
-  React.useEffect(() => {
-    if (mapData.features) {
-      setMapFeatures(mapData.features);
-    }
-  }, [mapData]);
+  // React.useEffect(() => {
+  //   if (mapData.features) {
+  //     setMapFeatures(mapData.features);
+  //   }
+  // }, [mapData]);
 
   React.useEffect(() => {
     const regionsArray: string[] = [];
@@ -271,7 +284,9 @@ export const MapComponent = ({
             zoomOnClick={false}
             isCustomColor={!Factors.includes(indicator)}
             customColor={colorScale}
-            legendData={Factors.includes(indicator) ? legendData : undefined}
+            legendData={
+              Factors.includes(indicator) ? legendData : customLegendData
+            }
             minZoom={6}
             maxZoom={8}
             mapDataFn={mapDataFn}

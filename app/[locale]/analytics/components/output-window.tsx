@@ -234,11 +234,18 @@ export function OutputWindow({
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
                     {IconMap[indicator]}
-                    <Text variant="bodyLg" fontWeight="bold">
+                    <Text
+                      variant="bodyLg"
+                      fontWeight={
+                        indicator === 'risk-score' ? 'bold' : 'regular'
+                      }
+                    >
                       {getFactorNameBySlug(factorData, indicator)}
                     </Text>
                     {!Factors.includes(indicator) && (
-                      <Text variant="bodyMd">{data[indicator]['value']}</Text>
+                      <Text variant="bodyMd" fontWeight="bold">
+                        {data[indicator]['value']}
+                      </Text>
                     )}
                   </div>
                   <div className="flex items-center gap-4">
