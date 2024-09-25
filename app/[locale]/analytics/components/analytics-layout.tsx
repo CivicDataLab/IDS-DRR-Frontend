@@ -4,12 +4,16 @@ import React from 'react';
 import { type TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { parseDate } from '@internationalized/date';
 import { useQuery } from '@tanstack/react-query';
+import { parseAsString, useQueryState } from 'next-usequerystate';
 import {
-  parseAsArrayOf,
-  parseAsString,
-  useQueryState,
-} from 'next-usequerystate';
-import { MonthPicker, Select, Text } from 'opub-ui';
+  MonthPicker,
+  Select,
+  Tab,
+  TabList,
+  TabPanel,
+  Tabs,
+  Text,
+} from 'opub-ui';
 
 import {
   ANALYTICS_DISTRICT_MAP_DATA,
@@ -227,57 +231,87 @@ export function Content({
 
   return (
     <React.Fragment>
-      <div className="mb-2 flex items-start justify-evenly gap-3">
-        <Select
-          label="Select District"
-          value={districtCode || ''}
-          name="district-select"
-          className=" flex-grow"
-          onChange={(e) => {
-            handleDistrictChange(e);
-          }}
-          options={DistrictDropDownOption}
-        />
-        <Select
-          label="Select Revenue Circle"
-          value={revenueCode || ''}
-          name="revenue-circle-select"
-          className=" flex-grow"
-          disabled={!districtCode}
-          onChange={(e) => {
-            setRevenueCode(e, { shallow: false });
-          }}
-          options={getRevenueCircleOptions()}
-        />
+      <Tabs defaultValue="map">
+        <TabList fitted className="p-4 pb-0">
+          <Tab theme="climate" value="map">
+            Map View
+          </Tab>
+          <Tab
+            theme="climate"
+            title="coming soon"
+            className=" cursor-not-allowed"
+            disabled
+            value="chart"
+          >
+            Chart View
+          </Tab>
+          <Tab
+            theme="climate"
+            title="coming soon"
+            className=" cursor-not-allowed"
+            disabled
+            value="table"
+          >
+            Table View
+          </Tab>
+        </TabList>
+        <TabPanel value="map">
+          {revenueMapData?.data && mapData?.data && (
+            <div className=" mt-2 h-[calc(100dvh_-_160px)]">
+              <div className="mb-2 flex items-start justify-evenly gap-3 p-4 pb-0">
+                <Select
+                  label="Select District"
+                  value={districtCode || ''}
+                  name="district-select"
+                  className=" flex-grow"
+                  onChange={(e) => {
+                    handleDistrictChange(e);
+                  }}
+                  options={DistrictDropDownOption}
+                />
+                <Select
+                  label="Select Revenue Circle"
+                  value={revenueCode || ''}
+                  name="revenue-circle-select"
+                  className=" flex-grow"
+                  disabled={!districtCode}
+                  onChange={(e) => {
+                    setRevenueCode(e, { shallow: false });
+                  }}
+                  options={getRevenueCircleOptions()}
+                />
 
-        <MonthPicker
-          name="time-period-select"
-          defaultValue={parseDate(
-            `${timePeriodSelected.split('_')[0]}-${timePeriodSelected.split('_')[1]}-01` ||
-              '23-08-01'
+                <MonthPicker
+                  name="time-period-select"
+                  defaultValue={parseDate(
+                    `${timePeriodSelected.split('_')[0]}-${timePeriodSelected.split('_')[1]}-01` ||
+                      '23-08-01'
+                  )}
+                  label="Select Month"
+                  minValue={parseDate(minDate || '2023-01-04')}
+                  maxValue={parseDate(maxDate || '2023-01-04')}
+                  onChange={(date) => {
+                    setTimePeriod(
+                      `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`,
+                      { shallow: false }
+                    );
+                  }}
+                />
+              </div>
+              <MapComponent
+                indicator={indicator}
+                regions={filterOpt()}
+                mapDataloading={mapData?.isFetching}
+                revenueMapDataLoading={revenueMapData?.isFetching}
+                setRegion={setDistrictCode}
+                setRevenueRegion={setRevenueCode}
+                revenueMapData={revenueMapData?.data?.revCircleMapData}
+                mapData={mapData?.data?.districtMapData}
+              />
+            </div>
           )}
-          label="Select Month"
-          minValue={parseDate(minDate || '2023-01-04')}
-          maxValue={parseDate(maxDate || '2023-01-04')}
-          onChange={(date) => {
-            setTimePeriod(
-              `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`,
-              { shallow: false }
-            );
-          }}
-        />
-      </div>
-      {revenueMapData?.data && mapData?.data && (
-        <MapComponent
-          indicator={indicator}
-          regions={filterOpt()}
-          mapDataloading={mapData?.isFetching}
-          setRegion={setDistrictCode}
-          setRevenueRegion={setRevenueCode}
-          revenueMapData={revenueMapData?.data?.revCircleMapData}
-          mapData={mapData?.data?.districtMapData}
-        />
-      )}
+        </TabPanel>
+      </Tabs>
     </React.Fragment>
   );
 }

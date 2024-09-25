@@ -44,7 +44,7 @@ export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
     >
       {isClient ? (
         <div className="relative max-h-[calc(100vh_-_60px)] min-h-[calc(100vh_-_60px)] grow flex-row-reverse gap-1 overflow-y-hidden md:flex">
-          <main className={cn(styles.Main, 'p-4')}>{children}</main>
+          <main className={cn(styles.Main)}>{children}</main>
           <IndicatorListWrapper />
         </div>
       ) : (
@@ -77,7 +77,7 @@ export function IndicatorListWrapper({ factorData }: any) {
             )}
           ></span>
           <div>
-            <div className="bg-surfaceNeutral mb-5 min-w-max max-w-full border-b-1 border-solid border-borderSubdued bg-surfaceSelected pl-4">
+            <div className=" mb-5  pl-4">
               <Text className="text-textSubdued" fontWeight="bold">
                 INDICATORS
               </Text>

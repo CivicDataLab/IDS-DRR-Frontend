@@ -16,6 +16,7 @@ export const MapComponent = ({
   indicator,
   regions,
   mapDataloading,
+  revenueMapDataLoading,
   mapData,
   revenueMapData,
   setRegion,
@@ -24,28 +25,27 @@ export const MapComponent = ({
   indicator: string;
   regions: { label: string; value: string }[];
   mapDataloading: boolean;
+  revenueMapDataLoading: boolean;
   mapData: any;
   revenueMapData: any;
   setRegion: any;
   setRevenueRegion: any;
 }) => {
   const [map, setMap] = React.useState<any>(null);
-  const [mapBounds, setMapBounds] = React.useState<any>(null);
   const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
   const params = new URLSearchParams(window.location.search);
   const districtCode = params.get('district-code');
 
+  console.log('coming to map');
+
   const values = [];
   for (let i = 0; i < mapFeatures.length; i++) {
-    if (
-      mapFeatures[i].properties[indicator] == null ||
-      mapFeatures[i].properties[indicator] === 0
-    )
-      continue;
+    if (mapFeatures[i].properties[indicator] == null) continue;
     values.push(mapFeatures[i].properties[indicator]);
   }
 
-  const customLegendData = [];
+  const customLegendData: { label: string; color: string }[] = [];
+  const allZeros = values.every((val) => val === 0);
 
   // Set the sequential scale properties
   const colorScale = d3
@@ -53,7 +53,7 @@ export const MapComponent = ({
     .domain([Math.min(...values), Math.max(...values)])
     .interpolator(interpolateBlues);
 
-  if (!Factors.includes(indicator)) {
+  if (!Factors.includes(indicator) && !allZeros) {
     const min = Math.min(...values);
     const max = Math.max(...values);
     const step = (max - min) / 3;
@@ -62,11 +62,24 @@ export const MapComponent = ({
       const from = grades[i];
       const to = grades[i + 1];
 
-      customLegendData.push({
-        color: colorScale(from),
-        label: `${Math.round(from)}${to ? ` - ${Math.round(to)}` : '+'}`,
-      });
+      const isDuplicate = customLegendData.some(
+        (entry) => Math.round(from) === parseInt(entry.label.split(' ')[0])
+      );
+
+      if (!isDuplicate) {
+        customLegendData.push({
+          color: colorScale(from),
+          label: `${Math.round(from)}${to ? ` - ${Math.round(to)}` : '+'}`,
+        });
+      }
     }
+  }
+
+  if (allZeros) {
+    customLegendData.unshift({
+      color: colorScale(0),
+      label: '0',
+    });
   }
 
   const mapDataFn = (value: number) => {
@@ -134,7 +147,6 @@ export const MapComponent = ({
     revenueMapData: any;
   }) => {
     if (!districtCode) {
-      const bounds = layer._bounds;
       setRegion(layerCode);
     }
 
@@ -145,38 +157,29 @@ export const MapComponent = ({
   };
 
   React.useEffect(() => {
-    if (map) {
-      if (mapData.features) {
-        setMapFeatures(mapData.features);
-        console.log(
-          'districtCode',
-          districtCode,
-          mapData.features[0].properties
-        );
-        const getBoundsData = mapData.features.filter(
-          (feature: { properties: { [x: string]: string } }) =>
-            feature.properties['code'] === districtCode
-        );
-        getBoundsData.length > 0 &&
-          map.fitBounds(getBoundsData[0].properties.bounds);
-        const filterMapData = revenueMapData.features.filter(
-          (feature: { properties: { [x: string]: string } }) =>
-            feature.properties['district-code'] === districtCode
-        );
-        setMapFeatures(filterMapData);
-      }
+    if (map && map.getContainer()) {
+      const getBoundsData = mapData.features.filter(
+        (feature: { properties: { [x: string]: string } }) =>
+          feature.properties['code'] === districtCode
+      );
+      getBoundsData.length > 0 &&
+        map.fitBounds(getBoundsData[0].properties.bounds);
+      const filterMapData = revenueMapData.features.filter(
+        (feature: { properties: { [x: string]: string } }) =>
+          feature.properties['district-code'] === districtCode
+      );
+      setMapFeatures(filterMapData);
       if (!districtCode) {
-        map.setView([26.193, 92.773], 7.4);
         setMapFeatures(mapData.features);
       }
     }
-  }, [districtCode, map, mapData, mapBounds]);
+  }, [districtCode, map, mapData]);
 
-  // React.useEffect(() => {
-  //   if (mapData.features) {
-  //     setMapFeatures(mapData.features);
-  //   }
-  // }, [mapData]);
+  React.useEffect(() => {
+    if (map && map.getContainer() && !districtCode) {
+      map?.setView([26.193, 92.773], 7.4);
+    }
+  }, [map, districtCode]);
 
   React.useEffect(() => {
     const regionsArray: string[] = [];
@@ -239,7 +242,7 @@ export const MapComponent = ({
     }
   }, [indicator, map, regions]);
 
-  if (mapDataloading)
+  if (mapDataloading || revenueMapDataLoading)
     return (
       <div className="flex h-full flex-col place-content-center items-center">
         <Spinner color="highlight" />

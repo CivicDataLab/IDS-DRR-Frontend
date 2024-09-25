@@ -178,7 +178,7 @@ export function FactorList() {
                           <div
                             className={cn(
                               'flex items-center gap-4  p-2',
-                              isActive && 'bg-[#71E57D]'
+                              isActive && 'bg-[#96e79eb2]'
                             )}
                           >
                             {getIcon(ind.slug)}

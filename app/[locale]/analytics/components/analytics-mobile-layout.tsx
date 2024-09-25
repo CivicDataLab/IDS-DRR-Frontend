@@ -150,6 +150,7 @@ export function AnalyticsMobileLayout({
             setRevenueRegion={setRevenueCode}
             revenueMapData={revenueMapData?.data?.revCircleMapData}
             mapDataloading={mapData?.isFetching}
+            revenueMapDataLoading={revenueMapData?.isFetching}
             mapData={mapData?.data?.districtMapData}
           />
         );
