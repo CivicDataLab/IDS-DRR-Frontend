@@ -11,14 +11,16 @@ import {
 import InfoCircle from '@/public/InfoCircle';
 import { useQuery } from '@tanstack/react-query';
 import { useQueryState } from 'next-usequerystate';
-import { Select, Text } from 'opub-ui';
+import { Button, Icon, IconButton, Menu, Select, Text, Tooltip } from 'opub-ui';
 
+import { GithubRepoLink } from '@/config/consts';
 import {
   ANALYTICS_INDICATORS,
   ANALYTICS_INDICATORS_BY_CATEGORY,
 } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
-import { cn } from '@/lib/utils';
+import { cn, copyCurrentURL, handleRedirect } from '@/lib/utils';
+import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import RadioButton from './RadioButton';
 import styles from './styles.module.scss';
@@ -31,10 +33,9 @@ export function FactorList() {
   const districtRegion = searchParams.get('district-code') || '';
   const revenueRegion = searchParams.get('revenue-code') || '';
 
+  const currentURL = typeof window !== 'undefined' ? window.location.href : '';
+
   const [selectedIndicator, setSelectedIndicator] = useState(indicator || '');
-  const [subIndicator, setSubIndicator] = useQueryState('sub-indicator');
-  const [selectedRadioValue, setSelectedRadioValue] =
-    React.useState<string>('');
 
   const factorData = useQuery(
     [`indicators_risk-score`],
@@ -99,8 +100,9 @@ export function FactorList() {
 
       convertedData[categoryName] = Object.keys(categoryItems).map((key) => ({
         name: key,
-        slug: categoryItems[key],
-        isSubIndicator: !getIcon(categoryItems[key]),
+        slug: categoryItems[key]['slug'],
+        description: categoryItems[key]['description'],
+        isSubIndicator: !getIcon(categoryItems[key]['slug']),
       }));
     });
   }
@@ -165,7 +167,12 @@ export function FactorList() {
             Object.keys(convertedData).map((item) =>
               convertedData[item].map(
                 (
-                  ind: { name: string; slug: string; isSubIndicator: boolean },
+                  ind: {
+                    name: string;
+                    slug: string;
+                    description: string;
+                    isSubIndicator: boolean;
+                  },
                   index: number
                 ) => {
                   const isActive = ind.slug === indicator;
@@ -182,19 +189,19 @@ export function FactorList() {
                             )}
                           >
                             {getIcon(ind.slug)}
-
-                            <Text>{ind.name}</Text>
+                            <Tooltip content={ind.description}>
+                              <Text>{ind.name}</Text>
+                            </Tooltip>
                           </div>
                         ) : (
                           <div className="mt-2 px-6">
-                            <RadioButton
-                              changed={(value: string) => {
-                                console.log('cvalue', ind.slug);
-                              }}
-                              isSelected={indicator === ind.slug}
-                              label={ind.name}
-                              value={ind.slug}
-                            />
+                            <Tooltip content={ind.description}>
+                              <RadioButton
+                                isSelected={indicator === ind.slug}
+                                label={ind.name}
+                                value={ind.slug}
+                              />
+                            </Tooltip>
                           </div>
                         )}
                       </Link>
@@ -203,6 +210,95 @@ export function FactorList() {
                 }
               )
             )}
+          <hr className="m-6" />
+          <div className="flex flex-col gap-4 px-6">
+            <Text className="text-textSubdued" fontWeight="bold">
+              ACTIONS
+            </Text>{' '}
+            <Menu
+              trigger={
+                <Button
+                  className="self-start"
+                  monochrome={true}
+                  kind="tertiary"
+                >
+                  <div className="flex items-center gap-1">
+                    <Icon source={Icons.share} />
+                    <Text variant="bodyMd">Share</Text>
+                  </div>
+                </Button>
+              }
+              items={[
+                {
+                  content: 'Facebook',
+                  icon: Icons.IconBrandFacebook,
+
+                  onAction: () => {
+                    const confirmation = window.confirm(
+                      `You are being redirected to "${`https://www.facebook.com/sharer/sharer.php?u=${currentURL}/`}". `
+                    );
+                    if (confirmation) {
+                      window.open(
+                        `https://www.facebook.com/sharer/sharer.php?u=${currentURL}/`,
+                        '_blank'
+                      );
+                    }
+                  },
+                },
+                {
+                  content: 'LinkedIn',
+                  icon: Icons.IconBrandLinkedin,
+                  onAction: () => {
+                    const confirmation = window.confirm(
+                      `You are being redirected to "${`https://www.linkedin.com/feed/?shareActive=true&text=${currentURL}`}`
+                    );
+                    if (confirmation) {
+                      window.open(
+                        `https://www.linkedin.com/feed/?shareActive=true&text=${currentURL}`,
+                        '_blank'
+                      );
+                    }
+                  },
+                },
+                {
+                  content: 'Twitter',
+                  icon: Icons.IconBrandX,
+                  onAction: () => {
+                    const confirmation = window.confirm(
+                      `You are being redirected to "${`https://twitter.com/intent/tweet?url=${currentURL}/`}". `
+                    );
+                    if (confirmation) {
+                      window.open(
+                        `https://twitter.com/intent/tweet?url=${currentURL}/`,
+                        '_blank'
+                      );
+                    }
+                  },
+                },
+                {
+                  content: 'Copy Link',
+                  icon: Icons.link,
+                  onAction: () => copyCurrentURL(),
+                },
+              ]}
+            />
+            <Button
+              className="self-start"
+              onClick={(event) =>
+                handleRedirect(
+                  event,
+                  'https://github.com/CivicDataLab/flood-data-ecosystem-Assam/raw/refs/heads/main/Sources/FRIMS/data/raw_data/FRIMS_Inf_Damage_Data_21_july_2023.xlsx'
+                )
+              }
+              monochrome={true}
+              kind="tertiary"
+            >
+              <div className="flex items-center gap-1">
+                <Icon source={Icons.download} />
+                <Text variant="bodyMd">Download Report</Text>
+              </div>
+            </Button>
+          </div>
         </div>
       </MediaRendering>
     </>
