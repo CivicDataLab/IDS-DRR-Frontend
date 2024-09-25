@@ -90,6 +90,19 @@ export default async function LocaleLayout({
             })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
           `}
         </Script>
+        <Script id="googleAnalytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_APP_ID}');
+          `}
+        </Script>
+        <Script
+          id="googleAnalyticsTag"
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_APP_ID}`}
+        />
       </head>
       <body className={fontSans.className}>
         <NextIntlClientProvider locale={locale} messages={messages}>
