@@ -262,6 +262,7 @@ const DatasetsListing = () => {
                 placeholder="Search datasets"
                 onSubmit={(value) => handleSearch(value)}
                 onClear={(value) => handleSearch(value)}
+                withButton={true}
               />
             </div>
             <div className="flex items-center gap-2">
