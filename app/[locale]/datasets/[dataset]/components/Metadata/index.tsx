@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Button, Icon, Text } from 'opub-ui';
+import { Button, Icon, Tag, Text } from 'opub-ui';
 
 import { toTitleCase } from '@/lib/utils';
 import { Icons } from '@/components/icons';
@@ -51,7 +51,7 @@ const MetadataComponent: React.FC<MetadataProps> = ({ data, setOpen }) => {
             </Text>
             <div className="flex flex-wrap gap-2">
               {data?.formats.map((item: any, index: any) => (
-                <Text key={index}>{item}</Text>
+                <Tag key={index}>{item}</Tag>
               ))}
             </div>
           </div>
