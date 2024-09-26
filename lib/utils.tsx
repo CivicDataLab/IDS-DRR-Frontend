@@ -163,3 +163,32 @@ export function copyCurrentURL() {
     document.body.removeChild(textArea);
   }
 }
+
+export function toTitleCase(str: string) {
+  return str.replace(/\b\w/g, function (char: string) {
+    return char.toUpperCase();
+  });
+}
+
+export function formatReferenceDate(
+  input: string | number | any,
+  isHyphenated = false
+): string {
+  const date = new Date(input);
+  // If hyphendated it would return date in this format - 2023-01-01 else in April 1, 2021
+  return isHyphenated
+    ? new Date(
+        date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'numeric',
+          // day: 'numeric',
+        })
+      )
+        .toISOString()
+        .split('T')[0]
+    : date.toLocaleDateString('en-US', {
+        month: 'long',
+        // day: 'numeric',
+        year: 'numeric',
+      });
+}
