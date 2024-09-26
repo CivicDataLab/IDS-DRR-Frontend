@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -12,46 +14,51 @@ import {
 } from 'opub-ui';
 
 import { ResourcesSectionText } from '@/config/consts';
+import { fetchDatasets } from '@/lib/api';
+import { formatReferenceDate } from '@/lib/utils';
+
+interface MetadataItem {
+  label: string;
+}
+
+interface MetadataEntry {
+  metadata_item: MetadataItem;
+  value: string;
+}
+
+interface Dataset {
+  id: string;
+  metadata: MetadataEntry[];
+  tags: string[];
+  categories: string[];
+  formats: string[];
+  title: string;
+  description: string;
+  created: string; // ISO 8601 date string
+  modified: string; // ISO 8601 date string
+  organization: string | null;
+}
 
 const Resources = () => {
-  const Datasets = [
-    {
-      title: 'Rainfall data aggregate Assam',
-      source: 'Indian Meteorological Department',
-      last_updated: '02 Aug 2023',
-      update_freq: 'monthly',
-      ref_period: 'Aug 2013 to Aug2024',
-      formats: ['CSV', 'XML'],
-      link: '/datasets/north-eastern-regional-node-for-disaster-risk-reduction-nerdrr_21',
-    },
-    {
-      title: 'Rainfall data aggregate Assam',
-      source: 'Indian Meteorological Department',
-      last_updated: '02 Aug 2023',
-      update_freq: 'monthly',
-      ref_period: 'Aug 2013 to Aug2024',
-      formats: ['CSV', 'XML'],
-      link: '/datasets/north-eastern-regional-node-for-disaster-risk-reduction-nerdrr_21',
-    },
-    {
-      title: 'Rainfall data aggregate Assam',
-      source: 'Indian Meteorological Department',
-      last_updated: '02 Aug 2023',
-      update_freq: 'monthly',
-      ref_period: 'Aug 2013 to Aug2024',
-      formats: ['CSV', 'XML'],
-      link: '/datasets/north-eastern-regional-node-for-disaster-risk-reduction-nerdrr_21',
-    },
-    {
-      title: 'Rainfall data aggregate Assam',
-      source: 'Indian Meteorological Department',
-      last_updated: '02 Aug 2023',
-      update_freq: 'monthly',
-      ref_period: 'Aug 2013 to Aug2024',
-      formats: ['CSV', 'XML'],
-      link: '/datasets/north-eastern-regional-node-for-disaster-risk-reduction-nerdrr_21',
-    },
-  ];
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    fetchDatasets('?&size=5&page=1&sort=recent')
+      .then((res: any) => {
+        setData(res.results);
+      })
+      .catch((err: any) => {
+        console.error(err);
+      });
+  }, []);
+
+  function getMetadataValue(data: Dataset, label: string): string | null {
+    const metadataEntry = data.metadata.find(
+      (entry) => entry.metadata_item.label === label
+    );
+    return metadataEntry ? metadataEntry.value : null;
+  }
+
   return (
     <section
       className="flex h-full w-full flex-col gap-10  px-5 py-6 lg:px-6 lg:py-14"
@@ -72,16 +79,20 @@ const Resources = () => {
           </div>
           <CarouselContent className="flex w-full gap-4 px-4 lg:gap-4 ">
             {/* Adjust padding */}
-            {Datasets.map((item, index) => (
+            {data.map((item: any, index: any) => (
               <CarouselItem
                 key={index}
                 className="ml-2  overflow-hidden rounded-2 bg-surfaceDefault p-3 md:basis-1/2 lg:ml-0 lg:basis-1/3  lg:p-6 "
               >
-                <Link href={item.link} className="w-full">
-                  <div className="flex w-full flex-col items-baseline justify-start gap-3">
+                <Link href={`/datasets/${item.id}`} className="w-full">
+                  <div className="flex w-full flex-col items-baseline justify-between gap-3">
                     <div className=" flex flex-col gap-1 ">
-                      <Text variant="bodyLg">{item.title}</Text>
-                      <Text>Source: {item.source}</Text>
+                      <Text variant="bodyLg">
+                        <b>{item.title}</b>
+                      </Text>
+                      <Text variant="bodySm">
+                        Source: {getMetadataValue(item, 'Source') || 'NA'}
+                      </Text>
                     </div>
                     <div className="flex flex-col items-start gap-1">
                       <div className=" flex flex-col gap-1  lg:flex-row">
@@ -91,7 +102,8 @@ const Resources = () => {
                           variant="bodySm"
                           fontWeight="regular"
                         >
-                          Last Updated: {item.last_updated}
+                          Last Updated:{' '}
+                          {getMetadataValue(item, 'Last Updated') || 'NA'}
                         </Text>
                         <Text
                           color="default"
@@ -107,7 +119,8 @@ const Resources = () => {
                           variant="bodySm"
                           fontWeight="regular"
                         >
-                          Update Frequency: {item.update_freq}
+                          Update Frequency:
+                          {getMetadataValue(item, 'Last Updated') || 'NA'}
                         </Text>
                       </div>
                       <Text
@@ -116,11 +129,18 @@ const Resources = () => {
                         variant="bodySm"
                         fontWeight="regular"
                       >
-                        Reference Period: {item.ref_period}
+                        Reference Period:{' '}
+                        {formatReferenceDate(
+                          getMetadataValue(item, 'Period From')
+                        ) || 'NA'}{' '}
+                        to{' '}
+                        {formatReferenceDate(
+                          getMetadataValue(item, 'Period To')
+                        ) || 'NA'}
                       </Text>
                     </div>
                     <div className=" flex gap-2">
-                      {item.formats.map((fileType, index) => (
+                      {item.formats.map((fileType: any, index: any) => (
                         <Tag key={index} background-color="#E1F0FF">
                           {fileType}
                         </Tag>

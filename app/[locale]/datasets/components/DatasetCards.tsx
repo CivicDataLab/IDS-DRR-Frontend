@@ -107,7 +107,7 @@ const Cards = ({ data }: { data: Dataset }) => {
                       {getMetadataValue(data, 'Update Frequency') || 'NA'}
                     </Text>
                   </div>
-                  {/* <Text
+                  <Text
                     color="default"
                     className="text-textSubdued"
                     variant="bodySm"
@@ -120,7 +120,7 @@ const Cards = ({ data }: { data: Dataset }) => {
                     to{' '}
                     {formatReferenceDate(getMetadataValue(data, 'Period To')) ||
                       'NA'}
-                  </Text> */}
+                  </Text>
                 </span>
               </div>
 
