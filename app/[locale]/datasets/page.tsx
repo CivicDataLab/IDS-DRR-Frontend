@@ -239,7 +239,7 @@ const DatasetsListing = () => {
       <BreadCrumbs
         data={[
           { href: '/', label: 'Home' },
-          { href: '#', label: 'Dataset Listing' },
+          { href: '#', label: 'Datasets' },
         ]}
       />
       {datasetDetails.length < 0 ? (
