@@ -1,121 +1,87 @@
 import { graphql } from '@/gql/generated/datasets';
+import { gql } from 'graphql-request';
 
-export const ALL_DATASETS_QUERY = graphql(`
-  query allDatasetsQuery {
-    all_datasets {
-      id
-      title
-      slug
-      period_from
-      period_to
-      description
-      issued
-      highlights
-      update_frequency
-      modified
-      source
-      tags {
-        name
-      }
-      sector {
-        id
-        name
-        description
-        highlights
-      }
-      catalog {
-        organization {
-          title
-          logo
-          homepage
-        }
-      }
+export const DATASET_QUERY: any = gql`
+  query datasets($filters: DatasetFilter) {
+    datasets(filters: $filters) {
       tags {
         id
-        name
+        value
       }
-      resource_set {
-        id
-        title
-        description
-        issued
-        modified
-        file_details {
-          format
-          file
-          source_file_name
-        }
-      }
-      datasetaccessmodel_set {
-        data_access_model {
-          license {
-            title
-          }
-        }
-      }
-    }
-  }
-`);
-
-export const DATASET_BY_SLUG = graphql(`
-  query datasetBySlugQuery($dataset_slug: String) {
-    dataset_by_slug(dataset_slug: $dataset_slug) {
       id
       title
       description
-      contact_point
-      issued
-      highlights
-      remote_issued
-      remote_modified
-      period_from
-      period_to
-      update_frequency
+      created
       modified
-      source
-      sector {
-        id
-        name
-        description
-      }
-      catalog {
-        id
-        title
-        organization {
-          title
-          logo
-          homepage
+      metadata {
+        metadataItem {
+          id
+          label
         }
+        value
       }
-      tags {
+      resources {
         id
-        name
-      }
-      resource_set {
-        id
-        title
-        description
-        issued
+        created
         modified
-        status
-        byte_size
-        release_date
-        is_downloadable
-        file_details {
-          file
-          source_file_name
-          format
-        }
+        type
+        name
+        description
       }
-      datasetaccessmodel_set {
-        data_access_model {
-          license {
-            title
-            type
+      categories {
+        name
+      }
+      formats
+    }
+  }
+`;
+
+export const CHARTS_QUERY: any = gql`
+  query chartsData($datasetId: UUID!) {
+    chartsDetails(datasetId: $datasetId) {
+      aggregateType
+      chartType
+      description
+      id
+      name
+      showLegend
+      xAxisLabel
+      yAxisLabel
+      chart
+    }
+  }
+`;
+
+export const DATASET_RESOURCES_QUERY: any = gql`
+  query datasetResources($datasetId: UUID!) {
+    datasetResources(datasetId: $datasetId) {
+      id
+      created
+      modified
+      type
+      name
+      description
+      accessModels {
+        name
+        description
+        type
+        modelResources {
+          fields {
+            format
+            fieldName
+            description
           }
         }
-        resource_formats
+      }
+      schema {
+        fieldName
+        id
+        format
+        description
+      }
+      fileDetails {
+        format
       }
     }
   }
-`);
+`;

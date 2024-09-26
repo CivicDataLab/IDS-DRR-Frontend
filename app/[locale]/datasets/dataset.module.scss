@@ -1,0 +1,19 @@
+.Search {
+  input {
+    width: 300px;
+    height: 36px;
+  }
+  svg {
+    color: #58ce65;
+  }
+  > button {
+    border-radius: 4px;
+    height: 36px;
+    background-color: var(--base-pure-white);
+    border: 2px;
+    border-color: #58ce65;
+    border-style: solid;
+    padding: 6px;
+  }
+  justify-content: center;
+}
