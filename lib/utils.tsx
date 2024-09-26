@@ -164,6 +164,47 @@ export function copyCurrentURL() {
   }
 }
 
+export function copyDefinedURL(url: any) {
+  const currentURL = url;
+
+  if (navigator.clipboard) {
+    navigator.clipboard
+      .writeText(currentURL)
+      .then(() => {
+        console.log('URL copied to clipboard:', currentURL);
+        alert('URL copied to clipboard!');
+      })
+      .catch((err) => {
+        console.error('Failed to copy URL:', err);
+        alert('Failed to copy URL.');
+      });
+  } else {
+    // For browsers not supporting clipboard API
+    const textArea = document.createElement('textarea');
+    textArea.value = currentURL;
+    textArea.style.position = 'fixed';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+      const success = document.execCommand('copy');
+      if (success) {
+        console.log('URL copied to clipboard:', currentURL);
+        alert('URL copied to clipboard!');
+      } else {
+        console.error('Failed to copy URL.');
+        alert('Failed to copy URL.');
+      }
+    } catch (err) {
+      console.error('Failed to copy URL:', err);
+      alert('Failed to copy URL.');
+    }
+
+    document.body.removeChild(textArea);
+  }
+}
+
 export function toTitleCase(str: string) {
   return str.replace(/\b\w/g, function (char: string) {
     return char.toUpperCase();
