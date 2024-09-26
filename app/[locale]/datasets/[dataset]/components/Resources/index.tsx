@@ -106,7 +106,9 @@ const Resources = () => {
                     target="_blank"
                     className="flex justify-center"
                   >
-                    <Button>Download</Button>
+                    <Button className=" bg-[#71E57DB2] font-Bold text-basePureBlack hover:bg-[#71E57DB2] hover:text-basePureBlack">
+                      Download
+                    </Button>
                   </Link>
                 </div>
               </div>
