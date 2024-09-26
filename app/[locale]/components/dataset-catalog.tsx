@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { Text } from 'opub-ui';
 
 import { DatasetCatalogText } from '@/config/consts';
@@ -8,18 +9,22 @@ export const DatasetCatalog = () => {
     {
       name: 'Hazard',
       icon: '/logo/Hazard.svg',
+      link: '/datasets?categories=Flood+Hazard+Score',
     },
     {
       name: 'Exposure',
       icon: '/logo/Exposure.svg',
+      link: '/datasets?categories=Exposure+Score',
     },
     {
       name: 'Vulnerability',
       icon: '/logo/Vulnerability.svg',
+      link: '/datasets?categories=Vulnerability+Score',
     },
     {
       name: 'Government Response',
       icon: '/logo/Government_Response.svg',
+      link: '/datasets?categories=Government+Response+Score',
     },
   ];
   return (
@@ -35,13 +40,15 @@ export const DatasetCatalog = () => {
       <div className="flex w-full flex-wrap items-center justify-between gap-3">
         {Catalog.map((item, index) => (
           <div key={index} className=" text-center">
-            <Image src={item.icon} alt={''} width={110} height={110} />
-            <Text
-              variant="headingXl"
-              className="m-auto block min-w-40 max-w-40 text-center"
-            >
-              {item.name}
-            </Text>
+            <Link href={item.link}>
+              <Image src={item.icon} alt={''} width={110} height={110} />
+              <Text
+                variant="headingXl"
+                className="m-auto block min-w-40 max-w-40 text-center"
+              >
+                {item.name}
+              </Text>
+            </Link>
           </div>
         ))}
       </div>
