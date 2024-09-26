@@ -48,41 +48,50 @@ const DatasetDetailsPage = () => {
           { href: '#', label: 'Dataset Details' },
         ]}
       />
-      <div className="flex w-full gap-7 md:px-8 lg:px-8">
-        <div className="w-full flex-grow py-8 ">
-          <div className=" flex flex-col gap-5  ">
-            <div ref={primaryDataRef} className="flex flex-col gap-4">
-              {isLoading ? (
-                <div className=" mt-8 flex justify-center">
-                  <Spinner />
-                </div>
-              ) : (
-                <PrimaryData
-                  data={data && data?.datasets[0]}
-                  isLoading={isLoading}
-                />
-              )}
+      {isLoading ? (
+        <div
+          className=" flex  items-center justify-center"
+          style={{ height: '76vh' }}
+        >
+          <Spinner size={30} />
+        </div>
+      ) : (
+        <div className="flex w-full gap-7 md:px-8 lg:px-8">
+          <div className="w-full flex-grow py-8 ">
+            <div className=" flex flex-col gap-5  ">
+              <div ref={primaryDataRef} className="flex flex-col gap-4">
+                {isLoading ? (
+                  <div className=" mt-8 flex justify-center">
+                    <Spinner />
+                  </div>
+                ) : (
+                  <PrimaryData
+                    data={data && data?.datasets[0]}
+                    isLoading={isLoading}
+                  />
+                )}
+              </div>
             </div>
-          </div>
-          <div className=" mt-5 flex w-full">
-            <div className="w-full lg:w-9/12">
-              <Details />
-              <Resources />
-            </div>
-            <div className=" hidden flex-col gap-8 border-l-2 border-solid border-baseGraySlateSolid3 py-6 pl-7 lg:flex ">
-              {isLoading ? (
-                <div className=" mt-8 flex justify-center">
-                  <Spinner />
-                </div>
-              ) : (
-                <div>
-                  <Metadata data={data && data?.datasets[0]} />
-                </div>
-              )}
+            <div className=" mt-5 flex w-full">
+              <div className="w-full lg:w-9/12">
+                <Details />
+                <Resources />
+              </div>
+              <div className=" hidden flex-col gap-8 border-l-2 border-solid border-baseGraySlateSolid3 py-6 pl-7 lg:flex ">
+                {isLoading ? (
+                  <div className=" mt-8 flex justify-center">
+                    <Spinner />
+                  </div>
+                ) : (
+                  <div>
+                    <Metadata data={data && data?.datasets[0]} />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </main>
   );
 };
