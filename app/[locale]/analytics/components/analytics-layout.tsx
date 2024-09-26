@@ -232,7 +232,7 @@ export function Content({
   return (
     <React.Fragment>
       <Tabs defaultValue="map">
-        <TabList fitted className="p-4 pb-0">
+        <TabList fitted className="p-2 pb-0">
           <Tab theme="climate" value="map">
             Map View
           </Tab>
@@ -257,8 +257,8 @@ export function Content({
         </TabList>
         <TabPanel value="map">
           {revenueMapData?.data && mapData?.data && (
-            <div className=" mt-2 h-[calc(100dvh_-_160px)]">
-              <div className="mb-2 flex items-start justify-evenly gap-3 p-4 pb-0">
+            <div className=" mt-2 h-[calc(100dvh_-_140px)]">
+              <div className="mb-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
                 <Select
                   label="Select District"
                   value={districtCode || ''}

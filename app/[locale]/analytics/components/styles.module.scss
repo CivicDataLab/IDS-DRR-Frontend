@@ -15,10 +15,10 @@
 
 .Overlay {
   position: absolute;
-  top: 170px;
+  top: 145px;
   right: -100%; /* Hide off-screen initially */
   z-index: 99999;
-  height: calc(100% - 20%);
+  height: calc(100dvh - 30%);
   opacity: 90%;
   box-shadow: var(--shadow-basic-md);
   transition: right 0.4s ease; /* Smooth transition */

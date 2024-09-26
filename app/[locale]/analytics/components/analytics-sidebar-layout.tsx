@@ -57,7 +57,7 @@ export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
   );
 }
 
-export function IndicatorListWrapper({ factorData }: any) {
+export function IndicatorListWrapper() {
   return (
     <React.Fragment>
       <aside
@@ -69,7 +69,7 @@ export function IndicatorListWrapper({ factorData }: any) {
           styles.Collapse
         )}
       >
-        <div className="h-[90vh] overflow-x-hidden overflow-y-scroll pt-6">
+        <div className="h-[90vh] overflow-x-hidden overflow-y-scroll bg-[#F4FBF5] pt-6">
           <span
             className={cn(
               ' rounded items-center justify-end pl-0'

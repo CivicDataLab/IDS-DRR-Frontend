@@ -92,6 +92,11 @@ export type QueryIndicatorsArgs = {
 };
 
 
+export type QueryIndicatorsByCategoryArgs = {
+  parentId?: InputMaybe<Scalars['Int']>;
+};
+
+
 export type QueryRevCircleMapDataArgs = {
   dataFilter: DataFilter;
   geoFilter?: InputMaybe<GeoFilter>;

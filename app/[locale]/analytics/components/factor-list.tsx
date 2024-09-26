@@ -8,12 +8,10 @@ import {
   RiskScore,
   Vulnerability,
 } from '@/public/FactorIcons';
-import InfoCircle from '@/public/InfoCircle';
 import { useQuery } from '@tanstack/react-query';
 import { useQueryState } from 'next-usequerystate';
 import { Button, Icon, IconButton, Menu, Select, Text, Tooltip } from 'opub-ui';
 
-import { GithubRepoLink } from '@/config/consts';
 import {
   ANALYTICS_INDICATORS,
   ANALYTICS_INDICATORS_BY_CATEGORY,
@@ -24,6 +22,35 @@ import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import RadioButton from './RadioButton';
 import styles from './styles.module.scss';
+
+interface TreeNode {
+  slug: string;
+  name: string;
+  description: string;
+  children: TreeNode[];
+}
+
+interface NestedSidebarProps {
+  data: TreeNode[];
+  indicator: string | null;
+}
+
+export function getIcon(slug: string) {
+  switch (slug) {
+    case 'risk-score':
+      return <RiskScore color="#000000" />;
+    case 'vulnerability':
+      return <Vulnerability color="#000000" />;
+    case 'flood-hazard':
+      return <FloodHazard color="#000000" />;
+    case 'exposure':
+      return <Exposure color="#000000" />;
+    case 'government-response':
+      return <GovtResponse color="#000000" />;
+    default:
+      return null;
+  }
+}
 
 export function FactorList() {
   const searchParams = useSearchParams();
@@ -68,71 +95,18 @@ export function FactorList() {
     }
   );
 
-  let convertedData: any = {};
-  const categories = indicatorsQuery?.data?.indicatorsByCategory;
-
-  //* To Get the Indicators in a particular format so that they can be used in URL formation check line no . 176 to 180
-
-  /* 
-    Sample on how convertedData would look 
-    {
-      'Damages and Losses': [
-        {
-          indicator: 'damages-and-losses',
-          'sub-indicator': null,
-        },
-        {
-          indicator: 'damages-and-losses',
-          'sub-indicator': 'population-affected',
-        },
-        {
-          indicator: 'damages-and-losses',
-          'sub-indicator': 'crop-area-affected',
-        },
-      ]
-    }
-  */
-
-  if (categories) {
-    categories.forEach((category: { [x: string]: any }) => {
-      const categoryName = Object.keys(category)[0]; // Extract the category name
-      const categoryItems = category[categoryName]; // Extract the sub-items
-
-      convertedData[categoryName] = Object.keys(categoryItems).map((key) => ({
-        name: key,
-        slug: categoryItems[key]['slug'],
-        description: categoryItems[key]['description'],
-        isSubIndicator: !getIcon(categoryItems[key]['slug']),
-      }));
-    });
-  }
+  const indicatorNodes = indicatorsQuery?.data?.indicatorsByCategory;
 
   useEffect(() => {
     setSelectedIndicator(indicator || '');
   }, [indicator]);
 
-  const handleChange = (selected: string, _name?: string) => {
+  const handleChange = (selected: string) => {
     setSelectedIndicator(selected);
     // Navigate to the selected indicator
     const selectedSlug = selected;
     window.location.href = `?indicator=${selectedSlug}&time-period=${time_period}&boundary=${boundary}&district-code=${districtRegion}&revenue-code=${revenueRegion}`;
   };
-  function getIcon(slug: string) {
-    switch (slug) {
-      case 'risk-score':
-        return <RiskScore color="#000000" />;
-      case 'vulnerability':
-        return <Vulnerability color="#000000" />;
-      case 'flood-hazard':
-        return <FloodHazard color="#000000" />;
-      case 'exposure':
-        return <Exposure color="#000000" />;
-      case 'government-response':
-        return <GovtResponse color="#000000" />;
-      default:
-        return null;
-    }
-  }
 
   return (
     <>
@@ -162,54 +136,10 @@ export function FactorList() {
       </MediaRendering>
       <MediaRendering minWidth="1024" maxWidth={null}>
         <div className={cn(styles.FactorList)}>
-          {indicatorsQuery.isFetched &&
-            convertedData &&
-            Object.keys(convertedData).map((item) =>
-              convertedData[item].map(
-                (
-                  ind: {
-                    name: string;
-                    slug: string;
-                    description: string;
-                    isSubIndicator: boolean;
-                  },
-                  index: number
-                ) => {
-                  const isActive = ind.slug === indicator;
-                  return (
-                    <React.Fragment key={`indicator_${ind.slug}_${index}`}>
-                      <Link
-                        href={`?indicator=${ind.slug}&time-period=${time_period}&boundary=${boundary}&district-code=${districtRegion}&revenue-code=${revenueRegion}`}
-                      >
-                        {!ind.isSubIndicator ? (
-                          <div
-                            className={cn(
-                              'flex items-center gap-4  p-2',
-                              isActive && 'bg-[#96e79eb2]'
-                            )}
-                          >
-                            {getIcon(ind.slug)}
-                            <Tooltip content={ind.description}>
-                              <Text>{ind.name}</Text>
-                            </Tooltip>
-                          </div>
-                        ) : (
-                          <div className="mt-2 px-6">
-                            <Tooltip content={ind.description}>
-                              <RadioButton
-                                isSelected={indicator === ind.slug}
-                                label={ind.name}
-                                value={ind.slug}
-                              />
-                            </Tooltip>
-                          </div>
-                        )}
-                      </Link>
-                    </React.Fragment>
-                  );
-                }
-              )
-            )}
+          {indicatorsQuery.isFetched && (
+            <NestedSidebar data={indicatorNodes} indicator={indicator} />
+          )}
+
           <hr className="m-6" />
           <div className="flex flex-col gap-4 px-6">
             <Text className="text-textSubdued" fontWeight="bold">
@@ -304,3 +234,130 @@ export function FactorList() {
     </>
   );
 }
+
+const NestedSidebarItem: React.FC<{
+  node: TreeNode;
+  level: number;
+  indicator: string | null;
+}> = ({ node, level, indicator }) => {
+  const [isExpanded, setIsExpanded] = useState(node.slug === 'risk-score');
+  const [, setIndicatorSelected] = useQueryState('indicator');
+  const isActive = node.slug === indicator;
+  const hasChildren = node.children && node.children.length > 0;
+  const searchParams = useSearchParams();
+  const time_period = searchParams.get('time-period');
+  const boundary = searchParams.get('boundary') || 'district';
+  const districtRegion = searchParams.get('district-code') || '';
+  const revenueRegion = searchParams.get('revenue-code') || '';
+
+  useEffect(() => {
+    if (node.slug === indicator) {
+      setIsExpanded(true);
+    }
+  }, [indicator, node.slug]);
+
+  const toggleExpand = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsExpanded(!isExpanded);
+  };
+
+  return (
+    <div className={cn('relative')}>
+      <div
+        className={cn(
+          'flex cursor-pointer items-center py-1',
+          level === 0 && 'font-Bold',
+          level === 1 && 'font-Medium',
+          level > 1 && 'pl-6'
+        )}
+        role="button"
+        tabIndex={0}
+        aria-label={node.name}
+      >
+        {level < 2 ? (
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={() => {
+              setIndicatorSelected(node.slug, { shallow: false });
+              setIsExpanded(true);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                setIndicatorSelected(node.slug, { shallow: false });
+                setIsExpanded(true);
+              }
+            }}
+            className={cn(
+              'group flex h-10 w-full items-center gap-4',
+              isActive && 'px-2',
+              isActive && 'bg-[#96e79eb2]'
+            )}
+          >
+            <div className="relative">
+              <div className="group-hover:hidden">{getIcon(node.slug)}</div>
+              <div className="hidden group-hover:block">
+                <Button
+                  monochrome={true}
+                  kind="tertiary"
+                  onClick={toggleExpand}
+                >
+                  {isExpanded ? (
+                    <Icon source={Icons.up} />
+                  ) : (
+                    <Icon source={Icons.down} />
+                  )}
+                </Button>
+              </div>
+            </div>
+            <Tooltip content={node.description}>
+              <Text>{node.name}</Text>
+            </Tooltip>
+          </div>
+        ) : (
+          <Tooltip content={node.description}>
+            <Link
+              href={`?indicator=${node.slug}&time-period=${time_period}&boundary=${boundary}&district-code=${districtRegion}&revenue-code=${revenueRegion}`}
+            >
+              <RadioButton
+                isSelected={indicator === node.slug}
+                changed={(value: string) => {
+                  setIndicatorSelected(value, { shallow: false });
+                }}
+                label={node.name}
+                value={node.slug}
+              />
+            </Link>
+          </Tooltip>
+        )}
+      </div>
+      {hasChildren && isExpanded && (
+        <div className={cn('relative', level === 0 && 'ml-4')}>
+          {node.children.map((child) => (
+            <NestedSidebarItem
+              key={child.slug}
+              node={child}
+              indicator={indicator}
+              level={level + 1}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const NestedSidebar: React.FC<NestedSidebarProps> = ({ data, indicator }) => {
+  return (
+    <div>
+      {data.map((node) => (
+        <NestedSidebarItem
+          key={node.slug}
+          node={node}
+          indicator={indicator}
+          level={0}
+        />
+      ))}
+    </div>
+  );
+};
