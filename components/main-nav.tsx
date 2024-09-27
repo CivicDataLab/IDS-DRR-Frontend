@@ -37,21 +37,22 @@ export function MainNav({ data }: { data: MainConfig }) {
             </div>
           </NavLink>
         </div>
+        <div className="flex">
+          {data.mainNav.length > 0 && (
+            <div className="flex shrink-0 flex-wrap items-center gap-3 sm:gap-5">
+              {data.mainNav.map((link) => (
+                <ExploreLink
+                  key={link.title}
+                  href={link.href || ''}
+                  icon={link.icon || ''}
+                  text={link.title || ''}
+                />
+              ))}
+            </div>
+          )}
 
-        {data.mainNav.length > 0 && (
-          <div className="flex shrink-0 flex-wrap items-center gap-3 sm:gap-5">
-            {data.mainNav.map((link) => (
-              <ExploreLink
-                key={link.title}
-                href={link.href || ''}
-                icon={link.icon || ''}
-                text={link.title || ''}
-              />
-            ))}
-          </div>
-        )}
-
-        <TranslateDropdown prefLangCookie={getPrefLangCookie()} />
+          <TranslateDropdown prefLangCookie={getPrefLangCookie()} />
+        </div>
       </div>
     </header>
   );
