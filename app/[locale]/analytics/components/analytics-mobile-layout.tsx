@@ -14,6 +14,7 @@ import { Button, Icon, Text } from 'opub-ui';
 import {
   ANALYTICS_DISTRICT_MAP_DATA,
   ANALYTICS_GEOGRAPHY_DATA,
+  ANALYTICS_INDICATORS,
   ANALYTICS_REVENUE_MAP_DATA,
 } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
@@ -121,6 +122,23 @@ export function AnalyticsMobileLayout({
     }
   );
 
+  const indicatorsData = useQuery(
+    [`indicators_${indicator}`],
+    () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_INDICATORS,
+        {
+          indcFilter: { slug: indicator },
+        }
+      ),
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
+
   const filterOpt = (boundary: string) => {
     const regionOptions = constructRegionOptions(boundary, geographiesData);
 
@@ -145,6 +163,7 @@ export function AnalyticsMobileLayout({
         return (
           <MapComponent
             indicator={indicator}
+            indicatorsData={indicatorsData?.data?.indicators}
             regions={filterOpt(boundary)}
             setRegion={setDistrictCode}
             setRevenueRegion={setRevenueCode}
