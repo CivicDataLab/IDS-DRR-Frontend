@@ -262,7 +262,7 @@ const NestedSidebarItem: React.FC<{
   };
 
   return (
-    <div className={cn('relative')}>
+    <div className={cn('relative', level === 0 && 'pl-4')}>
       <div
         className={cn(
           'flex cursor-pointer items-center py-1',

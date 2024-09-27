@@ -63,13 +63,13 @@ export function IndicatorListWrapper() {
       <aside
         className={cn(
           'overflow-hidden bg-surfaceDefault pr-0 shadow-basicMd',
-          'shadow-inset z-1 hidden shrink-0 basis-[320px] md:block',
+          'shadow-inset z-1 hidden shrink-0 basis-[320px] bg-[#F4FBF5] md:block',
           // isCollapsed && 'basis-[32px]',
           'border-r-1 border-solid border-borderSubdued',
           styles.Collapse
         )}
       >
-        <div className="h-[90vh] overflow-x-hidden overflow-y-scroll bg-[#F4FBF5] pt-6">
+        <div className="h-[90vh] overflow-x-hidden overflow-y-scroll  pt-6">
           <span
             className={cn(
               ' rounded items-center justify-end pl-0'
