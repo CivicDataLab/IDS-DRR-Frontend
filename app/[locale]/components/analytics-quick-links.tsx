@@ -60,7 +60,7 @@ export const QuickLinks = () => {
           <div className="block xl:hidden">
             <CarouselPrevious />
           </div>
-          <CarouselContent className="flex w-full gap-0 px-4 md:gap-6 lg:gap-2 xl:pr-28">
+          <CarouselContent className="container flex w-full gap-0 px-4 md:gap-6 lg:gap-2">
             {/* Adjust padding */}
             {Analytics.map((item, index) => (
               <CarouselItem

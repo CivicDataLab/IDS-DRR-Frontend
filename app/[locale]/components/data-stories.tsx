@@ -50,7 +50,7 @@ const DataStories = () => {
       className=" flex h-full w-full flex-col gap-10 px-5 py-6 lg:w-fit lg:px-6 lg:py-14"
       style={{ backgroundColor: '#222136' }}
     >
-      <div className=" container flex flex-col gap-4 ">
+      <div className="  flex flex-col gap-4 lg:pl-12">
         <Text variant="heading4xl" fontWeight="bold" color="onBgDefault">
           Data Stories{' '}
         </Text>
