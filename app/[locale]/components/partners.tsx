@@ -12,17 +12,6 @@ const Partners = () => {
             </Text>
             <div className="flex flex-wrap items-center gap-12">
               <Image
-                src="/logo/OpenContracting.png"
-                width={194}
-                height={72}
-                alt="OCP Logo"
-                className="object-contain"
-                style={{
-                  width: '194',
-                  height: '72',
-                }}
-              />
-              <Image
                 src="/logo/Rockefeller.png"
                 width={193}
                 height={66}
@@ -31,6 +20,17 @@ const Partners = () => {
                 style={{
                   width: '193',
                   height: '66',
+                }}
+              />
+              <Image
+                src="/logo/PJMc.png"
+                width={194}
+                height={72}
+                alt="OCP Logo"
+                className="object-contain"
+                style={{
+                  width: '194',
+                  height: '72',
                 }}
               />
             </div>
@@ -42,6 +42,17 @@ const Partners = () => {
             <div className="flex flex-wrap items-center gap-12 ">
               <Image
                 src="/logo/ASDMA3.png"
+                width={92}
+                height={72}
+                alt="ASDMA Logo"
+                className="object-contain"
+                style={{
+                  width: '92',
+                  height: '72',
+                }}
+              />
+              <Image
+                src="/logo/hp.png"
                 width={92}
                 height={72}
                 alt="ASDMA Logo"
