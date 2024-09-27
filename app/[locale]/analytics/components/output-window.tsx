@@ -13,22 +13,26 @@ import {
 } from '@/public/FactorIcons';
 import { InfoSquare } from '@/public/InfoCircle';
 import { useQuery } from '@tanstack/react-query';
+import { useQueryState } from 'next-usequerystate';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  Button,
   Divider,
+  Icon,
   ProgressBar,
   Text,
   Tooltip,
   useScreenshot,
 } from 'opub-ui';
 
-import { RiskColorMap } from '@/config/consts';
+import { Factors, RiskColorMap, RiskText } from '@/config/consts';
 import { ANALYTICS_TIME_TRENDS } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { cn, deSlugify, formatDateString } from '@/lib/utils';
+import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import { DownloadReport } from './download-report';
 import { RevenueCircle, ScoreInfo } from './revenue-circle-accordion';
@@ -42,9 +46,16 @@ export function OutputWindow({
   boundary,
 }: any) {
   const searchParams = useSearchParams();
-  const timePeriod = searchParams.get('time-period') || '2023_08';
+  if (!process.env.NEXT_PUBLIC_TIME_PERIOD) {
+    throw new Error('TIME_PERIOD is not defined');
+  }
+  const DEFAULT_TIME_PERIOD: string = process.env.NEXT_PUBLIC_TIME_PERIOD;
+  const timePeriod = searchParams.get('time-period') || DEFAULT_TIME_PERIOD;
   const formattedTimePeriod = formatDateString(timePeriod);
-  const region = searchParams.get('region') || '1';
+  const region = searchParams.get('district-code') || '';
+  const RevenueRegion = searchParams.get('revenue-code') || '';
+  const [, setDistrictCode] = useQueryState('district-code');
+  const [, setRevenueCode] = useQueryState('revenue-code');
 
   const DEFAULT_PERIOD = '3M';
 
@@ -76,7 +87,7 @@ export function OutputWindow({
         {
           indcFilter: { slug: indicator },
           dataFilter: { dataPeriod: timePeriod, period: period },
-          geoFilter: { code: region?.split(',') },
+          geoFilter: { code: [region] },
         }
       ),
     {
@@ -119,11 +130,10 @@ export function OutputWindow({
     'revenue-circle': 'Revenue Circle',
   };
 
-  const DataBasedOnBoundary = boundary === 'district' ? districtData : data;
-  const RegionName =
-    boundary === 'district'
-      ? districtData[0]?.district
-      : data[0]?.['revenue-circle'];
+  const DataBasedOnBoundary = !RevenueRegion ? districtData : data;
+  const RegionName = !RevenueRegion
+    ? districtData[0]?.district
+    : data[0]?.['revenue-circle'];
 
   const title = 'IDS DRR';
   const [svgURL, setSvgURL] = React.useState<string>('');
@@ -159,6 +169,22 @@ export function OutputWindow({
     return descriptionObject ? descriptionObject.description : 'NA';
   }
 
+  const IconMap: { [key: string]: React.ReactNode } = {
+    'risk-score': <RiskScore color={'#000'} />,
+    vulnerability: <Vulnerability color={'#000'} />,
+    'flood-hazard': <FloodHazard color={'#000'} />,
+    exposure: <Exposure color={'#000'} />,
+    'government-response': <GovtResponse color={'#000'} />,
+  };
+
+  const colorMap: { [key: number]: string } = {
+    1: 'text-mapRiskVeryLow',
+    2: 'text-mapRiskLow',
+    3: 'text-mapRiskMedium',
+    4: 'text-mapRiskHigh',
+    5: 'text-mapRiskVeryHigh',
+  };
+
   return (
     <>
       <MediaRendering minWidth="1024" maxWidth={null}>
@@ -167,144 +193,109 @@ export function OutputWindow({
           className={cn(
             'p-4',
             'bg-surfaceDefault shadow-basicMd',
-            'shadow-inset z-1 hidden min-w-[500px] max-w-[500px] shrink-0 md:block',
-            'overflow-y-auto border-r-1 border-solid border-borderSubdued'
+            'shadow-inset z-1 hidden min-w-[420px] max-w-[450px] shrink-0 md:block',
+            'overflow-y-auto border-r-1 border-solid border-borderSubdued',
+            styles.Overlay,
+            region !== null && region.length > 0 && styles.OverlayActive
           )}
         >
-          <OutputWindowHeader indicator={indicator} factorData={factorData} />
-          <Divider className="mt-2" />
-          {(data.length === 1 || districtData.length === 1) && (
-            <div className=" mb-2 mt-5 flex flex-col">
-              <Text variant="heading2xl" fontWeight="regular">
+          <div className="flex gap-2">
+            <Button
+              onClick={() => {
+                setDistrictCode(null), setRevenueCode(null);
+              }}
+              kind="tertiary"
+            >
+              <Icon source={Icons.back} />
+            </Button>
+
+            {(data.length === 1 || districtData.length === 1) && (
+              <Text
+                className="uppercase"
+                variant="headingLg"
+                fontWeight="semibold"
+              >
                 {RegionName} {GeographyMap[boundary]}
               </Text>
-            </div>
-          )}
+            )}
+          </div>
           <div className="flex items-center justify-between self-stretch">
             <div className="mt-4 flex items-center gap-4">
               <Text variant="bodyMd" color="subdued" fontWeight="regular">
                 Cumulative till {formattedTimePeriod}
               </Text>
-
-              <Tooltip
-                content={
-                  <>
-                    <Text>{getDescription(indicator)}</Text>
-                  </>
-                }
-                side="right"
-                defaultOpen={tooltipOpen}
-                open={tooltipOpen}
-                onOpenChange={(isOpen) => setTooltipOpen(isOpen)}
-              >
-                {<InfoSquare color="#6A6A6A" />}
-              </Tooltip>
             </div>
           </div>
+          {/* //--------  */}
 
           <section className="mt-4">
             {DataBasedOnBoundary.map((data: any, index: any) => (
-              <div key={index} className="mb-4">
-                <Text variant="headingXl" fontWeight="regular">
-                  {data[boundary]}
-                </Text>
-
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center">
-                    <div className=" mr-3 basis-2/4">
-                      <ProgressBar
-                        size="small"
-                        customColor={
-                          RiskColorMap[parseInt(data[indicator]['value'])]
-                        }
-                        value={(parseInt(data[indicator]['value']) / 5) * 100}
-                      />
-                    </div>
-                    <Text variant="heading2xl">
-                      {parseInt(data?.[indicator]['value'])}
+              <div key={`boundary-${index}`} className="mb-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    {IconMap[indicator]}
+                    <Text
+                      variant="bodyLg"
+                      fontWeight={
+                        indicator === 'risk-score' ? 'bold' : 'regular'
+                      }
+                    >
+                      {getFactorNameBySlug(factorData, indicator)}
                     </Text>
-                    /5
+                    {!Factors.includes(indicator) && (
+                      <Text variant="bodyMd" fontWeight="bold">
+                        {data[indicator]['value']}
+                      </Text>
+                    )}
                   </div>
-
-                  <OtherFactorScores
-                    factorData={factorData}
-                    data={data}
-                    boundary={boundary}
-                    indicator={indicator}
-                    indicatorDescription={indicatorDescriptions}
-                    getDescription={getDescription}
-                  />
+                  <div className="flex items-center gap-4">
+                    <Text
+                      className={cn(
+                        colorMap[parseInt(data[indicator]['value'])],
+                        'uppercase'
+                      )}
+                      fontWeight="semibold"
+                    >
+                      {Factors.includes(indicator) &&
+                        RiskText[parseInt(data[indicator]['value'])][
+                          'indicatorText'
+                        ]}
+                    </Text>
+                    <Tooltip
+                      content={
+                        <>
+                          <Text>{getDescription(indicator)}</Text>
+                        </>
+                      }
+                      side="right"
+                      defaultOpen={tooltipOpen}
+                      open={tooltipOpen}
+                      onOpenChange={(isOpen) => setTooltipOpen(isOpen)}
+                    >
+                      {<InfoSquare color="#6A6A6A" />}
+                    </Tooltip>
+                  </div>
                 </div>
+                {Factors.includes(indicator) && (
+                  <div className="mt-5 flex flex-col gap-2">
+                    <Text className="text-baseGraySlateSolid11">
+                      Some of the indicators contributing to{' '}
+                      {getFactorNameBySlug(factorData, indicator)} are -
+                    </Text>
+                    <OtherFactorScores
+                      factorData={factorData}
+                      data={data}
+                      boundary={boundary}
+                      IconMap={IconMap}
+                      indicator={indicator}
+                      indicatorDescription={indicatorDescriptions}
+                      getDescription={getDescription}
+                    />
+                  </div>
+                )}
               </div>
             ))}
           </section>
-          <Accordion type="single" defaultValue="revenue-circle" collapsible>
-            <AccordionItem value="revenue-circle" className="mt-4">
-              {districtData.length === 1 && (
-                <div className="mt-7">
-                  <div className={styles.SidebarAccordionTitle}>
-                    <Text variant="bodyLg" fontWeight="bold">
-                      REVENUE CIRCLE SCORE
-                    </Text>
-                    <AccordionTrigger />
-                  </div>
-                  <AccordionContent
-                    className={cn(styles.RevenueBox, 'px-2 pb-4 md:px-4 ')}
-                  >
-                    <RevenueCircle
-                      revenueCircleData={revenueCircleData}
-                      factorData={factorData}
-                      indicator={indicator}
-                      indicatorDescriptions={indicatorDescriptions}
-                      getDescription={getDescription}
-                    />
-                  </AccordionContent>
-                </div>
-              )}
-            </AccordionItem>
-            <AccordionItem value="time-trends" className="mt-4">
-              <div className="mt-5">
-                <div className={styles.SidebarAccordionTitle}>
-                  <Text variant="bodyLg" fontWeight="bold">
-                    TIME TRENDS
-                  </Text>
-                  <AccordionTrigger />
-                </div>
-
-                <AccordionContent
-                  className={cn(styles.TrendsBox, 'px-2 pb-4 md:px-4 ')}
-                >
-                  <div className="mt-4 flex items-center gap-2">
-                    {items.map(({ label, value: itemValue }) => {
-                      const isActiveValue = itemValue === period;
-                      return (
-                        <button
-                          key={itemValue}
-                          type="button"
-                          className={cn(
-                            styles.TabItem,
-                            isActiveValue && styles.TabItemActive
-                          )}
-                          onClick={() => {
-                            setPeriod(itemValue);
-                          }}
-                        >
-                          {label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {chartData.isFetched ? (
-                    <TimeTrends
-                      chartData={chartData?.data?.getTimeTrends}
-                      indicator={indicator}
-                      boundary={boundary}
-                    />
-                  ) : null}
-                </AccordionContent>
-              </div>
-            </AccordionItem>
-          </Accordion>
         </aside>
       </MediaRendering>
       <MediaRendering minWidth={null} maxWidth="1023">
@@ -333,15 +324,15 @@ export function OutputWindow({
           </div>
 
           <section className="mt-4">
-            {DataBasedOnBoundary.map((data: any, index: any) => (
-              <div key={index} className="mb-4">
-                <Text variant="headingXl" fontWeight="regular">
-                  {data[boundary]}
-                </Text>
+            <Accordion type="single" defaultValue="revenue-circle" collapsible>
+              <AccordionItem value="revenue-circle" className="border-none">
+                {DataBasedOnBoundary.map((data: any, index: any) => (
+                  <div key={index} className="mb-4">
+                    <div className="flex items-center gap-3">
+                      <Text variant="bodyLg" fontWeight="bold">
+                        {data[boundary]}
+                      </Text>
 
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center">
-                    <div className=" mr-3 basis-2/4">
                       <ProgressBar
                         size="small"
                         customColor={
@@ -349,23 +340,36 @@ export function OutputWindow({
                         }
                         value={(parseInt(data[indicator]['value']) / 5) * 100}
                       />
+
+                      <div>
+                        <Text variant="heading2xl">
+                          {parseInt(data?.[indicator]['value'])}
+                        </Text>
+                        /5
+                      </div>
+                      {/* <AccordionTrigger /> */}
+                      {indicator === 'risk-score' ? (
+                        <AccordionTrigger />
+                      ) : (
+                        <div style={{ width: '40px', height: '54px' }}></div>
+                      )}
                     </div>
-                    <Text variant="heading2xl">
-                      {parseInt(data?.[indicator]['value'])}
-                    </Text>
-                    /5
+                    <AccordionContent className="px-3 pb-4 md:px-6">
+                      <div className="flex flex-col gap-1">
+                        <OtherFactorScores
+                          factorData={factorData}
+                          data={data}
+                          boundary={boundary}
+                          indicator={indicator}
+                          indicatorDescription={indicatorDescriptions}
+                          getDescription={getDescription}
+                        />
+                      </div>
+                    </AccordionContent>
                   </div>
-                  <OtherFactorScores
-                    factorData={factorData}
-                    data={data}
-                    boundary={boundary}
-                    indicator={indicator}
-                    indicatorDescription={indicatorDescriptions}
-                    getDescription={getDescription}
-                  />
-                </div>
-              </div>
-            ))}
+                ))}
+              </AccordionItem>
+            </Accordion>
           </section>
           <Accordion type="single" defaultValue="revenue-circle" collapsible>
             <AccordionItem value="revenue-circle" className="mt-4">
@@ -478,6 +482,7 @@ export function OtherFactorScores({
   boundary,
   indicator,
   getDescription,
+  IconMap,
 }: any) {
   const clonedData = structuredClone(data);
   delete clonedData[boundary];
@@ -487,7 +492,14 @@ export function OtherFactorScores({
   const FactorVariables = Object.keys(clonedData);
 
   return FactorVariables.map((scoreType) => (
-    <div key={scoreType} className="ml-3">
+    <div key={scoreType} className=" flex  items-center  gap-4">
+      {IconMap[scoreType]}
+      {indicator === 'risk-score' && (
+        <Text className="shrink-1 min-w-[200px]">
+          {getFactorNameBySlug(factorData, scoreType)}
+        </Text>
+      )}
+
       <ScoreInfo
         indicator={indicator}
         label={
@@ -499,6 +511,13 @@ export function OtherFactorScores({
         scoreType={scoreType}
         indicatorDescription={getDescription(scoreType)}
       />
+      <Tooltip
+        content={getDescription(scoreType) || 'No description available'}
+      >
+        <div>
+          <InfoSquare color="#6A6A6A" />
+        </div>
+      </Tooltip>
     </div>
   ));
 }

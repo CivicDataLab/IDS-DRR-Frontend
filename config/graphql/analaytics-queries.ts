@@ -34,6 +34,12 @@ export const ANALYTICS_INDICATORS = graphql(`
   }
 `);
 
+export const ANALYTICS_INDICATORS_BY_CATEGORY = graphql(`
+  query indicatorsByCategory {
+    indicatorsByCategory
+  }
+`);
+
 export const ANALYTICS_TIME_PERIODS = graphql(`
   query dataTimePeriods {
     getDataTimePeriods {

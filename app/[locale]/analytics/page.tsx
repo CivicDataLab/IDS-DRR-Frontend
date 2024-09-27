@@ -17,6 +17,8 @@ export default async function Home({
 }) {
   const queryClient = getQueryClient();
 
+  const boundary = searchParams['revenue-code'] ? 'revenue-circle' : 'district';
+
   await queryClient.prefetchQuery([`timePeriods`], () =>
     GraphQL(
       `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
@@ -41,7 +43,7 @@ export default async function Home({
         <AnalyticsMobileLayout
           timePeriod={searchParams['time-period']}
           indicator={searchParams?.indicator}
-          boundary={searchParams?.boundary}
+          boundary={boundary}
         />
       </MediaRendering>
       <MediaRendering minWidth="1024" maxWidth={null}>

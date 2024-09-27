@@ -2,13 +2,61 @@ const platformName = 'Intelligent Data Solution';
 
 //General
 const RiskColorMap: {
-  [key: number]: { backgroundColor: string; indicatorColor: string };
+  [key: number]: {
+    backgroundColor: string;
+    indicatorColor: string;
+  };
 } = {
-  5: { backgroundColor: '#d416057a', indicatorColor: '#D41505' },
-  4: { backgroundColor: '#fb8b357a', indicatorColor: '#FB8C35' },
-  3: { backgroundColor: '#ffee6e82', indicatorColor: '#FFED6E' },
-  2: { backgroundColor: '#65a4bd77', indicatorColor: '#65A4BD' },
-  1: { backgroundColor: '#4575b480', indicatorColor: '#4575b4' },
+  5: {
+    backgroundColor: '#d416057a',
+    indicatorColor: '#D41505',
+  },
+  4: {
+    backgroundColor: '#fb8b357a',
+    indicatorColor: '#FB8C35',
+  },
+  3: {
+    backgroundColor: '#ffee6e82',
+    indicatorColor: '#FFED6E',
+  },
+  2: {
+    backgroundColor: '#65a4bd77',
+    indicatorColor: '#65A4BD',
+  },
+  1: {
+    backgroundColor: '#4575b480',
+    indicatorColor: '#4575B4',
+  },
+};
+
+const Factors = [
+  'risk-score',
+  'flood-hazard',
+  'vulnerability',
+  'government-response',
+  'exposure',
+];
+
+const RiskText: {
+  [key: number]: {
+    indicatorText: string;
+  };
+} = {
+  5: {
+    indicatorText: 'Very High Risk',
+  },
+  4: {
+    indicatorText: 'High Risk',
+  },
+  3: {
+    indicatorText: 'Medium  Risk',
+  },
+  2: {
+    indicatorText: 'Low Risk',
+  },
+  1: {
+    indicatorText: 'Very Low Risk',
+  },
 };
 
 // Datasets page
@@ -21,7 +69,7 @@ const DatasetsURL = `/datasets`;
 const GithubRepoLink = `https://github.com/CivicDataLab/flood-data-ecosystem-Assam/tree/main/Sources`;
 
 //analytics page
-const AnalyticsURL = `/analytics/?indicator=risk-score&time-period=2023_08&boundary=district`;
+const AnalyticsURL = `/analytics/?indicator=risk-score&time-period=${process.env.TIME_PERIOD || process.env.NEXT_PUBLIC_TIME_PERIOD}&boundary=district`;
 const learnMoreLink = `https://drive.google.com/file/d/1TerjJtQrWxziKJ1E5BvfvRELtWJWRw2M/view?usp=drive_link`;
 
 //home page
@@ -39,7 +87,14 @@ const HeroSectionText =
   'Discover insights, assess risks and build disaster resilience for data-driven disaster risk reduction (DRR)';
 
 const AnalyticsQuickLinksText =
-  'Gain insights from the IDS-DRR data model to compare and identify risk profiles of revenue circles and districts in Assam.';
+  'Gain insights from the IDS-DRR data model to understand the flood-risk profiles of districts and sub-district regions in various states across India.';
+
+const DatasetCatalogText = 'Explore and use high-value datasets';
+
+const ResourcesSectionText = 'Browse through our featured datasets';
+
+const DataStoriesText =
+  'Read about the impact, methods, and successes in using data for DRR.';
 
 const YouTubeLink = 'https://www.youtube.com/watch?v=gTqcyUQ7esg';
 
@@ -86,6 +141,8 @@ export {
   AboutTextContentThree,
   HeroSectionText,
   RiskColorMap,
+  RiskText,
+  Factors,
   AnalyticsQuickLinksText,
   AboutUsURL,
   YouTubeLink,
@@ -101,4 +158,7 @@ export {
   TheRockefellerFoundationTextOne,
   TheRockefellerFoundationTextTwo,
   learnMoreLink,
+  DatasetCatalogText,
+  ResourcesSectionText,
+  DataStoriesText,
 };

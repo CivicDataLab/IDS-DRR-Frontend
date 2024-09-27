@@ -13,6 +13,7 @@ import {
 import { GraphQL } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { DefaultWindow } from './default-output-window';
+import { FactorList } from './factor-list';
 import { OutputWindow } from './output-window';
 import styles from './styles.module.scss';
 
@@ -42,9 +43,9 @@ export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
       }
     >
       {isClient ? (
-        <div className="relative max-h-[calc(100vh_-_60px)] min-h-[calc(100vh_-_60px)] grow gap-1 overflow-y-hidden md:flex">
-          <main className={cn(styles.Main, 'px-4', 'py-6')}>{children}</main>
-          <OutputWindowComponent />
+        <div className="relative max-h-[calc(100vh_-_60px)] min-h-[calc(100vh_-_60px)] grow flex-row-reverse gap-1 overflow-y-hidden md:flex">
+          <main className={cn(styles.Main)}>{children}</main>
+          <IndicatorListWrapper />
         </div>
       ) : (
         <div className="flex h-[100vh] flex-col  place-content-center items-center">
@@ -56,22 +57,57 @@ export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
   );
 }
 
+export function IndicatorListWrapper() {
+  return (
+    <React.Fragment>
+      <aside
+        className={cn(
+          'overflow-hidden bg-surfaceDefault pr-0 shadow-basicMd',
+          'shadow-inset z-1 hidden shrink-0 basis-[320px] md:block',
+          // isCollapsed && 'basis-[32px]',
+          'border-r-1 border-solid border-borderSubdued',
+          styles.Collapse
+        )}
+      >
+        <div className="h-[90vh] overflow-x-hidden overflow-y-scroll bg-[#F4FBF5] pt-6">
+          <span
+            className={cn(
+              ' rounded items-center justify-end pl-0'
+              // isCollapsed && 'hidden'
+            )}
+          ></span>
+          <div>
+            <div className=" mb-5  pl-4">
+              <Text className="text-textSubdued" fontWeight="bold">
+                INDICATORS
+              </Text>
+            </div>
+
+            <FactorList />
+          </div>
+        </div>
+      </aside>
+      <OutputWindowComponent />
+    </React.Fragment>
+  );
+}
+
 export function OutputWindowComponent() {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator');
-  const time_period = searchParams.get('time-period') || '2023_08';
-  const region = searchParams.get('region');
-  const boundary = searchParams.get('boundary') || 'district';
+  const time_period = searchParams.get('time-period');
+  const region =
+    searchParams.get('revenue-code') || searchParams.get('district-code');
+  const boundary = searchParams.get('revenue-code')
+    ? 'revenue-circle'
+    : 'district';
 
-  const sidePaneQuery: any =
-    boundary === 'district'
-      ? ANALYTICS_DISTRICT_DATA
-      : ANALYTICS_REVENUE_TABLE_DATA;
+  const sidePaneQuery: any = !searchParams.get('revenue-code')
+    ? ANALYTICS_DISTRICT_DATA
+    : ANALYTICS_REVENUE_TABLE_DATA;
 
   const sidePaneData: any = useQuery(
-    [
-      `sidePaneData_${indicator}_${region?.split(',')}_${boundary}_${time_period}`,
-    ],
+    [`sidePaneData_${indicator}_${region}_${boundary}_${time_period}`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
@@ -79,7 +115,7 @@ export function OutputWindowComponent() {
         {
           indcFilter: { slug: indicator },
           dataFilter: { dataPeriod: time_period },
-          ...(region && { geoFilter: { code: region?.split(',') } }),
+          ...(region && { geoFilter: { code: region } }),
         }
       ),
     {
@@ -106,36 +142,33 @@ export function OutputWindowComponent() {
     }
   );
 
-  if (!sidePaneData.isFetched)
-    return (
-      <div className="flex min-w-[500px] flex-col place-content-center items-center border-solid border-borderSubdued bg-surfaceDefault">
-        <Spinner color="highlight" />
-        <Text className="text-center">Loading...</Text>
-      </div>
-    );
-  return region !== null && region.length > 0
-    ? sidePaneData.isFetched && (
-        <OutputWindow
-          data={
-            sidePaneData?.data[
-              boundary === 'district' ? 'districtViewData' : 'revCircleViewData'
-            ]
-          }
-          indicatorDescriptions={indicatorDescriptions?.data?.indicators}
-          indicator={indicator}
-          boundary={boundary}
-        />
-      )
-    : sidePaneData.isFetched && (
-        <DefaultWindow
-          chartData={
-            sidePaneData?.data[
-              boundary === 'district' ? 'districtViewData' : 'revCircleViewData'
-            ]
-          }
-          indicatorDescriptions={indicatorDescriptions?.data?.indicators}
-          indicator={indicator}
-          boundary={boundary}
-        />
-      );
+  return (
+    sidePaneData.isFetched && (
+      <OutputWindow
+        data={
+          sidePaneData?.data[
+            !searchParams.get('revenue-code')
+              ? 'districtViewData'
+              : 'revCircleViewData'
+          ]
+        }
+        indicatorDescriptions={indicatorDescriptions?.data?.indicators}
+        indicator={indicator}
+        boundary={boundary}
+      />
+    )
+  );
+
+  // : sidePaneData.isFetched && (
+  //     <DefaultWindow
+  //       chartData={
+  //         sidePaneData?.data[
+  //           boundary === 'district' ? 'districtViewData' : 'revCircleViewData'
+  //         ]
+  //       }
+  //       indicatorDescriptions={indicatorDescriptions?.data?.indicators}
+  //       indicator={indicator}
+  //       boundary={boundary}
+  //     />
+  //   );
 }

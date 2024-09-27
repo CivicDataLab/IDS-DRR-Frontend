@@ -5,7 +5,7 @@ const config: CodegenConfig = {
   generates: {
     './gql/generated/datasets/': {
       documents: 'config/**/dataset-queries.ts',
-      schema: `${process.env.BACKEND_URL}/graphql`,
+      schema: `${process.env.BACKEND_URL}/api/graphql`,
       preset: 'client',
       plugins: [],
     },
