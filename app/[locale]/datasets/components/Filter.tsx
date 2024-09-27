@@ -56,7 +56,12 @@ const Filter: React.FC<FilterProps> = ({
       <div className="flex flex-col gap-5">
         {Object.entries(options).map(([category, data], index) => (
           <div key={index}>
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion
+              type="single"
+              collapsible
+              defaultValue={category} // Keeps the accordion open by default
+              className="w-full"
+            >
               <AccordionItem value={category}>
                 <AccordionTrigger className="flex w-full flex-wrap items-center gap-2 rounded-1 bg-[#96E79E] py-2 hover:no-underline">
                   <Text>{toTitleCase(category)}</Text>
