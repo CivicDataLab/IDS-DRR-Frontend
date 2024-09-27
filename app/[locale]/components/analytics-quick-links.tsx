@@ -81,7 +81,9 @@ export const QuickLinks = () => {
                         alt="blog Logo"
                         className={`h-32 w-32 object-contain px-3 py-4 ${styles.stateIcon}`}
                       />
-                      <Text variant="headingLg">{item.name}</Text>
+                      <Text variant="headingLg" className=" whitespace-nowrap">
+                        {item.name}
+                      </Text>
                     </div>
                   </Link>
                 ) : (
@@ -96,10 +98,12 @@ export const QuickLinks = () => {
                       alt="blog Logo"
                       className={`h-32 w-32  object-contain px-3 py-4 opacity-25 ${styles.inactiveStateIcon}`}
                     />
-                    <Text variant="headingLg">{item.name}</Text>
+                    <Text variant="headingLg" className=" whitespace-nowrap">
+                      {item.name}
+                    </Text>
                     <Text
                       variant="headingLg"
-                      className="absolute top-1/3 w-fit text-nowrap rounded-2 bg-basePureBlack px-3 py-1 text-surfaceDefault"
+                      className="absolute top-1/3 w-fit whitespace-nowrap text-nowrap rounded-2 bg-basePureBlack px-3 py-1 text-surfaceDefault"
                     >
                       Coming Soon
                     </Text>
