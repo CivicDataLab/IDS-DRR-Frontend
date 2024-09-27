@@ -1,8 +1,14 @@
-import React from 'react';
 import Image from 'next/image';
-import { Text } from 'opub-ui';
+import { Button, Text } from 'opub-ui';
 
-import { MediaRendering } from '@/components/media-rendering';
+import {
+  CDLPartnershipTextOne,
+  CDLPartnershipTextThree,
+  CDLPartnershipTextTwo,
+  OpenContractingPartnershipTextOne,
+  OpenContractingPartnershipTextTwo,
+} from '@/config/consts';
+import { handleRedirect } from '@/lib/utils';
 import styles from './styles.module.scss';
 
 interface TeamMember {
@@ -76,10 +82,126 @@ export function TheTeam() {
   return (
     <section className=" py-14 ">
       {/* DESKTOP  */}
-      <div className="container ">
+      <div className="container mb-2 flex flex-col gap-8 ">
         <Text variant="heading2xl" fontWeight="bold" color="default">
-          The Team
+          Co-created by
         </Text>
+
+        <div className="flex flex-wrap items-center justify-center gap-10 bg-baseIndigoSolid1 p-9 lg:flex-nowrap ">
+          <div className="flex flex-col items-center gap-4 text-surfaceDefault">
+            <Image
+              src="/logo/OpenContracting.png"
+              height={190}
+              width={230}
+              alt="Open Contracting Partnership Logo"
+              className=" object-contain "
+            />
+            <div className="flex flex-row items-center justify-between self-stretch">
+              <Button
+                monochrome={true}
+                kind="tertiary"
+                onClick={(event) =>
+                  handleRedirect(event, 'https://www.open-contracting.org/')
+                }
+              >
+                <img src="/web.svg" alt="web" />
+              </Button>
+              <Button
+                monochrome={true}
+                kind="tertiary"
+                onClick={(event) =>
+                  handleRedirect(
+                    event,
+                    'https://www.linkedin.com/company/opencontractingpartnership'
+                  )
+                }
+              >
+                <img src="/linkedin.svg" alt="linkedin" />{' '}
+              </Button>
+              <Button
+                monochrome={true}
+                kind="tertiary"
+                onClick={(event) =>
+                  handleRedirect(event, 'https://twitter.com/opencontracting')
+                }
+              >
+                <img src="/x.svg" alt="x" />{' '}
+              </Button>
+            </div>
+          </div>
+          <div className="flex flex-col gap-3">
+            <Text variant="headingXl" fontWeight="medium" color="default">
+              Open Contracting Partnership
+            </Text>
+            <div className="flex flex-col gap-5">
+              <Text variant="bodyLg" fontWeight="regular" color="default">
+                {OpenContractingPartnershipTextOne}
+              </Text>
+              <Text variant="bodyLg" fontWeight="regular" color="default">
+                {OpenContractingPartnershipTextTwo}
+              </Text>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center justify-center gap-10 bg-baseIndigoSolid1 p-9 lg:flex-nowrap ">
+          <div className="flex flex-col items-center gap-4 text-surfaceDefault">
+            <Image
+              src="/logo/cdl_logo.svg"
+              height={120}
+              width={230}
+              alt="Open Contracting Partnership Logo"
+              className=" object-contain "
+            />
+            <div className="flex flex-row items-center justify-between self-stretch">
+              <Button
+                monochrome={true}
+                kind="tertiary"
+                onClick={(event) =>
+                  handleRedirect(event, 'https://civicdatalab.in/')
+                }
+              >
+                <img src="/web.svg" alt="web" />
+              </Button>
+              <Button
+                monochrome={true}
+                kind="tertiary"
+                onClick={(event) =>
+                  handleRedirect(
+                    event,
+                    'https://www.linkedin.com/company/civicdatalab/mycompany/verification/'
+                  )
+                }
+              >
+                <img src="/linkedin.svg" alt="linkedin" />{' '}
+              </Button>
+              <Button
+                monochrome={true}
+                kind="tertiary"
+                onClick={(event) =>
+                  handleRedirect(event, 'https://x.com/CivicDataLab')
+                }
+              >
+                <img src="/x.svg" alt="x" />{' '}
+              </Button>
+            </div>
+          </div>
+          <div className="flex flex-col gap-3">
+            <Text variant="headingXl" fontWeight="medium" color="default">
+              CivicDataLab{' '}
+            </Text>
+            <div className="flex flex-col gap-5">
+              <Text variant="bodyLg" fontWeight="regular" color="default">
+                {CDLPartnershipTextOne}
+              </Text>
+              <Text variant="bodyLg" fontWeight="regular" color="default">
+                {CDLPartnershipTextTwo}
+              </Text>
+              <Text variant="bodyLg" fontWeight="regular" color="default">
+                {CDLPartnershipTextThree}
+              </Text>
+            </div>
+          </div>
+        </div>
         <div className="mt-6 grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 ">
           {teamMembers.map((member, index) => (
             <div key={index} className={styles.card}>

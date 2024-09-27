@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { Button, Icon, Text } from 'opub-ui';
 
 import {
+  CollaboratingPartnerHPText,
   CollaboratingPartnerTextOne,
   CollaboratingPartnerTextTwo,
 } from '@/config/consts';
@@ -69,6 +70,57 @@ export function CollaboratingPartner() {
               </Text>
               <Text variant="bodyLg" fontWeight="regular" color="default">
                 {CollaboratingPartnerTextTwo}
+              </Text>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center justify-center gap-10 bg-baseIndigoSolid1 p-9 lg:flex-nowrap ">
+          <div className="flex flex-col items-center gap-4 text-surfaceDefault">
+            <Image
+              src="/logo/hp.png"
+              height={190}
+              width={230}
+              alt="ASDMA Logo"
+              className=" object-contain "
+            />
+            <div className="flex flex-row items-center justify-between self-stretch">
+              <Button
+                monochrome={true}
+                kind="tertiary"
+                onClick={(event) =>
+                  handleRedirect(event, 'https://hpsdma.nic.in/')
+                }
+              >
+                <img src="/web.svg" alt="web" />
+              </Button>
+              <Button
+                monochrome={true}
+                kind="tertiary"
+                onClick={(event) =>
+                  handleRedirect(event, 'https://hpsdma.nic.in/')
+                }
+              >
+                <img src="/linkedin.svg" alt="linkedin" />{' '}
+              </Button>
+              <Button
+                monochrome={true}
+                kind="tertiary"
+                onClick={(event) =>
+                  handleRedirect(event, 'https://x.com/hpsdma')
+                }
+              >
+                <img src="/x.svg" alt="x" />{' '}
+              </Button>
+            </div>
+          </div>
+          <div className=" flex  flex-col gap-3">
+            <Text variant="headingXl" fontWeight="medium" color="default">
+              Himachal Pradesh State Disaster Management Authority
+            </Text>
+
+            <div className="flex flex-col gap-5">
+              <Text variant="bodyLg" fontWeight="regular" color="default">
+                {CollaboratingPartnerHPText}
               </Text>
             </div>
           </div>
