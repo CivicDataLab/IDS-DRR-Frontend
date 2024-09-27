@@ -100,9 +100,9 @@ export const RevenueCircle = ({
 
 interface ScoreProps {
   label: string;
-  value: any;
+  value: string;
   indicator: string;
-  scoreType: string;
+  scoreType?: string;
   indicatorDescription?: string;
 }
 
@@ -114,25 +114,34 @@ export const ScoreInfo = ({
   indicatorDescription,
 }: ScoreProps) => {
   const searchParams = useSearchParams();
-  if (!process.env.NEXT_PUBLIC_TIME_PERIOD) {
-    throw new Error('TIME_PERIOD not specified');
-  }
-  const time_period =
-    searchParams.get('time-period') || process.env.NEXT_PUBLIC_TIME_PERIOD;
+  const time_period = searchParams.get('time-period') || '2023_08';
   const boundary = searchParams.get('boundary') || 'district';
   const region = searchParams.get('region') || '';
+
   return (
-    <div className="flex-1">
+    <div className="mt-2">
       {indicator === 'risk-score' ? (
-        <ProgressBar
-          size="small"
-          customColor={RiskColorMap[parseInt(value)]}
-          value={(parseInt(value) / 5) * 100}
-        />
+        <div className="inline-flex  items-center gap-2">
+          <Link
+            href={`?indicator=${scoreType}&time-period=${time_period}&boundary=${boundary}&region=${region}`}
+          >
+            <Text color="interactive">{label}</Text>
+          </Link>
+          <Tooltip content={indicatorDescription || 'No description available'}>
+            <div>
+              <InfoSquare color="#6A6A6A" />
+            </div>
+          </Tooltip>
+        </div>
       ) : (
         <span>{label}</span>
       )}{' '}
-      {indicator !== 'risk-score' && <strong className="pl-2">{value}</strong>}
+      :{' '}
+      {indicator === 'risk-score' ? (
+        <strong className="pl-2">{parseInt(value)}/5</strong>
+      ) : (
+        <strong className="pl-2">{value}</strong>
+      )}
     </div>
   );
 };

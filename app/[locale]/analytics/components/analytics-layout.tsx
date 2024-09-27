@@ -4,16 +4,12 @@ import React from 'react';
 import { type TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { parseDate } from '@internationalized/date';
 import { useQuery } from '@tanstack/react-query';
-import { parseAsString, useQueryState } from 'next-usequerystate';
 import {
-  MonthPicker,
-  Select,
-  Tab,
-  TabList,
-  TabPanel,
-  Tabs,
-  Text,
-} from 'opub-ui';
+  parseAsArrayOf,
+  parseAsString,
+  useQueryState,
+} from 'next-usequerystate';
+import { Combobox, MonthPicker, Select } from 'opub-ui';
 
 import {
   ANALYTICS_DISTRICT_MAP_DATA,
@@ -36,27 +32,37 @@ export function Content({
     disabled?: boolean;
     value: string;
     label: string;
-    districtCode?: string;
+    type?: string;
   }
+
+  const [boundary, setBoundary] = useQueryState(
+    'boundary',
+    parseAsString.withDefault('district')
+  );
 
   const [timePeriodSelected, setTimePeriod] = useQueryState(
     'time-period',
     parseAsString.withDefault(timePeriod)
   );
 
-  const [districtCode, setDistrictCode] = useQueryState('district-code');
-  const [revenueCode, setRevenueCode] = useQueryState('revenue-code');
+  const [region, setRegion] = useQueryState(
+    'region',
+    parseAsArrayOf(parseAsString)
+  );
 
-  const [filteredRevenueCircles, setFilteredRevenueCircles] = React.useState<
-    Option[]
-  >([{ label: '', value: '' }]);
+  const [selectedGroup, setSelectedGroup] = React.useState<string[]>([]);
+
+  const mapQuery: TypedDocumentNode<any, any> =
+    boundary === 'district'
+      ? ANALYTICS_DISTRICT_MAP_DATA
+      : ANALYTICS_REVENUE_MAP_DATA;
 
   const mapData = useQuery(
-    [`mapQuery_district_${indicator}_${timePeriodSelected}`],
+    [`mapQuery_${boundary}_${indicator}_${timePeriodSelected}`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_DISTRICT_MAP_DATA,
+        mapQuery,
         {
           indcFilter: { slug: indicator },
           dataFilter: { dataPeriod: timePeriodSelected },
@@ -69,49 +75,14 @@ export function Content({
     }
   );
 
-  const revenueMapData = useQuery(
-    [`mapQuery_revenue-circle_${indicator}_${timePeriodSelected}`],
-    () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_REVENUE_MAP_DATA,
-        {
-          indcFilter: { slug: indicator },
-          dataFilter: { dataPeriod: timePeriodSelected },
-        }
-      ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
-
-  const districtGeographiesData = useQuery(
-    [`geographies_data_district`],
+  const geographiesData = useQuery(
+    [`geographies_data_${boundary}`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_GEOGRAPHY_DATA,
         {
-          geoFilter: { type: 'district' },
-        }
-      ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
-
-  const revenueGeographiesData = useQuery(
-    [`geographies_data_revenue`],
-    () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_GEOGRAPHY_DATA,
-        {
-          geoFilter: { type: 'revenue-circle' },
+          geoFilter: { type: boundary },
         }
       ),
     {
@@ -150,168 +121,199 @@ export function Content({
     maxDate = formatDate(maxTimestamp, true);
   }
 
-  let RevCircleDropdownOptions: Option[] = [{ label: '', value: '' }];
-  let DistrictDropDownOption: Option[] = [{ label: '', value: '' }];
+  let RevCircleDropdownOptions: Option[] = [];
+  let DistrictDropDownOption: Option[] = [];
 
-  if (districtGeographiesData.data && !districtGeographiesData.isFetching) {
-    districtGeographiesData.data?.getDistrictRevCircle?.forEach(
-      (geography: { district: string; code: string }) => {
-        DistrictDropDownOption.push({
-          label: geography.district,
-          value: geography.code ? geography.code : 'NA',
-        });
+  if (geographiesData.data && !geographiesData.isFetching) {
+    if (boundary === 'revenue-circle') {
+      let rawData = geographiesData?.data?.getDistrictRevCircle;
+      if (rawData) {
+        for (const district in rawData) {
+          const revenueCircles = rawData[district];
+          revenueCircles.forEach(
+            (circle: { 'revenue-circle': string; code: string }) => {
+              RevCircleDropdownOptions.push({
+                label: circle['revenue-circle'],
+                value: circle.code,
+                type: district,
+              });
+            }
+          );
+        }
       }
-    );
-  }
-
-  if (revenueGeographiesData.data && !revenueGeographiesData.isFetching) {
-    let rawData = revenueGeographiesData?.data?.getDistrictRevCircle;
-    if (rawData) {
-      for (const revenueCircle in rawData) {
-        const revenueCircles = rawData[revenueCircle];
-        revenueCircles.forEach(
-          (circle: {
-            'revenue-circle': string;
-            code: string;
-            district_code: string;
-          }) => {
-            RevCircleDropdownOptions.push({
-              label: circle['revenue-circle'],
-              value: circle.code,
-              districtCode: circle.district_code,
-            });
-          }
-        );
-      }
+    } else {
+      geographiesData.data?.getDistrictRevCircle?.forEach(
+        (geography: { district: string; code: string }) => {
+          DistrictDropDownOption.push({
+            label: geography.district,
+            value: geography.code ? geography.code : 'NA',
+          });
+        }
+      );
     }
   }
 
   React.useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const timePeriod = params.get('time-period');
-    if (timePeriod) {
-      setTimePeriod(timePeriod);
-    }
-  }, []);
-
-  const getRevenueCircleOptions = () => {
-    const filterRevenueCircles = RevCircleDropdownOptions.filter(
-      (option) => option.districtCode === districtCode
-    );
-
-    filterRevenueCircles.unshift({ label: '', value: '' });
-
-    return filterRevenueCircles;
-  };
-
-  const filterOpt = () => {
-    if (revenueCode) {
-      const filterRevenueCircles = RevCircleDropdownOptions.filter(
-        (option) => option.value === revenueCode
+    if (
+      region &&
+      region.length > 0 &&
+      geographiesData.data &&
+      boundary === 'revenue-circle'
+    ) {
+      const filteredItems = RevCircleDropdownOptions.filter((item) =>
+        region.includes(item.value)
       );
-      return filterRevenueCircles;
-    }
-    const filteredDistrictOptions = DistrictDropDownOption?.filter(
-      (option) => option.value === districtCode
-    );
 
-    return filteredDistrictOptions;
+      setSelectedGroup([filteredItems[0]?.type ?? '']);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [geographiesData.data]);
+
+  function onComboboxChange(selectedOptions: any) {
+    const val = selectedOptions.map((option: any) => option.value);
+
+    const group = selectedOptions.map((option: any) => option?.type ?? '');
+
+    setSelectedGroup(group);
+    setRegion(val);
+  }
+
+  const getDistrictOptions = () => {
+    const updatedDistrictDropDownOption = DistrictDropDownOption.map(
+      (item: any) => {
+        if (region?.length === 4 && boundary === 'district') {
+          return { ...item, disabled: true };
+        }
+
+        return item;
+      }
+    );
+    return updatedDistrictDropDownOption;
   };
 
-  const handleDistrictChange = (districtCode: string) => {
-    setDistrictCode(districtCode, { shallow: false });
-    // const filterRevenueCircles = RevCircleDropdownOptions.filter(
-    //   (option) => option.districtCode === districtCode
-    // );
+  const getRevenueOptions = () => {
+    const updatedRevenueDropDownOption = RevCircleDropdownOptions.map(
+      (item: any) => {
+        if (region?.length === 4 && boundary === 'revenue-circle') {
+          return { ...item, disabled: true };
+        }
 
-    // filterRevenueCircles.unshift({ label: '', value: '' });
+        return item;
+      }
+    );
+    return updatedRevenueDropDownOption;
+  };
 
-    // setFilteredRevenueCircles(filterRevenueCircles);
+  const filterOpt = (boundary: string) => {
+    if (boundary === 'revenue-circle') {
+      RevCircleDropdownOptions.forEach((item: any) => {
+        if (
+          !selectedGroup.includes(item?.type || '') &&
+          selectedGroup.length > 0
+        ) {
+          item.disabled = true;
+        }
+      });
+
+      const filteredOptions = RevCircleDropdownOptions.filter(
+        (option: any) =>
+          region?.includes(option.value) &&
+          (selectedGroup.length === 0 ||
+            selectedGroup.includes(option.type || ''))
+      );
+      return filteredOptions;
+    } else {
+      const filteredDistrictOptions = DistrictDropDownOption?.filter((option) =>
+        region?.includes(option.value)
+      );
+
+      return filteredDistrictOptions;
+    }
   };
 
   return (
     <React.Fragment>
-      <Tabs defaultValue="map">
-        <TabList fitted className="p-2 pb-0">
-          <Tab theme="climate" value="map">
-            Map View
-          </Tab>
-          <Tab
-            theme="climate"
-            title="coming soon"
-            className=" cursor-not-allowed"
-            disabled
-            value="chart"
-          >
-            Chart View
-          </Tab>
-          <Tab
-            theme="climate"
-            title="coming soon"
-            className=" cursor-not-allowed"
-            disabled
-            value="table"
-          >
-            Table View
-          </Tab>
-        </TabList>
-        <TabPanel value="map">
-          {revenueMapData?.data && mapData?.data && (
-            <div className=" mt-2 h-[calc(100dvh_-_140px)]">
-              <div className="mb-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
-                <Select
-                  label="Select District"
-                  value={districtCode || ''}
-                  name="district-select"
-                  className=" flex-grow"
-                  onChange={(e) => {
-                    handleDistrictChange(e);
-                  }}
-                  options={DistrictDropDownOption}
-                />
-                <Select
-                  label="Select Revenue Circle"
-                  value={revenueCode || ''}
-                  name="revenue-circle-select"
-                  className=" flex-grow"
-                  disabled={!districtCode}
-                  onChange={(e) => {
-                    setRevenueCode(e, { shallow: false });
-                  }}
-                  options={getRevenueCircleOptions()}
-                />
+      <div className="mb-2 flex items-start justify-evenly gap-3">
+        <Select
+          defaultValue="revenue-circle"
+          label="Select Boundary"
+          value={boundary || 'district'}
+          className="min-w-36 grow"
+          name="boundary-select"
+          onChange={(e) => {
+            setBoundary(e, { shallow: false });
+            setRegion([]);
+            setSelectedGroup([]);
+          }}
+          options={[
+            {
+              label: 'Revenue Circle',
+              value: 'revenue-circle',
+            },
+            {
+              label: 'District',
+              value: 'district',
+            },
+          ]}
+        />
 
-                <MonthPicker
-                  name="time-period-select"
-                  defaultValue={parseDate(
-                    `${timePeriodSelected.split('_')[0]}-${timePeriodSelected.split('_')[1]}-01` ||
-                      '23-08-01'
-                  )}
-                  label="Select Month"
-                  minValue={parseDate(minDate || '2023-01-04')}
-                  maxValue={parseDate(maxDate || '2023-01-04')}
-                  onChange={(date) => {
-                    setTimePeriod(
-                      `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`,
-                      { shallow: false }
-                    );
-                  }}
-                />
-              </div>
-              <MapComponent
-                indicator={indicator}
-                regions={filterOpt()}
-                mapDataloading={mapData?.isFetching}
-                revenueMapDataLoading={revenueMapData?.isFetching}
-                setRegion={setDistrictCode}
-                setRevenueRegion={setRevenueCode}
-                revenueMapData={revenueMapData?.data?.revCircleMapData}
-                mapData={mapData?.data?.districtMapData}
-              />
+        <div className=" z-9 grow-[3]">
+          <Combobox
+            key={JSON.stringify(filterOpt(boundary))}
+            name="select region"
+            group
+            displaySelected
+            placeholder={`Enter ${boundary === 'district' ? 'District' : 'Revenue Circle'} name...`}
+            label="Select one or more region"
+            list={
+              boundary === 'revenue-circle'
+                ? getRevenueOptions()
+                : getDistrictOptions()
+            }
+            selectedValue={filterOpt(boundary)}
+            onChange={(selectedOptions: any) => {
+              onComboboxChange(selectedOptions);
+            }}
+          />
+          {boundary === 'district' && (
+            <div style={{ fontSize: 'small', color: 'grey' }}>
+              You can select upto 4 districts only
             </div>
           )}
-        </TabPanel>
-      </Tabs>
+          {boundary === 'revenue-circle' && (
+            <div style={{ fontSize: 'small', color: 'grey' }}>
+              You can select upto 4 revenue circles only
+            </div>
+          )}
+        </div>
+
+        <MonthPicker
+          name="time-period-select"
+          defaultValue={parseDate('2023-08-01')}
+          label="Select Month"
+          minValue={parseDate(minDate || '2023-01-04')}
+          maxValue={parseDate(maxDate || '2023-01-04')}
+          onChange={(date) => {
+            setTimePeriod(
+              `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`,
+              { shallow: false }
+            );
+          }}
+        />
+      </div>
+      <MapComponent
+        indicator={indicator}
+        regions={filterOpt(boundary)}
+        mapDataloading={mapData?.isFetching}
+        setRegion={setRegion}
+        boundary={boundary}
+        mapData={
+          boundary === 'district'
+            ? mapData?.data?.districtMapData
+            : mapData?.data?.revCircleMapData
+        }
+      />
     </React.Fragment>
   );
 }

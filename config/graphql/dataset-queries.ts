@@ -1,87 +1,121 @@
 import { graphql } from '@/gql/generated/datasets';
-import { gql } from 'graphql-request';
 
-export const DATASET_QUERY: any = gql`
-  query datasets($filters: DatasetFilter) {
-    datasets(filters: $filters) {
-      tags {
-        id
-        value
-      }
+export const ALL_DATASETS_QUERY = graphql(`
+  query allDatasetsQuery {
+    all_datasets {
       id
       title
+      slug
+      period_from
+      period_to
       description
-      created
+      issued
+      highlights
+      update_frequency
       modified
-      metadata {
-        metadataItem {
-          id
-          label
-        }
-        value
+      source
+      tags {
+        name
       }
-      resources {
+      sector {
         id
-        created
+        name
+        description
+        highlights
+      }
+      catalog {
+        organization {
+          title
+          logo
+          homepage
+        }
+      }
+      tags {
+        id
+        name
+      }
+      resource_set {
+        id
+        title
+        description
+        issued
         modified
-        type
-        name
-        description
+        file_details {
+          format
+          file
+          source_file_name
+        }
       }
-      categories {
-        name
-      }
-      formats
-    }
-  }
-`;
-
-export const CHARTS_QUERY: any = gql`
-  query chartsData($datasetId: UUID!) {
-    chartsDetails(datasetId: $datasetId) {
-      aggregateType
-      chartType
-      description
-      id
-      name
-      showLegend
-      xAxisLabel
-      yAxisLabel
-      chart
-    }
-  }
-`;
-
-export const DATASET_RESOURCES_QUERY: any = gql`
-  query datasetResources($datasetId: UUID!) {
-    datasetResources(datasetId: $datasetId) {
-      id
-      created
-      modified
-      type
-      name
-      description
-      accessModels {
-        name
-        description
-        type
-        modelResources {
-          fields {
-            format
-            fieldName
-            description
+      datasetaccessmodel_set {
+        data_access_model {
+          license {
+            title
           }
         }
       }
-      schema {
-        fieldName
+    }
+  }
+`);
+
+export const DATASET_BY_SLUG = graphql(`
+  query datasetBySlugQuery($dataset_slug: String) {
+    dataset_by_slug(dataset_slug: $dataset_slug) {
+      id
+      title
+      description
+      contact_point
+      issued
+      highlights
+      remote_issued
+      remote_modified
+      period_from
+      period_to
+      update_frequency
+      modified
+      source
+      sector {
         id
-        format
+        name
         description
       }
-      fileDetails {
-        format
+      catalog {
+        id
+        title
+        organization {
+          title
+          logo
+          homepage
+        }
+      }
+      tags {
+        id
+        name
+      }
+      resource_set {
+        id
+        title
+        description
+        issued
+        modified
+        status
+        byte_size
+        release_date
+        is_downloadable
+        file_details {
+          file
+          source_file_name
+          format
+        }
+      }
+      datasetaccessmodel_set {
+        data_access_model {
+          license {
+            title
+            type
+          }
+        }
+        resource_formats
       }
     }
   }
-`;
+`);

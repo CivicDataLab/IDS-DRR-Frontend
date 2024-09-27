@@ -6,9 +6,7 @@ import { useKeyDetect } from '@/hooks/use-key-detect';
 import { MainConfig } from '@/types';
 import { Icon, Text } from 'opub-ui';
 
-import { getPrefLangCookie } from '@/lib/serverUtils';
 import { Icons } from '@/components/icons';
-import { TranslateDropdown } from './langSelect/lang-select';
 import NavLink from './nav-link';
 
 export function MainNav({ data }: { data: MainConfig }) {
@@ -50,8 +48,6 @@ export function MainNav({ data }: { data: MainConfig }) {
             ))}
           </div>
         )}
-
-        <TranslateDropdown prefLangCookie={getPrefLangCookie()} />
       </div>
     </header>
   );

@@ -8,14 +8,6 @@
 
 body {
   background-color: var(--background-solid-subdued);
-  /* Compensate the height issue due to hiding the default google pop up iframe */
-  position: static;
-  top: 0px !important;
-}
-
-/* Hide the default google pop up iframe */
-iframe.skiptranslate {
-  display: none !important;
 }
 
 #nprogress .bar {
@@ -24,9 +16,4 @@ iframe.skiptranslate {
 
 #nprogress .spinner .spinner-icon {
   display: none;
-}
-
-.opub-popup {
-  border-radius: var(--border-radius-1);
-  background-color: #fff !important;
 }

@@ -1,99 +1,25 @@
-'use client';
+import { dehydrate, Hydrate } from '@tanstack/react-query';
 
-import { useRef, useState } from 'react';
-import { useParams } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
-import { gql } from 'graphql-request';
-import { Spinner } from 'opub-ui';
+import { DATASET_BY_SLUG } from '@/config/graphql/dataset-queries';
+import { getQueryClient, GraphQL } from '@/lib/api';
+import { Content } from './components/dataset-explorer';
 
-import { DATASET_QUERY } from '@/config/graphql/dataset-queries';
-import { GraphQL } from '@/lib/api';
-import BreadCrumbs from '.././components/BreadCrumbs';
-import Details from './components/Details';
-import Metadata from './components/Metadata';
-import PrimaryData from './components/PrimaryData';
-import Resources from './components/Resources';
-
-// Define the query as a gql template literal
-
-const DatasetDetailsPage = () => {
-  const [open, setOpen] = useState(false);
-  const primaryDataRef = useRef<HTMLDivElement>(null); // Explicitly specify the type of ref
-
-  const params = useParams();
-
-  const {
-    data,
-    isLoading,
-    refetch,
-  }: { data: any; isLoading: boolean; refetch: any } = useQuery({
-    queryKey: ['dataset_details', params.dataset],
-    queryFn: () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/graphql`,
-        DATASET_QUERY,
-        {
-          filters: { id: params.dataset },
-        }
-      ),
-    enabled: !!params.dataset,
-  });
+export default async function DatasetExplorer({
+  params,
+}: {
+  params: { dataset: string };
+}) {
+  const queryClient = getQueryClient();
+  await queryClient.prefetchQuery([`dataset_by_slug_${params.dataset}`], () =>
+    GraphQL(`${process.env.BACKEND_URL}/graphql`, DATASET_BY_SLUG, {
+      dataset_slug: params.dataset,
+    })
+  );
+  const dehydratedState = dehydrate(queryClient);
 
   return (
-    <main style={{ background: '#F0F9F1' }}>
-      <BreadCrumbs
-        data={[
-          { href: '/', label: 'Home' },
-          { href: '/datasets', label: 'Datasets' },
-          { href: '#', label: 'Dataset Details' },
-        ]}
-      />
-      {isLoading ? (
-        <div
-          className=" flex  items-center justify-center"
-          style={{ height: '76vh' }}
-        >
-          <Spinner size={30} />
-        </div>
-      ) : (
-        <div className="flex w-full gap-7 md:px-8 lg:px-8">
-          <div className="w-full flex-grow py-8 ">
-            <div className=" flex flex-col gap-5  ">
-              <div ref={primaryDataRef} className="flex flex-col gap-4">
-                {isLoading ? (
-                  <div className=" mt-8 flex justify-center">
-                    <Spinner />
-                  </div>
-                ) : (
-                  <PrimaryData
-                    data={data && data?.datasets[0]}
-                    isLoading={isLoading}
-                  />
-                )}
-              </div>
-            </div>
-            <div className=" mt-5 flex w-full">
-              <div className="w-full lg:w-9/12">
-                <Details />
-                <Resources />
-              </div>
-              <div className=" hidden flex-col gap-8 border-l-2 border-solid border-baseGraySlateSolid3 py-6 pl-7 lg:flex ">
-                {isLoading ? (
-                  <div className=" mt-8 flex justify-center">
-                    <Spinner />
-                  </div>
-                ) : (
-                  <div>
-                    <Metadata data={data && data?.datasets[0]} />
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </main>
+    <Hydrate state={dehydratedState}>
+      <Content slug={params.dataset} />
+    </Hydrate>
   );
-};
-
-export default DatasetDetailsPage;
+}
