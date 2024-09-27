@@ -249,21 +249,23 @@ const DatasetsListing = () => {
       ) : (
         <section className="mx-5 md:mx-8 lg:mx-10">
           <div className="my-4 flex flex-wrap items-center justify-between gap-6 rounded-2 bg-[#96E79E] p-2">
-            <div>
-              <Text>
-                Showing {datasetDetails?.length} of {count} Datasets
-              </Text>
-            </div>
-            <div className=" w-full max-w-[550px] md:block">
-              <SearchInput
-                label="Search"
-                name="Search"
-                className={cn(Styles.Search)}
-                placeholder="Search datasets"
-                onSubmit={(value) => handleSearch(value)}
-                onClear={(value) => handleSearch(value)}
-                withButton={true}
-              />
+            <div className=" flex flex-wrap items-center gap-4 whitespace-nowrap align-middle">
+              <div>
+                <Text>
+                  Showing {datasetDetails?.length} of {count} Datasets
+                </Text>
+              </div>
+              <div className=" w-full max-w-[550px] md:block">
+                <SearchInput
+                  label="Search"
+                  name="Search"
+                  className={cn(Styles.Search)}
+                  placeholder="Search datasets"
+                  onSubmit={(value) => handleSearch(value)}
+                  onClear={(value) => handleSearch(value)}
+                  withButton={true}
+                />
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <Text variant="bodyLg" className="font-bold">
