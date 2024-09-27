@@ -11,11 +11,13 @@ import { deSlugify } from '@/lib/utils';
 import MapChart from '@/components/MapChart';
 import { MediaRendering } from '@/components/media-rendering';
 import { FactorList } from './factor-list';
+import { getFactorNameBySlug } from './output-window';
 
 export const MapComponent = ({
   indicator,
   regions,
   mapDataloading,
+  indicatorsData,
   revenueMapDataLoading,
   mapData,
   revenueMapData,
@@ -25,6 +27,12 @@ export const MapComponent = ({
   indicator: string;
   regions: { label: string; value: string }[];
   mapDataloading: boolean;
+  indicatorsData: {
+    name: string;
+    slug: string;
+    long_description?: string;
+    short_description: string;
+  }[];
   revenueMapDataLoading: boolean;
   mapData: any;
   revenueMapData: any;
@@ -35,8 +43,6 @@ export const MapComponent = ({
   const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
   const params = new URLSearchParams(window.location.search);
   const districtCode = params.get('district-code');
-
-  console.log('coming to map');
 
   const values = [];
   for (let i = 0; i < mapFeatures.length; i++) {
@@ -138,14 +144,7 @@ export const MapComponent = ({
     5: 'var(--mapRiskVeryHigh)',
   };
 
-  const onMapClick = ({
-    layer,
-    layerCode,
-  }: {
-    layer: any;
-    layerCode: string;
-    revenueMapData: any;
-  }) => {
+  const onMapClick = ({ layerCode }: { layerCode: string }) => {
     if (!districtCode) {
       setRegion(layerCode);
     }
@@ -155,6 +154,39 @@ export const MapComponent = ({
       setRegion(districtCode);
     }
   };
+
+  function EnablePopup({
+    regionName,
+    riskValue,
+    riskText,
+    layer,
+  }: {
+    regionName: string;
+    riskValue: number;
+    riskText: string;
+    layer: any;
+  }) {
+    layer
+      .bindPopup(
+        () => {
+          return `
+      <div>
+      <strong>${regionName.toUpperCase()}</strong><br/>
+      <span>${getFactorNameBySlug(indicatorsData, indicator)} : <span style="color: ${colorMap[riskValue]}; text-transform: uppercase; font-weight: bold;">${riskText}</span></span>
+      </div>`;
+        },
+        {
+          maxWidth: 200,
+          closeButton: false,
+          autoClose: false,
+          closeOnEscapeKey: false,
+          closeOnClick: false,
+          id: `${regionName}`,
+          className: 'opub-popup',
+        }
+      )
+      .openPopup();
+  }
 
   React.useEffect(() => {
     if (map && map.getContainer()) {
@@ -203,26 +235,12 @@ export const MapComponent = ({
           if (popup) {
             openPopups.push(popup);
           } else {
-            layer
-              .bindPopup(
-                () => {
-                  return `
-                  <div>
-                  <strong>${regionName.toUpperCase()}</strong><br/>
-                  <span>${deSlugify(indicator)}:<span style="color: ${colorMap[riskValue]}; text-transform: uppercase;">${riskText}</span></span>
-                  </div>`;
-                },
-                {
-                  maxWidth: 200,
-                  closeButton: false,
-                  autoClose: false,
-                  closeOnEscapeKey: false,
-                  closeOnClick: false,
-                  id: `${regionName}`,
-                  className: 'opub-popup',
-                }
-              )
-              .openPopup();
+            EnablePopup({
+              regionName,
+              riskValue,
+              riskText,
+              layer,
+            });
           }
         } else {
           layer.closePopup();
@@ -266,9 +284,7 @@ export const MapComponent = ({
             mapDataFn={mapDataFn}
             click={(layer) =>
               onMapClick({
-                layer: layer,
                 layerCode: layer.feature?.properties.code,
-                revenueMapData: revenueMapData,
               })
             }
             fillOpacity={1}
@@ -299,26 +315,12 @@ export const MapComponent = ({
               const riskText = Factors.includes(indicator)
                 ? RiskText[riskValue]?.indicatorText
                 : riskValue;
-              layer
-                .bindPopup(
-                  () => {
-                    return `
-                    <div>
-                    <strong>${regionName.toUpperCase()}</strong><br/>
-                    <span>${deSlugify(indicator)} : <span style="color: ${colorMap[riskValue]}; font-weight: bold; text-transform: uppercase;">${riskText}</span></span>
-                    </div>`;
-                  },
-                  {
-                    maxWidth: 200,
-                    closeButton: false,
-                    autoClose: false,
-                    closeOnEscapeKey: false,
-                    closeOnClick: false,
-                    id: `${regionName}`,
-                    className: 'opub-popup',
-                  }
-                )
-                .openPopup();
+              EnablePopup({
+                regionName,
+                riskValue,
+                riskText,
+                layer,
+              });
             }}
             mouseout={(layer) => {
               layer.closePopup();
@@ -326,9 +328,7 @@ export const MapComponent = ({
             }}
             click={(layer) =>
               onMapClick({
-                layer: layer,
                 layerCode: layer.feature?.properties.code,
-                revenueMapData: revenueMapData,
               })
             }
             fillOpacity={1}

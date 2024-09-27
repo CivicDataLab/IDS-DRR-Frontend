@@ -1,6 +1,8 @@
 import React from 'react';
+import { redirect } from 'next/navigation';
 import { dehydrate, Hydrate } from '@tanstack/react-query';
 
+import { AnalyticsURL } from '@/config/consts';
 import {
   ANALYTICS_INDICATORS,
   ANALYTICS_TIME_PERIODS,
@@ -25,6 +27,10 @@ export default async function Home({
       ANALYTICS_TIME_PERIODS
     )
   );
+
+  if (Object.keys(searchParams).length === 0) {
+    redirect(AnalyticsURL);
+  }
 
   await queryClient.prefetchQuery(
     [`indicators_${searchParams?.['indicator']}`],

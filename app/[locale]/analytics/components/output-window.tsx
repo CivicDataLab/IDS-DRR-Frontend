@@ -97,26 +97,6 @@ export function OutputWindow({
     }
   );
 
-  const factorData: { title: string; slug: string; description: string }[] = [];
-
-  if (indicatorDescriptions) {
-    indicatorDescriptions.map(
-      (item: {
-        name: string;
-        slug: string;
-        long_description?: string;
-        short_description: string;
-      }) => {
-        factorData.push({
-          title: item?.name,
-          slug: item?.slug,
-          description:
-            item?.short_description || item?.long_description || 'NA',
-        });
-      }
-    );
-  }
-
   const districtData = data.filter((item: any) =>
     Object.hasOwnProperty.call(item, 'district')
   );
@@ -163,10 +143,10 @@ export function OutputWindow({
   const [tooltipOpen, setTooltipOpen] = React.useState(false);
 
   function getDescription(indicatorSlug: string) {
-    const descriptionObject = factorData.find(
+    const descriptionObject = indicatorDescriptions.find(
       (desc: { slug: string }) => desc.slug === indicatorSlug
     );
-    return descriptionObject ? descriptionObject.description : 'NA';
+    return descriptionObject ? descriptionObject.long_description : 'NA';
   }
 
   const IconMap: { [key: string]: React.ReactNode } = {
@@ -240,7 +220,7 @@ export function OutputWindow({
                         indicator === 'risk-score' ? 'bold' : 'regular'
                       }
                     >
-                      {getFactorNameBySlug(factorData, indicator)}
+                      {getFactorNameBySlug(indicatorDescriptions, indicator)}
                     </Text>
                     {!Factors.includes(indicator) && (
                       <Text variant="bodyMd" fontWeight="bold">
@@ -280,10 +260,11 @@ export function OutputWindow({
                   <div className="mt-5 flex flex-col gap-2">
                     <Text className="text-baseGraySlateSolid11">
                       Some of the indicators contributing to{' '}
-                      {getFactorNameBySlug(factorData, indicator)} are -
+                      {getFactorNameBySlug(indicatorDescriptions, indicator)}{' '}
+                      are
                     </Text>
                     <OtherFactorScores
-                      factorData={factorData}
+                      factorData={indicatorDescriptions}
                       data={data}
                       boundary={boundary}
                       IconMap={IconMap}
@@ -357,7 +338,7 @@ export function OutputWindow({
                     <AccordionContent className="px-3 pb-4 md:px-6">
                       <div className="flex flex-col gap-1">
                         <OtherFactorScores
-                          factorData={factorData}
+                          factorData={indicatorDescriptions}
                           data={data}
                           boundary={boundary}
                           indicator={indicator}
@@ -386,7 +367,7 @@ export function OutputWindow({
                   >
                     <RevenueCircle
                       revenueCircleData={revenueCircleData}
-                      factorData={factorData}
+                      factorData={indicatorDescriptions}
                       indicator={indicator}
                       indicatorDescriptions={indicatorDescriptions}
                       getDescription={getDescription}
@@ -448,7 +429,7 @@ export function getFactorNameBySlug(factorData: any, slug: string) {
   const factorName = factorData?.filter(
     (factor: { slug: string }) => factor.slug === slug
   );
-  return factorName[0]?.title;
+  return factorName[0]?.name;
 }
 
 export function OutputWindowHeader({ factorData, indicator }: any) {

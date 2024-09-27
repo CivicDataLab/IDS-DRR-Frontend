@@ -18,6 +18,7 @@ import {
 import {
   ANALYTICS_DISTRICT_MAP_DATA,
   ANALYTICS_GEOGRAPHY_DATA,
+  ANALYTICS_INDICATORS,
   ANALYTICS_REVENUE_MAP_DATA,
   ANALYTICS_TIME_PERIODS,
 } from '@/config/graphql/analaytics-queries';
@@ -46,10 +47,6 @@ export function Content({
 
   const [districtCode, setDistrictCode] = useQueryState('district-code');
   const [revenueCode, setRevenueCode] = useQueryState('revenue-code');
-
-  const [filteredRevenueCircles, setFilteredRevenueCircles] = React.useState<
-    Option[]
-  >([{ label: '', value: '' }]);
 
   const mapData = useQuery(
     [`mapQuery_district_${indicator}_${timePeriodSelected}`],
@@ -134,6 +131,24 @@ export function Content({
       refetchOnReconnect: false,
     }
   );
+
+  const indicatorsData = useQuery(
+    [`indicators_${indicator}`],
+    () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_INDICATORS,
+        {
+          indcFilter: { slug: indicator },
+        }
+      ),
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
+
   let minDate, maxDate;
   if (timePeriods.data) {
     const datesArray = timePeriods?.data?.getDataTimePeriods.map((date) => {
@@ -303,6 +318,7 @@ export function Content({
                 regions={filterOpt()}
                 mapDataloading={mapData?.isFetching}
                 revenueMapDataLoading={revenueMapData?.isFetching}
+                indicatorsData={indicatorsData?.data?.indicators}
                 setRegion={setDistrictCode}
                 setRevenueRegion={setRevenueCode}
                 revenueMapData={revenueMapData?.data?.revCircleMapData}
