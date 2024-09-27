@@ -46,8 +46,8 @@ export const QuickLinks = () => {
     },
   ];
   return (
-    <section className="container flex flex-col gap-9 px-5 py-6 lg:px-6 lg:py-20">
-      <div className=" flex flex-col gap-4 ">
+    <section className=" flex h-full w-full flex-col gap-9 px-5 py-6 lg:px-6 lg:py-20">
+      <div className="container flex flex-col gap-4 ">
         <Text variant="heading4xl" fontWeight="bold" color="default">
           Analytics Dashboard
         </Text>
@@ -55,14 +55,12 @@ export const QuickLinks = () => {
           {AnalyticsQuickLinksText}
         </Text>
       </div>
-      <div className="w-full">
-        {' '}
-        {/* Ensure full width for the container */}
+      <div>
         <Carousel className="flex w-full items-center justify-center">
           <div className="block xl:hidden">
             <CarouselPrevious />
           </div>
-          <CarouselContent className="flex w-full gap-0 px-4 md:gap-6 lg:gap-2">
+          <CarouselContent className="container flex w-full gap-0 px-4 md:gap-6 lg:gap-2">
             {/* Adjust padding */}
             {Analytics.map((item, index) => (
               <CarouselItem
@@ -83,7 +81,9 @@ export const QuickLinks = () => {
                         alt="blog Logo"
                         className={`h-32 w-32 object-contain px-3 py-4 ${styles.stateIcon}`}
                       />
-                      <Text variant="headingLg">{item.name}</Text>
+                      <Text variant="headingLg" className=" whitespace-nowrap">
+                        {item.name}
+                      </Text>
                     </div>
                   </Link>
                 ) : (
@@ -98,10 +98,12 @@ export const QuickLinks = () => {
                       alt="blog Logo"
                       className={`h-32 w-32  object-contain px-3 py-4 opacity-25 ${styles.inactiveStateIcon}`}
                     />
-                    <Text variant="headingLg">{item.name}</Text>
+                    <Text variant="headingLg" className=" whitespace-nowrap">
+                      {item.name}
+                    </Text>
                     <Text
                       variant="headingLg"
-                      className="absolute top-1/3 w-fit text-nowrap rounded-2 bg-basePureBlack px-3 py-1 text-surfaceDefault"
+                      className="absolute top-1/3 w-fit whitespace-nowrap text-nowrap rounded-2 bg-basePureBlack px-3 py-1 text-surfaceDefault"
                     >
                       Coming Soon
                     </Text>

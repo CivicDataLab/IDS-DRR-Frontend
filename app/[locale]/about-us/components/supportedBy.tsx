@@ -5,6 +5,7 @@ import { Button, Icon, Text } from 'opub-ui';
 import {
   OpenContractingPartnershipTextOne,
   OpenContractingPartnershipTextTwo,
+  PJMcPartnershipText,
   TheRockefellerFoundationTextOne,
 } from '@/config/consts';
 import { handleRedirect } from '@/lib/utils';
@@ -90,7 +91,7 @@ export function SupportedBy() {
         <div className="flex flex-wrap items-center justify-center gap-10 bg-baseIndigoSolid1 p-9 lg:flex-nowrap ">
           <div className="flex flex-col items-center gap-4 text-surfaceDefault">
             <Image
-              src="/logo/OpenContracting.png"
+              src="/logo/PJMc.png"
               height={190}
               width={230}
               alt="Open Contracting Partnership Logo"
@@ -101,7 +102,7 @@ export function SupportedBy() {
                 monochrome={true}
                 kind="tertiary"
                 onClick={(event) =>
-                  handleRedirect(event, 'https://www.open-contracting.org/')
+                  handleRedirect(event, 'https://www.mcgovern.org/')
                 }
               >
                 <img src="/web.svg" alt="web" />
@@ -112,7 +113,7 @@ export function SupportedBy() {
                 onClick={(event) =>
                   handleRedirect(
                     event,
-                    'https://www.linkedin.com/company/opencontractingpartnership'
+                    'https://www.linkedin.com/company/mcgovern-foundation/'
                   )
                 }
               >
@@ -122,7 +123,7 @@ export function SupportedBy() {
                 monochrome={true}
                 kind="tertiary"
                 onClick={(event) =>
-                  handleRedirect(event, 'https://twitter.com/opencontracting')
+                  handleRedirect(event, 'https://x.com/PJMFnd')
                 }
               >
                 <img src="/x.svg" alt="x" />{' '}
@@ -131,14 +132,11 @@ export function SupportedBy() {
           </div>
           <div className="flex flex-col gap-3">
             <Text variant="headingXl" fontWeight="medium" color="default">
-              Open Contracting Partnership
+              Patrick J. McGovern Foundation{' '}
             </Text>
             <div className="flex flex-col gap-5">
               <Text variant="bodyLg" fontWeight="regular" color="default">
-                {OpenContractingPartnershipTextOne}
-              </Text>
-              <Text variant="bodyLg" fontWeight="regular" color="default">
-                {OpenContractingPartnershipTextTwo}
+                {PJMcPartnershipText}
               </Text>
             </div>
           </div>

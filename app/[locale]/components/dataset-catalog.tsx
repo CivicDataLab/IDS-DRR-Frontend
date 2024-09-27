@@ -28,8 +28,8 @@ export const DatasetCatalog = () => {
     },
   ];
   return (
-    <section className="container flex flex-col gap-9 px-5 py-6 lg:px-6 lg:py-20">
-      <div className=" flex flex-col gap-4 ">
+    <section className="flex w-full flex-col gap-9 px-5 py-6 lg:px-6 lg:py-20">
+      <div className="container flex flex-col gap-4 ">
         <Text variant="heading4xl" fontWeight="bold" color="default">
           Dataset Catalog
         </Text>
@@ -37,7 +37,7 @@ export const DatasetCatalog = () => {
           {DatasetCatalogText}
         </Text>
       </div>
-      <div className="flex w-full flex-wrap items-center justify-between gap-3">
+      <div className="container flex w-full flex-wrap items-center justify-between gap-3">
         {Catalog.map((item, index) => (
           <div key={index} className=" text-center">
             <Link href={item.link}>

@@ -14,10 +14,10 @@ import styles from './styles.module.scss';
 export function About() {
   return (
     <section
-      className="h-full w-full md:p-6"
+      className=" h-full w-full md:p-6"
       style={{ backgroundColor: '#222136' }}
     >
-      <div className="flex flex-wrap place-content-center items-center text-surfaceDefault">
+      <div className="container flex flex-wrap place-content-center items-center text-surfaceDefault">
         <MediaRendering minWidth="1024" maxWidth={null}>
           {/* DESKTOP  */}
           <Image

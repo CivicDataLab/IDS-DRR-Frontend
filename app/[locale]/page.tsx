@@ -12,7 +12,9 @@ export default function Home() {
         <QuickLinks />
         <DatasetCatalog />
         <Resources />
-        <DataStories />
+        <div className=" flex w-full justify-center bg-[#222136]">
+          <DataStories />
+        </div>
         <About />
         <Partners />
       </div>

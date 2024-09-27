@@ -80,7 +80,7 @@ export function MobileNav({ data }: { data: MainConfig }) {
             )}
           </div>
           <footer className="flex flex-col flex-wrap items-start gap-1 self-stretch bg-backgroundSolidDark px-5 py-4">
-            <div className="flex  items-center justify-between self-stretch">
+            <div className="flex flex-col items-center justify-center gap-4 self-center">
               <div className=" ">
                 <Text variant="headingSmSpaced" color="onBgDefault">
                   <strong>
@@ -107,14 +107,26 @@ export function MobileNav({ data }: { data: MainConfig }) {
                   </a>
                 </Text>
               </div>
-
-              <Image
-                src="/logo/cdlofficiallogo.png"
-                width={64}
-                height={64}
-                alt="CivicDataLab Logo"
-                className="object-contain"
-              />
+              <div className="flex items-center">
+                <Image
+                  src="/logo/cdlofficiallogo.png"
+                  width={64}
+                  height={64}
+                  alt="CivicDataLab Logo"
+                  className="object-contain"
+                />
+                <Image
+                  src="/logo/ocp.png"
+                  width={164}
+                  height={50}
+                  alt="OCP Logo"
+                  className="object-contain"
+                  style={{
+                    width: '164',
+                    height: '50',
+                  }}
+                />
+              </div>
             </div>
           </footer>
         </div>

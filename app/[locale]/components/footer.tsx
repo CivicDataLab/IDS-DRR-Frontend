@@ -25,6 +25,17 @@ export const Footer = () => {
             alt="CivicDataLab Logo"
             className="object-contain"
           />
+          <Image
+            src="/logo/ocp.png"
+            width={164}
+            height={50}
+            alt="OCP Logo"
+            className="object-contain"
+            style={{
+              width: '164',
+              height: '50',
+            }}
+          />
         </div>
       </div>
       <div className="text-center md:text-right">

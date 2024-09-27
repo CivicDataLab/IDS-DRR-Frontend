@@ -47,10 +47,10 @@ const DataStories = () => {
   ];
   return (
     <section
-      className="flex h-full w-full flex-col gap-10 px-5 py-6 lg:px-6 lg:py-14"
+      className=" flex h-full w-full flex-col gap-10 px-5 py-6 lg:w-fit lg:px-6 lg:py-14"
       style={{ backgroundColor: '#222136' }}
     >
-      <div className=" container flex flex-col gap-4 ">
+      <div className="  flex flex-col gap-4 lg:pl-12">
         <Text variant="heading4xl" fontWeight="bold" color="onBgDefault">
           Data Stories{' '}
         </Text>
@@ -58,17 +58,17 @@ const DataStories = () => {
           {DataStoriesText}
         </Text>
       </div>
-      <div className=" md:container lg:container">
+      <div className="">
         <Carousel className="flex w-full items-center justify-between">
           <div className="mr-2 rounded-1 bg-surfaceDefault">
             <CarouselPrevious />
           </div>
-          <CarouselContent className="flex w-full gap-4 px-4 lg:gap-4 ">
+          <CarouselContent className="flex w-full gap-4 px-4 lg:container lg:gap-6 ">
             {/* Adjust padding */}
             {Stories.map((item, index) => (
               <CarouselItem
                 key={index}
-                className="ml-2 flex w-fit flex-col items-baseline justify-start gap-3 overflow-hidden rounded-2 bg-surfaceDefault p-3 md:basis-1/2 lg:ml-0 lg:basis-1/3  lg:p-6 "
+                className="ml-2  overflow-hidden rounded-2 bg-surfaceDefault p-3 md:basis-1/2 lg:ml-0 lg:basis-1/3  lg:p-6 "
               >
                 <Link href={item.link} className=" w-full" target="_blank">
                   <div className="flex flex-col gap-4 ">
