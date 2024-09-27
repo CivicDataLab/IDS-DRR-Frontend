@@ -64,7 +64,7 @@ const Resources = () => {
       className="flex h-full w-full flex-col gap-10  px-5 py-6 lg:px-6 lg:py-14"
       style={{ backgroundColor: '#222136' }}
     >
-      <div className=" container flex flex-col gap-4 ">
+      <div className=" container flex flex-col  gap-4">
         <Text variant="heading4xl" fontWeight="bold" color="onBgDefault">
           Resources{' '}
         </Text>
@@ -72,12 +72,12 @@ const Resources = () => {
           {ResourcesSectionText}
         </Text>
       </div>
-      <div className=" md:container lg:container">
+      <div>
         <Carousel className="flex w-full items-center justify-center">
           <div className="mr-2 rounded-1 bg-surfaceDefault">
             <CarouselPrevious />
           </div>
-          <CarouselContent className="flex w-full gap-4 px-4 lg:gap-4 ">
+          <CarouselContent className="container flex w-full gap-4 px-4 lg:gap-4 ">
             {/* Adjust padding */}
             {data.map((item: any, index: any) => (
               <CarouselItem
