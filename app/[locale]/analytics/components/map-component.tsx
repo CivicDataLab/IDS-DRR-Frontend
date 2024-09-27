@@ -1,21 +1,17 @@
 'use client';
 
 import React from 'react';
-import { useWindowSize } from '@/hooks/use-window-size';
 import * as d3 from 'd3-scale';
 import { interpolateBlues } from 'd3-scale-chromatic';
 import { Spinner, Text } from 'opub-ui';
 
 import { Factors, RiskText } from '@/config/consts';
-import { deSlugify } from '@/lib/utils';
 import MapChart from '@/components/MapChart';
 import { MediaRendering } from '@/components/media-rendering';
-import { FactorList } from './factor-list';
-import { getFactorNameBySlug } from './output-window';
+import { getFactorNameBySlug, getUnitsBySlug } from '../utils/utils';
 
 export const MapComponent = ({
   indicator,
-  regions,
   mapDataloading,
   indicatorsData,
   revenueMapDataLoading,
@@ -25,11 +21,11 @@ export const MapComponent = ({
   setRevenueRegion,
 }: {
   indicator: string;
-  regions: { label: string; value: string }[];
   mapDataloading: boolean;
   indicatorsData: {
     name: string;
     slug: string;
+    unit: string;
     long_description?: string;
     short_description: string;
   }[];
@@ -41,6 +37,7 @@ export const MapComponent = ({
 }) => {
   const [map, setMap] = React.useState<any>(null);
   const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
+
   const params = new URLSearchParams(window.location.search);
   const districtCode = params.get('district-code');
 
@@ -172,7 +169,7 @@ export const MapComponent = ({
           return `
       <div>
       <strong>${regionName.toUpperCase()}</strong><br/>
-      <span>${getFactorNameBySlug(indicatorsData, indicator)} : <span style="color: ${colorMap[riskValue]}; text-transform: uppercase; font-weight: bold;">${riskText}</span></span>
+      <span>${getFactorNameBySlug(indicatorsData, indicator)} : <span style="color: ${colorMap[riskValue]}; text-transform: ${Factors.includes(indicator) && 'uppercase'}; font-weight: bold;">${riskText}</span></span>
       </div>`;
         },
         {
@@ -189,76 +186,37 @@ export const MapComponent = ({
   }
 
   React.useEffect(() => {
-    if (map && map.getContainer()) {
-      const getBoundsData = mapData.features.filter(
-        (feature: { properties: { [x: string]: string } }) =>
-          feature.properties['code'] === districtCode
-      );
+    const getBoundsData = mapData.features.filter(
+      (feature: { properties: { [x: string]: string } }) =>
+        feature.properties['code'] === districtCode
+    );
+
+    if (
       getBoundsData.length > 0 &&
-        map.fitBounds(getBoundsData[0].properties.bounds);
-      const filterMapData = revenueMapData.features.filter(
-        (feature: { properties: { [x: string]: string } }) =>
-          feature.properties['district-code'] === districtCode
-      );
-      setMapFeatures(filterMapData);
-      if (!districtCode) {
-        setMapFeatures(mapData.features);
+      getBoundsData[0]?.properties?.bounds &&
+      map &&
+      map.getContainer()
+    ) {
+      try {
+        map?.fitBounds(getBoundsData[0]?.properties?.bounds);
+      } catch (error) {
+        console.warn('Error fitting bounds:', error);
       }
     }
-  }, [districtCode, map, mapData]);
+
+    const filterMapData = revenueMapData.features.filter(
+      (feature: { properties: { [x: string]: string } }) =>
+        feature.properties['district-code'] === districtCode
+    );
+
+    setMapFeatures(districtCode ? filterMapData : mapData.features);
+  }, [districtCode, map, mapData.features, revenueMapData.features]);
 
   React.useEffect(() => {
     if (map && map.getContainer() && !districtCode) {
       map?.setView([26.193, 92.773], 7.4);
     }
   }, [map, districtCode]);
-
-  React.useEffect(() => {
-    const regionsArray: string[] = [];
-    regions?.forEach((region) => {
-      regionsArray.push(region.value);
-    });
-
-    if (map) {
-      const openPopups: any[] = [];
-      map.eachLayer((layer: any) => {
-        const regionName = layer.feature?.properties.name;
-        const regionCode = layer.feature?.properties.code;
-        const riskValue = layer.feature?.properties?.[indicator];
-
-        const riskText = Factors.includes(indicator)
-          ? RiskText[riskValue]?.indicatorText
-          : riskValue;
-
-        if (regionsArray.includes(regionCode)) {
-          const popup = layer.getPopup();
-          if (popup) {
-            openPopups.push(popup);
-          } else {
-            EnablePopup({
-              regionName,
-              riskValue,
-              riskText,
-              layer,
-            });
-          }
-        } else {
-          layer.closePopup();
-          layer.unbindPopup();
-          // Remove the layer from the map
-          if (layer.getPopup()) {
-            map.removeLayer(layer);
-          }
-        }
-      });
-
-      // Close the last open popup if regionsArray is empty
-      if (regionsArray.length === 0 && openPopups.length > 0) {
-        const lastLayer = openPopups[openPopups.length - 1];
-        map.removeLayer(lastLayer);
-      }
-    }
-  }, [indicator, map, regions]);
 
   if (mapDataloading || revenueMapDataLoading)
     return (
@@ -303,6 +261,11 @@ export const MapComponent = ({
             zoomOnClick={false}
             isCustomColor={!Factors.includes(indicator)}
             customColor={colorScale}
+            legendHeading={{
+              heading: !Factors.includes(indicator)
+                ? `${getFactorNameBySlug(indicatorsData, indicator)} ${getUnitsBySlug(indicatorsData, indicator) && `(${getUnitsBySlug(indicatorsData, indicator)})`}`
+                : '',
+            }}
             legendData={
               Factors.includes(indicator) ? legendData : customLegendData
             }
@@ -314,7 +277,7 @@ export const MapComponent = ({
               const riskValue = layer.feature?.properties?.[indicator];
               const riskText = Factors.includes(indicator)
                 ? RiskText[riskValue]?.indicatorText
-                : riskValue;
+                : `${riskValue} ${getUnitsBySlug(indicatorsData, indicator)}`;
               EnablePopup({
                 regionName,
                 riskValue,

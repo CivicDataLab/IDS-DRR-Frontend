@@ -44,3 +44,17 @@ export const constructRegionOptions = (
   );
   return DistrictDropDownOption;
 };
+
+export function getFactorNameBySlug(factorData: any, slug: string) {
+  const factorName = factorData?.filter(
+    (factor: { slug: string }) => factor.slug === slug
+  );
+  return factorName[0]?.name;
+}
+
+export function getUnitsBySlug(factorData: any, slug: string) {
+  const factorName = factorData?.filter(
+    (factor: { slug: string }) => factor.slug === slug
+  );
+  return factorName[0]?.unit__name || '';
+}

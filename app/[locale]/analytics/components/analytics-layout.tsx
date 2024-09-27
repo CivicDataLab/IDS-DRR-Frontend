@@ -219,29 +219,8 @@ export function Content({
     return filterRevenueCircles;
   };
 
-  const filterOpt = () => {
-    if (revenueCode) {
-      const filterRevenueCircles = RevCircleDropdownOptions.filter(
-        (option) => option.value === revenueCode
-      );
-      return filterRevenueCircles;
-    }
-    const filteredDistrictOptions = DistrictDropDownOption?.filter(
-      (option) => option.value === districtCode
-    );
-
-    return filteredDistrictOptions;
-  };
-
   const handleDistrictChange = (districtCode: string) => {
     setDistrictCode(districtCode, { shallow: false });
-    // const filterRevenueCircles = RevCircleDropdownOptions.filter(
-    //   (option) => option.districtCode === districtCode
-    // );
-
-    // filterRevenueCircles.unshift({ label: '', value: '' });
-
-    // setFilteredRevenueCircles(filterRevenueCircles);
   };
 
   return (
@@ -315,7 +294,6 @@ export function Content({
               </div>
               <MapComponent
                 indicator={indicator}
-                regions={filterOpt()}
                 mapDataloading={mapData?.isFetching}
                 revenueMapDataLoading={revenueMapData?.isFetching}
                 indicatorsData={indicatorsData?.data?.indicators}

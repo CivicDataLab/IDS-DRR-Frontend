@@ -139,22 +139,6 @@ export function AnalyticsMobileLayout({
     }
   );
 
-  const filterOpt = (boundary: string) => {
-    const regionOptions = constructRegionOptions(boundary, geographiesData);
-
-    if (boundary === 'revenue-circle') {
-      const filterRevenueCircles = regionOptions.filter(
-        (option) => option.districtCode === districtCode
-      );
-      return filterRevenueCircles;
-    }
-    const filteredDistrictOptions = regionOptions?.filter(
-      (option) => option.value === districtCode
-    );
-
-    return filteredDistrictOptions;
-  };
-
   const [activeButton, setActiveButton] = useState(view);
 
   const RenderView = ({ selectedView }: any) => {
@@ -164,7 +148,6 @@ export function AnalyticsMobileLayout({
           <MapComponent
             indicator={indicator}
             indicatorsData={indicatorsData?.data?.indicators}
-            regions={filterOpt(boundary)}
             setRegion={setDistrictCode}
             setRevenueRegion={setRevenueCode}
             revenueMapData={revenueMapData?.data?.revCircleMapData}

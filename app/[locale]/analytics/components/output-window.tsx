@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useWindowSize } from '@/hooks/use-window-size';
 import {
@@ -20,7 +19,6 @@ import {
   AccordionItem,
   AccordionTrigger,
   Button,
-  Divider,
   Icon,
   ProgressBar,
   Text,
@@ -31,10 +29,10 @@ import {
 import { Factors, RiskColorMap, RiskText } from '@/config/consts';
 import { ANALYTICS_TIME_TRENDS } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
-import { cn, deSlugify, formatDateString } from '@/lib/utils';
+import { cn, formatDateString } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
-import { DownloadReport } from './download-report';
+import { getFactorNameBySlug } from '../utils/utils';
 import { RevenueCircle, ScoreInfo } from './revenue-circle-accordion';
 import styles from './styles.module.scss';
 import { TimeTrends } from './time-trends';
@@ -423,13 +421,6 @@ export function OutputWindow({
       </MediaRendering>
     </>
   );
-}
-
-export function getFactorNameBySlug(factorData: any, slug: string) {
-  const factorName = factorData?.filter(
-    (factor: { slug: string }) => factor.slug === slug
-  );
-  return factorName[0]?.name;
 }
 
 export function OutputWindowHeader({ factorData, indicator }: any) {
