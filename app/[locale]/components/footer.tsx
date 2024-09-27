@@ -25,14 +25,42 @@ export const Footer = () => {
             alt="CivicDataLab Logo"
             className="object-contain"
           />
+          <div className="flex flex-row items-center gap-2">
+            <Text variant="bodySm" color="onBgDefault">
+              In collaobration with:
+            </Text>
+            <Image
+              src="/logo/ASDMA3.png"
+              width={59}
+              height={54}
+              alt="ASDMA Logo"
+              className="object-contain"
+            />
+          </div>
+          <div className="flex flex-row items-center gap-2">
+            <Text variant="bodySm" color="onBgDefault">
+              Supported by:
+            </Text>
+            <Image
+              src="/logo/RockefellerLogoW.png"
+              width={106}
+              height={64}
+              alt="Rockefeller Logo"
+              className="object-contain"
+            />
+            <Image
+              src="/logo/ocp.png"
+              width={91}
+              height={40}
+              alt="OCP Logo"
+              className="object-contain"
+            />
+          </div>
         </div>
       </div>
       <div className="text-center md:text-right">
         <Text variant="headingSmSpaced" color="onBgDefault">
-          <strong>
-            made with <span className=" text-baseRedSolid11">&#10084; </span> in
-            india️
-          </strong>
+          <strong>made with ❤ in india️</strong>
         </Text>
         <Text
           variant="bodySm"

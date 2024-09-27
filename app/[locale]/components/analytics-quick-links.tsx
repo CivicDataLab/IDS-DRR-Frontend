@@ -1,118 +1,118 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  Text,
-} from 'opub-ui';
+import { Button, Text } from 'opub-ui';
 
 import { AnalyticsQuickLinksText, AnalyticsURL } from '@/config/consts';
-import styles from './analytics-quick-links.module.css';
+import { MediaRendering } from '@/components/media-rendering';
 
 export const QuickLinks = () => {
-  const Analytics = [
-    {
-      name: 'Assam',
-      status: 'active',
-      icon: '/logo/states/Assam.svg',
-      link: AnalyticsURL,
-    },
-    {
-      name: 'Himachal Pradesh',
-      status: 'inactive',
-      icon: '/logo/states/Hp.svg',
-      link: '',
-    },
-    {
-      name: 'Odisha',
-      status: 'inactive',
-      icon: '/logo/states/Odisha.svg',
-      link: '',
-    },
-    {
-      name: 'Bihar',
-      status: 'inactive',
-      icon: '/logo/states/Bihar.svg',
-      link: '',
-    },
-    {
-      name: 'Uttar Pradesh',
-      status: 'inactive',
-      icon: '/logo/states/Up.svg',
-      link: '',
-    },
-  ];
   return (
-    <section className=" flex h-full w-full flex-col gap-9 px-5 py-6 lg:px-6 lg:py-20">
-      <div className="container flex flex-col gap-4 ">
-        <Text variant="heading4xl" fontWeight="bold" color="default">
-          Analytics Dashboard
-        </Text>
-        <Text variant="headingXl" fontWeight="regular" color="default">
-          {AnalyticsQuickLinksText}
-        </Text>
-      </div>
-      <div>
-        <Carousel className="flex w-full items-center justify-center">
-          <div className="block xl:hidden">
-            <CarouselPrevious />
+    <section className="container h-[400px] px-6 py-1">
+      <MediaRendering minWidth="1024" maxWidth={null}>
+        {/* DESKTOP  */}
+        <div className=" flex h-full flex-wrap gap-4">
+          <div className="flex flex-col justify-center gap-8 md:basis-2/6">
+            <Text variant="heading3xl" fontWeight="bold" color="default">
+              Analytics Dashboard
+            </Text>
+            <Text variant="bodyLg" fontWeight="regular" color="default">
+              {AnalyticsQuickLinksText}
+            </Text>
+            <Link href={AnalyticsURL}>
+              <Button className=" bg-[#71E57D]" variant="success" size="large">
+                <Text variant="bodyLg" fontWeight="bold" color="default">
+                  Explore More
+                </Text>
+              </Button>
+            </Link>
           </div>
-          <CarouselContent className="flex w-full gap-0 px-4 md:gap-6 lg:gap-2 xl:pr-28">
-            {/* Adjust padding */}
-            {Analytics.map((item, index) => (
-              <CarouselItem
-                key={index}
-                className="lg flex items-center justify-center overflow-hidden px-1 md:basis-1/2 lg:basis-1/3 xl:basis-1/4 xl:px-7 2xl:basis-1/5"
+          <div className=" m-auto  hidden basis-2/6 items-center md:flex">
+            <Image
+              className="object-contain"
+              src="/logo/analyticLinkPlaceholder2.png"
+              height={252}
+              width={364}
+              alt="snapshot comparing risk scores across various revenue circles"
+              style={{ marginTop: '-30px' }}
+            />
+            <Image
+              src="/logo/analyticLinkPlaceholder.png"
+              className="object-contain"
+              height={214}
+              width={330}
+              alt="Map snapshot showcasing flood affected areas"
+              style={{ marginLeft: '-190px', marginTop: '40px' }}
+            />
+
+            <Image
+              className="object-contain"
+              src="/logo/analyticLinkPlaceholder3.png"
+              height={152}
+              width={360}
+              alt="snapshot showcasing risk scores for Mahmora revenue circle"
+              style={{
+                marginLeft: '-105px',
+                marginBottom: '2px',
+                marginTop: '14px',
+              }}
+            />
+          </div>
+        </div>
+      </MediaRendering>
+      <MediaRendering minWidth={null} maxWidth="1023">
+        {/* MOBILE */}
+        <div className=" flex h-full flex-wrap gap-6 ">
+          <div className=" m-2 h-[120px] w-full items-center md:flex">
+            <Image
+              className="object-contain "
+              src="/logo/analyticLinkPlaceholder2.png"
+              height={240}
+              width={254}
+              alt="snapshot comparing risk scores across various revenue circles"
+              style={{ marginTop: '-60px', marginLeft: '30px' }}
+            />
+            <Image
+              className="object-contain "
+              src="/logo/analyticLinkPlaceholder3.png"
+              height={122}
+              width={130}
+              alt="snapshot showcasing risk scores for Mahmora revenue circle"
+              style={{
+                marginLeft: '-10px',
+                marginBottom: '40px',
+                marginTop: '-190px',
+              }}
+            />
+            <Image
+              src="/logo/analyticLinkPlaceholder.png"
+              className="object-contain "
+              height={144}
+              width={150}
+              alt="Map snapshot showcasing flood affected areas"
+              style={{ marginLeft: '-10px', marginTop: '-180px' }}
+            />
+          </div>
+          <div className="relative flex  flex-col justify-center gap-4 p-2 ">
+            <Text variant="heading3xl" fontWeight="bold" color="default">
+              Analytics Dashboard
+            </Text>
+            <Text variant="bodyLg" fontWeight="regular" color="default">
+              {AnalyticsQuickLinksText}
+            </Text>
+            <Link href={AnalyticsURL}>
+              <Button
+                className=" w-[100%] bg-[#71E57D]"
+                variant="success"
+                size="large"
               >
-                {item.status === 'active' ? (
-                  <Link
-                    href={item.link}
-                    className={`cursor-pointer ${styles.stateCard}`}
-                  >
-                    {/* Ensure items take up flexible width */}
-                    <div className="flex h-48 w-56 flex-col items-center justify-between rounded-4 bg-surfaceDefault p-4 text-center shadow-elementCard">
-                      <Image
-                        width={200}
-                        height={160}
-                        src={item.icon}
-                        alt="blog Logo"
-                        className={`h-32 w-32 object-contain px-3 py-4 ${styles.stateIcon}`}
-                      />
-                      <Text variant="headingLg">{item.name}</Text>
-                    </div>
-                  </Link>
-                ) : (
-                  <div
-                    className="flex h-48 w-56 cursor-no-drop flex-col items-center justify-between rounded-4 p-4 text-center shadow-elementCard"
-                    style={{ background: '#F9F9FB' }}
-                  >
-                    <Image
-                      width={200}
-                      height={160}
-                      src={item.icon}
-                      alt="blog Logo"
-                      className={`h-32 w-32  object-contain px-3 py-4 opacity-25 ${styles.inactiveStateIcon}`}
-                    />
-                    <Text variant="headingLg">{item.name}</Text>
-                    <Text
-                      variant="headingLg"
-                      className="absolute top-1/3 w-fit text-nowrap rounded-2 bg-basePureBlack px-3 py-1 text-surfaceDefault"
-                    >
-                      Coming Soon
-                    </Text>
-                  </div>
-                )}
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <div className="block xl:hidden">
-            <CarouselNext />
+                <Text variant="bodyLg" fontWeight="bold" color="default">
+                  Explore More
+                </Text>
+              </Button>
+            </Link>
           </div>
-        </Carousel>
-      </div>
+        </div>
+      </MediaRendering>
     </section>
   );
 };

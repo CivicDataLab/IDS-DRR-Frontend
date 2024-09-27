@@ -4,6 +4,7 @@ import { Button, Text } from 'opub-ui';
 
 import {
   AboutText,
+  AboutTextContentOne,
   AboutTextContentThree,
   AboutTextContentTwo,
 } from '@/config/consts';
@@ -13,11 +14,8 @@ import styles from './styles.module.scss';
 
 export function About() {
   return (
-    <section
-      className=" h-full w-full md:p-6"
-      style={{ backgroundColor: '#222136' }}
-    >
-      <div className="container flex flex-wrap place-content-center items-center text-surfaceDefault">
+    <section className="h-full w-full bg-backgroundSolidDark md:p-6">
+      <div className="flex flex-wrap place-content-center items-center text-surfaceDefault">
         <MediaRendering minWidth="1024" maxWidth={null}>
           {/* DESKTOP  */}
           <Image
@@ -27,7 +25,6 @@ export function About() {
             objectFit="contain"
             className={styles.about__img}
             alt="An image representing global climate action"
-            style={{ width: '400px', height: '469px' }}
           />
         </MediaRendering>
         <MediaRendering minWidth={null} maxWidth="1023">
@@ -109,15 +106,28 @@ export function About() {
           >
             {AboutTextContentTwo}
           </Text>
-          <Link href={'/about-us'}>
-            <Text
-              variant="headingMd"
-              color="onBgDefault"
-              className=" underline"
-            >
-              Read More
-            </Text>
-          </Link>
+
+          <Text
+            className="gap-5 text-surfaceDefault"
+            variant="bodyLg"
+            fontWeight="regular"
+          >
+            {AboutTextContentThree}
+            <br />
+            <br />
+            <ol>
+              <li>
+                1. Build an Open Access Disaster Data Repository <br />
+                <br />
+                2. Co-Create Intelligent Data Model & Platform
+                <br />
+                <br />
+                3. Enhance Data Capacity of State & District Management
+                Authorities <br />
+                <br />
+              </li>
+            </ol>
+          </Text>
         </div>
       </div>
     </section>
