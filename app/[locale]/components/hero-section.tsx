@@ -8,17 +8,15 @@ import styles from './styles.module.scss';
 export const HeroSection = () => {
   return (
     <section className={cn(styles.HeroSection)}>
-      <div className=" flex w-full flex-wrap items-center justify-center gap-6 bg-baseGraySlateSolid12 bg-opacity-20 p-4">
-        <div></div>
+      <div className=" container flex h-full w-full flex-col justify-end self-start py-14">
         <Image
-          src="/logo/assamDRRLogo.svg"
-          width={400}
-          height={104}
+          src="/logo/IDS-yellow.png"
+          width={380}
+          height={56}
           alt="Assam DRR Dashboard"
         />
-
         <Text
-          className="p-4 text-surfaceDefault md:basis-1/2"
+          className=" max-w-96 pt-4 text-surfaceDefault"
           variant="headingXl"
           fontWeight="medium"
         >
