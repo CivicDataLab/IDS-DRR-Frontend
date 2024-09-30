@@ -249,7 +249,7 @@ const DatasetsListing = () => {
       ) : (
         <section className="mx-5 md:mx-8 lg:mx-10">
           <div className="my-4 flex flex-wrap items-center justify-between gap-6 rounded-2 bg-[#96E79E] p-2">
-            <div className=" flex flex-wrap items-center gap-4 whitespace-nowrap align-middle">
+            <div className=" flex flex-wrap items-center gap-4 whitespace-nowrap align-middle lg:flex-nowrap">
               <div>
                 <Text>
                   Showing {datasetDetails?.length} of {count} Datasets
