@@ -9,6 +9,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  Spinner,
   Tag,
   Text,
 } from 'opub-ui';
@@ -77,21 +78,20 @@ const Resources = () => {
           <div className="mr-2 rounded-1 bg-surfaceDefault">
             <CarouselPrevious />
           </div>
-          <CarouselContent className="container flex w-full gap-4 px-4 lg:gap-4 ">
-            {/* Adjust padding */}
-            {data.map((item: any, index: any) => (
-              <CarouselItem
-                key={index}
-                className="ml-2  overflow-hidden rounded-2 bg-surfaceDefault p-3 md:basis-1/2 lg:ml-0 lg:basis-1/3  lg:p-6 "
-              >
-                <Link href={`/datasets/${item.id}`} className="w-full">
+          {data.length > 0 ? (
+            <CarouselContent className="container flex w-full gap-4 px-4 lg:gap-4 ">
+              <CarouselItem className="ml-2  overflow-hidden rounded-2 bg-surfaceDefault p-3 md:basis-1/2 lg:ml-0 lg:basis-1/3  lg:p-6 ">
+                <Link
+                  href={`https://supersetv2.civicdatalab.in/superset/dashboard/p/qe6NrVOpNPz/`}
+                  className="w-full"
+                >
                   <div className="flex w-full flex-col items-baseline justify-between gap-3">
                     <div className=" flex flex-col gap-1 ">
                       <Text variant="bodyLg">
-                        <b>{item.title}</b>
+                        <b> Assam Tenders Dashboard</b>
                       </Text>
                       <Text variant="bodySm">
-                        Source: {getMetadataValue(item, 'Source') || 'NA'}
+                        Source: Assam Government eProcurement System
                       </Text>
                     </div>
                     <div className="flex flex-col items-start gap-1">
@@ -102,8 +102,7 @@ const Resources = () => {
                           variant="bodySm"
                           fontWeight="regular"
                         >
-                          Last Updated:{' '}
-                          {getMetadataValue(item, 'Last Updated') || 'NA'}
+                          Last Updated: NA
                         </Text>
                         <Text
                           color="default"
@@ -119,8 +118,7 @@ const Resources = () => {
                           variant="bodySm"
                           fontWeight="regular"
                         >
-                          Update Frequency:
-                          {getMetadataValue(item, 'Last Updated') || 'NA'}
+                          Update Frequency: NA
                         </Text>
                       </div>
                       <Text
@@ -129,28 +127,91 @@ const Resources = () => {
                         variant="bodySm"
                         fontWeight="regular"
                       >
-                        Reference Period:{' '}
-                        {formatReferenceDate(
-                          getMetadataValue(item, 'Period From')
-                        ) || 'NA'}{' '}
-                        to{' '}
-                        {formatReferenceDate(
-                          getMetadataValue(item, 'Period To')
-                        ) || 'NA'}
+                        Reference Period: January 2017 to September 2023
                       </Text>
                     </div>
-                    <div className=" flex gap-2">
-                      {item.formats.map((fileType: any, index: any) => (
-                        <Tag key={index} background-color="#E1F0FF">
-                          {fileType}
-                        </Tag>
-                      ))}
+                    <div className=" flex flex-wrap gap-2">
+                      <Tag background-color="#E1F0FF">Financial Data</Tag>
+                      <Tag background-color="#E1F0FF">Government Response</Tag>
                     </div>
                   </div>
                 </Link>
               </CarouselItem>
-            ))}
-          </CarouselContent>
+              {data.map((item: any, index: any) => (
+                <CarouselItem
+                  key={index}
+                  className="ml-2  overflow-hidden rounded-2 bg-surfaceDefault p-3 md:basis-1/2 lg:ml-0 lg:basis-1/3  lg:p-6 "
+                >
+                  <Link href={`/datasets/${item.id}`} className="w-full">
+                    <div className="flex w-full flex-col items-baseline justify-between gap-3">
+                      <div className=" flex flex-col gap-1 ">
+                        <Text variant="bodyLg">
+                          <b>{item.title}</b>
+                        </Text>
+                        <Text variant="bodySm">
+                          Source: {getMetadataValue(item, 'Source') || 'NA'}
+                        </Text>
+                      </div>
+                      <div className="flex flex-col items-start gap-1">
+                        <div className=" flex flex-col gap-1  lg:flex-row">
+                          <Text
+                            color="default"
+                            className="text-textSubdued"
+                            variant="bodySm"
+                            fontWeight="regular"
+                          >
+                            Last Updated:{' '}
+                            {getMetadataValue(item, 'Last Updated') || 'NA'}
+                          </Text>
+                          <Text
+                            color="default"
+                            className="hidden text-textSubdued  lg:block"
+                            variant="bodySm"
+                            fontWeight="regular"
+                          >
+                            |
+                          </Text>
+                          <Text
+                            color="default"
+                            className="text-textSubdued"
+                            variant="bodySm"
+                            fontWeight="regular"
+                          >
+                            Update Frequency:
+                            {getMetadataValue(item, 'Last Updated') || 'NA'}
+                          </Text>
+                        </div>
+                        <Text
+                          color="default"
+                          className=" text-textSubdued "
+                          variant="bodySm"
+                          fontWeight="regular"
+                        >
+                          Reference Period:{' '}
+                          {formatReferenceDate(
+                            getMetadataValue(item, 'Period From')
+                          ) || 'NA'}{' '}
+                          to{' '}
+                          {formatReferenceDate(
+                            getMetadataValue(item, 'Period To')
+                          ) || 'NA'}
+                        </Text>
+                      </div>
+                      <div className=" flex gap-2">
+                        {item.formats.map((fileType: any, index: any) => (
+                          <Tag key={index} background-color="#E1F0FF">
+                            {fileType}
+                          </Tag>
+                        ))}
+                      </div>
+                    </div>
+                  </Link>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          ) : (
+            <Spinner />
+          )}
           <div className="ml-2 rounded-1 bg-surfaceDefault">
             <CarouselNext />
           </div>

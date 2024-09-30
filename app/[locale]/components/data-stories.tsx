@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import {
   Carousel,
@@ -13,36 +14,46 @@ import { DataStoriesText } from '@/config/consts';
 const DataStories = () => {
   const Stories = [
     {
-      title: 'Rainfall data aggregate Assam',
+      title:
+        'Using Data for Disaster Risk Reduction(DRR) and enhanced Climate Adaptation',
       description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+        'Today, it is essential that we look at Disaster Risk Reduction (DRR) that goes beyond rescue and relief for building resilient communities',
       subTitle: 'By line',
-      date: '01/12/2001',
-      link: 'https://www.google.co.in/',
+      date: '16/05/2024',
+      image:
+        'https://miro.medium.com/v2/resize:fit:720/format:webp/1*MYJWdHX-BuGX0UB5bgEbkg.jpeg',
+      link: 'https://medium.com/civicdatalab/using-data-for-disaster-risk-reduction-drr-and-enhanced-climate-adaptation-f2465a91446c',
     },
     {
-      title: 'Rainfall data aggregate Assam',
+      title: 'Establishing a Resilient Climate Data Environment',
       description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+        'In order to harness the potential of the data-for-public-good ecosystem for addressing the growing impact of Climate Change, data-based',
       subTitle: 'By line',
-      date: '01/12/2001',
-      link: 'www.fb.com',
+      date: '01/04/2024',
+      link: 'https://medium.com/civicdatalab/establishing-a-resilient-climate-data-environment-ebe680ba7a9a',
+      image:
+        'https://miro.medium.com/v2/resize:fit:720/format:webp/1*_UlVG5lEb8ChOgFrthHp_w.jpeg',
     },
     {
-      title: 'Rainfall data aggregate Assam',
+      title: 'Critical Role of Local Communities for DRR',
       description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+        'Evidence based interventions for climate action and disaster risk reduction (DRR) must engage communities to ensure resilience.',
       subTitle: 'By line',
-      date: '01/12/2001',
-      link: 'www.google.com',
+      date: '25/09/2024',
+      link: 'https://medium.com/civicdatalab/critical-role-of-local-communities-for-drr-3cae00f6c89c',
+      image:
+        'https://miro.medium.com/v2/resize:fit:720/format:webp/0*RWVURinKnqLkvZbZ',
     },
     {
-      title: 'Rainfall data aggregate Assam',
+      title:
+        'Introducing ‘Intelligent (Open) Data Ecosystem for Assam — Flood Response and Management (IDEA-FRM)’',
       description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+        'How we identified and curated relevant datasets which can be used to study, model and address the issue of floods in the state of Assam.',
       subTitle: 'By line',
-      date: '01/12/2001',
-      link: 'www.google.com',
+      date: '22/05/2023',
+      link: 'https://medium.com/civicdatalab/introducing-intelligent-open-data-ecosystem-for-assam-flood-response-and-management-ca5481908dd4',
+      image:
+        'https://miro.medium.com/v2/resize:fit:720/format:webp/1*KzBOx8poqVyG4m1JY4PsMQ.jpeg',
     },
   ];
   return (
@@ -72,12 +83,20 @@ const DataStories = () => {
               >
                 <Link href={item.link} className=" w-full" target="_blank">
                   <div className="flex flex-col gap-4 ">
-                    <div className=" w-fill h-48 bg-borderDisabled"></div>
-                    <div>
+                    <div className="w-full">
+                      <Image
+                        width={180}
+                        height={192}
+                        src={item.image}
+                        alt="banner"
+                        className=" w-full object-cover"
+                      />
+                    </div>
+                    <div className=" min-h-12">
                       <Text>{item.title}</Text>
                     </div>
                     <div className=" flex flex-wrap justify-between">
-                      <Text>{item.subTitle}</Text>
+                      <Text> </Text>
                       <Text>{item.date}</Text>
                     </div>
                     <div>
