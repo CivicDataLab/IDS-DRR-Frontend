@@ -217,7 +217,7 @@ export function FactorList() {
               onClick={(event) =>
                 handleRedirect(
                   event,
-                  'https://github.com/CivicDataLab/flood-data-ecosystem-Assam/raw/refs/heads/main/Sources/FRIMS/data/raw_data/FRIMS_Inf_Damage_Data_21_july_2023.xlsx'
+                  process.env.NEXT_PUBLIC_DOWNLOAD_REPORT_LINK
                 )
               }
               monochrome={true}
