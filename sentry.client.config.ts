@@ -8,12 +8,16 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN_URL,
 
   // Add optional integrations for additional features
-  // integrations: [
-  //   Sentry.replayIntegration(),
-  // ],
+  integrations: [
+    Sentry.replayIntegration(),
+    Sentry.browserTracingIntegration(),
+  ],
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
   tracesSampleRate: 1,
+
+  // Track session events as well
+  autoSessionTracking: true,
 
   // Define how likely Replay events are sampled.
   // This sets the sample rate to be 10%. You may want this to be 100% while
