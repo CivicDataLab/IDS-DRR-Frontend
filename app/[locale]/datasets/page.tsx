@@ -2,6 +2,7 @@
 
 import React, { useEffect, useReducer, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { captureException } from '@sentry/nextjs';
 import {
   Button,
   Pill,
@@ -192,6 +193,7 @@ const DatasetsListing = () => {
           setFacets(res);
         })
         .catch((err: any) => {
+          captureException(err);
           console.error(err);
         });
     }

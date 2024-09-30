@@ -1,5 +1,6 @@
 import React from 'react';
 import { type TypedDocumentNode } from '@graphql-typed-document-node/core';
+import { captureException } from '@sentry/nextjs';
 import { QueryClient, useQuery } from '@tanstack/react-query';
 import { request } from 'graphql-request';
 
@@ -10,10 +11,14 @@ export async function GraphQL<TResult, TVariables>(
   document: TypedDocumentNode<TResult, TVariables>,
   ...[variables]: TVariables extends Record<string, never> ? [] : [TVariables]
 ) {
-  const data = await request(url, document, {
-    ...variables,
-  });
-  return data;
+  try {
+    const data = await request(url, document, {
+      ...variables,
+    });
+    return data;
+  } catch (error: any) {
+    captureException(error);
+  }
 }
 
 // wrapper function for react-query to be used by server components
@@ -39,6 +44,7 @@ export function useFetch(id: string, query: string) {
         const data = await fetch(query).then((res) => res.json());
         return data;
       } catch (error: any) {
+        captureException(error);
         throw new Error(error);
       }
     },
@@ -52,14 +58,19 @@ export async function getData(query: string) {
     });
     return res.json();
   } catch (err) {
+    captureException(err);
     console.log('error ', err);
   }
 }
 
 export const fetchDatasets = async (variables: any) => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/search/dataset/${variables}`
-  );
-  const data = await response.json();
-  return data;
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/search/dataset/${variables}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    captureException(error);
+  }
 };

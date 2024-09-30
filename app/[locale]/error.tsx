@@ -1,7 +1,8 @@
 'use client';
 
-import { Button, Text } from 'opub-ui';
 import { useEffect } from 'react';
+import { captureException } from '@sentry/nextjs';
+import { Button, Text } from 'opub-ui';
 
 export default function ErrorPage({
   error,
@@ -12,10 +13,11 @@ export default function ErrorPage({
 }) {
   useEffect(() => {
     console.error(error);
+    captureException(error);
   }, [error]);
 
   return (
-    <div className="w-full min-h-full flex justify-center items-center flex-col gap-3">
+    <div className="flex min-h-full w-full flex-col items-center justify-center gap-3">
       <Text variant="headingMd" as="h2">
         Something went wrong!
       </Text>
