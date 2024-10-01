@@ -1,5 +1,6 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
+import { captureException } from '@sentry/nextjs';
 import { dehydrate, Hydrate } from '@tanstack/react-query';
 
 import { AnalyticsURL } from '@/config/consts';
@@ -21,28 +22,33 @@ export default async function Home({
 
   const boundary = searchParams['revenue-code'] ? 'revenue-circle' : 'district';
 
-  await queryClient.prefetchQuery([`timePeriods`], () =>
-    GraphQL(
-      `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
-      ANALYTICS_TIME_PERIODS
-    )
-  );
+  try {
+    await queryClient.prefetchQuery([`timePeriods`], () =>
+      GraphQL(
+        `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_TIME_PERIODS
+      )
+    );
+
+    await queryClient.prefetchQuery(
+      [`indicators_${searchParams?.['indicator']}`],
+      () =>
+        GraphQL(
+          `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
+          ANALYTICS_INDICATORS,
+          { indcFilter: { slug: searchParams?.['indicator'] } }
+        )
+    );
+  } catch (error) {
+    captureException(error);
+  }
 
   if (Object.keys(searchParams).length === 0) {
     redirect(AnalyticsURL);
   }
 
-  await queryClient.prefetchQuery(
-    [`indicators_${searchParams?.['indicator']}`],
-    () =>
-      GraphQL(
-        `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_INDICATORS,
-        { indcFilter: { slug: searchParams?.['indicator'] } }
-      )
-  );
-
   const dehydratedState = dehydrate(queryClient);
+
   return (
     <Hydrate state={dehydratedState}>
       <MediaRendering minWidth={null} maxWidth="1023">
