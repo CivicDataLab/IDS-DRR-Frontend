@@ -2,6 +2,7 @@ import React from 'react';
 import { Inter as FontSans } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import Script from 'next/script';
+import { captureException } from '@sentry/nextjs';
 import { NextIntlClientProvider } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
 
@@ -71,6 +72,7 @@ export default async function LocaleLayout({
   try {
     messages = (await import(`../../locales/${locale}.json`)).default;
   } catch (error) {
+    captureException(error);
     notFound();
   }
   unstable_setRequestLocale(locale);

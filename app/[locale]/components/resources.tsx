@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { captureException } from '@sentry/nextjs';
 import {
   Carousel,
   CarouselContent,
@@ -49,7 +50,7 @@ const Resources = () => {
         setData(res.results);
       })
       .catch((err: any) => {
-        console.error(err);
+        captureException(err);
       });
   }, []);
 
