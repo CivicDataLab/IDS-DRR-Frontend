@@ -207,7 +207,7 @@ export function Content({
     if (timePeriod) {
       setTimePeriod(timePeriod);
     }
-  }, []);
+  });
 
   const getRevenueCircleOptions = () => {
     const filterRevenueCircles = RevCircleDropdownOptions.filter(
