@@ -88,7 +88,7 @@ export function AnalyticsMobileLayout({
   );
 
   const mapData = useQuery(
-    [`mapQuery_district_${indicator}_${timePeriodSelected}`],
+    [`mobile_mapQuery_district_${indicator}_${timePeriodSelected}`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
@@ -124,7 +124,7 @@ export function AnalyticsMobileLayout({
   );
 
   const districtGeographiesData = useQuery(
-    [`geographies_data_district`],
+    [`mobile_geographies_data_district`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
@@ -144,7 +144,7 @@ export function AnalyticsMobileLayout({
   );
 
   const revenueGeographiesData = useQuery(
-    [`geographies_data_revenue`],
+    [`mobile_geographies_data_revenue`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
@@ -164,7 +164,7 @@ export function AnalyticsMobileLayout({
   );
 
   const timePeriods = useQuery(
-    [`timePeriods`],
+    [`mobile_timePeriods`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
@@ -178,7 +178,7 @@ export function AnalyticsMobileLayout({
   );
 
   const indicatorsData = useQuery(
-    [`indicators_${indicator}`],
+    [`mobile_indicators_${indicator}`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
@@ -275,8 +275,6 @@ export function AnalyticsMobileLayout({
   };
 
   const [activeButton, setActiveButton] = useState(view);
-
-  console.log('Analytics  Mobile', revenueMapData.data);
 
   const RenderView = ({ selectedView }: any) => {
     const isRegionSelected = Boolean(districtCode || revenueCode);
