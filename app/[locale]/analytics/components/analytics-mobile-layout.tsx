@@ -337,6 +337,7 @@ export function AnalyticsMobileLayout({
           <RenderView selectedView={view} />
         )}
       </div>
+      {/* <OutputWindowComponent /> */}
 
       <div className="sticky bottom-0 flex h-[86px] w-full flex-row justify-between gap-1 bg-baseIndigoSolid1 p-1">
         {buttons.map((button, index) =>

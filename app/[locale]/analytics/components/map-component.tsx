@@ -38,6 +38,9 @@ export const MapComponent = ({
   const [map, setMap] = React.useState<any>(null);
   const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
 
+  // console.log('$$$$', mapData.features);
+  console.log('$$$$', revenueMapData);
+
   const params = new URLSearchParams(window.location.search);
   const districtCode = params.get('district-code');
 
