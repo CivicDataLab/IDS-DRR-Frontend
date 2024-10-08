@@ -223,6 +223,8 @@ export function Content({
     setDistrictCode(districtCode, { shallow: false });
   };
 
+  // console.log('Analytics  Desktop', mapData.data);
+
   return (
     <React.Fragment>
       <Tabs defaultValue="map">

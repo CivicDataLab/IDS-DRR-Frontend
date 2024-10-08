@@ -38,6 +38,9 @@ export const MapComponent = ({
   const [map, setMap] = React.useState<any>(null);
   const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
 
+  // console.log('$$$$', mapData.features);
+  console.log('$$$$', revenueMapData);
+
   const params = new URLSearchParams(window.location.search);
   const districtCode = params.get('district-code');
 
@@ -233,13 +236,40 @@ export const MapComponent = ({
         <div className="relative h-full w-full pt-[62px]">
           <MapChart
             features={mapFeatures || mapData.features}
-            mapZoom={6}
-            minZoom={5}
-            maxZoom={8}
+            mapZoom={8}
             mapProperty={indicator}
             zoomOnClick={false}
-            legendData={legendData}
+            isCustomColor={!Factors.includes(indicator)}
+            customColor={colorScale}
+            horizontalLegend={true}
+            legendHeading={{
+              heading: !Factors.includes(indicator)
+                ? `${getFactorNameBySlug(indicatorsData, indicator)} ${getUnitsBySlug(indicatorsData, indicator) && `(${getUnitsBySlug(indicatorsData, indicator)})`}`
+                : '',
+            }}
+            legendData={
+              Factors.includes(indicator) ? legendData : customLegendData
+            }
+            minZoom={3}
+            maxZoom={6.3}
             mapDataFn={mapDataFn}
+            mouseover={(layer) => {
+              const regionName = layer.feature?.properties.name;
+              const riskValue = layer.feature?.properties?.[indicator];
+              const riskText = Factors.includes(indicator)
+                ? RiskText[riskValue]?.indicatorText
+                : `${riskValue} ${getUnitsBySlug(indicatorsData, indicator)}`;
+              EnablePopup({
+                regionName,
+                riskValue,
+                riskText,
+                layer,
+              });
+            }}
+            mouseout={(layer) => {
+              layer.closePopup();
+              layer.unbindPopup();
+            }}
             click={(layer) =>
               onMapClick({
                 layerCode: layer.feature?.properties.code,
@@ -252,6 +282,8 @@ export const MapComponent = ({
           />
         </div>
       </MediaRendering>
+
+      {/* Desktop  */}
       <MediaRendering minWidth="1024" maxWidth={null}>
         <div className=" relative h-[90%] w-full">
           <MapChart

@@ -6,6 +6,7 @@ import { parseAsString, useQueryState } from 'next-usequerystate';
 import {
   Button,
   Icon,
+  MonthPicker,
   RadioGroup,
   RadioItem,
   SearchInput,
@@ -223,6 +224,7 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
               handleSearchChange(value)
             }
             regionOptions={regionOptions}
+            timePeriodSelected={timePeriodSelected}
           />
         </MobileFilterContent>
       </MobileFilterBox>
@@ -241,6 +243,7 @@ export const RenderOptions = ({
   setTimePeriodSelected,
   regionOptions,
   regionSelected,
+  timePeriodSelected,
 }: any) => {
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -359,7 +362,11 @@ export const RenderOptions = ({
       return (
         <div className=" self-center">
           <YearCalendar
-            defaultValue={parseDate('2023-08-01')}
+            // defaultValue={parseDate('2023-08-01')}
+            defaultValue={parseDate(
+              `${timePeriodSelected.split('_')[0]}-${timePeriodSelected.split('_')[1]}-01` ||
+                '23-08-01'
+            )}
             minValue={parseDate(minDate || '2023-01-04')}
             maxValue={parseDate(maxDate || '2023-01-04')}
             onChange={(date) => {

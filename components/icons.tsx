@@ -22,6 +22,7 @@ import {
   IconDatabaseSearch,
   IconDatabaseShare,
   IconDiamondsFilled,
+  IconDots,
   IconDownload,
   IconExternalLink,
   IconFilter,
@@ -39,6 +40,7 @@ import {
   IconShare,
   IconSquareRoundedArrowRight,
   IconSquareRoundedChevronLeftFilled,
+  IconTableAlias,
   IconUserCog,
   IconWorld,
   IconX,
@@ -90,6 +92,8 @@ export const Icons: {
   IconMap: IconMap,
   IconChartBar: IconChartBar,
   filter: IconFilter,
+  IconTableAlias: IconTableAlias,
+  IconDots: IconDots,
 };
 
 export default Icons;

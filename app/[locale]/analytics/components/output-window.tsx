@@ -171,7 +171,7 @@ export function OutputWindow({
           className={cn(
             'p-4',
             'bg-surfaceDefault shadow-basicMd',
-            'shadow-inset z-1 hidden min-w-[420px] max-w-[450px] shrink-0 md:block',
+            'shadow-inset z-1 hidden    min-w-[420px] max-w-[450px] shrink-0 md:block',
             'overflow-y-auto border-r-1 border-solid border-borderSubdued',
             styles.Overlay,
             region !== null && region.length > 0 && styles.OverlayActive
@@ -279,145 +279,115 @@ export function OutputWindow({
       </MediaRendering>
       <MediaRendering minWidth={null} maxWidth="1023">
         {/* MOBILE  */}
-        <div className={cn('p-4', 'bg-surfaceDefault')}>
-          <div className="flex items-center justify-items-stretch">
-            <div className="mt-4 flex items-center justify-between gap-3">
+        <aside
+          className={cn(
+            'p-4',
+            'bg-surfaceDefault shadow-basicMd',
+            'shadow-inset z-1  min-w-[320px] max-w-[400px] shrink-0 md:block',
+            'overflow-y-auto border-r-1 border-solid border-borderSubdued',
+            styles.Overlay,
+            region !== null && region.length > 0 && styles.OverlayActive
+          )}
+        >
+          <div className="flex gap-2">
+            <Button
+              onClick={() => {
+                setDistrictCode(null), setRevenueCode(null);
+              }}
+              kind="tertiary"
+            >
+              <Icon source={Icons.back} />
+            </Button>
+
+            {(data.length === 1 || districtData.length === 1) && (
+              <Text
+                className="uppercase"
+                variant="headingLg"
+                fontWeight="semibold"
+              >
+                {RegionName} {GeographyMap[boundary]}
+              </Text>
+            )}
+          </div>
+          <div className="flex items-center justify-between self-stretch">
+            <div className="mt-4 flex items-center gap-4">
               <Text variant="bodyMd" color="subdued" fontWeight="regular">
                 Cumulative till {formattedTimePeriod}
               </Text>
-
-              <Tooltip
-                content={
-                  <>
-                    <Text>{getDescription(indicator)}</Text>
-                  </>
-                }
-                side="right"
-                defaultOpen={tooltipOpen}
-                open={tooltipOpen}
-                onOpenChange={(isOpen) => setTooltipOpen(isOpen)}
-              >
-                {<InfoSquare color="#6A6A6A" />}
-              </Tooltip>
             </div>
           </div>
+          {/* //--------  */}
 
           <section className="mt-4">
-            <Accordion type="single" defaultValue="revenue-circle" collapsible>
-              <AccordionItem value="revenue-circle" className="border-none">
-                {DataBasedOnBoundary.map((data: any, index: any) => (
-                  <div key={index} className="mb-4">
-                    <div className="flex items-center gap-3">
-                      <Text variant="bodyLg" fontWeight="bold">
-                        {data[boundary]}
-                      </Text>
-
-                      <ProgressBar
-                        size="small"
-                        customColor={
-                          RiskColorMap[parseInt(data[indicator]['value'])]
-                        }
-                        value={(parseInt(data[indicator]['value']) / 5) * 100}
-                      />
-
-                      <div>
-                        <Text variant="heading2xl">
-                          {parseInt(data?.[indicator]['value'])}
-                        </Text>
-                        /5
-                      </div>
-                      {/* <AccordionTrigger /> */}
-                      {indicator === 'risk-score' ? (
-                        <AccordionTrigger />
-                      ) : (
-                        <div style={{ width: '40px', height: '54px' }}></div>
-                      )}
-                    </div>
-                    <AccordionContent className="px-3 pb-4 md:px-6">
-                      <div className="flex flex-col gap-1">
-                        <OtherFactorScores
-                          factorData={indicatorDescriptions}
-                          data={data}
-                          boundary={boundary}
-                          indicator={indicator}
-                          indicatorDescription={indicatorDescriptions}
-                          getDescription={getDescription}
-                        />
-                      </div>
-                    </AccordionContent>
-                  </div>
-                ))}
-              </AccordionItem>
-            </Accordion>
-          </section>
-          <Accordion type="single" defaultValue="revenue-circle" collapsible>
-            <AccordionItem value="revenue-circle" className="mt-4">
-              {districtData.length === 1 && (
-                <div className="mt-7">
-                  <div className={styles.SidebarAccordionTitle}>
-                    <Text variant="bodyLg" fontWeight="bold">
-                      REVENUE CIRCLE SCORE
+            {DataBasedOnBoundary.map((data: any, index: any) => (
+              <div key={`boundary-${index}`} className="mb-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    {IconMap[indicator]}
+                    <Text
+                      variant="bodyLg"
+                      fontWeight={
+                        indicator === 'risk-score' ? 'bold' : 'regular'
+                      }
+                    >
+                      {getFactorNameBySlug(indicatorDescriptions, indicator)}
                     </Text>
-                    <AccordionTrigger />
+                    {!Factors.includes(indicator) && (
+                      <Text variant="bodyMd" fontWeight="bold">
+                        {data[indicator]['value']}
+                      </Text>
+                    )}
                   </div>
-                  <AccordionContent
-                    className={cn(styles.RevenueBox, 'px-2 pb-4 md:px-4 ')}
-                  >
-                    <RevenueCircle
-                      revenueCircleData={revenueCircleData}
+                  <div className="flex items-center gap-4">
+                    <Text
+                      className={cn(
+                        colorMap[parseInt(data[indicator]['value'])],
+                        'uppercase'
+                      )}
+                      fontWeight="semibold"
+                    >
+                      {Factors.includes(indicator) &&
+                        RiskText[parseInt(data[indicator]['value'])][
+                          'indicatorText'
+                        ]}
+                    </Text>
+                    <Tooltip
+                      content={
+                        <>
+                          <Text>{getDescription(indicator)}</Text>
+                        </>
+                      }
+                      side="right"
+                      defaultOpen={tooltipOpen}
+                      open={tooltipOpen}
+                      onOpenChange={(isOpen) => setTooltipOpen(isOpen)}
+                    >
+                      {<InfoSquare color="#6A6A6A" />}
+                    </Tooltip>
+                  </div>
+                </div>
+                {Factors.includes(indicator) && (
+                  <div className="mt-5 flex flex-col gap-2">
+                    <Text className="text-baseGraySlateSolid11">
+                      Some of the indicators contributing to{' '}
+                      {getFactorNameBySlug(indicatorDescriptions, indicator)}{' '}
+                      are
+                    </Text>
+                    <OtherFactorScores
                       factorData={indicatorDescriptions}
+                      data={data}
+                      boundary={boundary}
+                      IconMap={IconMap}
                       indicator={indicator}
-                      indicatorDescriptions={indicatorDescriptions}
+                      indicatorDescription={indicatorDescriptions}
                       getDescription={getDescription}
                     />
-                  </AccordionContent>
-                </div>
-              )}
-            </AccordionItem>
-            <AccordionItem value="time-trends" className="mt-4">
-              <div className="mt-5">
-                <div className={styles.SidebarAccordionTitle}>
-                  <Text variant="bodyLg" fontWeight="bold">
-                    TIME TRENDS
-                  </Text>
-                  <AccordionTrigger />
-                </div>
-
-                <AccordionContent
-                  className={cn(styles.TrendsBox, 'px-2 pb-4 md:px-4 ')}
-                >
-                  <div className="mt-4 flex items-center gap-2">
-                    {items.map(({ label, value: itemValue }) => {
-                      const isActiveValue = itemValue === period;
-                      return (
-                        <button
-                          key={itemValue}
-                          type="button"
-                          className={cn(
-                            styles.TabItem,
-                            isActiveValue && styles.TabItemActive
-                          )}
-                          onClick={() => {
-                            setPeriod(itemValue);
-                          }}
-                        >
-                          {label}
-                        </button>
-                      );
-                    })}
                   </div>
-                  {chartData.isFetched ? (
-                    <TimeTrends
-                      chartData={chartData?.data?.getTimeTrends}
-                      indicator={indicator}
-                      boundary={boundary}
-                    />
-                  ) : null}
-                </AccordionContent>
+                )}
               </div>
-            </AccordionItem>
-          </Accordion>
-        </div>
+            ))}
+          </section>
+        </aside>
       </MediaRendering>
     </>
   );
