@@ -207,13 +207,13 @@ export const MapComponent = ({
       }
     }
 
-    const filterMapData = revenueMapData.features.filter(
+    const filterMapData = revenueMapData?.features.filter(
       (feature: { properties: { [x: string]: string } }) =>
         feature.properties['district-code'] === districtCode
     );
 
-    setMapFeatures(districtCode ? filterMapData : mapData.features);
-  }, [districtCode, map, mapData.features, revenueMapData.features]);
+    setMapFeatures(districtCode ? filterMapData : mapData?.features);
+  }, [districtCode, map, mapData?.features, revenueMapData?.features]);
 
   React.useEffect(() => {
     if (map && map.getContainer() && !districtCode) {
