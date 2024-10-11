@@ -181,7 +181,7 @@ export function OutputWindow({
           className={cn(
             'p-4',
             'bg-surfaceDefault shadow-basicMd',
-            'shadow-inset z-1 hidden    min-w-[420px] max-w-[450px] shrink-0 md:block',
+            'shadow-inset z-1 hidden min-w-[420px] max-w-[450px] shrink-0 md:block',
             'overflow-y-auto border-r-1 border-solid border-borderSubdued',
             styles.Overlay,
             region !== null &&
