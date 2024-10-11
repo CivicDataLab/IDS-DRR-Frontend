@@ -132,6 +132,7 @@ export function FactorList() {
     <>
       <MediaRendering minWidth={null} maxWidth="1023">
         {/* MOBILE  */}
+
         {indicatorsQuery.isFetched && (
           <Select
             value={selectedIndicator}

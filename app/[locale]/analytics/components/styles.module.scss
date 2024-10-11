@@ -23,6 +23,16 @@
   box-shadow: var(--shadow-basic-md);
   transition: right 0.4s ease; /* Smooth transition */
 }
+.mobileOverlay {
+  position: absolute;
+  top: 65px;
+  right: -100%; /* Hide off-screen initially */
+  z-index: 99999;
+  height: calc(100dvh - 26%);
+  opacity: 90%;
+  box-shadow: var(--shadow-basic-md);
+  transition: right 0.4s ease; /* Smooth transition */
+}
 
 .OverlayActive {
   right: 0; /* Moves overlay into view */
@@ -141,3 +151,7 @@
   background-color: var(--active-color);
   color: #202223;
 }
+
+// .hidden {
+//   display: none;
+// }

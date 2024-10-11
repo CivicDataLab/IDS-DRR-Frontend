@@ -20,6 +20,7 @@ import {
   AccordionTrigger,
   Button,
   Icon,
+  IconButton,
   ProgressBar,
   Text,
   Tooltip,
@@ -163,6 +164,8 @@ export function OutputWindow({
     5: 'text-mapRiskVeryHigh',
   };
 
+  const [isAsideVisible, setAsideVisible] = React.useState(true); // Add this state to control visibility
+
   return (
     <>
       <MediaRendering minWidth="1024" maxWidth={null}>
@@ -171,7 +174,7 @@ export function OutputWindow({
           className={cn(
             'p-4',
             'bg-surfaceDefault shadow-basicMd',
-            'shadow-inset z-1 hidden    min-w-[420px] max-w-[450px] shrink-0 md:block',
+            'shadow-inset z-1 hidden min-w-[420px] max-w-[450px] shrink-0 md:block',
             'overflow-y-auto border-r-1 border-solid border-borderSubdued',
             styles.Overlay,
             region !== null && region.length > 0 && styles.OverlayActive
@@ -279,115 +282,128 @@ export function OutputWindow({
       </MediaRendering>
       <MediaRendering minWidth={null} maxWidth="1023">
         {/* MOBILE  */}
-        <aside
-          className={cn(
-            'p-4',
-            'bg-surfaceDefault shadow-basicMd',
-            'shadow-inset z-1  min-w-[320px] max-w-[400px] shrink-0 md:block',
-            'overflow-y-auto border-r-1 border-solid border-borderSubdued',
-            styles.Overlay,
-            region !== null && region.length > 0 && styles.OverlayActive
-          )}
-        >
-          <div className="flex gap-2">
-            <Button
-              onClick={() => {
-                setDistrictCode(null), setRevenueCode(null);
-              }}
-              kind="tertiary"
-            >
-              <Icon source={Icons.back} />
-            </Button>
 
-            {(data.length === 1 || districtData.length === 1) && (
-              <Text
-                className="uppercase"
-                variant="headingLg"
-                fontWeight="semibold"
-              >
-                {RegionName} {GeographyMap[boundary]}
-              </Text>
+        <>
+          {/* Apply conditional class for visibility */}
+          <aside
+            className={cn(
+              'p-4',
+              'bg-surfaceDefault shadow-basicMd',
+              'shadow-inset z-1 min-w-[320px] max-w-[400px] shrink-0 md:block',
+              'overflow-y-auto border-r-1 border-solid border-borderSubdued',
+              styles.mobileOverlay,
+              region !== null && region.length > 0 && styles.OverlayActive,
+              !isAsideVisible && 'hidden' // Use the 'hidden' class to hide the aside when it's not visible
             )}
-          </div>
-          <div className="flex items-center justify-between self-stretch">
-            <div className="mt-4 flex items-center gap-4">
-              <Text variant="bodyMd" color="subdued" fontWeight="regular">
-                Cumulative till {formattedTimePeriod}
-              </Text>
-            </div>
-          </div>
-          {/* //--------  */}
-
-          <section className="mt-4">
-            {DataBasedOnBoundary.map((data: any, index: any) => (
-              <div key={`boundary-${index}`} className="mb-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    {IconMap[indicator]}
-                    <Text
-                      variant="bodyLg"
-                      fontWeight={
-                        indicator === 'risk-score' ? 'bold' : 'regular'
-                      }
-                    >
-                      {getFactorNameBySlug(indicatorDescriptions, indicator)}
-                    </Text>
-                    {!Factors.includes(indicator) && (
-                      <Text variant="bodyMd" fontWeight="bold">
-                        {data[indicator]['value']}
-                      </Text>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <Text
-                      className={cn(
-                        colorMap[parseInt(data[indicator]['value'])],
-                        'uppercase'
-                      )}
-                      fontWeight="semibold"
-                    >
-                      {Factors.includes(indicator) &&
-                        RiskText[parseInt(data[indicator]['value'])][
-                          'indicatorText'
-                        ]}
-                    </Text>
-                    <Tooltip
-                      content={
-                        <>
-                          <Text>{getDescription(indicator)}</Text>
-                        </>
-                      }
-                      side="right"
-                      defaultOpen={tooltipOpen}
-                      open={tooltipOpen}
-                      onOpenChange={(isOpen) => setTooltipOpen(isOpen)}
-                    >
-                      {<InfoSquare color="#6A6A6A" />}
-                    </Tooltip>
-                  </div>
-                </div>
-                {Factors.includes(indicator) && (
-                  <div className="mt-5 flex flex-col gap-2">
-                    <Text className="text-baseGraySlateSolid11">
-                      Some of the indicators contributing to{' '}
-                      {getFactorNameBySlug(indicatorDescriptions, indicator)}{' '}
-                      are
-                    </Text>
-                    <OtherFactorScores
-                      factorData={indicatorDescriptions}
-                      data={data}
-                      boundary={boundary}
-                      IconMap={IconMap}
-                      indicator={indicator}
-                      indicatorDescription={indicatorDescriptions}
-                      getDescription={getDescription}
-                    />
-                  </div>
+          >
+            <div className="flex flex-row items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={() => {
+                    setDistrictCode(null), setRevenueCode(null);
+                  }}
+                  kind="tertiary"
+                >
+                  <Icon source={Icons.back} />
+                </Button>
+                {(data.length === 1 || districtData.length === 1) && (
+                  <Text
+                    className="uppercase"
+                    variant="headingLg"
+                    fontWeight="semibold"
+                  >
+                    {RegionName} {GeographyMap[boundary]}
+                  </Text>
                 )}
               </div>
-            ))}
-          </section>
-        </aside>
+              <IconButton
+                icon={Icons.cross}
+                onClick={() => setAsideVisible(false)} // Hide aside when the close button is clicked
+                color="default"
+              >
+                Close
+              </IconButton>
+            </div>
+            <div className="flex items-center justify-between self-stretch">
+              <div className="mt-4 flex items-center gap-4">
+                <Text variant="bodyMd" color="subdued" fontWeight="regular">
+                  Cumulative till {formattedTimePeriod}
+                </Text>
+              </div>
+            </div>
+
+            {/* Aside content */}
+            <section className="mt-4">
+              {DataBasedOnBoundary.map((data: any, index: any) => (
+                <div key={`boundary-${index}`} className="mb-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      {IconMap[indicator]}
+                      <Text
+                        variant="bodyLg"
+                        fontWeight={
+                          indicator === 'risk-score' ? 'bold' : 'regular'
+                        }
+                      >
+                        {getFactorNameBySlug(indicatorDescriptions, indicator)}
+                      </Text>
+                      {!Factors.includes(indicator) && (
+                        <Text variant="bodyMd" fontWeight="bold">
+                          {data[indicator]['value']}
+                        </Text>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <Text
+                        className={cn(
+                          colorMap[parseInt(data[indicator]['value'])],
+                          'uppercase'
+                        )}
+                        fontWeight="semibold"
+                      >
+                        {Factors.includes(indicator) &&
+                          RiskText[parseInt(data[indicator]['value'])][
+                            'indicatorText'
+                          ]}
+                      </Text>
+                      <Tooltip
+                        content={
+                          <>
+                            <Text>{getDescription(indicator)}</Text>
+                          </>
+                        }
+                        side="right"
+                        defaultOpen={tooltipOpen}
+                        open={tooltipOpen}
+                        onOpenChange={(isOpen) => setTooltipOpen(isOpen)}
+                      >
+                        {<InfoSquare color="#6A6A6A" />}
+                      </Tooltip>
+                    </div>
+                  </div>
+                  {Factors.includes(indicator) && (
+                    <div className="mt-5 flex flex-col gap-2">
+                      <Text className="text-baseGraySlateSolid11">
+                        Some of the indicators contributing to{' '}
+                        {getFactorNameBySlug(indicatorDescriptions, indicator)}{' '}
+                        are
+                      </Text>
+                      <OtherFactorScores
+                        factorData={indicatorDescriptions}
+                        data={data}
+                        boundary={boundary}
+                        IconMap={IconMap}
+                        indicator={indicator}
+                        indicatorDescription={indicatorDescriptions}
+                        getDescription={getDescription}
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </section>
+          </aside>
+        </>
       </MediaRendering>
     </>
   );

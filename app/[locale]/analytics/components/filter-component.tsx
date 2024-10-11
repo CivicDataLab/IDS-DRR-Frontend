@@ -133,15 +133,15 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
   }, [boundarySelected, geographiesData]);
 
   const FilterOptions: FilterButtonOption = [
-    {
-      title: 'Boundary',
-      value: 'boundary',
-      options: [
-        { label: 'District', value: 'district' },
-        { label: 'Revenue Circle', value: 'revenue-circle' },
-      ],
-      type: 'radio-button',
-    },
+    // {
+    //   title: 'Boundary',
+    //   value: 'boundary',
+    //   options: [
+    //     { label: 'District', value: 'district' },
+    //     { label: 'Revenue Circle', value: 'revenue-circle' },
+    //   ],
+    //   type: 'radio-button',
+    // },
     {
       title: 'Region',
       value: 'region',
@@ -191,6 +191,37 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
     setTimePeriod(timePeriod, { shallow: false });
   };
 
+  //CHANGES BELOW:
+
+  const handleDistrictChange = (selectedDistrict: string) => {
+    setRegionSelected(selectedDistrict); // Update the selected region
+    const revenueCircleOptions = getRevenueCircleOptions(selectedDistrict);
+    setRegionOptions(revenueCircleOptions); // Update the region options to show Revenue Circles
+  };
+
+  const getRevenueCircleOptions = (selectedDistrict: string) => {
+    if (!geographiesData.data) return [];
+    const rawData = geographiesData.data.getDistrictRevCircle;
+    const revenueCircleOptions: {
+      label: string;
+      value: string;
+      type: string;
+    }[] = [];
+
+    if (rawData[selectedDistrict]) {
+      rawData[selectedDistrict].forEach(
+        (circle: { 'revenue-circle': string; code: string }) => {
+          revenueCircleOptions.push({
+            label: circle['revenue-circle'],
+            value: circle.code,
+            type: 'item',
+          });
+        }
+      );
+    }
+    return revenueCircleOptions;
+  };
+
   return (
     <>
       <Button
@@ -225,6 +256,7 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
             }
             regionOptions={regionOptions}
             timePeriodSelected={timePeriodSelected}
+            handleDistrictChange={handleDistrictChange}
           />
         </MobileFilterContent>
       </MobileFilterBox>
@@ -244,6 +276,7 @@ export const RenderOptions = ({
   regionOptions,
   regionSelected,
   timePeriodSelected,
+  handleDistrictChange,
 }: any) => {
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -258,12 +291,25 @@ export const RenderOptions = ({
     (opt: { value: string }) => opt.value === selectedOption
   );
 
+  // const onRadioButtonChange = (selectedValue: string, value: string) => {
+  //   if (value === 'boundary') {
+  //     setBoundarySelected(selectedValue);
+  //     setRegionSelected('');
+  //   } else {
+  //     setRegionSelected(selectedValue);
+  //   }
+  // };
+
+  // CHANGE
+
   const onRadioButtonChange = (selectedValue: string, value: string) => {
     if (value === 'boundary') {
       setBoundarySelected(selectedValue);
-      setRegionSelected('');
+      setRegionSelected(''); // Reset the region when boundary is changed
+    } else if (value === 'region' && boundarySelected === 'district') {
+      handleDistrictChange(selectedValue); // Update region based on district selection
     } else {
-      setRegionSelected(selectedValue);
+      setRegionSelected(selectedValue); // Handle normal region selection
     }
   };
 

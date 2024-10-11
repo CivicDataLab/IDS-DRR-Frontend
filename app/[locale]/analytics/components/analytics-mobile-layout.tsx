@@ -275,6 +275,13 @@ export function AnalyticsMobileLayout({
   };
 
   const [activeButton, setActiveButton] = useState(view);
+  // const [activeButton, setActiveButton] = useState(''); // State for managing active buttons
+  const [isShareOptionsVisible, setShareOptionsVisible] = useState(false); // State for share options visibility
+  const currentURL = window.location.href; // Get the current URL
+
+  const toggleShareOptions = () => {
+    setShareOptionsVisible((prev) => !prev); // Toggle visibility of share options
+  };
 
   const RenderView = ({ selectedView }: any) => {
     const isRegionSelected = Boolean(districtCode || revenueCode);
@@ -380,18 +387,69 @@ export function AnalyticsMobileLayout({
                 {
                   content: 'Share',
                   icon: Icons.share,
+                  // onAction: toggleShareOptions,
                   onAction: () => {
                     return (
-                      <Button
-                        className="self-start"
-                        monochrome={true}
-                        kind="tertiary"
-                      >
-                        <div className="flex items-center gap-1">
-                          <Icon source={Icons.share} />
-                          <Text variant="bodyMd">Share</Text>
-                        </div>
-                      </Button>
+                      <div className="bg-white shadow-md rounded-md absolute top-[-14] z-10 p-4">
+                        <Button
+                          className="flex items-center gap-1"
+                          onClick={() => {
+                            const confirmation = window.confirm(
+                              `You are being redirected to "https://www.facebook.com/sharer/sharer.php?u=${currentURL}/". `
+                            );
+                            if (confirmation) {
+                              window.open(
+                                `https://www.facebook.com/sharer/sharer.php?u=${currentURL}/`,
+                                '_blank'
+                              );
+                            }
+                          }}
+                        >
+                          <Icon source={Icons.IconBrandFacebook} />
+                          <Text>Facebook</Text>
+                        </Button>
+                        <Button
+                          className="flex items-center gap-1"
+                          onClick={() => {
+                            const confirmation = window.confirm(
+                              `You are being redirected to "https://www.linkedin.com/feed/?shareActive=true&text=${currentURL}".`
+                            );
+                            if (confirmation) {
+                              window.open(
+                                `https://www.linkedin.com/feed/?shareActive=true&text=${currentURL}`,
+                                '_blank'
+                              );
+                            }
+                          }}
+                        >
+                          <Icon source={Icons.IconBrandLinkedin} />
+                          <Text>LinkedIn</Text>
+                        </Button>
+                        <Button
+                          className="flex items-center gap-1"
+                          onClick={() => {
+                            const confirmation = window.confirm(
+                              `You are being redirected to "https://twitter.com/intent/tweet?url=${currentURL}/". `
+                            );
+                            if (confirmation) {
+                              window.open(
+                                `https://twitter.com/intent/tweet?url=${currentURL}/`,
+                                '_blank'
+                              );
+                            }
+                          }}
+                        >
+                          <Icon source={Icons.IconBrandX} />
+                          <Text>Twitter</Text>
+                        </Button>
+                        <Button
+                          className="flex items-center gap-1"
+                          onClick={() => copyCurrentURL()}
+                        >
+                          <Icon source={Icons.link} />
+                          <Text>Copy Link</Text>
+                        </Button>
+                      </div>
                     );
                   },
                 },

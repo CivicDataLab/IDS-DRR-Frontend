@@ -3,6 +3,7 @@ import {
   IconAnchor,
   IconArrowLeft,
   IconArrowRight,
+  IconArrowsCross,
   IconBarrierBlock,
   IconBellFilled,
   IconBrandFacebook,
@@ -94,6 +95,7 @@ export const Icons: {
   filter: IconFilter,
   IconTableAlias: IconTableAlias,
   IconDots: IconDots,
+  IconArrowsCross: IconArrowsCross,
 };
 
 export default Icons;
