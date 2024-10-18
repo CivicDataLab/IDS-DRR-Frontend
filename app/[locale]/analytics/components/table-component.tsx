@@ -30,17 +30,14 @@ export function TableComponent({ data, isLoading }: any) {
     return transformed;
   }
 
-  function transformRowData(data: Record<string, string>[]) {
+  function transformRowData(data: Record<string, any>[]) {
     const rows = data?.map((item) => {
       const row: Record<string, string> = {};
       row['region-name'] = item['region-name'] as string;
       Object.keys(item).forEach((key) => {
-        if (
-          item[key] !== null &&
-          typeof item[key] === 'object' &&
-          'value' in item[key]
-        ) {
-          row[key] = (item[key] as { value: string }).value;
+        const value = item[key];
+        if (value !== null && typeof value === 'object' && 'value' in value) {
+          row[key] = (value as { value: string }).value;
         }
       });
       return row;
