@@ -59,10 +59,7 @@ export default async function Home({
         />
       </MediaRendering>
       <MediaRendering minWidth="1024" maxWidth={null}>
-        <Content
-          timePeriod={searchParams['time-period']}
-          indicator={searchParams?.indicator}
-        />
+        <Content />
       </MediaRendering>
     </Hydrate>
   );

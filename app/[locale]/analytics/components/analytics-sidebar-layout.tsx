@@ -43,9 +43,9 @@ export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
       }
     >
       {isClient ? (
-        <div className="relative max-h-[calc(100vh_-_60px)] min-h-[calc(100vh_-_60px)] grow flex-row-reverse gap-1 overflow-y-hidden md:flex">
-          <main className={cn(styles.Main)}>{children}</main>
+        <div className="relative max-h-[calc(100vh_-_60px)] min-h-[calc(100vh_-_60px)] grow flex-row gap-1 overflow-y-hidden md:flex">
           <IndicatorListWrapper />
+          <main className={cn(styles.Main)}>{children}</main>
         </div>
       ) : (
         <div className="flex h-[100vh] flex-col  place-content-center items-center">
@@ -58,6 +58,11 @@ export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
 }
 
 export function IndicatorListWrapper() {
+  const searchParams = useSearchParams();
+
+  const region = searchParams.get('district-code') || '';
+  const view = searchParams.get('view') || '';
+
   return (
     <React.Fragment>
       <aside
@@ -87,7 +92,9 @@ export function IndicatorListWrapper() {
           </div>
         </div>
       </aside>
-      <OutputWindowComponent />
+      {region !== null && region.length > 0 && view === 'map' && (
+        <OutputWindowComponent />
+      )}
     </React.Fragment>
   );
 }
