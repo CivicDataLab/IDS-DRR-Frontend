@@ -77,6 +77,11 @@ export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
 }
 
 export function IndicatorListWrapper() {
+  const searchParams = useSearchParams();
+
+  const region = searchParams.get('district-code') || '';
+  const view = searchParams.get('view') || '';
+
   return (
     <React.Fragment>
       {/* DESKTOP  */}
@@ -108,12 +113,14 @@ export function IndicatorListWrapper() {
             </div>
           </div>
         </aside>
+        {region !== null && region.length > 0 && view === 'map' && (
         <OutputWindowComponent />
       </MediaRendering>
       {/* Mobile View */}
       <MediaRendering minWidth={null} maxWidth="1023">
         <OutputWindowComponent />
       </MediaRendering>
+      )}
     </React.Fragment>
   );
 }

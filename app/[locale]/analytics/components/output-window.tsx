@@ -52,6 +52,8 @@ export function OutputWindow({
   const timePeriod = searchParams.get('time-period') || DEFAULT_TIME_PERIOD;
   const formattedTimePeriod = formatDateString(timePeriod);
   const region = searchParams.get('district-code') || '';
+  const view = searchParams.get('view') || '';
+
   const RevenueRegion = searchParams.get('revenue-code') || '';
   const [revenueCode, setDistrictCode] = useQueryState('district-code');
   const [districtCode, setRevenueCode] = useQueryState('revenue-code');
@@ -182,7 +184,10 @@ export function OutputWindow({
             'shadow-inset z-1 hidden min-w-[420px] max-w-[450px] shrink-0 md:block',
             'overflow-y-auto border-r-1 border-solid border-borderSubdued',
             styles.Overlay,
-            region !== null && region.length > 0 && styles.OverlayActive
+            region !== null &&
+              region.length > 0 &&
+              view === 'map' &&
+              styles.OverlayActive
           )}
         >
           <div className="flex gap-2">
