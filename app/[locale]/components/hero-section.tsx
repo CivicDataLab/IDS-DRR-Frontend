@@ -21,6 +21,7 @@ export const HeroSection = () => {
           width={360}
           height={56}
           alt="Assam DRR Dashboard"
+          layout="responsive"
           className=" block lg:hidden"
         />
         <Text
