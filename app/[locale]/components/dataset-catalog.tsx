@@ -48,7 +48,7 @@ export const DatasetCatalog = () => {
       <div className="container grid grid-cols-1 gap-8 lg:grid-cols-2">
         {Catalog.map((item, index) => (
           <div key={index} className="flex bg-surfaceDefault p-6 ">
-            <Link href={item.link} className=" flex gap-4">
+            <Link href={item.link} className=" flex items-center gap-4">
               <Image src={item.icon} alt={''} width={66} height={66} />
               <div className=" flex flex-col justify-center gap-2">
                 <Text variant="headingMd" className="  ">
