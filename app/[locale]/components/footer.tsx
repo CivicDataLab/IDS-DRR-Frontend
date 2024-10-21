@@ -50,7 +50,7 @@ export const Footer = () => {
           color="onBgDefault"
           className="mt-2 block md:mt-3"
         >
-          A Data4Districts product by{' '}
+          A DataSpace product by{' '}
           <Button
             size="slim"
             className=" text-baseIndigoSolid1 underline"
