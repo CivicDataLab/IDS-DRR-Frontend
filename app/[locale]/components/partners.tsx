@@ -41,7 +41,7 @@ const Partners = () => {
             </Text>
             <div className="flex flex-wrap items-center gap-12 ">
               <Image
-                src="/logo/ASDMA3.png"
+                src="/logo/ASDMA3.svg"
                 width={92}
                 height={72}
                 alt="ASDMA Logo"
