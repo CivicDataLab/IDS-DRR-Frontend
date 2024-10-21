@@ -10,21 +10,29 @@ export const DatasetCatalog = () => {
       name: 'Hazard',
       icon: '/logo/Hazard.svg',
       link: '/datasets?categories=Flood+Hazard+Score',
+      description:
+        'Hazards or Potential of a physical event that may cause loss of life or property',
     },
     {
       name: 'Exposure',
       icon: '/logo/Exposure.svg',
       link: '/datasets?categories=Exposure+Score',
+      description:
+        'Hazards or Potential of a physical event that may cause loss of life or property',
     },
     {
       name: 'Vulnerability',
       icon: '/logo/Vulnerability.svg',
       link: '/datasets?categories=Vulnerability+Score',
+      description:
+        'Physical, Social, Economic, and Environmental vulnerabilities which increase susceptibility of an area or a community to impact of hazards',
     },
     {
       name: 'Government Response',
       icon: '/logo/Government_Response.svg',
       link: '/datasets?categories=Government+Response+Score',
+      description:
+        'Government Response with respect to capacities or resources that can reduce the level of risk, or the effects of disasters',
     },
   ];
   return (
@@ -33,21 +41,23 @@ export const DatasetCatalog = () => {
         <Text variant="heading4xl" fontWeight="bold" color="default">
           Dataset Catalog
         </Text>
-        <Text variant="headingXl" fontWeight="regular" color="default">
+        <Text variant="headingMd" fontWeight="regular" color="default">
           {DatasetCatalogText}
         </Text>
       </div>
-      <div className="container flex w-full flex-wrap items-center justify-between gap-3">
+      <div className="container grid grid-cols-1 gap-8 lg:grid-cols-2">
         {Catalog.map((item, index) => (
-          <div key={index} className=" text-center">
-            <Link href={item.link}>
-              <Image src={item.icon} alt={''} width={110} height={110} />
-              <Text
-                variant="headingXl"
-                className="m-auto block min-w-40 max-w-40 text-center"
-              >
-                {item.name}
-              </Text>
+          <div key={index} className="flex bg-surfaceDefault p-6 ">
+            <Link href={item.link} className=" flex gap-4">
+              <Image src={item.icon} alt={''} width={66} height={66} />
+              <div className=" flex flex-col justify-center gap-2">
+                <Text variant="headingMd" className="  ">
+                  {item.name}
+                </Text>
+                <Text variant="bodySm" className="">
+                  {item.description}
+                </Text>
+              </div>
             </Link>
           </div>
         ))}
