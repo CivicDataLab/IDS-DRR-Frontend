@@ -65,7 +65,7 @@ const DataStories = () => {
         <Text variant="heading4xl" fontWeight="bold" color="onBgDefault">
           Data Stories{' '}
         </Text>
-        <Text variant="headingXl" fontWeight="regular" color="onBgDefault">
+        <Text variant="headingMd" fontWeight="regular" color="onBgDefault">
           {DataStoriesText}
         </Text>
       </div>
@@ -93,10 +93,11 @@ const DataStories = () => {
                       />
                     </div>
                     <div className=" min-h-12">
-                      <Text>{item.title}</Text>
+                      <Text variant="headingLg" fontWeight="semibold">
+                        {item.title}
+                      </Text>
                     </div>
                     <div className=" flex flex-wrap justify-between">
-                      <Text> </Text>
                       <Text>{item.date}</Text>
                     </div>
                     <div>
