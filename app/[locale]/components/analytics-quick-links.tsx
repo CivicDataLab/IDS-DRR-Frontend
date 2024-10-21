@@ -51,7 +51,7 @@ export const QuickLinks = () => {
         <Text variant="heading4xl" fontWeight="bold" color="default">
           Analytics Dashboard
         </Text>
-        <Text variant="headingXl" fontWeight="regular" color="default">
+        <Text variant="headingMd" fontWeight="regular" color="default">
           {AnalyticsQuickLinksText}
         </Text>
       </div>
@@ -79,7 +79,7 @@ export const QuickLinks = () => {
                         height={160}
                         src={item.icon}
                         alt="blog Logo"
-                        className={`h-32 w-32 object-contain px-3 py-4 ${styles.stateIcon}`}
+                        className={`h-32 w-32 object-contain px-3 ${styles.stateIcon}`}
                       />
                       <Text variant="headingLg" className=" whitespace-nowrap">
                         {item.name}
@@ -88,7 +88,7 @@ export const QuickLinks = () => {
                   </Link>
                 ) : (
                   <div
-                    className="flex h-48 w-56 cursor-no-drop flex-col items-center justify-between rounded-4 p-4 text-center shadow-elementCard"
+                    className="relative flex h-48 w-56 cursor-no-drop flex-col items-center justify-between rounded-4 p-4 text-center shadow-elementCard"
                     style={{ background: '#F9F9FB' }}
                   >
                     <Image
@@ -96,14 +96,14 @@ export const QuickLinks = () => {
                       height={160}
                       src={item.icon}
                       alt="blog Logo"
-                      className={`h-32 w-32  object-contain px-3 py-4 opacity-25 ${styles.inactiveStateIcon}`}
+                      className={`h-32 w-32  object-contain px-3 opacity-25 ${styles.inactiveStateIcon}`}
                     />
                     <Text variant="headingLg" className=" whitespace-nowrap">
                       {item.name}
                     </Text>
                     <Text
-                      variant="headingLg"
-                      className="absolute top-1/3 w-fit whitespace-nowrap text-nowrap rounded-2 bg-basePureBlack px-3 py-1 text-surfaceDefault"
+                      variant="headingMd"
+                      className="absolute right-0 top-0 m-2 w-fit whitespace-nowrap rounded-2 bg-basePureBlack px-3 py-1 text-surfaceDefault"
                     >
                       Coming Soon
                     </Text>
