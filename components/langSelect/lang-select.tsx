@@ -28,6 +28,7 @@ export function TranslateDropdown({
       {
         pageLanguage: 'en',
         includedLanguages,
+        defaultLanguage: 'en',
       },
       'google_translate_element'
     );
@@ -35,6 +36,10 @@ export function TranslateDropdown({
 
   React.useEffect(() => {
     (window as any).googleTranslateElementInit = googleTranslateElementInit;
+
+    if (langCookie.split('/')[2] === 'en') {
+      changeLang('en');
+    }
   });
 
   const changeLang = (value: string) => {
