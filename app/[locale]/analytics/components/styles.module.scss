@@ -15,27 +15,73 @@
 
 .Overlay {
   position: absolute;
-  top: 145px;
-  right: -100%; /* Hide off-screen initially */
+  top: 140px;
+  right: -100%;
   z-index: 99999;
   height: calc(100dvh - 30%);
   opacity: 90%;
   box-shadow: var(--shadow-basic-md);
-  transition: right 0.4s ease; /* Smooth transition */
-}
-.mobileOverlay {
-  position: absolute;
-  top: 65px;
-  right: -100%; /* Hide off-screen initially */
-  z-index: 99999;
-  height: calc(100dvh - 26%);
-  opacity: 90%;
-  box-shadow: var(--shadow-basic-md);
-  transition: right 0.4s ease; /* Smooth transition */
+  transition: right 0.4s ease;
 }
 
 .OverlayActive {
-  right: 0; /* Moves overlay into view */
+  right: 0;
+}
+
+.mobileOverlay {
+  position: absolute;
+  bottom: -100%; /* Initially off-screen */
+  z-index: 99999;
+  height: calc(100dvh - 86%);
+  opacity: 95%;
+  box-shadow: var(--shadow-basic-md);
+  transition:
+    bottom 0.4s ease,
+    height 0.4s ease;
+
+  width: 100%;
+  max-width: 380px;
+  min-width: 300px;
+}
+
+.mobileOverlayActive {
+  bottom: 86px;
+  right: 0;
+}
+
+.expandedOverlay {
+  bottom: 86px;
+  height: calc(100dvh - 160px);
+}
+
+@media (max-width: 480px) {
+  .mobileOverlay {
+    max-width: 100%;
+    min-width: 280px;
+  }
+}
+
+.bottomDrawer {
+  position: absolute;
+  // bottom: -100%;
+  left: 0;
+  width: 100%;
+  height: 80%;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 99999;
+  box-shadow: var(--shadow-basic-md);
+  transition: bottom 0.4s ease;
+  overflow-y: auto;
+}
+
+.drawerActive {
+  bottom: 0;
+}
+
+@media (min-width: 768px) {
+  .bottomDrawer {
+    height: 50%;
+  }
 }
 
 .IndicatorBtn {
@@ -152,6 +198,23 @@
   color: #202223;
 }
 
-// .hidden {
-//   display: none;
+.content {
+  padding: 6px;
+  text-align: center;
+}
+
+// .toggle-btn {
+//   position: absolute;
+//   top: -40px; /* Place the button above the container */
+//   left: 50%;
+//   transform: translateX(-50%);
+//   background-color: #007bff;
+//   color: white;
+//   border: none;
+//   padding: 10px 20px;
+//   cursor: pointer;
 // }
+
+.toggle-btn:focus {
+  outline: none;
+}

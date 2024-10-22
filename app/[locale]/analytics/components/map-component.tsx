@@ -38,14 +38,11 @@ export const MapComponent = ({
   const [map, setMap] = React.useState<any>(null);
   const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
 
-  // console.log('$$$$', mapData.features);
-  console.log('$$$$', revenueMapData);
-
   const params = new URLSearchParams(window.location.search);
   const districtCode = params.get('district-code');
 
   const values = [];
-  for (let i = 0; i < mapFeatures.length; i++) {
+  for (let i = 0; i < mapFeatures?.length; i++) {
     if (mapFeatures[i].properties[indicator] == null) continue;
     values.push(mapFeatures[i].properties[indicator]);
   }

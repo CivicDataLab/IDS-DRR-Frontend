@@ -43,17 +43,35 @@ export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
         </div>
       }
     >
-      {isClient ? (
-        <div className="relative max-h-[calc(100vh_-_60px)] min-h-[calc(100vh_-_60px)] grow flex-row-reverse gap-1 overflow-y-hidden md:flex">
-          <main className={cn(styles.Main)}>{children}</main>
-          <IndicatorListWrapper />
-        </div>
-      ) : (
-        <div className="flex h-[100vh] flex-col  place-content-center items-center">
-          <Spinner color="highlight" />
-          <Text>Loading...</Text>
-        </div>
-      )}
+      <MediaRendering minWidth="1024" maxWidth={null}>
+        {/* DESKTOP  */}{' '}
+        {isClient ? (
+          <div className="relative max-h-[calc(100vh_-_60px)] min-h-[calc(100vh_-_60px)] grow flex-row-reverse gap-1 overflow-y-hidden md:flex">
+            <main className={cn(styles.Main)}>{children}</main>
+            <IndicatorListWrapper />
+          </div>
+        ) : (
+          <div className="flex h-[100vh] flex-col  place-content-center items-center">
+            <Spinner color="highlight" />
+            <Text>Loading...</Text>
+          </div>
+        )}
+      </MediaRendering>
+      <MediaRendering minWidth={null} maxWidth="1023">
+        {/* Mobile  */}
+        {isClient ? (
+          <div className="relative max-h-[calc(100vh_-_60px)] min-h-[calc(100vh_-_60px)] grow flex-row-reverse gap-1 overflow-y-hidden md:flex">
+            <main className={cn(styles.Main)}>{children}</main>
+            <IndicatorListWrapper />
+            {/* <OutputWindowComponent /> */}
+          </div>
+        ) : (
+          <div className="flex h-[100vh] flex-col  place-content-center items-center">
+            <Spinner color="highlight" />
+            <Text>Loading...</Text>
+          </div>
+        )}
+      </MediaRendering>
     </React.Suspense>
   );
 }
@@ -151,20 +169,40 @@ export function OutputWindowComponent() {
   );
 
   return (
-    sidePaneData.isFetched && (
-      <OutputWindow
-        data={
-          sidePaneData?.data[
-            !searchParams.get('revenue-code')
-              ? 'districtViewData'
-              : 'revCircleViewData'
-          ]
-        }
-        indicatorDescriptions={indicatorDescriptions?.data?.indicators}
-        indicator={indicator}
-        boundary={boundary}
-      />
-    )
+    <>
+      <MediaRendering minWidth="1024" maxWidth={null}>
+        {sidePaneData.isFetched && (
+          <OutputWindow
+            data={
+              sidePaneData?.data[
+                !searchParams.get('revenue-code')
+                  ? 'districtViewData'
+                  : 'revCircleViewData'
+              ]
+            }
+            indicatorDescriptions={indicatorDescriptions?.data?.indicators}
+            indicator={indicator}
+            boundary={boundary}
+          />
+        )}
+      </MediaRendering>
+      <MediaRendering minWidth={null} maxWidth="1023">
+        {sidePaneData.isFetched && (
+          <OutputWindow
+            data={
+              sidePaneData?.data[
+                !searchParams.get('revenue-code')
+                  ? 'districtViewData'
+                  : 'revCircleViewData'
+              ]
+            }
+            indicatorDescriptions={indicatorDescriptions?.data?.indicators}
+            indicator={indicator}
+            boundary={boundary}
+          />
+        )}
+      </MediaRendering>
+    </>
   );
 
   // : sidePaneData.isFetched && (

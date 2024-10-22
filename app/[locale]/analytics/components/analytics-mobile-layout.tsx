@@ -22,7 +22,10 @@ import { GraphQL } from '@/lib/api';
 import { cn, copyCurrentURL, formatDate, handleRedirect } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { constructRegionOptions } from '../utils/utils';
-import { OutputWindowComponent } from './analytics-sidebar-layout';
+import {
+  AnalyticsDashboardLayout,
+  OutputWindowComponent,
+} from './analytics-sidebar-layout';
 import { FactorList } from './factor-list';
 import { FilterComp } from './filter-component';
 import { MapComponent } from './map-component';
@@ -286,9 +289,6 @@ export function AnalyticsMobileLayout({
   const RenderView = ({ selectedView }: any) => {
     const isRegionSelected = Boolean(districtCode || revenueCode);
 
-    if (isRegionSelected) {
-      return <OutputWindowComponent />;
-    }
     switch (selectedView) {
       case 'map':
         return (
@@ -305,18 +305,10 @@ export function AnalyticsMobileLayout({
         );
 
       case 'chart':
-        return (
-          <div className="pt-[62px]">
-            <OutputWindowComponent />
-          </div>
-        );
+        return <div className="pt-[62px]"></div>;
 
       case 'table':
-        return (
-          <div className="pt-[62px]">
-            <OutputWindowComponent />
-          </div>
-        );
+        return <div className="pt-[62px]"></div>;
 
       default:
         return null;
@@ -330,10 +322,11 @@ export function AnalyticsMobileLayout({
           'relative h-[calc(100dvh_-_130px)] w-full flex-grow flex-col gap-3 overflow-y-scroll '
         )}
       >
-        <div className="fixed top-[56px] z-9 flex w-full items-center bg-[#FFFF] px-4">
+        <div className="fixed top-[56px] z-9 flex h-[10%] w-full items-center bg-[#FFFF] px-4">
           <FactorList />
           <FilterComp timePeriod={timePeriod} />
         </div>
+
         {mapData.isLoading ? (
           <div className="p-4 text-center">Loading map data...</div>
         ) : mapData.isError || revenueMapData.isError ? (
@@ -344,9 +337,8 @@ export function AnalyticsMobileLayout({
           <RenderView selectedView={view} />
         )}
       </div>
-      {/* <OutputWindowComponent /> */}
 
-      <div className="sticky bottom-0 flex h-[66px] w-full flex-row justify-between gap-1 bg-baseIndigoSolid1 p-1">
+      <div className="sticky bottom-0 flex h-[86px] w-full flex-row justify-between gap-1 bg-baseIndigoSolid1 p-1">
         {buttons.map((button, index) =>
           button.value === 'more' ? (
             // Render Menu for 'More' button
@@ -389,68 +381,7 @@ export function AnalyticsMobileLayout({
                   icon: Icons.share,
                   // onAction: toggleShareOptions,
                   onAction: () => {
-                    return (
-                      <div className="bg-white shadow-md rounded-md absolute top-[-14] z-10 p-4">
-                        <Button
-                          className="flex items-center gap-1"
-                          onClick={() => {
-                            const confirmation = window.confirm(
-                              `You are being redirected to "https://www.facebook.com/sharer/sharer.php?u=${currentURL}/". `
-                            );
-                            if (confirmation) {
-                              window.open(
-                                `https://www.facebook.com/sharer/sharer.php?u=${currentURL}/`,
-                                '_blank'
-                              );
-                            }
-                          }}
-                        >
-                          <Icon source={Icons.IconBrandFacebook} />
-                          <Text>Facebook</Text>
-                        </Button>
-                        <Button
-                          className="flex items-center gap-1"
-                          onClick={() => {
-                            const confirmation = window.confirm(
-                              `You are being redirected to "https://www.linkedin.com/feed/?shareActive=true&text=${currentURL}".`
-                            );
-                            if (confirmation) {
-                              window.open(
-                                `https://www.linkedin.com/feed/?shareActive=true&text=${currentURL}`,
-                                '_blank'
-                              );
-                            }
-                          }}
-                        >
-                          <Icon source={Icons.IconBrandLinkedin} />
-                          <Text>LinkedIn</Text>
-                        </Button>
-                        <Button
-                          className="flex items-center gap-1"
-                          onClick={() => {
-                            const confirmation = window.confirm(
-                              `You are being redirected to "https://twitter.com/intent/tweet?url=${currentURL}/". `
-                            );
-                            if (confirmation) {
-                              window.open(
-                                `https://twitter.com/intent/tweet?url=${currentURL}/`,
-                                '_blank'
-                              );
-                            }
-                          }}
-                        >
-                          <Icon source={Icons.IconBrandX} />
-                          <Text>Twitter</Text>
-                        </Button>
-                        <Button
-                          className="flex items-center gap-1"
-                          onClick={() => copyCurrentURL()}
-                        >
-                          <Icon source={Icons.link} />
-                          <Text>Copy Link</Text>
-                        </Button>
-                      </div>
-                    );
+                    copyCurrentURL();
                   },
                 },
                 {

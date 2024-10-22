@@ -35,12 +35,16 @@ import {
   IconListSearch,
   IconMap,
   IconMenu,
+  IconMinus,
+  IconRefresh,
   IconReport,
   IconReportSearch,
   IconSearch,
   IconShare,
   IconSquareRoundedArrowRight,
   IconSquareRoundedChevronLeftFilled,
+  IconSwipeDown,
+  IconSwipeUp,
   IconTableAlias,
   IconUserCog,
   IconWorld,
@@ -96,6 +100,10 @@ export const Icons: {
   IconTableAlias: IconTableAlias,
   IconDots: IconDots,
   IconArrowsCross: IconArrowsCross,
+  IconMinus: IconMinus,
+  IconRefresh: IconRefresh,
+  IconSwipeUp: IconSwipeUp,
+  IconSwipeDown: IconSwipeDown,
 };
 
 export default Icons;

@@ -64,7 +64,7 @@ export function DefaultWindow({
       </MediaRendering>
       <MediaRendering minWidth={null} maxWidth="1023">
         <div className="h-full bg-surfaceDefault px-4">
-          <RenderSidebarContent />
+          {/* <RenderSidebarContent /> */}
         </div>
       </MediaRendering>
     </>
