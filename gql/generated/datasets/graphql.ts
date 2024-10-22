@@ -95,7 +95,9 @@ export enum ApiMetadataDataTypeEnum {
   /** Select */
   Select = 'SELECT',
   /** String */
-  String = 'STRING'
+  String = 'STRING',
+  /** Url */
+  Url = 'URL'
 }
 
 /** metadata | model */
@@ -262,8 +264,21 @@ export type DatasetFilter = {
   DISTINCT?: InputMaybe<Scalars['Boolean']>;
   NOT?: InputMaybe<DatasetFilter>;
   OR?: InputMaybe<DatasetFilter>;
-  id: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
+  status?: InputMaybe<DatasetStatus>;
 };
+
+export type DatasetOrder = {
+  created?: InputMaybe<Ordering>;
+  modified?: InputMaybe<Ordering>;
+  title?: InputMaybe<Ordering>;
+};
+
+export enum DatasetStatus {
+  Archived = 'ARCHIVED',
+  Draft = 'DRAFT',
+  Published = 'PUBLISHED'
+}
 
 export type DjangoFileType = {
   __typename?: 'DjangoFileType';
@@ -308,7 +323,7 @@ export enum FieldType {
   String = 'STRING'
 }
 
-/** Metadata(id, label, data_standard, urn, data_type, options, validator, type, model, enabled, filterable) */
+/** Metadata(id, label, data_standard, urn, data_type, options, validator, validator_options, type, model, enabled, filterable) */
 export type MetadataFilter = {
   AND?: InputMaybe<MetadataFilter>;
   DISTINCT?: InputMaybe<Scalars['Boolean']>;
@@ -318,7 +333,7 @@ export type MetadataFilter = {
   model: Scalars['String'];
 };
 
-/** Metadata(id, label, data_standard, urn, data_type, options, validator, type, model, enabled, filterable) */
+/** Metadata(id, label, data_standard, urn, data_type, options, validator, validator_options, type, model, enabled, filterable) */
 export type MetadataInput = {
   dataStandard?: InputMaybe<ApiMetadataDataStandardEnum>;
   dataType: ApiMetadataDataTypeEnum;
@@ -327,13 +342,14 @@ export type MetadataInput = {
   id?: InputMaybe<Scalars['ID']>;
   label: Scalars['String'];
   model: ApiMetadataModelEnum;
-  options?: InputMaybe<Scalars['String']>;
+  options?: InputMaybe<Scalars['JSON']>;
   type: ApiMetadataTypeEnum;
   urn?: InputMaybe<Scalars['String']>;
-  validator?: InputMaybe<Scalars['String']>;
+  validator?: InputMaybe<Scalars['JSON']>;
+  validatorOptions?: InputMaybe<Scalars['JSON']>;
 };
 
-/** Metadata(id, label, data_standard, urn, data_type, options, validator, type, model, enabled, filterable) */
+/** Metadata(id, label, data_standard, urn, data_type, options, validator, validator_options, type, model, enabled, filterable) */
 export type MetadataInputPartial = {
   dataStandard?: InputMaybe<ApiMetadataDataStandardEnum>;
   dataType?: InputMaybe<ApiMetadataDataTypeEnum>;
@@ -342,10 +358,11 @@ export type MetadataInputPartial = {
   id: Scalars['String'];
   label?: InputMaybe<Scalars['String']>;
   model?: InputMaybe<ApiMetadataModelEnum>;
-  options?: InputMaybe<Scalars['String']>;
+  options?: InputMaybe<Scalars['JSON']>;
   type?: InputMaybe<ApiMetadataTypeEnum>;
   urn?: InputMaybe<Scalars['String']>;
-  validator?: InputMaybe<Scalars['String']>;
+  validator?: InputMaybe<Scalars['JSON']>;
+  validatorOptions?: InputMaybe<Scalars['JSON']>;
 };
 
 export type Mutation = {
@@ -537,6 +554,15 @@ export enum OperationMessageKind {
   Warning = 'WARNING'
 }
 
+export enum Ordering {
+  Asc = 'ASC',
+  AscNullsFirst = 'ASC_NULLS_FIRST',
+  AscNullsLast = 'ASC_NULLS_LAST',
+  Desc = 'DESC',
+  DescNullsFirst = 'DESC_NULLS_FIRST',
+  DescNullsLast = 'DESC_NULLS_LAST'
+}
+
 /** Organization(id, name, description, logo, created, modified, homepage, contact_email, organization_types, parent, slug) */
 export type OrganizationInput = {
   contactEmail?: InputMaybe<Scalars['String']>;
@@ -618,6 +644,7 @@ export type QueryDatasetResourcesArgs = {
 
 export type QueryDatasetsArgs = {
   filters?: InputMaybe<DatasetFilter>;
+  order?: InputMaybe<DatasetOrder>;
   pagination?: InputMaybe<OffsetPaginationInput>;
 };
 
@@ -747,7 +774,7 @@ export type TypeFileDetails = {
   size?: Maybe<Scalars['Float']>;
 };
 
-/** Metadata(id, label, data_standard, urn, data_type, options, validator, type, model, enabled, filterable) */
+/** Metadata(id, label, data_standard, urn, data_type, options, validator, validator_options, type, model, enabled, filterable) */
 export type TypeMetadata = {
   __typename?: 'TypeMetadata';
   dataStandard: ApiMetadataDataStandardEnum;
@@ -757,10 +784,11 @@ export type TypeMetadata = {
   id: Scalars['ID'];
   label: Scalars['String'];
   model: ApiMetadataModelEnum;
-  options: Scalars['String'];
+  options?: Maybe<Scalars['JSON']>;
   type: ApiMetadataTypeEnum;
   urn: Scalars['String'];
-  validator: Scalars['String'];
+  validator: Array<ValidatorType>;
+  validatorOptions?: Maybe<Scalars['JSON']>;
 };
 
 /** Organization(id, name, description, logo, created, modified, homepage, contact_email, organization_types, parent, slug) */
@@ -887,6 +915,12 @@ export type UpdateMetadataInput = {
 };
 
 export type UpdateSchemaPayload = OperationInfo | TypeResource;
+
+export enum ValidatorType {
+  MinLength = 'MIN_LENGTH',
+  Range = 'RANGE',
+  Regex = 'REGEX'
+}
 
 export type DatasetsQueryVariables = Exact<{
   filters?: InputMaybe<DatasetFilter>;

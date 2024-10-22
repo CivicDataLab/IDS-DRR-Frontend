@@ -1,38 +1,31 @@
 'use client';
 
-import React from 'react';
-import { type TypedDocumentNode } from '@graphql-typed-document-node/core';
+import React, { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { parseDate } from '@internationalized/date';
 import { useQuery } from '@tanstack/react-query';
 import { parseAsString, useQueryState } from 'next-usequerystate';
-import {
-  MonthPicker,
-  Select,
-  Tab,
-  TabList,
-  TabPanel,
-  Tabs,
-  Text,
-} from 'opub-ui';
+import { MonthPicker, Select, Tab, TabList, TabPanel, Tabs } from 'opub-ui';
+import { shallow } from 'zustand/shallow';
 
 import {
   ANALYTICS_DISTRICT_MAP_DATA,
   ANALYTICS_GEOGRAPHY_DATA,
   ANALYTICS_INDICATORS,
   ANALYTICS_REVENUE_MAP_DATA,
+  ANALYTICS_TABLE_DATA,
   ANALYTICS_TIME_PERIODS,
 } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
 import { MapComponent } from './map-component';
+import { TableComponent } from './table-component';
 
-export function Content({
-  timePeriod,
-  indicator,
-}: {
-  timePeriod: string;
-  indicator: string;
-}) {
+export function Content() {
+  const searchParams = useSearchParams();
+  const indicator = searchParams.get('indicator') || '';
+  const timePeriod = searchParams.get('time-period') || '';
+
   interface Option {
     disabled?: boolean;
     value: string;
@@ -45,8 +38,12 @@ export function Content({
     parseAsString.withDefault(timePeriod)
   );
 
-  const [districtCode, setDistrictCode] = useQueryState('district-code');
+  const [districtCode, setDistrictCode] = useQueryState(
+    'district-code',
+    parseAsString.withDefault('')
+  );
   const [revenueCode, setRevenueCode] = useQueryState('revenue-code');
+  const [view, setView] = useQueryState('view');
 
   const mapData = useQuery(
     [`mapQuery_district_${indicator}_${timePeriodSelected}`],
@@ -149,6 +146,29 @@ export function Content({
     }
   );
 
+  const tableData = useQuery(
+    [`table_data_${indicator}_${districtCode}`],
+    () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_TABLE_DATA,
+        {
+          indcFilter: { slug: indicator },
+          dataFilter: { dataPeriod: timePeriodSelected },
+          ...(districtCode && { geoFilter: { code: [districtCode] } }),
+        }
+      ),
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
+
+  const [filteredTableData, setFilteredTableData] = useState(
+    tableData.data?.tableData
+  );
+
   let minDate, maxDate;
   if (timePeriods.data) {
     const datesArray = timePeriods?.data?.getDataTimePeriods.map((date) => {
@@ -209,6 +229,16 @@ export function Content({
     }
   });
 
+  React.useEffect(() => {
+    if (revenueCode !== '') {
+      const filteredTableData = tableData.data?.tableData.filter(
+        (item: { [x: string]: string }) =>
+          item['revenue-circle-code'] === revenueCode
+      );
+      setFilteredTableData(filteredTableData);
+    }
+  }, [revenueCode, tableData.data?.tableData]);
+
   const getRevenueCircleOptions = () => {
     const filterRevenueCircles = RevCircleDropdownOptions.filter(
       (option) => option.districtCode === districtCode
@@ -227,7 +257,10 @@ export function Content({
 
   return (
     <React.Fragment>
-      <Tabs defaultValue="map">
+      <Tabs
+        onValueChange={(value: string) => setView(value, { shallow: false })}
+        defaultValue={view || 'map'}
+      >
         <TabList fitted className="p-2 pb-0">
           <Tab theme="climate" value="map">
             Map View
@@ -241,13 +274,7 @@ export function Content({
           >
             Chart View
           </Tab>
-          <Tab
-            theme="climate"
-            title="coming soon"
-            className=" cursor-not-allowed"
-            disabled
-            value="table"
-          >
+          <Tab theme="climate" value="table">
             Table View
           </Tab>
         </TabList>
@@ -306,6 +333,39 @@ export function Content({
               />
             </div>
           )}
+        </TabPanel>
+        <TabPanel value="table">
+          <div className="mb-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
+            <Select
+              label="Select District"
+              value={districtCode || ''}
+              name="district-select"
+              className=" flex-grow"
+              onChange={(e) => {
+                handleDistrictChange(e);
+              }}
+              options={DistrictDropDownOption}
+            />
+            <Select
+              label="Select Revenue Circle"
+              value={revenueCode || ''}
+              name="revenue-circle-select"
+              className=" flex-grow"
+              disabled={!districtCode}
+              onChange={(e) => {
+                setRevenueCode(e, { shallow: false });
+              }}
+              options={getRevenueCircleOptions()}
+            />
+          </div>
+          <TableComponent
+            data={
+              filteredTableData?.length > 0
+                ? filteredTableData
+                : tableData.data?.tableData
+            }
+            isLoading={tableData.isLoading}
+          />
         </TabPanel>
       </Tabs>
     </React.Fragment>

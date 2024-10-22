@@ -105,7 +105,7 @@ export function FactorList() {
     setSelectedIndicator(selected);
     // Navigate to the selected indicator
     const selectedSlug = selected;
-    window.location.href = `?indicator=${selectedSlug}&time-period=${time_period}&boundary=${boundary}&district-code=${districtRegion}&revenue-code=${revenueRegion}`;
+    window.location.href = `?indicator=${selectedSlug}&time-period=${time_period}&district-code=${districtRegion}&revenue-code=${revenueRegion}`;
   };
 
   const flattenIndicators = (
@@ -293,12 +293,12 @@ const NestedSidebarItem: React.FC<{
             role="button"
             tabIndex={0}
             onClick={() => {
-              setIndicatorSelected(node.slug, { shallow: false });
               setIsExpanded(true);
+              setIndicatorSelected(node.slug, { shallow: false });
             }}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
-                setIndicatorSelected(node.slug, { shallow: false });
+                e.stopPropagation();
                 setIsExpanded(true);
               }
             }}
