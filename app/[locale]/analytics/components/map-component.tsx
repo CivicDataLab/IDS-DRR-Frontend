@@ -218,6 +218,14 @@ export const MapComponent = ({
     }
   }, [map, districtCode]);
 
+  if (mapDataloading || revenueMapDataLoading)
+    return (
+      <div className="flex h-full flex-col place-content-center items-center">
+        <Spinner color="highlight" />
+        <Text>Loading...</Text>
+      </div>
+    );
+
   return (
     <>
       {/* Mobile View */}
