@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import {
   Exposure,
@@ -47,7 +48,7 @@ export function getIcon(slug: string) {
     case 'government-response':
       return <GovtResponse color="#000000" />;
     default:
-      return <RiskScore color="#000000" />;
+      return null;
   }
 }
 
@@ -104,7 +105,27 @@ export function FactorList() {
     setSelectedIndicator(selected);
     // Navigate to the selected indicator
     const selectedSlug = selected;
-    window.location.href = `?indicator=${selectedSlug}&time-period=${time_period}&district-code=${districtRegion}&revenue-code=${revenueRegion}&view=map`;
+    window.location.href = `?indicator=${selectedSlug}&time-period=${time_period}&boundary=${boundary}&district-code=${districtRegion}&revenue-code=${revenueRegion}`;
+  };
+
+  const flattenIndicators = (
+    nodes: TreeNode[],
+    level = 0
+  ): { label: string; value: string }[] => {
+    let options: { label: string; value: string }[] = [];
+
+    nodes.forEach((node) => {
+      options.push({
+        label: `${'\u00A0'.repeat(level * 3)}${node.name}`, // Use string concatenation
+        value: node.slug,
+      });
+
+      if (node.children && node.children.length > 0) {
+        options = [...options, ...flattenIndicators(node.children, level + 1)];
+      }
+    });
+
+    return options;
   };
 
   const flattenIndicators = (
@@ -257,6 +278,12 @@ const NestedSidebarItem: React.FC<{
   const [, setIndicatorSelected] = useQueryState('indicator');
   const isActive = node.slug === indicator;
   const hasChildren = node.children && node.children.length > 0;
+  const searchParams = useSearchParams();
+  const time_period = searchParams.get('time-period');
+  const boundary = searchParams.get('boundary') || 'district';
+  const districtRegion = searchParams.get('district-code') || '';
+  const revenueRegion = searchParams.get('revenue-code') || '';
+
   useEffect(() => {
     if (node.slug === indicator) {
       setIsExpanded(true);
@@ -273,7 +300,8 @@ const NestedSidebarItem: React.FC<{
       <div
         className={cn(
           'flex cursor-pointer items-center py-1',
-          'font-Bold',
+          level === 0 && 'font-Bold',
+          level === 1 && 'font-Medium',
           level > 1 && 'pl-6'
         )}
         role="button"
@@ -285,12 +313,12 @@ const NestedSidebarItem: React.FC<{
             role="button"
             tabIndex={0}
             onClick={() => {
-              setIsExpanded(true);
               setIndicatorSelected(node.slug, { shallow: false });
+              setIsExpanded(true);
             }}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
-                e.stopPropagation();
+                setIndicatorSelected(node.slug, { shallow: false });
                 setIsExpanded(true);
               }
             }}
@@ -317,20 +345,23 @@ const NestedSidebarItem: React.FC<{
               </div>
             </div>
             <Tooltip content={node.description}>
-              <Text fontWeight="semibold">{node.name}</Text>
+              <Text>{node.name}</Text>
             </Tooltip>
           </div>
         ) : (
           <Tooltip content={node.description}>
-            <RadioButton
-              id={`radio-${node.slug}`}
-              isSelected={indicator === node.slug}
-              changed={(value: string) => {
-                setIndicatorSelected(value, { shallow: false });
-              }}
-              label={node.name}
-              value={node.slug}
-            />
+            <Link
+              href={`?indicator=${node.slug}&time-period=${time_period}&boundary=${boundary}&district-code=${districtRegion}&revenue-code=${revenueRegion}`}
+            >
+              <RadioButton
+                isSelected={indicator === node.slug}
+                changed={(value: string) => {
+                  setIndicatorSelected(value, { shallow: false });
+                }}
+                label={node.name}
+                value={node.slug}
+              />
+            </Link>
           </Tooltip>
         )}
       </div>

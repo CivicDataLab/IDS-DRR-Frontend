@@ -77,11 +77,6 @@ export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
 }
 
 export function IndicatorListWrapper() {
-  const searchParams = useSearchParams();
-
-  const region = searchParams.get('district-code') || '';
-  const view = searchParams.get('view') || '';
-
   return (
     <React.Fragment>
       {/* DESKTOP  */}
