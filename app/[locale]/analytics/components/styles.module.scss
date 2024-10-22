@@ -24,6 +24,9 @@
   opacity: 90%;
   box-shadow: var(--shadow-basic-md);
   transition: right 0.4s ease; /* Smooth transition */
+  transition: right 0.4s ease;
+  max-width: 430px;
+  min-width: 430px;
 }
 
 .OverlayActive {

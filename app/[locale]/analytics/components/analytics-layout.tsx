@@ -5,8 +5,16 @@ import { useSearchParams } from 'next/navigation';
 import { parseDate } from '@internationalized/date';
 import { useQuery } from '@tanstack/react-query';
 import { parseAsString, useQueryState } from 'next-usequerystate';
-import { MonthPicker, Select, Tab, TabList, TabPanel, Tabs } from 'opub-ui';
-import { shallow } from 'zustand/shallow';
+import {
+  MonthPicker,
+  Select,
+  Spinner,
+  Tab,
+  TabList,
+  TabPanel,
+  Tabs,
+  Text,
+} from 'opub-ui';
 
 import {
   ANALYTICS_DISTRICT_MAP_DATA,
@@ -197,6 +205,7 @@ export function Content() {
         });
       }
     );
+    DistrictDropDownOption.sort((a, b) => a.label.localeCompare(b.label));
   }
 
   if (revenueGeographiesData.data && !revenueGeographiesData.isFetching) {
@@ -218,16 +227,9 @@ export function Content() {
           }
         );
       }
+      RevCircleDropdownOptions.sort((a, b) => a.label.localeCompare(b.label));
     }
   }
-
-  React.useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const timePeriod = params.get('time-period');
-    if (timePeriod) {
-      setTimePeriod(timePeriod);
-    }
-  });
 
   React.useEffect(() => {
     if (revenueCode !== '') {
@@ -253,7 +255,47 @@ export function Content() {
     setDistrictCode(districtCode, { shallow: false });
   };
 
-  console.log('filteredTableData', filteredTableData);
+  function SelectOptions() {
+    return (
+      <React.Fragment>
+        <Select
+          label="Select District"
+          value={districtCode || ''}
+          name="district-select"
+          className=" flex-grow"
+          onChange={(e) => {
+            handleDistrictChange(e);
+          }}
+          options={DistrictDropDownOption}
+        />
+        <Select
+          label="Select Revenue Circle"
+          value={revenueCode || ''}
+          placeholder={
+            !districtCode
+              ? 'Select a district to enable'
+              : 'Select a revenue circle'
+          }
+          name="revenue-circle-select"
+          className=" flex-grow"
+          disabled={!districtCode}
+          onChange={(e) => {
+            setRevenueCode(e, { shallow: false });
+          }}
+          options={getRevenueCircleOptions()}
+        />
+      </React.Fragment>
+    );
+  }
+
+  if (mapData?.isFetching && revenueMapData?.isFetching) {
+    return (
+      <div className="flex h-full flex-col place-content-center items-center">
+        <Spinner color="highlight" />
+        <Text>Loading...</Text>
+      </div>
+    );
+  }
 
   return (
     <React.Fragment>
@@ -268,7 +310,7 @@ export function Content() {
           <Tab
             theme="climate"
             title="coming soon"
-            className=" cursor-not-allowed"
+            className=" cursor-not-allowed border-r-1 border-iconWarning"
             disabled
             value="chart"
           >
@@ -282,28 +324,7 @@ export function Content() {
           {revenueMapData?.data && mapData?.data && (
             <div className=" mt-2 h-[calc(100dvh_-_140px)]">
               <div className="mb-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
-                <Select
-                  label="Select District"
-                  value={districtCode || ''}
-                  name="district-select"
-                  className=" flex-grow"
-                  onChange={(e) => {
-                    handleDistrictChange(e);
-                  }}
-                  options={DistrictDropDownOption}
-                />
-                <Select
-                  label="Select Revenue Circle"
-                  value={revenueCode || ''}
-                  name="revenue-circle-select"
-                  className=" flex-grow"
-                  disabled={!districtCode}
-                  onChange={(e) => {
-                    setRevenueCode(e, { shallow: false });
-                  }}
-                  options={getRevenueCircleOptions()}
-                />
-
+                <SelectOptions />
                 <MonthPicker
                   name="time-period-select"
                   defaultValue={parseDate(
@@ -335,28 +356,8 @@ export function Content() {
           )}
         </TabPanel>
         <TabPanel value="table">
-          <div className="mb-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
-            <Select
-              label="Select District"
-              value={districtCode || ''}
-              name="district-select"
-              className=" flex-grow"
-              onChange={(e) => {
-                handleDistrictChange(e);
-              }}
-              options={DistrictDropDownOption}
-            />
-            <Select
-              label="Select Revenue Circle"
-              value={revenueCode || ''}
-              name="revenue-circle-select"
-              className=" flex-grow"
-              disabled={!districtCode}
-              onChange={(e) => {
-                setRevenueCode(e, { shallow: false });
-              }}
-              options={getRevenueCircleOptions()}
-            />
+          <div className="mb-2 mt-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
+            <SelectOptions />
           </div>
           <TableComponent
             data={

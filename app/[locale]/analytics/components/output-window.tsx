@@ -182,15 +182,22 @@ export function OutputWindow({
               styles.OverlayActive
           )}
         >
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2">
             <Button
+              className="self-start"
               onClick={() => {
-                setDistrictCode(null), setRevenueCode(null);
+                !RevenueRegion && setDistrictCode(null),
+                  RevenueRegion && setRevenueCode(null);
               }}
               kind="tertiary"
             >
               <Icon source={Icons.back} />
             </Button>
+            {RevenueRegion && (
+              <Text className="uppercase" variant="bodyLg">
+                {DataBasedOnBoundary[0]['district']} District
+              </Text>
+            )}
 
             {(data.length === 1 || districtData.length === 1) && (
               <Text
@@ -205,7 +212,9 @@ export function OutputWindow({
           <div className="flex items-center justify-between self-stretch">
             <div className="mt-4 flex items-center gap-4">
               <Text variant="bodyMd" color="subdued" fontWeight="regular">
-                Cumulative till {formattedTimePeriod}
+                {indicator === 'government-response'
+                  ? `Cumulative for the financial year till ${formattedTimePeriod}`
+                  : `Calculated for ${formattedTimePeriod}`}
               </Text>
             </div>
           </div>
@@ -465,6 +474,8 @@ export function OtherFactorScores({
   delete clonedData[boundary];
   delete clonedData[`${boundary}-code`];
   delete clonedData[indicator];
+  delete clonedData['district'];
+  delete clonedData['district-code'];
 
   const FactorVariables = Object.keys(clonedData);
 
