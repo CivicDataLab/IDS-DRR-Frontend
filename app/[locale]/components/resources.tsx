@@ -70,7 +70,7 @@ const Resources = () => {
         <Text variant="heading4xl" fontWeight="bold" color="onBgDefault">
           Resources{' '}
         </Text>
-        <Text variant="headingXl" fontWeight="regular" color="onBgDefault">
+        <Text variant="headingMd" fontWeight="regular" color="onBgDefault">
           {ResourcesSectionText}
         </Text>
       </div>
