@@ -26,7 +26,7 @@ export const HeroSection = () => {
         />
         <Text
           className="pt-4 text-center text-surfaceDefault"
-          fontWeight="medium"
+          fontWeight="regular"
           variant="headingMd"
         >
           {HeroSectionText}
