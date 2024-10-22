@@ -13,6 +13,7 @@ const RadioButton = (props: any) => {
         }}
         value={props.value}
         type="radio"
+        id={props.id}
         checked={props.isSelected}
         aria-checked={props.isSelected}
       />

@@ -39,8 +39,8 @@ export function Vulnerability({ color, ...props }: FactorIconProps) {
 export function RiskScore({ color, ...props }: FactorIconProps) {
   return (
     <svg
-      width="28"
-      height="28"
+      width="24"
+      height="24"
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -57,8 +57,8 @@ export function RiskScore({ color, ...props }: FactorIconProps) {
 export function FloodHazard({ color, ...props }: FactorIconProps) {
   return (
     <svg
-      width="28"
-      height="28"
+      width="24"
+      height="24"
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -79,8 +79,8 @@ export function FloodHazard({ color, ...props }: FactorIconProps) {
 export function Exposure({ color, ...props }: FactorIconProps) {
   return (
     <svg
-      width="28"
-      height="28"
+      width="24"
+      height="24"
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
