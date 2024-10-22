@@ -28,15 +28,51 @@
   max-width: 430px;
   min-width: 430px;
 }
+
 .mobileOverlay {
   position: absolute;
-  top: 65px;
-  right: -100%; /* Hide off-screen initially */
+  bottom: -100%; /* Initially off-screen */
   z-index: 99999;
-  height: calc(100dvh - 26%);
-  opacity: 90%;
+  height: calc(100dvh - 86%);
+  opacity: 95%;
   box-shadow: var(--shadow-basic-md);
-  transition: right 0.4s ease; /* Smooth transition */
+  transition:
+    bottom 0.4s ease,
+    height 0.4s ease;
+
+  width: 100%;
+  max-width: 380px;
+  min-width: 300px;
+}
+
+.mobileOverlayActive {
+  bottom: 86px;
+  right: 0;
+}
+
+.expandedOverlay {
+  bottom: 86px;
+  height: calc(100dvh - 160px);
+}
+
+@media (max-width: 480px) {
+  .mobileOverlay {
+    max-width: 100%;
+    min-width: 280px;
+  }
+}
+
+.bottomDrawer {
+  position: absolute;
+  // bottom: -100%;
+  left: 0;
+  width: 100%;
+  height: 80%;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 99999;
+  box-shadow: var(--shadow-basic-md);
+  transition: bottom 0.4s ease;
+  overflow-y: auto;
 }
 
 .OverlayActive {
