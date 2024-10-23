@@ -43,40 +43,27 @@ export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
         </div>
       }
     >
-      <MediaRendering minWidth="1024" maxWidth={null}>
-        {/* DESKTOP  */}{' '}
-        {isClient ? (
-          <div className="relative max-h-[calc(100vh_-_60px)] min-h-[calc(100vh_-_60px)] grow flex-row-reverse gap-1 overflow-y-hidden md:flex">
-            <main className={cn(styles.Main)}>{children}</main>
-            <IndicatorListWrapper />
-          </div>
-        ) : (
-          <div className="flex h-[100vh] flex-col  place-content-center items-center">
-            <Spinner color="highlight" />
-            <Text>Loading...</Text>
-          </div>
-        )}
-      </MediaRendering>
-      <MediaRendering minWidth={null} maxWidth="1023">
-        {/* Mobile  */}
-        {isClient ? (
-          <div className="relative max-h-[calc(100vh_-_60px)] min-h-[calc(100vh_-_60px)] grow flex-row-reverse gap-1 overflow-y-hidden md:flex">
-            <main className={cn(styles.Main)}>{children}</main>
-            <IndicatorListWrapper />
-            {/* <OutputWindowComponent /> */}
-          </div>
-        ) : (
-          <div className="flex h-[100vh] flex-col  place-content-center items-center">
-            <Spinner color="highlight" />
-            <Text>Loading...</Text>
-          </div>
-        )}
-      </MediaRendering>
+      {' '}
+      {isClient ? (
+        <div className="relative max-h-[calc(100vh_-_60px)] min-h-[calc(100vh_-_60px)] grow flex-row-reverse gap-1 overflow-y-hidden md:flex">
+          <main className={cn(styles.Main)}>{children}</main>
+          <IndicatorListWrapper />
+        </div>
+      ) : (
+        <div className="flex h-[100vh] flex-col  place-content-center items-center">
+          <Spinner color="highlight" />
+          <Text>Loading...</Text>
+        </div>
+      )}
     </React.Suspense>
   );
 }
 
 export function IndicatorListWrapper() {
+  const searchParams = useSearchParams();
+
+  const region = searchParams.get('district-code') || '';
+  const view = searchParams.get('view') || '';
   return (
     <React.Fragment>
       {/* DESKTOP  */}
@@ -109,13 +96,13 @@ export function IndicatorListWrapper() {
           </div>
         </aside>
         {region !== null && region.length > 0 && view === 'map' && (
-        <OutputWindowComponent />
+          <OutputWindowComponent />
+        )}
       </MediaRendering>
       {/* Mobile View */}
       <MediaRendering minWidth={null} maxWidth="1023">
         <OutputWindowComponent />
       </MediaRendering>
-      )}
     </React.Fragment>
   );
 }
@@ -172,38 +159,20 @@ export function OutputWindowComponent() {
 
   return (
     <>
-      <MediaRendering minWidth="1024" maxWidth={null}>
-        {sidePaneData.isFetched && (
-          <OutputWindow
-            data={
-              sidePaneData?.data[
-                !searchParams.get('revenue-code')
-                  ? 'districtViewData'
-                  : 'revCircleViewData'
-              ]
-            }
-            indicatorDescriptions={indicatorDescriptions?.data?.indicators}
-            indicator={indicator}
-            boundary={boundary}
-          />
-        )}
-      </MediaRendering>
-      <MediaRendering minWidth={null} maxWidth="1023">
-        {sidePaneData.isFetched && (
-          <OutputWindow
-            data={
-              sidePaneData?.data[
-                !searchParams.get('revenue-code')
-                  ? 'districtViewData'
-                  : 'revCircleViewData'
-              ]
-            }
-            indicatorDescriptions={indicatorDescriptions?.data?.indicators}
-            indicator={indicator}
-            boundary={boundary}
-          />
-        )}
-      </MediaRendering>
+      {sidePaneData.isFetched && (
+        <OutputWindow
+          data={
+            sidePaneData?.data[
+              !searchParams.get('revenue-code')
+                ? 'districtViewData'
+                : 'revCircleViewData'
+            ]
+          }
+          indicatorDescriptions={indicatorDescriptions?.data?.indicators}
+          indicator={indicator}
+          boundary={boundary}
+        />
+      )}
     </>
   );
 

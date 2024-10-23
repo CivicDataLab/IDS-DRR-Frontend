@@ -128,26 +128,6 @@ export function FactorList() {
     return options;
   };
 
-  const flattenIndicators = (
-    nodes: TreeNode[],
-    level = 0
-  ): { label: string; value: string }[] => {
-    let options: { label: string; value: string }[] = [];
-
-    nodes.forEach((node) => {
-      options.push({
-        label: `${'\u00A0'.repeat(level * 3)}${node.name}`, // Use string concatenation
-        value: node.slug,
-      });
-
-      if (node.children && node.children.length > 0) {
-        options = [...options, ...flattenIndicators(node.children, level + 1)];
-      }
-    });
-
-    return options;
-  };
-
   return (
     <>
       <MediaRendering minWidth={null} maxWidth="1023">
