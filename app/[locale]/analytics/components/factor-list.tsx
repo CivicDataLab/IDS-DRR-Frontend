@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import {
   Exposure,
@@ -48,7 +47,7 @@ export function getIcon(slug: string) {
     case 'government-response':
       return <GovtResponse color="#000000" />;
     default:
-      return null;
+      return <RiskScore color="#000000" />;
   }
 }
 
@@ -105,7 +104,7 @@ export function FactorList() {
     setSelectedIndicator(selected);
     // Navigate to the selected indicator
     const selectedSlug = selected;
-    window.location.href = `?indicator=${selectedSlug}&time-period=${time_period}&boundary=${boundary}&district-code=${districtRegion}&revenue-code=${revenueRegion}`;
+    window.location.href = `?indicator=${selectedSlug}&time-period=${time_period}&district-code=${districtRegion}&revenue-code=${revenueRegion}&view=map`;
   };
 
   const flattenIndicators = (
@@ -258,12 +257,6 @@ const NestedSidebarItem: React.FC<{
   const [, setIndicatorSelected] = useQueryState('indicator');
   const isActive = node.slug === indicator;
   const hasChildren = node.children && node.children.length > 0;
-  const searchParams = useSearchParams();
-  const time_period = searchParams.get('time-period');
-  const boundary = searchParams.get('boundary') || 'district';
-  const districtRegion = searchParams.get('district-code') || '';
-  const revenueRegion = searchParams.get('revenue-code') || '';
-
   useEffect(() => {
     if (node.slug === indicator) {
       setIsExpanded(true);
@@ -280,8 +273,7 @@ const NestedSidebarItem: React.FC<{
       <div
         className={cn(
           'flex cursor-pointer items-center py-1',
-          level === 0 && 'font-Bold',
-          level === 1 && 'font-Medium',
+          'font-Bold',
           level > 1 && 'pl-6'
         )}
         role="button"
@@ -293,12 +285,12 @@ const NestedSidebarItem: React.FC<{
             role="button"
             tabIndex={0}
             onClick={() => {
-              setIndicatorSelected(node.slug, { shallow: false });
               setIsExpanded(true);
+              setIndicatorSelected(node.slug, { shallow: false });
             }}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
-                setIndicatorSelected(node.slug, { shallow: false });
+                e.stopPropagation();
                 setIsExpanded(true);
               }
             }}
@@ -325,23 +317,20 @@ const NestedSidebarItem: React.FC<{
               </div>
             </div>
             <Tooltip content={node.description}>
-              <Text>{node.name}</Text>
+              <Text fontWeight="semibold">{node.name}</Text>
             </Tooltip>
           </div>
         ) : (
           <Tooltip content={node.description}>
-            <Link
-              href={`?indicator=${node.slug}&time-period=${time_period}&boundary=${boundary}&district-code=${districtRegion}&revenue-code=${revenueRegion}`}
-            >
-              <RadioButton
-                isSelected={indicator === node.slug}
-                changed={(value: string) => {
-                  setIndicatorSelected(value, { shallow: false });
-                }}
-                label={node.name}
-                value={node.slug}
-              />
-            </Link>
+            <RadioButton
+              id={`radio-${node.slug}`}
+              isSelected={indicator === node.slug}
+              changed={(value: string) => {
+                setIndicatorSelected(value, { shallow: false });
+              }}
+              label={node.name}
+              value={node.slug}
+            />
           </Tooltip>
         )}
       </div>

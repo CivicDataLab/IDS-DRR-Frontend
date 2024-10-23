@@ -1,4 +1,6 @@
 .Main {
+  max-width: 100vw;
+  overflow-x: auto;
   flex-grow: 1;
   transition: transform var(--duration-400) ease 0s;
 }
@@ -14,13 +16,16 @@
 
 .Overlay {
   position: absolute;
-  top: 140px;
-  right: -100%;
+  top: 145px;
+  right: -100%; /* Hide off-screen initially */
   z-index: 99999;
   height: calc(100dvh - 30%);
   opacity: 90%;
   box-shadow: var(--shadow-basic-md);
+  transition: right 0.4s ease; /* Smooth transition */
   transition: right 0.4s ease;
+  max-width: 430px;
+  min-width: 430px;
 }
 
 .mobileOverlay {
@@ -67,6 +72,9 @@
   box-shadow: var(--shadow-basic-md);
   transition: bottom 0.4s ease;
   overflow-y: auto;
+  transition: right 0.4s ease;
+  max-width: 430px;
+  min-width: 430px;
 }
 
 .OverlayActive {
