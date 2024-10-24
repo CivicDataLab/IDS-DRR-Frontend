@@ -165,17 +165,4 @@ export function OutputWindowComponent() {
       />
     )
   );
-
-  // : sidePaneData.isFetched && (
-  //     <DefaultWindow
-  //       chartData={
-  //         sidePaneData?.data[
-  //           boundary === 'district' ? 'districtViewData' : 'revCircleViewData'
-  //         ]
-  //       }
-  //       indicatorDescriptions={indicatorDescriptions?.data?.indicators}
-  //       indicator={indicator}
-  //       boundary={boundary}
-  //     />
-  //   );
 }

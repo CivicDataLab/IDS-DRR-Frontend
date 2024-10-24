@@ -307,15 +307,21 @@ export function Content() {
           <Tab theme="climate" value="map">
             Map View
           </Tab>
+          <div
+            className={`ml-4 h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'map' ? 'hidden' : ''}`}
+          />
           <Tab
             theme="climate"
             title="coming soon"
-            className=" cursor-not-allowed border-r-1 border-iconWarning"
+            className=" cursor-not-allowed"
             disabled
             value="chart"
           >
             Chart View
           </Tab>
+          <div
+            className={`ml-4 h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'table' ? 'hidden' : ''}`}
+          />{' '}
           <Tab theme="climate" value="table">
             Table View
           </Tab>

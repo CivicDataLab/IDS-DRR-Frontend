@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
-import { Spinner, Table, Text } from 'opub-ui';
+import { DataTable, Spinner, Text } from 'opub-ui';
+
+import { Factors, RiskText } from '@/config/consts';
 
 type ColumnDefinition = {
   accessorKey: string;
@@ -37,7 +39,11 @@ export function TableComponent({ data, isLoading }: any) {
       Object.keys(item).forEach((key) => {
         const value = item[key];
         if (value !== null && typeof value === 'object' && 'value' in value) {
-          row[key] = (value as { value: string }).value;
+          row[key] = Factors.includes(key)
+            ? RiskText[parseInt((value as { value: string }).value)][
+                'indicatorText'
+              ]
+            : (value as { value: string }).value;
         }
       });
       return row;
@@ -72,12 +78,17 @@ export function TableComponent({ data, isLoading }: any) {
 
   return (
     <div className="max-h-svh p-4">
-      <Table
+      <DataTable
         key={JSON.stringify(rows)}
         truncate
         columns={columns}
         theme="climate"
         hasZebraStripingOnData
+        addToolbar
+        hideSelection
+        hideViewSelector
+        placeholder="Search"
+        sortColumns={columns.map((column) => column.accessorKey)}
         rows={rows}
       />
     </div>

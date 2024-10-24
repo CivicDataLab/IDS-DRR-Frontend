@@ -151,7 +151,7 @@ export function FactorList() {
                   monochrome={true}
                   kind="tertiary"
                 >
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-2">
                     <Icon source={Icons.share} />
                     <Text variant="bodyMd">Share</Text>
                   </div>
@@ -222,7 +222,7 @@ export function FactorList() {
               monochrome={true}
               kind="tertiary"
             >
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-2">
                 <Icon source={Icons.download} />
                 <Text variant="bodyMd">Download Report</Text>
               </div>
