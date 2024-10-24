@@ -12,6 +12,7 @@ import {
 } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { cn } from '@/lib/utils';
+import { MediaRendering } from '@/components/media-rendering';
 import { DefaultWindow } from './default-output-window';
 import { FactorList } from './factor-list';
 import { OutputWindow } from './output-window';
@@ -42,6 +43,7 @@ export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
         </div>
       }
     >
+      {' '}
       {isClient ? (
         <div className="relative max-h-[calc(100vh_-_60px)] min-h-[calc(100vh_-_60px)] grow flex-row gap-1 overflow-y-hidden md:flex">
           <IndicatorListWrapper />
@@ -65,36 +67,43 @@ export function IndicatorListWrapper() {
 
   return (
     <React.Fragment>
-      <aside
-        className={cn(
-          'overflow-hidden bg-surfaceDefault pr-0 shadow-basicMd',
-          'shadow-inset z-1 hidden shrink-0 basis-[320px] bg-[#F4FBF5] md:block',
-          // isCollapsed && 'basis-[32px]',
-          'border-r-1 border-solid border-borderSubdued',
-          styles.Collapse
-        )}
-      >
-        <div className="h-[90vh] overflow-x-hidden overflow-y-scroll  pt-6">
-          <span
-            className={cn(
-              ' rounded items-center justify-end pl-0'
-              // isCollapsed && 'hidden'
-            )}
-          ></span>
-          <div>
-            <div className=" mb-5  pl-4">
-              <Text className="text-textSubdued" fontWeight="bold">
-                INDICATORS
-              </Text>
-            </div>
+      {/* DESKTOP  */}
+      <MediaRendering minWidth="1024" maxWidth={null}>
+        <aside
+          className={cn(
+            'overflow-hidden bg-surfaceDefault pr-0 shadow-basicMd',
+            'shadow-inset z-1 hidden shrink-0 basis-[320px] bg-[#F4FBF5] md:block',
+            // isCollapsed && 'basis-[32px]',
+            'border-r-1 border-solid border-borderSubdued',
+            styles.Collapse
+          )}
+        >
+          <div className="h-[90vh] overflow-x-hidden overflow-y-scroll  pt-6">
+            <span
+              className={cn(
+                ' rounded items-center justify-end pl-0'
+                // isCollapsed && 'hidden'
+              )}
+            ></span>
+            <div>
+              <div className=" mb-5  pl-4">
+                <Text className="text-textSubdued" fontWeight="bold">
+                  INDICATORS
+                </Text>
+              </div>
 
-            <FactorList />
+              <FactorList />
+            </div>
           </div>
-        </div>
-      </aside>
-      {region !== null && region.length > 0 && view === 'map' && (
+        </aside>
+        {region !== null && region.length > 0 && view === 'map' && (
+          <OutputWindowComponent />
+        )}
+      </MediaRendering>
+      {/* Mobile View */}
+      <MediaRendering minWidth={null} maxWidth="1023">
         <OutputWindowComponent />
-      )}
+      </MediaRendering>
     </React.Fragment>
   );
 }
@@ -150,19 +159,21 @@ export function OutputWindowComponent() {
   );
 
   return (
-    sidePaneData.isFetched && (
-      <OutputWindow
-        data={
-          sidePaneData?.data[
-            !searchParams.get('revenue-code')
-              ? 'districtViewData'
-              : 'revCircleViewData'
-          ]
-        }
-        indicatorDescriptions={indicatorDescriptions?.data?.indicators}
-        indicator={indicator}
-        boundary={boundary}
-      />
-    )
+    <>
+      {sidePaneData.isFetched && (
+        <OutputWindow
+          data={
+            sidePaneData?.data[
+              !searchParams.get('revenue-code')
+                ? 'districtViewData'
+                : 'revCircleViewData'
+            ]
+          }
+          indicatorDescriptions={indicatorDescriptions?.data?.indicators}
+          indicator={indicator}
+          boundary={boundary}
+        />
+      )}
+    </>
   );
 }

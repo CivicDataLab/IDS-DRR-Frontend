@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useWindowSize } from '@/hooks/use-window-size';
 import * as d3 from 'd3-scale';
 import { interpolateBlues } from 'd3-scale-chromatic';
 import { Spinner, Text } from 'opub-ui';
@@ -41,8 +42,11 @@ export const MapComponent = ({
   const params = new URLSearchParams(window.location.search);
   const districtCode = params.get('district-code');
 
+  const { width } = useWindowSize();
+  const isMobile = width < 768;
+
   const values = [];
-  for (let i = 0; i < mapFeatures.length; i++) {
+  for (let i = 0; i < mapFeatures?.length; i++) {
     if (mapFeatures[i].properties[indicator] == null) continue;
     values.push(mapFeatures[i].properties[indicator]);
   }
@@ -173,7 +177,7 @@ export const MapComponent = ({
       </div>`;
         },
         {
-          maxWidth: 200,
+          maxWidth: '90%',
           closeButton: false,
           autoClose: false,
           closeOnEscapeKey: false,
@@ -204,13 +208,13 @@ export const MapComponent = ({
       }
     }
 
-    const filterMapData = revenueMapData.features.filter(
+    const filterMapData = revenueMapData?.features.filter(
       (feature: { properties: { [x: string]: string } }) =>
         feature.properties['district-code'] === districtCode
     );
 
-    setMapFeatures(districtCode ? filterMapData : mapData.features);
-  }, [districtCode, map, mapData.features, revenueMapData.features]);
+    setMapFeatures(districtCode ? filterMapData : mapData?.features);
+  }, [districtCode, map, mapData?.features, revenueMapData?.features]);
 
   React.useEffect(() => {
     if (map && map.getContainer() && !districtCode) {
@@ -218,81 +222,61 @@ export const MapComponent = ({
     }
   }, [map, districtCode]);
 
+  if (mapDataloading || revenueMapDataLoading)
+    return (
+      <div className="flex h-full flex-col place-content-center items-center">
+        <Spinner color="highlight" />
+        <Text>Loading...</Text>
+      </div>
+    );
+
   return (
     <>
-      {/* Mobile View */}
-      <MediaRendering minWidth={null} maxWidth="1023">
-        <div className="relative h-full w-full pt-[62px]">
-          <MapChart
-            features={mapFeatures || mapData.features}
-            mapZoom={6}
-            minZoom={5}
-            maxZoom={8}
-            mapProperty={indicator}
-            zoomOnClick={false}
-            legendData={legendData}
-            mapDataFn={mapDataFn}
-            click={(layer) =>
-              onMapClick({
-                layerCode: layer.feature?.properties.code,
-              })
-            }
-            fillOpacity={1}
-            setMap={setMap}
-            resetZoom
-            scroolWheelZoom={false}
-          />
-        </div>
-      </MediaRendering>
-      <MediaRendering minWidth="1024" maxWidth={null}>
-        <div className=" relative h-[90%] w-full">
-          <MapChart
-            features={mapFeatures || mapData.features}
-            mapZoom={7.4}
-            mapProperty={indicator}
-            zoomOnClick={false}
-            isCustomColor={!Factors.includes(indicator)}
-            customColor={colorScale}
-            legendHeading={{
-              heading: !Factors.includes(indicator)
-                ? `${getFactorNameBySlug(indicatorsData, indicator)} ${getUnitsBySlug(indicatorsData, indicator) && `(${getUnitsBySlug(indicatorsData, indicator)})`}`
-                : '',
-            }}
-            legendData={
-              Factors.includes(indicator) ? legendData : customLegendData
-            }
-            minZoom={6}
-            maxZoom={8}
-            mapDataFn={mapDataFn}
-            mouseover={(layer) => {
-              const regionName = layer.feature?.properties.name;
-              const riskValue = layer.feature?.properties?.[indicator];
-              const riskText = Factors.includes(indicator)
-                ? RiskText[riskValue]?.indicatorText
-                : `${riskValue} ${getUnitsBySlug(indicatorsData, indicator)}`;
-              EnablePopup({
-                regionName,
-                riskValue,
-                riskText,
-                layer,
-              });
-            }}
-            mouseout={(layer) => {
-              layer.closePopup();
-              layer.unbindPopup();
-            }}
-            click={(layer) =>
-              onMapClick({
-                layerCode: layer.feature?.properties.code,
-              })
-            }
-            fillOpacity={1}
-            setMap={setMap}
-            resetZoom
-            scroolWheelZoom={false}
-          />
-        </div>
-      </MediaRendering>
+      {' '}
+      <div
+        className={`relative w-full ${isMobile ? 'h-full' : 'h-[90%]'} ${isMobile ? 'pt-[62px]' : ''}`}
+      >
+        {' '}
+        <MapChart
+          features={mapFeatures || mapData.features}
+          mapZoom={isMobile ? 8 : 7.4}
+          mapProperty={indicator}
+          zoomOnClick={false}
+          isCustomColor={!Factors.includes(indicator)}
+          customColor={colorScale}
+          horizontalLegend={isMobile ? true : false}
+          legendHeading={{
+            heading: !Factors.includes(indicator)
+              ? `${getFactorNameBySlug(indicatorsData, indicator)} ${getUnitsBySlug(indicatorsData, indicator) && `(${getUnitsBySlug(indicatorsData, indicator)})`}`
+              : '',
+          }}
+          legendData={
+            Factors.includes(indicator) ? legendData : customLegendData
+          }
+          minZoom={isMobile ? 3 : 6}
+          maxZoom={isMobile ? 6.3 : 8}
+          mapDataFn={mapDataFn}
+          mouseover={(layer) => {
+            const regionName = layer.feature?.properties.name;
+            const riskValue = layer.feature?.properties?.[indicator];
+            const riskText = Factors.includes(indicator)
+              ? RiskText[riskValue]?.indicatorText
+              : `${riskValue} ${getUnitsBySlug(indicatorsData, indicator)}`;
+            EnablePopup({ regionName, riskValue, riskText, layer });
+          }}
+          mouseout={(layer) => {
+            layer.closePopup();
+            layer.unbindPopup();
+          }}
+          click={(layer) =>
+            onMapClick({ layerCode: layer.feature?.properties.code })
+          }
+          fillOpacity={1}
+          setMap={setMap}
+          resetZoom
+          scroolWheelZoom={false}
+        />{' '}
+      </div>{' '}
     </>
   );
 };

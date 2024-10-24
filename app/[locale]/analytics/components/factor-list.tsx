@@ -107,33 +107,47 @@ export function FactorList() {
     window.location.href = `?indicator=${selectedSlug}&time-period=${time_period}&district-code=${districtRegion}&revenue-code=${revenueRegion}&view=map`;
   };
 
+  const flattenIndicators = (
+    nodes: TreeNode[],
+    level = 0
+  ): { label: string; value: string }[] => {
+    let options: { label: string; value: string }[] = [];
+
+    nodes.forEach((node) => {
+      options.push({
+        label: `${'\u00A0'.repeat(level * 3)}${node.name}`, // Use string concatenation
+        value: node.slug,
+      });
+
+      if (node.children && node.children.length > 0) {
+        options = [...options, ...flattenIndicators(node.children, level + 1)];
+      }
+    });
+
+    return options;
+  };
+
   return (
     <>
       <MediaRendering minWidth={null} maxWidth="1023">
-        {factorData.isFetched && (
+        {/* MOBILE  */}
+
+        {indicatorsQuery.isFetched && (
           <Select
             value={selectedIndicator}
             onChange={handleChange}
             label=""
-            className="w-[276px]  p-2"
+            className="w-[246px] p-2"
             name="boundary-select"
-            labelInline
+            // labelInline
             options={
-              factorData.data?.indicators.map((item: any) => ({
-                label: (
-                  <>
-                    <div className=" flex flex-row items-center gap-4 pl-2">
-                      {getIcon(item.slug)} {item.name}
-                    </div>
-                  </>
-                ),
-                value: item.slug,
-              })) || []
+              indicatorsQuery.isFetched ? flattenIndicators(indicatorNodes) : []
             }
           />
         )}
       </MediaRendering>
       <MediaRendering minWidth="1024" maxWidth={null}>
+        {/* DESKTOP  */}
         <div className={cn(styles.FactorList)}>
           {indicatorsQuery.isFetched && (
             <NestedSidebar data={indicatorNodes} indicator={indicator} />

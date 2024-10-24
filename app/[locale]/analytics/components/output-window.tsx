@@ -20,6 +20,7 @@ import {
   AccordionTrigger,
   Button,
   Icon,
+  IconButton,
   ProgressBar,
   Text,
   Tooltip,
@@ -54,8 +55,9 @@ export function OutputWindow({
   const view = searchParams.get('view') || '';
 
   const RevenueRegion = searchParams.get('revenue-code') || '';
-  const [, setDistrictCode] = useQueryState('district-code');
-  const [, setRevenueCode] = useQueryState('revenue-code');
+  const [revenueCode, setDistrictCode] = useQueryState('district-code');
+  const [districtCode, setRevenueCode] = useQueryState('revenue-code');
+  const [indicatorCode, setIndicatorCode] = useQueryState('indicator');
 
   const DEFAULT_PERIOD = '3M';
 
@@ -97,11 +99,11 @@ export function OutputWindow({
     }
   );
 
-  const districtData = data.filter((item: any) =>
+  const districtData = data?.filter((item: any) =>
     Object.hasOwnProperty.call(item, 'district')
   );
   // To filter out revenue circles from the district data boundary
-  const revenueCircleData = data.filter((item: any) =>
+  const revenueCircleData = data?.filter((item: any) =>
     Object.hasOwnProperty.call(item, 'revenue circle')
   );
 
@@ -163,6 +165,12 @@ export function OutputWindow({
     3: 'text-mapRiskMedium',
     4: 'text-mapRiskHigh',
     5: 'text-mapRiskVeryHigh',
+  };
+
+  const [isExpanded, setIsExpanded] = React.useState(false);
+
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded); // Toggle expanded state
   };
 
   return (
@@ -293,145 +301,144 @@ export function OutputWindow({
       </MediaRendering>
       <MediaRendering minWidth={null} maxWidth="1023">
         {/* MOBILE  */}
-        <div className={cn('p-4', 'bg-surfaceDefault')}>
-          <div className="flex items-center justify-items-stretch">
-            <div className="mt-4 flex items-center justify-between gap-3">
-              <Text variant="bodyMd" color="subdued" fontWeight="regular">
-                Cumulative till {formattedTimePeriod}
-              </Text>
 
-              <Tooltip
-                content={
-                  <>
-                    <Text>{getDescription(indicator)}</Text>
-                  </>
-                }
-                side="right"
-                defaultOpen={tooltipOpen}
-                open={tooltipOpen}
-                onOpenChange={(isOpen) => setTooltipOpen(isOpen)}
-              >
-                {<InfoSquare color="#6A6A6A" />}
-              </Tooltip>
+        <>
+          {/* Apply conditional class for visibility */}
+          <div
+            className={cn(
+              'p-4',
+              'bg-surfaceDefault shadow-basicMd',
+              'shadow-inset min-w-[373px] max-w-[380px] shrink-0 md:block',
+              'overflow-y-auto border-b-1 border-l-1 border-r-1 border-solid border-borderSubdued',
+              styles.mobileOverlay,
+              region !== null &&
+                region.length > 0 &&
+                styles.mobileOverlayActive,
+              region == null && 'hidden', // Use the 'hidden' class to hide the aside when it's not visible
+              isExpanded && styles.expandedOverlay
+            )}
+            style={{ zIndex: '100000' }}
+          >
+            {/* <div className=" flex items-center">swipe up</div> */}
+            <div className="mb-2 flex items-center justify-center">
+              <Button onClick={toggleExpand} kind="tertiary">
+                {isExpanded ? (
+                  <Icon source={Icons.down} /> // Swipe Down Icon
+                ) : (
+                  <Icon source={Icons.up} /> // Swipe Up Icon
+                )}
+              </Button>
             </div>
-          </div>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={() => {
+                  setDistrictCode(null), setRevenueCode(null);
+                }}
+                kind="tertiary"
+              >
+                <Icon source={Icons.back} />
+              </Button>
+              {(data.length === 1 || districtData.length === 1) && (
+                <Text
+                  className="uppercase"
+                  variant="headingLg"
+                  fontWeight="semibold"
+                >
+                  {RegionName} {GeographyMap[boundary]}
+                </Text>
+              )}
+            </div>
+            {/* </div> */}
+            <div className="flex items-center justify-between self-stretch">
+              <div className="mt-4 flex items-center gap-4">
+                {(districtCode !== null || revenueCode !== null) && (
+                  <Text variant="bodyMd" color="subdued" fontWeight="regular">
+                    Cumulative till {formattedTimePeriod}
+                  </Text>
+                )}
+              </div>
+            </div>
 
-          <section className="mt-4">
-            <Accordion type="single" defaultValue="revenue-circle" collapsible>
-              <AccordionItem value="revenue-circle" className="border-none">
-                {DataBasedOnBoundary.map((data: any, index: any) => (
-                  <div key={index} className="mb-4">
-                    <div className="flex items-center gap-3">
-                      <Text variant="bodyLg" fontWeight="bold">
-                        {data[boundary]}
-                      </Text>
-
-                      <ProgressBar
-                        size="small"
-                        customColor={
-                          RiskColorMap[parseInt(data[indicator]['value'])]
-                        }
-                        value={(parseInt(data[indicator]['value']) / 5) * 100}
-                      />
-
-                      <div>
-                        <Text variant="heading2xl">
-                          {parseInt(data?.[indicator]['value'])}
+            {/* Aside content */}
+            <section className="mt-4">
+              {region !== null &&
+                region.length > 0 &&
+                DataBasedOnBoundary.map((data: any, index: any) => (
+                  <div key={`boundary-${index}`} className="mb-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        {IconMap[indicator]}
+                        <Text
+                          variant="bodyLg"
+                          fontWeight={
+                            indicator === 'risk-score' ? 'bold' : 'regular'
+                          }
+                        >
+                          {getFactorNameBySlug(
+                            indicatorDescriptions,
+                            indicator
+                          )}
                         </Text>
-                        /5
+                        {!Factors.includes(indicator) && (
+                          <Text variant="bodyMd" fontWeight="bold">
+                            {data[indicator]['value']}
+                          </Text>
+                        )}
                       </div>
-                      {/* <AccordionTrigger /> */}
-                      {indicator === 'risk-score' ? (
-                        <AccordionTrigger />
-                      ) : (
-                        <div style={{ width: '40px', height: '54px' }}></div>
-                      )}
+                      <div className="flex items-center gap-4">
+                        <Text
+                          className={cn(
+                            colorMap[parseInt(data[indicator]['value'])],
+                            'uppercase'
+                          )}
+                          fontWeight="semibold"
+                        >
+                          {Factors.includes(indicator) &&
+                            RiskText[parseInt(data[indicator]['value'])][
+                              'indicatorText'
+                            ]}
+                        </Text>
+                        <Tooltip
+                          content={
+                            <>
+                              <Text>{getDescription(indicator)}</Text>
+                            </>
+                          }
+                          side="right"
+                          defaultOpen={tooltipOpen}
+                          open={tooltipOpen}
+                          onOpenChange={(isOpen) => setTooltipOpen(isOpen)}
+                        >
+                          {<InfoSquare color="#6A6A6A" />}
+                        </Tooltip>
+                      </div>
                     </div>
-                    <AccordionContent className="px-3 pb-4 md:px-6">
-                      <div className="flex flex-col gap-1">
+                    {Factors.includes(indicator) && (
+                      <div className="mt-5 flex flex-col gap-2">
+                        <Text className="text-baseGraySlateSolid11">
+                          Some of the indicators contributing to{' '}
+                          {getFactorNameBySlug(
+                            indicatorDescriptions,
+                            indicator
+                          )}{' '}
+                          are
+                        </Text>
                         <OtherFactorScores
                           factorData={indicatorDescriptions}
                           data={data}
                           boundary={boundary}
+                          IconMap={IconMap}
                           indicator={indicator}
                           indicatorDescription={indicatorDescriptions}
                           getDescription={getDescription}
                         />
                       </div>
-                    </AccordionContent>
+                    )}
                   </div>
                 ))}
-              </AccordionItem>
-            </Accordion>
-          </section>
-          <Accordion type="single" defaultValue="revenue-circle" collapsible>
-            <AccordionItem value="revenue-circle" className="mt-4">
-              {districtData.length === 1 && (
-                <div className="mt-7">
-                  <div className={styles.SidebarAccordionTitle}>
-                    <Text variant="bodyLg" fontWeight="bold">
-                      REVENUE CIRCLE SCORE
-                    </Text>
-                    <AccordionTrigger />
-                  </div>
-                  <AccordionContent
-                    className={cn(styles.RevenueBox, 'px-2 pb-4 md:px-4 ')}
-                  >
-                    <RevenueCircle
-                      revenueCircleData={revenueCircleData}
-                      factorData={indicatorDescriptions}
-                      indicator={indicator}
-                      indicatorDescriptions={indicatorDescriptions}
-                      getDescription={getDescription}
-                    />
-                  </AccordionContent>
-                </div>
-              )}
-            </AccordionItem>
-            <AccordionItem value="time-trends" className="mt-4">
-              <div className="mt-5">
-                <div className={styles.SidebarAccordionTitle}>
-                  <Text variant="bodyLg" fontWeight="bold">
-                    TIME TRENDS
-                  </Text>
-                  <AccordionTrigger />
-                </div>
-
-                <AccordionContent
-                  className={cn(styles.TrendsBox, 'px-2 pb-4 md:px-4 ')}
-                >
-                  <div className="mt-4 flex items-center gap-2">
-                    {items.map(({ label, value: itemValue }) => {
-                      const isActiveValue = itemValue === period;
-                      return (
-                        <button
-                          key={itemValue}
-                          type="button"
-                          className={cn(
-                            styles.TabItem,
-                            isActiveValue && styles.TabItemActive
-                          )}
-                          onClick={() => {
-                            setPeriod(itemValue);
-                          }}
-                        >
-                          {label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {chartData.isFetched ? (
-                    <TimeTrends
-                      chartData={chartData?.data?.getTimeTrends}
-                      indicator={indicator}
-                      boundary={boundary}
-                    />
-                  ) : null}
-                </AccordionContent>
-              </div>
-            </AccordionItem>
-          </Accordion>
-        </div>
+            </section>
+          </div>
+        </>
       </MediaRendering>
     </>
   );

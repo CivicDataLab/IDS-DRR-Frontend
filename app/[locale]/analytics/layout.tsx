@@ -11,8 +11,10 @@ export default async function AnalyticsLayout({
   return (
     <>
       <MediaRendering minWidth={null} maxWidth="1023">
-        {children}
+        <AnalyticsDashboardLayout>{children}</AnalyticsDashboardLayout>
+        {/* {children} */}
       </MediaRendering>
+
       <MediaRendering minWidth="1024" maxWidth={null}>
         <AnalyticsDashboardLayout>{children}</AnalyticsDashboardLayout>
       </MediaRendering>

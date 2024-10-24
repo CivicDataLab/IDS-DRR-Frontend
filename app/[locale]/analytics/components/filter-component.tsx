@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import SearchSvg from '@/public/Search';
+import React, { useCallback, useEffect, useState } from 'react';
 import { parseDate } from '@internationalized/date';
 import { useQuery } from '@tanstack/react-query';
 import { parseAsString, useQueryState } from 'next-usequerystate';
@@ -8,7 +7,7 @@ import {
   Icon,
   RadioGroup,
   RadioItem,
-  SearchInput,
+  Select,
   TextField,
   YearCalendar,
 } from 'opub-ui';
@@ -24,16 +23,21 @@ import {
   MobileFilterBox,
   MobileFilterContent,
 } from '@/components/MobileFilterBox';
-import { constructRegionOptions } from '../utils/utils';
 
 export function FilterComp({ timePeriod }: { timePeriod: string }) {
+  interface OptionType {
+    label: string;
+    value: string;
+    type: 'group' | 'item';
+    options?: OptionType[]; // Only 'group' type will have nested options
+  }
+
   interface Option {
     disabled?: boolean;
     value: string;
     label: string;
     type?: string;
   }
-
   type FilterButtonOption = {
     title: string;
     value: string;
@@ -43,42 +47,39 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const [selectedOption, setSelectedOption] = useState('boundary');
-
-  const [regionOptions, setRegionOptions] = useState<Option[] | never[]>([]);
-
-  const [boundary, setBoundary] = useQueryState(
-    'boundary',
-    parseAsString.withDefault('district')
-  );
-
+  // URL parameters
   const [timePeriodParam, setTimePeriod] = useQueryState(
     'time-period',
     parseAsString.withDefault(timePeriod)
   );
 
-  const [region, setRegion] = useQueryState('region');
+  const [districtCode, setDistrictCode] = useQueryState('district-code');
+  const [revenueCode, setRevenueCode] = useQueryState('revenue-code');
 
-  const [boundarySelected, setBoundarySelected] = useState(boundary);
-
-  const [regionSelected, setRegionSelected] = useState(region);
-
+  // State variables
+  const [regionSelected, setRegionSelected] = useState(districtCode || '');
+  const [regionName, setRegionName] = useState(''); // New state for region name
+  const [revenueSelected, setRevenueSelected] = useState(revenueCode || '');
   const [timePeriodSelected, setTimePeriodSelected] = useState(timePeriodParam);
 
-  useEffect(() => {
-    setBoundarySelected(boundary);
-    setRegionSelected(region || '');
-    setTimePeriodSelected(timePeriodParam);
-  }, [boundary, region, timePeriodParam]);
+  //filter variables
+  const [filterOption, setFilterOption] = useState('district');
 
-  const geographiesData = useQuery(
-    [`geographies_data_${boundarySelected}`],
+  useEffect(() => {
+    setRegionSelected(regionSelected || '');
+    setRevenueSelected(revenueSelected || '');
+    setTimePeriodSelected(timePeriodParam);
+  }, [regionSelected, revenueSelected, timePeriodParam]);
+
+  // Fetch district geographies data
+  const districtGeographiesData = useQuery(
+    [`geographies_data_district`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_GEOGRAPHY_DATA,
         {
-          geoFilter: { type: boundarySelected },
+          geoFilter: { type: 'district' },
         }
       ),
     {
@@ -88,6 +89,25 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
     }
   );
 
+  // Fetch revenue circle geographies data
+  const revenueGeographiesData = useQuery(
+    [`geographies_data_revenue`],
+    () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_GEOGRAPHY_DATA,
+        {
+          geoFilter: { type: 'revenue-circle' },
+        }
+      ),
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
+
+  // Fetch time periods
   const timePeriods = useQuery(
     [`timePeriods`],
     () =>
@@ -102,49 +122,86 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
     }
   );
 
-  const getRegionOptions = React.useCallback(() => {
-    const regionOptions = constructRegionOptions(
-      boundarySelected,
-      geographiesData
-    );
-    if (boundarySelected === 'revenue-circle' && geographiesData.data) {
-      const rawData = geographiesData?.data?.getDistrictRevCircle;
-      const formattedOptions = [];
-      for (const district in rawData) {
-        formattedOptions.push({
-          label: district,
-          value: district,
-          type: 'group',
-        });
-        rawData[district].forEach(
-          (circle: { 'revenue-circle': string; code: string }) => {
-            formattedOptions.push({
-              label: circle['revenue-circle'],
-              value: circle.code,
-              type: 'item',
-            });
-          }
-        );
-      }
-      return formattedOptions;
+  // Function to format district options
+  const getDistrictOptions = useCallback(() => {
+    if (districtGeographiesData.data) {
+      const rawData = districtGeographiesData?.data?.getDistrictRevCircle;
+
+      return rawData.map((district: { code: string; district: string }) => ({
+        label: district.district,
+        value: district.code,
+      }));
     }
-    return regionOptions;
-  }, [boundarySelected, geographiesData]);
+    return [];
+  }, [districtGeographiesData]);
+
+  // Function to format revenue circle options based on selected district
+  const getRevenueOptions = useCallback(() => {
+    if (revenueGeographiesData.data && regionName) {
+      // Use regionName
+      const rawData = revenueGeographiesData?.data?.getDistrictRevCircle;
+
+      const selectedDistrictData = rawData[regionName]; // Use regionName to get the data
+
+      return (
+        selectedDistrictData?.map(
+          (circle: { code: string; 'revenue-circle': string }) => ({
+            label: circle['revenue-circle'],
+            value: circle.code,
+          })
+        ) || []
+      );
+    }
+    return [];
+  }, [revenueGeographiesData, regionName]);
+
+  const toggleDrawer = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+  };
+
+  const handleApplyFilters = () => {
+    setDistrictCode(regionSelected, { shallow: false });
+    setRevenueCode(revenueSelected, { shallow: false });
+    setTimePeriod(timePeriodSelected, { shallow: false });
+    toggleDrawer();
+  };
+
+  const handleClearAllFilters = () => {
+    setRegionSelected('');
+    setRegionName(''); // Clear region name
+    setRevenueSelected('');
+    setTimePeriodSelected(timePeriod);
+    setDistrictCode('', { shallow: false });
+    setRevenueCode('', { shallow: false });
+    setTimePeriod(timePeriod, { shallow: false });
+    toggleDrawer();
+  };
+
+  const handleSelectedOption = (val: string) => {
+    setFilterOption(val);
+  };
+
+  const handleDistrictChange = (value: string) => {
+    setRegionSelected(value);
+
+    // Set the region name based on the selected district code
+    const selectedDistrict = getDistrictOptions().find(
+      (option: { value: string }) => option.value === value
+    );
+    setRegionName(selectedDistrict ? selectedDistrict.label : ''); // Set region name
+  };
 
   const FilterOptions: FilterButtonOption = [
     {
-      title: 'Boundary',
-      value: 'boundary',
-      options: [
-        { label: 'District', value: 'district' },
-        { label: 'Revenue Circle', value: 'revenue-circle' },
-      ],
+      title: 'District',
+      value: 'district',
+      options: getDistrictOptions(),
       type: 'radio-button',
     },
     {
-      title: 'Region',
-      value: 'region',
-      options: getRegionOptions(),
+      title: 'Revenue-circle',
+      value: 'revenue-circle',
+      options: getRevenueOptions(),
       type: 'radio-button',
     },
     {
@@ -153,42 +210,6 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
       type: 'month-picker',
     },
   ];
-
-  const toggleDrawer = () => {
-    setIsDrawerOpen(!isDrawerOpen);
-  };
-
-  const handleSearchChange = (value: string) => {
-    // const regionOptions = getRegionOptions();
-    const regionOptions = FilterOptions[1].options;
-    if (regionOptions) {
-      if (value) {
-        const filtered = regionOptions.filter((item) =>
-          item?.label?.toLowerCase().includes(value?.toLowerCase())
-        );
-
-        setRegionOptions(filtered);
-      } else {
-        setRegionOptions(regionOptions);
-      }
-    }
-  };
-
-  const handleApplyFilters = () => {
-    setRegion(regionSelected, { shallow: false });
-    setBoundary(boundarySelected, { shallow: false });
-    setTimePeriod(timePeriodSelected, { shallow: false });
-  };
-
-  const handleClearAllFilters = () => {
-    toggleDrawer();
-    setBoundarySelected(boundary);
-    setRegionSelected('');
-    setTimePeriodSelected(timePeriod);
-    setRegion('', { shallow: false });
-    setBoundary(boundary, { shallow: false });
-    setTimePeriod(timePeriod, { shallow: false });
-  };
 
   return (
     <>
@@ -201,28 +222,26 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
       </Button>
 
       <MobileFilterBox
-        filterOptions={FilterOptions}
+        filterOptions={FilterOptions || []}
         handleApplyFilters={handleApplyFilters}
-        onSelectedOption={(selectedOption) => setSelectedOption(selectedOption)}
-        open={isDrawerOpen}
         handleClearFilters={handleClearAllFilters}
+        open={isDrawerOpen}
         toggleDrawerCallback={toggleDrawer}
+        onSelectedOption={handleSelectedOption}
       >
         <MobileFilterContent>
           <RenderOptions
-            filterOptions={FilterOptions}
-            selectedOption={selectedOption}
-            boundarySelected={boundarySelected}
-            timePeriod={timePeriod}
-            timePeriodData={timePeriods}
-            setBoundarySelected={setBoundarySelected}
-            setRegionSelected={setRegionSelected}
+            filterOptions={FilterOptions || []}
+            selectedOption={filterOption}
+            regionOptions={getDistrictOptions()} // Pass the result of getDistrictOptions here
+            revenueOptions={getRevenueOptions()} // Pass the result of getRevenueOptions here
             regionSelected={regionSelected}
+            setRegionSelected={handleDistrictChange}
+            revenueSelected={revenueSelected}
+            setRevenueSelected={setRevenueSelected}
+            timePeriodData={timePeriods}
+            timePeriodSelected={timePeriodSelected}
             setTimePeriodSelected={setTimePeriodSelected}
-            handleInputChangeCallback={(value: string) =>
-              handleSearchChange(value)
-            }
-            regionOptions={regionOptions}
           />
         </MobileFilterContent>
       </MobileFilterBox>
@@ -233,34 +252,38 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
 export const RenderOptions = ({
   filterOptions,
   selectedOption,
-  boundarySelected,
-  timePeriodData,
-  handleInputChangeCallback,
-  setBoundarySelected,
-  setRegionSelected,
-  setTimePeriodSelected,
   regionOptions,
+  revenueOptions, // New revenue options
   regionSelected,
+  setRegionSelected,
+  revenueSelected,
+  setRevenueSelected,
+  timePeriodData,
+  timePeriodSelected,
+  setTimePeriodSelected,
+  handleDistrictChange,
 }: any) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const findSelectedValue = filterOptions.filter(
     (opt: { value: string }) => opt.value === selectedOption
   );
-  const type = findSelectedValue[0]['type'];
-  const value = findSelectedValue[0]['value'];
-  const options = findSelectedValue[0]['options'];
 
-  const filteredFindOption = regionOptions.filter(
-    (opt: { value: string }) => opt.value === selectedOption
+  const type = findSelectedValue[0]?.type;
+  const value = findSelectedValue[0]?.value;
+  const options = findSelectedValue[0]?.options;
+
+  const filteredRegionOptions = regionOptions.filter(
+    (opt: { value: string }) => opt.value === regionSelected
   );
 
   const onRadioButtonChange = (selectedValue: string, value: string) => {
-    if (value === 'boundary') {
-      setBoundarySelected(selectedValue);
-      setRegionSelected('');
-    } else {
-      setRegionSelected(selectedValue);
+    if (value === 'district') {
+      setRegionSelected(selectedValue); // Directly set the region
+      // regionOptions(selectedValue);
+    } else if (value === 'revenue-circle') {
+      setRevenueSelected(selectedValue);
+      // revenueOptions(selectedValue);
     }
   };
 
@@ -284,82 +307,41 @@ export const RenderOptions = ({
   switch (type) {
     case 'radio-button':
       return (
-        <React.Fragment>
-          {value === 'region' && (
-            <TextField
-              label="Search"
-              name="name"
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e), handleInputChangeCallback(e);
-              }}
-            />
+        <RadioGroup
+          onChange={(e) => onRadioButtonChange(e, value)}
+          name={value}
+          value={value === 'district' ? regionSelected : revenueSelected}
+          // value={regionSelected}
+        >
+          {options.map((item: any, idx: any) =>
+            item.type === 'group' ? (
+              <div
+                key={idx}
+                style={{
+                  backgroundColor: '#F7F7F8',
+                  padding: '10px',
+                  marginTop: '15px',
+                }}
+              >
+                <span>{item.label}</span>
+              </div>
+            ) : (
+              <RadioItem key={idx} value={item.value}>
+                {item.label}
+              </RadioItem>
+            )
           )}
-          <RadioGroup
-            onChange={(e) => {
-              onRadioButtonChange(e, value);
-            }}
-            // key={value === 'boundary' ? boundary : regionSelected}
-            name={value}
-            value={value === 'boundary' ? boundarySelected : regionSelected}
-          >
-            {searchQuery === ''
-              ? // Render original options if search query is empty
-                options?.map(
-                  (
-                    item: { value: string; label: string; type: string },
-                    idx: number
-                  ) =>
-                    item.type === 'group' ? (
-                      <div
-                        key={idx}
-                        style={{
-                          backgroundColor: '#F7F7F8',
-                          padding: '4px',
-                          marginTop: '15px',
-                          fontWeight: 'bold',
-                          // textDecoration: 'underline',
-                        }}
-                      >
-                        <span>{item.label}</span>
-                      </div>
-                    ) : (
-                      <RadioItem key={idx} value={item.value}>
-                        {item.label}
-                      </RadioItem>
-                    )
-                )
-              : // Render filtered options based on search query
-                regionOptions?.map(
-                  (
-                    item: { value: string; label: string; type: string },
-                    idx: number
-                  ) =>
-                    item.type === 'group' ? (
-                      <div
-                        key={idx}
-                        style={{
-                          backgroundColor: '#F7F7F8',
-                          padding: '10px',
-                          marginTop: '15px',
-                        }}
-                      >
-                        <span>{item.label}</span>
-                      </div>
-                    ) : (
-                      <RadioItem key={idx} value={item.value}>
-                        {item.label}
-                      </RadioItem>
-                    )
-                )}
-          </RadioGroup>
-        </React.Fragment>
+        </RadioGroup>
       );
     case 'month-picker':
       return (
         <div className=" self-center">
           <YearCalendar
-            defaultValue={parseDate('2023-08-01')}
+            // defaultValue={parseDate('2023-08-01')}
+            defaultValue={parseDate(
+              `${timePeriodSelected.split('_')[0]}-${timePeriodSelected.split('_')[1]}-01` ||
+                '23-08-01'
+            )}
             minValue={parseDate(minDate || '2023-01-04')}
             maxValue={parseDate(maxDate || '2023-01-04')}
             onChange={(date) => {
