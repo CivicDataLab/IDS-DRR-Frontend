@@ -9,28 +9,28 @@ export const DatasetCatalog = () => {
     {
       name: 'Hazard',
       icon: '/logo/Hazard.svg',
-      link: '/datasets?categories=Flood+Hazard+Score',
+      link: '/datasets?categories=Hazard',
       description:
         'Hazards or Potential of a physical event that may cause loss of life or property',
     },
     {
       name: 'Exposure',
       icon: '/logo/Exposure.svg',
-      link: '/datasets?categories=Exposure+Score',
+      link: '/datasets?categories=Exposure',
       description:
         'Hazards or Potential of a physical event that may cause loss of life or property',
     },
     {
       name: 'Vulnerability',
       icon: '/logo/Vulnerability.svg',
-      link: '/datasets?categories=Vulnerability+Score',
+      link: '/datasets?categories=Vulnerability',
       description:
         'Physical, Social, Economic, and Environmental vulnerabilities which increase susceptibility of an area or a community to impact of hazards',
     },
     {
       name: 'Government Response',
       icon: '/logo/Government_Response.svg',
-      link: '/datasets?categories=Government+Response+Score',
+      link: '/datasets?categories=Government+Response',
       description:
         'Government Response with respect to capacities or resources that can reduce the level of risk, or the effects of disasters',
     },

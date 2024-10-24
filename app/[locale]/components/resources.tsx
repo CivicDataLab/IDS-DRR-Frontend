@@ -83,7 +83,7 @@ const Resources = () => {
             <CarouselContent className="container flex w-full gap-4 px-4 lg:gap-4 ">
               <CarouselItem className="ml-2  overflow-hidden rounded-2 bg-surfaceDefault p-3 md:basis-1/2 lg:ml-0 lg:basis-1/3  lg:p-6 ">
                 <Link
-                  href={`https://supersetv2.civicdatalab.in/superset/dashboard/p/qe6NrVOpNPz/`}
+                  href={`https://supersetv2.civicdatalab.in/superset/dashboard/p/Od0XQzvMNmr/`}
                   className="w-full"
                 >
                   <div className="flex w-full flex-col items-baseline justify-between gap-3">
@@ -103,7 +103,7 @@ const Resources = () => {
                           variant="bodySm"
                           fontWeight="regular"
                         >
-                          Last Updated: NA
+                          Last Updated: 2024-10-01
                         </Text>
                         <Text
                           color="default"
@@ -128,7 +128,7 @@ const Resources = () => {
                         variant="bodySm"
                         fontWeight="regular"
                       >
-                        Reference Period: January 2017 to September 2023
+                        Reference Period: January 2017 to August 2024
                       </Text>
                     </div>
                     <div className=" flex flex-wrap gap-2">
