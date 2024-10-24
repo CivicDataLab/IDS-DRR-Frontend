@@ -177,7 +177,7 @@ export const MapComponent = ({
       </div>`;
         },
         {
-          maxWidth: '90%',
+          maxWidth: isMobile ? '90%' : 200,
           closeButton: false,
           autoClose: false,
           closeOnEscapeKey: false,

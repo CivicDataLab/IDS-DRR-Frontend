@@ -43,7 +43,15 @@ export enum AccessTypes {
 
 export type AddDatasetPayload = OperationInfo | TypeDataset;
 
+export type AddDatasetToUseCasePayload = OperationInfo | TypeUseCase;
+
+export type AddResourceChartImagePayload = OperationInfo | TypeResourceChartImage;
+
+export type AddResourceChartPayload = OperationInfo | TypeResourceChart;
+
 export type AddUpdateDatasetMetadataPayload = OperationInfo | TypeDataset;
+
+export type AddUseCasePayload = OperationInfo | TypeUseCase;
 
 export enum AggregateType {
   Average = 'AVERAGE',
@@ -158,10 +166,10 @@ export enum ApiOrganizationOrganizationTypesEnum {
 
 /** resource chart details | aggregate type */
 export enum ApiResourceChartDetailsAggregateTypeEnum {
-  /** Average */
-  Average = 'AVERAGE',
   /** Count */
   Count = 'COUNT',
+  /** Average */
+  Mean = 'MEAN',
   /** None */
   None = 'NONE',
   /** Sum */
@@ -184,6 +192,8 @@ export enum ApiResourceChartDetailsChartTypeEnum {
 
 /** resource schema | format */
 export enum ApiResourceSchemaFormatEnum {
+  /** Boolean */
+  Boolean = 'BOOLEAN',
   /** Date */
   Date = 'DATE',
   /** Integer */
@@ -203,6 +213,18 @@ export enum ApiResourceTypeEnum {
   /** File */
   File = 'FILE'
 }
+
+/** use case | status */
+export enum ApiUseCaseStatusEnum {
+  /** Archived */
+  Archived = 'ARCHIVED',
+  /** Draft */
+  Draft = 'DRAFT',
+  /** Published */
+  Published = 'PUBLISHED'
+}
+
+export type ArchiveUseCasePayload = OperationInfo | TypeUseCase;
 
 /** Category(id, name, description, parent_id, slug) */
 export type CategoryFilter = {
@@ -258,7 +280,43 @@ export type DsMetadataItemType = {
   value: Scalars['String'];
 };
 
-/** Dataset(id, title, description, organization, created, modified, status) */
+/** DataSpace(id, name, description, logo, created, modified, homepage, contact_email, slug) */
+export type DataSpaceFilter = {
+  AND?: InputMaybe<DataSpaceFilter>;
+  DISTINCT?: InputMaybe<Scalars['Boolean']>;
+  NOT?: InputMaybe<DataSpaceFilter>;
+  OR?: InputMaybe<DataSpaceFilter>;
+  id?: InputMaybe<Scalars['ID']>;
+  slug?: InputMaybe<Scalars['String']>;
+};
+
+/** DataSpace(id, name, description, logo, created, modified, homepage, contact_email, slug) */
+export type DataSpaceInput = {
+  contactEmail?: InputMaybe<Scalars['String']>;
+  created?: InputMaybe<Scalars['DateTime']>;
+  description: Scalars['String'];
+  homepage?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['ID']>;
+  logo?: InputMaybe<Scalars['Upload']>;
+  modified?: InputMaybe<Scalars['DateTime']>;
+  name: Scalars['String'];
+  slug?: InputMaybe<Scalars['String']>;
+};
+
+/** DataSpace(id, name, description, logo, created, modified, homepage, contact_email, slug) */
+export type DataSpaceInputPartial = {
+  contactEmail?: InputMaybe<Scalars['String']>;
+  created?: InputMaybe<Scalars['DateTime']>;
+  description?: InputMaybe<Scalars['String']>;
+  homepage?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['ID']>;
+  logo?: InputMaybe<Scalars['Upload']>;
+  modified?: InputMaybe<Scalars['DateTime']>;
+  name?: InputMaybe<Scalars['String']>;
+  slug?: InputMaybe<Scalars['String']>;
+};
+
+/** Dataset(id, title, description, organization, dataspace, created, modified, status) */
 export type DatasetFilter = {
   AND?: InputMaybe<DatasetFilter>;
   DISTINCT?: InputMaybe<Scalars['Boolean']>;
@@ -368,35 +426,75 @@ export type MetadataInputPartial = {
 export type Mutation = {
   __typename?: 'Mutation';
   addDataset: AddDatasetPayload;
+  addDatasetToUseCase: AddDatasetToUseCasePayload;
+  addResourceChart: AddResourceChartPayload;
+  addResourceChartImage: AddResourceChartImagePayload;
   addUpdateDatasetMetadata: AddUpdateDatasetMetadataPayload;
+  addUseCase: AddUseCasePayload;
+  archiveUseCase: ArchiveUseCasePayload;
   createAccessModel: CreateAccessModelPayload;
   createCategory: TypeCategory;
+  createDataspace: TypeDataSpace;
   createFileResource: CreateFileResourcePayload;
   createFileResources: Array<TypeResource>;
   createMetadata: TypeMetadata;
   createOrganization: TypeOrganization;
+  createResourceChartImage: TypeResourceChartImage;
+  createUseCase: TypeUseCase;
   deleteAccessModel: Scalars['Boolean'];
   deleteCategory: TypeCategory;
   deleteDataset: Scalars['Boolean'];
+  deleteDataspace: TypeDataSpace;
   deleteFileResource: Scalars['Boolean'];
   deleteMetadata: Scalars['Boolean'];
   deleteOrganization: TypeOrganization;
   deleteResourceChart: Scalars['Boolean'];
+  deleteResourceChartImage: Scalars['Boolean'];
+  deleteUseCase: Scalars['Boolean'];
   editAccessModel: EditAccessModelPayload;
   editResourceChart: EditResourceChartPayload;
   publishDataset: PublishDatasetPayload;
+  publishUseCase: PublishUseCasePayload;
+  removeDatasetFromUseCase: RemoveDatasetFromUseCasePayload;
   resetFileResourceSchema: ResetFileResourceSchemaPayload;
+  unPublishDataset: UnPublishDatasetPayload;
+  unpublishUseCase: UnpublishUseCasePayload;
   updateCategory: TypeCategory;
   updateDataset: UpdateDatasetPayload;
+  updateDataspace: TypeDataSpace;
   updateFileResource: UpdateFileResourcePayload;
   updateMetadata: TypeMetadata;
   updateOrganization: TypeOrganization;
+  updateResourceChartImage: TypeResourceChartImage;
   updateSchema: UpdateSchemaPayload;
+  updateUseCase: TypeUseCase;
+  updateUsecaseDatasets: UpdateUsecaseDatasetsPayload;
+};
+
+
+export type MutationAddDatasetToUseCaseArgs = {
+  datasetId: Scalars['UUID'];
+  useCaseId: Scalars['Int'];
+};
+
+
+export type MutationAddResourceChartArgs = {
+  resource: Scalars['UUID'];
+};
+
+
+export type MutationAddResourceChartImageArgs = {
+  dataset: Scalars['UUID'];
 };
 
 
 export type MutationAddUpdateDatasetMetadataArgs = {
   updateMetadataInput: UpdateMetadataInput;
+};
+
+
+export type MutationArchiveUseCaseArgs = {
+  useCaseId: Scalars['Int'];
 };
 
 
@@ -407,6 +505,11 @@ export type MutationCreateAccessModelArgs = {
 
 export type MutationCreateCategoryArgs = {
   data: CategoryInput;
+};
+
+
+export type MutationCreateDataspaceArgs = {
+  data: DataSpaceInput;
 };
 
 
@@ -430,6 +533,16 @@ export type MutationCreateOrganizationArgs = {
 };
 
 
+export type MutationCreateResourceChartImageArgs = {
+  data: ResourceChartImageInput;
+};
+
+
+export type MutationCreateUseCaseArgs = {
+  data: UseCaseInput;
+};
+
+
 export type MutationDeleteAccessModelArgs = {
   accessModelId: Scalars['UUID'];
 };
@@ -442,6 +555,11 @@ export type MutationDeleteCategoryArgs = {
 
 export type MutationDeleteDatasetArgs = {
   datasetId: Scalars['UUID'];
+};
+
+
+export type MutationDeleteDataspaceArgs = {
+  data: NodeInput;
 };
 
 
@@ -465,6 +583,16 @@ export type MutationDeleteResourceChartArgs = {
 };
 
 
+export type MutationDeleteResourceChartImageArgs = {
+  resourceChartImageId: Scalars['String'];
+};
+
+
+export type MutationDeleteUseCaseArgs = {
+  useCaseId: Scalars['String'];
+};
+
+
 export type MutationEditAccessModelArgs = {
   accessModelInput: EditAccessModelInput;
 };
@@ -480,8 +608,29 @@ export type MutationPublishDatasetArgs = {
 };
 
 
+export type MutationPublishUseCaseArgs = {
+  useCaseId: Scalars['Int'];
+};
+
+
+export type MutationRemoveDatasetFromUseCaseArgs = {
+  datasetId: Scalars['UUID'];
+  useCaseId: Scalars['Int'];
+};
+
+
 export type MutationResetFileResourceSchemaArgs = {
   resourceId: Scalars['UUID'];
+};
+
+
+export type MutationUnPublishDatasetArgs = {
+  datasetId: Scalars['UUID'];
+};
+
+
+export type MutationUnpublishUseCaseArgs = {
+  useCaseId: Scalars['Int'];
 };
 
 
@@ -492,6 +641,11 @@ export type MutationUpdateCategoryArgs = {
 
 export type MutationUpdateDatasetArgs = {
   updateDatasetInput: UpdateDatasetInput;
+};
+
+
+export type MutationUpdateDataspaceArgs = {
+  data: DataSpaceInputPartial;
 };
 
 
@@ -510,8 +664,24 @@ export type MutationUpdateOrganizationArgs = {
 };
 
 
+export type MutationUpdateResourceChartImageArgs = {
+  data: ResourceChartImageInputPartial;
+};
+
+
 export type MutationUpdateSchemaArgs = {
   input: SchemaUpdateInput;
+};
+
+
+export type MutationUpdateUseCaseArgs = {
+  data: UseCaseInputPartial;
+};
+
+
+export type MutationUpdateUsecaseDatasetsArgs = {
+  datasetIds: Array<Scalars['UUID']>;
+  useCaseId: Scalars['Int'];
 };
 
 /** Input of an object that implements the `Node` interface. */
@@ -564,6 +734,16 @@ export enum Ordering {
 }
 
 /** Organization(id, name, description, logo, created, modified, homepage, contact_email, organization_types, parent, slug) */
+export type OrganizationFilter = {
+  AND?: InputMaybe<OrganizationFilter>;
+  DISTINCT?: InputMaybe<Scalars['Boolean']>;
+  NOT?: InputMaybe<OrganizationFilter>;
+  OR?: InputMaybe<OrganizationFilter>;
+  id?: InputMaybe<Scalars['ID']>;
+  slug?: InputMaybe<Scalars['String']>;
+};
+
+/** Organization(id, name, description, logo, created, modified, homepage, contact_email, organization_types, parent, slug) */
 export type OrganizationInput = {
   contactEmail?: InputMaybe<Scalars['String']>;
   created?: InputMaybe<Scalars['DateTime']>;
@@ -601,6 +781,8 @@ export type PreviewDetails = {
 
 export type PublishDatasetPayload = OperationInfo | TypeDataset;
 
+export type PublishUseCasePayload = OperationInfo | TypeUseCase;
+
 export type Query = {
   __typename?: 'Query';
   accessModel: TypeAccessModel;
@@ -609,10 +791,15 @@ export type Query = {
   chartsDetails: Array<TypeResourceChart>;
   datasetResources: Array<TypeResource>;
   datasets: Array<TypeDataset>;
+  dataspaces: Array<TypeDataSpace>;
+  getChartData: Array<TypeResourceChartImageTypeResourceChart>;
   metadata: Array<TypeMetadata>;
+  organisations: Array<TypeOrganization>;
   resource: Array<TypeResource>;
   resourceChart: TypeResourceChart;
+  resourceChartImages: Array<TypeResourceChartImage>;
   tags: Array<TypeTag>;
+  useCases: Array<TypeUseCase>;
 };
 
 
@@ -649,8 +836,25 @@ export type QueryDatasetsArgs = {
 };
 
 
+export type QueryDataspacesArgs = {
+  filters?: InputMaybe<DataSpaceFilter>;
+  pagination?: InputMaybe<OffsetPaginationInput>;
+};
+
+
+export type QueryGetChartDataArgs = {
+  datasetId: Scalars['UUID'];
+};
+
+
 export type QueryMetadataArgs = {
   filters?: InputMaybe<MetadataFilter>;
+};
+
+
+export type QueryOrganisationsArgs = {
+  filters?: InputMaybe<OrganizationFilter>;
+  pagination?: InputMaybe<OffsetPaginationInput>;
 };
 
 
@@ -658,9 +862,54 @@ export type QueryResourceChartArgs = {
   chartDetailsId: Scalars['UUID'];
 };
 
+
+export type QueryResourceChartImagesArgs = {
+  filters?: InputMaybe<ResourceChartImageFilter>;
+  pagination?: InputMaybe<OffsetPaginationInput>;
+};
+
+
+export type QueryUseCasesArgs = {
+  filters?: InputMaybe<UseCaseFilter>;
+  order?: InputMaybe<UseCaseOrder>;
+  pagination?: InputMaybe<OffsetPaginationInput>;
+};
+
+export type RemoveDatasetFromUseCasePayload = OperationInfo | TypeUseCase;
+
 export type ResetFileResourceSchemaPayload = OperationInfo | TypeResource;
 
-/** ResourceChartDetails(id, resource, name, description, chart_type, x_axis_label, y_axis_label, x_axis_column, y_axis_column, show_legend, aggregate_type, region_column, value_column) */
+/** ResourceChartImage(id, name, description, image, dataset, modified) */
+export type ResourceChartImageFilter = {
+  AND?: InputMaybe<ResourceChartImageFilter>;
+  DISTINCT?: InputMaybe<Scalars['Boolean']>;
+  NOT?: InputMaybe<ResourceChartImageFilter>;
+  OR?: InputMaybe<ResourceChartImageFilter>;
+  id?: InputMaybe<Scalars['UUID']>;
+  name?: InputMaybe<Scalars['String']>;
+};
+
+/** ResourceChartImage(id, name, description, image, dataset, modified) */
+export type ResourceChartImageInput = {
+  dataset?: InputMaybe<OneToManyInput>;
+  description?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  image?: InputMaybe<Scalars['Upload']>;
+  modified?: InputMaybe<Scalars['DateTime']>;
+  name?: InputMaybe<Scalars['String']>;
+};
+
+/** ResourceChartImage(id, name, description, image, dataset, modified) */
+export type ResourceChartImageInputPartial = {
+  dataset?: InputMaybe<OneToManyInput>;
+  description?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
+  image?: InputMaybe<Scalars['Upload']>;
+  modified?: InputMaybe<Scalars['DateTime']>;
+  name?: InputMaybe<Scalars['String']>;
+};
+
+/** ResourceChartDetails(id, resource, name, description, chart_type, x_axis_label, y_axis_label, x_axis_column, y_axis_column, show_legend, aggregate_type, region_column, value_column, modified) */
 export type ResourceChartInput = {
   aggregateType?: AggregateType;
   chartId?: InputMaybe<Scalars['UUID']>;
@@ -728,12 +977,28 @@ export type TypeCategory = {
   slug?: Maybe<Scalars['String']>;
 };
 
-/** Dataset(id, title, description, organization, created, modified, status) */
+/** DataSpace(id, name, description, logo, created, modified, homepage, contact_email, slug) */
+export type TypeDataSpace = {
+  __typename?: 'TypeDataSpace';
+  contactEmail?: Maybe<Scalars['String']>;
+  created: Scalars['DateTime'];
+  datasetCount: Scalars['Int'];
+  description: Scalars['String'];
+  homepage: Scalars['String'];
+  id: Scalars['ID'];
+  logo?: Maybe<DjangoImageType>;
+  modified: Scalars['DateTime'];
+  name: Scalars['String'];
+  slug?: Maybe<Scalars['String']>;
+};
+
+/** Dataset(id, title, description, organization, dataspace, created, modified, status) */
 export type TypeDataset = {
   __typename?: 'TypeDataset';
   accessModels: Array<TypeAccessModel>;
   categories: Array<TypeCategory>;
   created: Scalars['DateTime'];
+  dataspace?: Maybe<DjangoModelType>;
   description: Scalars['String'];
   formats: Array<Scalars['String']>;
   id: Scalars['UUID'];
@@ -747,7 +1012,7 @@ export type TypeDataset = {
 };
 
 
-/** Dataset(id, title, description, organization, created, modified, status) */
+/** Dataset(id, title, description, organization, dataspace, created, modified, status) */
 export type TypeDatasetCategoriesArgs = {
   filters?: InputMaybe<CategoryFilter>;
   pagination?: InputMaybe<OffsetPaginationInput>;
@@ -841,7 +1106,7 @@ export type TypeResourceAccessModel = {
   type: ApiAccessModelTypeEnum;
 };
 
-/** ResourceChartDetails(id, resource, name, description, chart_type, x_axis_label, y_axis_label, x_axis_column, y_axis_column, show_legend, aggregate_type, region_column, value_column) */
+/** ResourceChartDetails(id, resource, name, description, chart_type, x_axis_label, y_axis_label, x_axis_column, y_axis_column, show_legend, aggregate_type, region_column, value_column, modified) */
 export type TypeResourceChart = {
   __typename?: 'TypeResourceChart';
   aggregateType: ApiResourceChartDetailsAggregateTypeEnum;
@@ -849,6 +1114,7 @@ export type TypeResourceChart = {
   chartType: ApiResourceChartDetailsChartTypeEnum;
   description: Scalars['String'];
   id: Scalars['UUID'];
+  modified: Scalars['DateTime'];
   name: Scalars['String'];
   regionColumn?: Maybe<TypeResourceSchema>;
   resource: TypeResource;
@@ -859,6 +1125,19 @@ export type TypeResourceChart = {
   yAxisColumn?: Maybe<TypeResourceSchema>;
   yAxisLabel: Scalars['String'];
 };
+
+/** ResourceChartImage(id, name, description, image, dataset, modified) */
+export type TypeResourceChartImage = {
+  __typename?: 'TypeResourceChartImage';
+  dataset?: Maybe<DjangoModelType>;
+  description: Scalars['String'];
+  id: Scalars['UUID'];
+  image?: Maybe<DjangoImageType>;
+  modified: Scalars['DateTime'];
+  name: Scalars['String'];
+};
+
+export type TypeResourceChartImageTypeResourceChart = TypeResourceChart | TypeResourceChartImage;
 
 /** ResourceMetadata(id, resource, metadata_item, value) */
 export type TypeResourceMetadata = {
@@ -885,6 +1164,35 @@ export type TypeTag = {
   id: Scalars['ID'];
   value: Scalars['String'];
 };
+
+/** UseCase(id, title, description, logo, created, modified, website, contact_email, slug, status) */
+export type TypeUseCase = {
+  __typename?: 'TypeUseCase';
+  contactEmail?: Maybe<Scalars['String']>;
+  created: Scalars['DateTime'];
+  datasetCount: Scalars['Int'];
+  datasets?: Maybe<Array<TypeDataset>>;
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  logo?: Maybe<DjangoImageType>;
+  modified: Scalars['DateTime'];
+  slug?: Maybe<Scalars['String']>;
+  status: ApiUseCaseStatusEnum;
+  title?: Maybe<Scalars['String']>;
+  website: Scalars['String'];
+};
+
+
+/** UseCase(id, title, description, logo, created, modified, website, contact_email, slug, status) */
+export type TypeUseCaseDatasetsArgs = {
+  filters?: InputMaybe<DatasetFilter>;
+  order?: InputMaybe<DatasetOrder>;
+  pagination?: InputMaybe<OffsetPaginationInput>;
+};
+
+export type UnPublishDatasetPayload = OperationInfo | TypeDataset;
+
+export type UnpublishUseCasePayload = OperationInfo | TypeUseCase;
 
 export type UpdateDatasetInput = {
   dataset: Scalars['UUID'];
@@ -915,6 +1223,59 @@ export type UpdateMetadataInput = {
 };
 
 export type UpdateSchemaPayload = OperationInfo | TypeResource;
+
+export type UpdateUsecaseDatasetsPayload = OperationInfo | TypeUseCase;
+
+/** UseCase(id, title, description, logo, created, modified, website, contact_email, slug, status) */
+export type UseCaseFilter = {
+  AND?: InputMaybe<UseCaseFilter>;
+  DISTINCT?: InputMaybe<Scalars['Boolean']>;
+  NOT?: InputMaybe<UseCaseFilter>;
+  OR?: InputMaybe<UseCaseFilter>;
+  id?: InputMaybe<Scalars['ID']>;
+  slug?: InputMaybe<Scalars['String']>;
+  status?: InputMaybe<UseCaseStatus>;
+};
+
+/** UseCase(id, title, description, logo, created, modified, website, contact_email, slug, status) */
+export type UseCaseInput = {
+  contactEmail?: InputMaybe<Scalars['String']>;
+  created?: InputMaybe<Scalars['DateTime']>;
+  description?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['ID']>;
+  logo?: InputMaybe<Scalars['Upload']>;
+  modified?: InputMaybe<Scalars['DateTime']>;
+  slug?: InputMaybe<Scalars['String']>;
+  status?: InputMaybe<ApiUseCaseStatusEnum>;
+  title?: InputMaybe<Scalars['String']>;
+  website?: InputMaybe<Scalars['String']>;
+};
+
+/** UseCase(id, title, description, logo, created, modified, website, contact_email, slug, status) */
+export type UseCaseInputPartial = {
+  contactEmail?: InputMaybe<Scalars['String']>;
+  created?: InputMaybe<Scalars['DateTime']>;
+  description?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
+  logo?: InputMaybe<Scalars['Upload']>;
+  modified?: InputMaybe<Scalars['DateTime']>;
+  slug?: InputMaybe<Scalars['String']>;
+  status?: InputMaybe<ApiUseCaseStatusEnum>;
+  title?: InputMaybe<Scalars['String']>;
+  website?: InputMaybe<Scalars['String']>;
+};
+
+export type UseCaseOrder = {
+  created?: InputMaybe<Ordering>;
+  modified?: InputMaybe<Ordering>;
+  title?: InputMaybe<Ordering>;
+};
+
+export enum UseCaseStatus {
+  Archived = 'ARCHIVED',
+  Draft = 'DRAFT',
+  Published = 'PUBLISHED'
+}
 
 export enum ValidatorType {
   MinLength = 'MIN_LENGTH',

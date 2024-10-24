@@ -1,8 +1,8 @@
 'use client';
 
 // run a function when the pathname changes
-import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 
 export const useNavigationEvent = (onPathnameChange: () => void) => {
   const pathname = usePathname(); // Get current route
