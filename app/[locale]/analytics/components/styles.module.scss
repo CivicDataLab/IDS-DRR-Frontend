@@ -31,7 +31,7 @@
 .mobileOverlay {
   position: absolute;
   bottom: -100%; /* Initially off-screen */
-  z-index: 99999;
+  z-index: 100001;
   height: calc(100dvh - 86%);
   opacity: 95%;
   box-shadow: var(--shadow-basic-md);

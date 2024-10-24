@@ -317,6 +317,7 @@ export function OutputWindow({
               region == null && 'hidden', // Use the 'hidden' class to hide the aside when it's not visible
               isExpanded && styles.expandedOverlay
             )}
+            style={{ zIndex: '100000' }}
           >
             {/* <div className=" flex items-center">swipe up</div> */}
             <div className="mb-2 flex items-center justify-center">

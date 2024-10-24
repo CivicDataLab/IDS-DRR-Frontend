@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useWindowSize } from '@/hooks/use-window-size';
 import * as d3 from 'd3-scale';
 import { interpolateBlues } from 'd3-scale-chromatic';
 import { Spinner, Text } from 'opub-ui';
@@ -40,26 +41,9 @@ export const MapComponent = ({
 
   const params = new URLSearchParams(window.location.search);
   const districtCode = params.get('district-code');
-  const [isMobile, setIsMobile] = React.useState<boolean>(
-    window.innerWidth < 768
-  );
 
-  // Function to update isMobile state based on window width
-  const handleResize = () => {
-    setIsMobile(window.innerWidth < 768);
-  };
-
-  React.useEffect(() => {
-    // Set up the resize event listener
-    window.addEventListener('resize', handleResize);
-
-    // Cleanup event listener on component unmount
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  console.log('isMobile', isMobile);
+  const { width } = useWindowSize();
+  const isMobile = width < 768;
 
   const values = [];
   for (let i = 0; i < mapFeatures?.length; i++) {
@@ -193,7 +177,7 @@ export const MapComponent = ({
       </div>`;
         },
         {
-          maxWidth: 200,
+          maxWidth: '90%',
           closeButton: false,
           autoClose: false,
           closeOnEscapeKey: false,
@@ -238,6 +222,14 @@ export const MapComponent = ({
     }
   }, [map, districtCode]);
 
+  if (mapDataloading || revenueMapDataLoading)
+    return (
+      <div className="flex h-full flex-col place-content-center items-center">
+        <Spinner color="highlight" />
+        <Text>Loading...</Text>
+      </div>
+    );
+
   return (
     <>
       {' '}
@@ -252,6 +244,7 @@ export const MapComponent = ({
           zoomOnClick={false}
           isCustomColor={!Factors.includes(indicator)}
           customColor={colorScale}
+          horizontalLegend={isMobile ? true : false}
           legendHeading={{
             heading: !Factors.includes(indicator)
               ? `${getFactorNameBySlug(indicatorsData, indicator)} ${getUnitsBySlug(indicatorsData, indicator) && `(${getUnitsBySlug(indicatorsData, indicator)})`}`
