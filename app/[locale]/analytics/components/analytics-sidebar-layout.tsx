@@ -78,7 +78,7 @@ export function IndicatorListWrapper() {
             styles.Collapse
           )}
         >
-          <div className="h-[90vh] overflow-x-hidden overflow-y-scroll  pt-6">
+          <div className="h-full overflow-x-hidden overflow-y-scroll  pt-6">
             <span
               className={cn(
                 ' rounded items-center justify-end pl-0'

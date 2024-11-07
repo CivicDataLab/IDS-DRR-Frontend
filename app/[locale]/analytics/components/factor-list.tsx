@@ -54,10 +54,7 @@ export function getIcon(slug: string) {
 export function FactorList() {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator');
-  const time_period = searchParams.get('time-period');
-  const boundary = searchParams.get('boundary') || 'district';
-  const districtRegion = searchParams.get('district-code') || '';
-  const revenueRegion = searchParams.get('revenue-code') || '';
+  const [, setIndicatorSelected] = useQueryState('indicator');
 
   const currentURL = typeof window !== 'undefined' ? window.location.href : '';
 
@@ -101,10 +98,7 @@ export function FactorList() {
   }, [indicator]);
 
   const handleChange = (selected: string) => {
-    setSelectedIndicator(selected);
-    // Navigate to the selected indicator
-    const selectedSlug = selected;
-    window.location.href = `?indicator=${selectedSlug}&time-period=${time_period}&district-code=${districtRegion}&revenue-code=${revenueRegion}&view=map`;
+    setIndicatorSelected(selected, { shallow: false });
   };
 
   const flattenIndicators = (

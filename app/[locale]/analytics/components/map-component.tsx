@@ -234,7 +234,7 @@ export const MapComponent = ({
     <>
       {' '}
       <div
-        className={`relative w-full ${isMobile ? 'h-full' : 'h-[90%]'} ${isMobile ? 'pt-[62px]' : ''}`}
+        className={`relative w-full ${isMobile ? 'h-full' : 'h-[90%]'} ${isMobile ? 'pt-[84px]' : ''}`}
       >
         {' '}
         <MapChart
