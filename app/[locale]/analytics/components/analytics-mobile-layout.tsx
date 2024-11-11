@@ -9,13 +9,14 @@ import {
   parseAsString,
   useQueryState,
 } from 'next-usequerystate';
-import { Button, Icon, Menu, Text } from 'opub-ui';
+import { Button, Icon, Menu, Select, Text } from 'opub-ui';
 
 import {
   ANALYTICS_DISTRICT_MAP_DATA,
   ANALYTICS_GEOGRAPHY_DATA,
   ANALYTICS_INDICATORS,
   ANALYTICS_REVENUE_MAP_DATA,
+  ANALYTICS_TABLE_DATA,
   ANALYTICS_TIME_PERIODS,
 } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
@@ -29,6 +30,7 @@ import {
 import { FactorList } from './factor-list';
 import { FilterComp } from './filter-component';
 import { MapComponent } from './map-component';
+import { TableComponent } from './table-component';
 
 const currentURL = typeof window !== 'undefined' ? window.location.href : '';
 
@@ -75,7 +77,7 @@ export function AnalyticsMobileLayout({
       icon: Icons.IconTableAlias,
       title: 'Table',
       value: 'table',
-      disabled: true,
+      disabled: false,
     },
     {
       icon: Icons.IconDots,
@@ -196,6 +198,24 @@ export function AnalyticsMobileLayout({
       refetchOnReconnect: false,
     }
   );
+  const tableData = useQuery(
+    [`table_data_${indicator}_${districtCode}`],
+    () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_TABLE_DATA,
+        {
+          indcFilter: { slug: indicator },
+          dataFilter: { dataPeriod: timePeriodSelected },
+          ...(districtCode && { geoFilter: { code: [districtCode] } }),
+        }
+      ),
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
 
   let minDate, maxDate;
   if (timePeriods.data) {
@@ -285,6 +305,42 @@ export function AnalyticsMobileLayout({
   const toggleShareOptions = () => {
     setShareOptionsVisible((prev) => !prev); // Toggle visibility of share options
   };
+  const [filteredTableData, setFilteredTableData] = useState(
+    tableData.data?.tableData
+  );
+
+  function SelectOptions() {
+    return (
+      <React.Fragment>
+        <Select
+          label="Select District"
+          value={districtCode || ''}
+          name="district-select"
+          className=" flex-grow"
+          onChange={(e) => {
+            handleDistrictChange(e);
+          }}
+          options={DistrictDropDownOption}
+        />
+        <Select
+          label="Select Revenue Circle"
+          value={revenueCode || ''}
+          placeholder={
+            !districtCode
+              ? 'Select a district to enable'
+              : 'Select a revenue circle'
+          }
+          name="revenue-circle-select"
+          className=" flex-grow"
+          disabled={!districtCode}
+          onChange={(e) => {
+            setRevenueCode(e, { shallow: false });
+          }}
+          options={getRevenueCircleOptions()}
+        />
+      </React.Fragment>
+    );
+  }
 
   const RenderView = ({ selectedView }: any) => {
     const isRegionSelected = Boolean(districtCode || revenueCode);
@@ -308,7 +364,21 @@ export function AnalyticsMobileLayout({
         return <div className="pt-[62px]"></div>;
 
       case 'table':
-        return <div className="pt-[62px]"></div>;
+        return (
+          <div>
+            <div className="mb-2 mt-16 flex items-start justify-evenly gap-3 p-4 pb-1 pt-0">
+              <SelectOptions />
+            </div>
+            <TableComponent
+              data={
+                filteredTableData?.length > 0
+                  ? filteredTableData
+                  : tableData.data?.tableData
+              }
+              isLoading={tableData.isLoading}
+            />
+          </div>
+        );
 
       default:
         return null;
