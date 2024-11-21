@@ -59,6 +59,13 @@ const RiskText: {
   },
 };
 
+//State Codes
+
+const STATE_CODES = {
+  assam: '18',
+  'himachal-pradesh': '02',
+};
+
 // Datasets page
 const DatasetSource = 'Source';
 const LastUpdated = 'Last Updated';
@@ -179,4 +186,5 @@ export {
   CDLPartnershipTextOne,
   CDLPartnershipTextTwo,
   CDLPartnershipTextThree,
+  STATE_CODES,
 };

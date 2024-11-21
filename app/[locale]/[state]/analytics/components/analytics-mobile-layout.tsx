@@ -20,19 +20,12 @@ import {
   ANALYTICS_TIME_PERIODS,
 } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
-import { cn, copyCurrentURL, formatDate, handleRedirect } from '@/lib/utils';
+import { cn, copyCurrentURL, formatDate } from '@/lib/utils';
 import Icons from '@/components/icons';
-import { constructRegionOptions } from '../utils/utils';
-import {
-  AnalyticsDashboardLayout,
-  OutputWindowComponent,
-} from './analytics-sidebar-layout';
 import { FactorList } from './factor-list';
 import { FilterComp } from './filter-component';
 import { MapComponent } from './map-component';
 import { TableComponent } from './table-component';
-
-const currentURL = typeof window !== 'undefined' ? window.location.href : '';
 
 interface Option {
   disabled?: boolean;
@@ -44,11 +37,9 @@ interface Option {
 export function AnalyticsMobileLayout({
   timePeriod,
   indicator,
-  boundary,
 }: {
   timePeriod: string;
   indicator: string;
-  boundary: string;
 }) {
   //Remove default page scroll to make only the content scrollable
   useLockBody();

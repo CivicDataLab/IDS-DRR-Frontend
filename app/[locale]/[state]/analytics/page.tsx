@@ -20,8 +20,6 @@ export default async function Home({
 }) {
   const queryClient = getQueryClient();
 
-  const boundary = searchParams['revenue-code'] ? 'revenue-circle' : 'district';
-
   try {
     await queryClient.prefetchQuery([`timePeriods`], () =>
       GraphQL(
@@ -43,9 +41,9 @@ export default async function Home({
     captureException(error);
   }
 
-  if (Object.keys(searchParams).length === 0) {
-    redirect(AnalyticsURL);
-  }
+  // if (Object.keys(searchParams).length === 0) {
+  //   redirect(AnalyticsURL);
+  // }
 
   const dehydratedState = dehydrate(queryClient);
 
@@ -55,7 +53,6 @@ export default async function Home({
         <AnalyticsMobileLayout
           timePeriod={searchParams['time-period']}
           indicator={searchParams?.indicator}
-          boundary={boundary}
         />
       </MediaRendering>
       <MediaRendering minWidth="1024" maxWidth={null}>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { parseDate } from '@internationalized/date';
 import { useQuery } from '@tanstack/react-query';
 import { parseAsString, useQueryState } from 'next-usequerystate';
@@ -16,6 +16,7 @@ import {
   Text,
 } from 'opub-ui';
 
+import { STATE_CODES } from '@/config/consts';
 import {
   ANALYTICS_DISTRICT_MAP_DATA,
   ANALYTICS_GEOGRAPHY_DATA,
@@ -53,17 +54,20 @@ export function Content() {
   const [revenueCode, setRevenueCode] = useQueryState('revenue-code');
   const [view, setView] = useQueryState('view');
 
+  const params = useParams();
+  const state = params.state;
+  const urlToFetch =
+    state === 'asssam'
+      ? process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL
+      : process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL_HP;
+
   const mapData = useQuery(
     [`mapQuery_district_${indicator}_${timePeriodSelected}`],
     () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_DISTRICT_MAP_DATA,
-        {
-          indcFilter: { slug: indicator },
-          dataFilter: { dataPeriod: timePeriodSelected },
-        }
-      ),
+      GraphQL(`${urlToFetch}/graphql`, ANALYTICS_DISTRICT_MAP_DATA, {
+        indcFilter: { slug: indicator },
+        dataFilter: { dataPeriod: timePeriodSelected },
+      }),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -74,14 +78,11 @@ export function Content() {
   const revenueMapData = useQuery(
     [`mapQuery_revenue-circle_${indicator}_${timePeriodSelected}`],
     () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_REVENUE_MAP_DATA,
-        {
-          indcFilter: { slug: indicator },
-          dataFilter: { dataPeriod: timePeriodSelected },
-        }
-      ),
+      GraphQL(`${urlToFetch}/graphql`, ANALYTICS_REVENUE_MAP_DATA, {
+        indcFilter: { slug: indicator },
+        dataFilter: { dataPeriod: timePeriodSelected },
+        ...(state !== 'assam' && { geoFilter: { code: '02' } }),
+      }),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
