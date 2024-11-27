@@ -54,20 +54,24 @@ export function Content() {
   const [revenueCode, setRevenueCode] = useQueryState('revenue-code');
   const [view, setView] = useQueryState('view');
 
-  const params = useParams();
-  const state = params.state;
-  const urlToFetch =
-    state === 'asssam'
-      ? process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL
-      : process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL_HP;
+  const routerParams = useParams();
+
+  const stateCode = STATE_CODES[routerParams.state as keyof typeof STATE_CODES];
 
   const mapData = useQuery(
     [`mapQuery_district_${indicator}_${timePeriodSelected}`],
     () =>
-      GraphQL(`${urlToFetch}/graphql`, ANALYTICS_DISTRICT_MAP_DATA, {
-        indcFilter: { slug: indicator },
-        dataFilter: { dataPeriod: timePeriodSelected },
-      }),
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_DISTRICT_MAP_DATA,
+        {
+          indcFilter: { slug: indicator },
+          dataFilter: { dataPeriod: timePeriodSelected },
+          geoFilter: {
+            code: [STATE_CODES[routerParams.state as keyof typeof STATE_CODES]],
+          },
+        }
+      ),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -78,11 +82,17 @@ export function Content() {
   const revenueMapData = useQuery(
     [`mapQuery_revenue-circle_${indicator}_${timePeriodSelected}`],
     () =>
-      GraphQL(`${urlToFetch}/graphql`, ANALYTICS_REVENUE_MAP_DATA, {
-        indcFilter: { slug: indicator },
-        dataFilter: { dataPeriod: timePeriodSelected },
-        ...(state !== 'assam' && { geoFilter: { code: '02' } }),
-      }),
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_REVENUE_MAP_DATA,
+        {
+          indcFilter: { slug: indicator },
+          dataFilter: { dataPeriod: timePeriodSelected },
+          geoFilter: {
+            code: [STATE_CODES[routerParams.state as keyof typeof STATE_CODES]],
+          },
+        }
+      ),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -97,7 +107,10 @@ export function Content() {
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_GEOGRAPHY_DATA,
         {
-          geoFilter: { type: 'district' },
+          geoFilter: {
+            type: 'district',
+            code: [STATE_CODES[routerParams.state as keyof typeof STATE_CODES]],
+          },
         }
       ),
     {
@@ -114,7 +127,14 @@ export function Content() {
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_GEOGRAPHY_DATA,
         {
-          geoFilter: { type: 'revenue-circle' },
+          geoFilter: {
+            type:
+              STATE_CODES[routerParams.state as keyof typeof STATE_CODES] ==
+              '02'
+                ? 'tehsil'
+                : 'revenue-circle',
+            code: [STATE_CODES[routerParams.state as keyof typeof STATE_CODES]],
+          },
         }
       ),
     {
@@ -129,7 +149,8 @@ export function Content() {
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_TIME_PERIODS
+        ANALYTICS_TIME_PERIODS,
+        []
       ),
     {
       refetchOnMount: false,
@@ -164,7 +185,12 @@ export function Content() {
         {
           indcFilter: { slug: indicator },
           dataFilter: { dataPeriod: timePeriodSelected },
-          ...(districtCode && { geoFilter: { code: [districtCode] } }),
+          geoFilter: {
+            code: [
+              districtCode ??
+                STATE_CODES[routerParams.state as keyof typeof STATE_CODES],
+            ],
+          },
         }
       ),
     {
@@ -180,11 +206,13 @@ export function Content() {
 
   let minDate, maxDate;
   if (timePeriods.data) {
-    const datesArray = timePeriods?.data?.getDataTimePeriods.map((date) => {
-      const [year, month] = date.value.split('_');
-      return new Date(parseInt(year), parseInt(month));
-    });
-    const timestamps = datesArray.map((date) => date.getTime());
+    const datesArray = timePeriods?.data?.getDataTimePeriods.map(
+      (date: any) => {
+        const [year, month] = date.value.split('_');
+        return new Date(parseInt(year), parseInt(month));
+      }
+    );
+    const timestamps = datesArray.map((date: any) => date.getTime());
     // Find the minimum and maximum timestamps
     const minTimestamp = Math.min(...timestamps);
     const maxTimestamp = Math.max(...timestamps);
@@ -211,26 +239,41 @@ export function Content() {
 
   if (revenueGeographiesData.data && !revenueGeographiesData.isFetching) {
     let rawData = revenueGeographiesData?.data?.getDistrictRevCircle;
+
     if (rawData) {
       for (const revenueCircle in rawData) {
         const revenueCircles = rawData[revenueCircle];
         revenueCircles.forEach(
-          (circle: {
-            'revenue-circle': string;
-            code: string;
-            district_code: string;
-          }) => {
+          (
+            circle: any
+            // {
+            // 'revenue-circle': string;
+            // tehsil: string;
+            // code: string;
+            // district_code: string;
+            // }
+          ) => {
             RevCircleDropdownOptions.push({
-              label: circle['revenue-circle'],
+              label:
+                circle[stateCode == '02' ? 'tehsil' : 'revenue-circle'] ||
+                circle['revenue-circle'],
               value: circle.code,
               districtCode: circle.district_code,
             });
           }
         );
       }
+
       RevCircleDropdownOptions.sort((a, b) => a.label.localeCompare(b.label));
     }
   }
+
+  React.useEffect(() => {
+    districtGeographiesData.refetch();
+    mapData.refetch();
+    revenueMapData.refetch();
+    revenueGeographiesData.refetch();
+  }, [stateCode]);
 
   React.useEffect(() => {
     if (revenueCode !== '') {

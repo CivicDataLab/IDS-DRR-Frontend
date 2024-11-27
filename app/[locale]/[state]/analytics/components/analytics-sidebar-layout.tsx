@@ -1,10 +1,11 @@
 'use client';
 
 import React from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { Spinner, Text } from 'opub-ui';
+import { Select, Spinner, Text } from 'opub-ui';
 
+import { STATE_CODES, STATE_CODES_DROPDOWN } from '@/config/consts';
 import {
   ANALYTICS_DISTRICT_DATA,
   ANALYTICS_INDICATORS,
@@ -61,6 +62,8 @@ export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
 
 export function IndicatorListWrapper() {
   const searchParams = useSearchParams();
+  const routerParams = useParams();
+  const router = useRouter();
 
   const region = searchParams.get('district-code') || '';
   const view = searchParams.get('view') || '';
@@ -86,7 +89,31 @@ export function IndicatorListWrapper() {
               )}
             ></span>
             <div>
-              <div className=" mb-5  pl-4">
+              <div className="mb-5 pl-4">
+                <Text className="text-textSubdued" fontWeight="bold">
+                  ANALYTICS DASHBOARD
+                </Text>
+              </div>
+
+              <div className="mb-5 px-3">
+                <Select
+                  name={'State'}
+                  label={''}
+                  value={
+                    STATE_CODES_DROPDOWN.find(
+                      (item) => item.value === routerParams.state
+                    )?.value
+                  }
+                  options={STATE_CODES_DROPDOWN}
+                  onChange={(e) => {
+                    router.push(
+                      `/${e}/analytics/?indicator=risk-score&time-period=${process.env.TIME_PERIOD || process.env.NEXT_PUBLIC_TIME_PERIOD}&view=map`
+                    );
+                  }}
+                />
+              </div>
+
+              <div className="mb-5 pl-4">
                 <Text className="text-textSubdued" fontWeight="bold">
                   INDICATORS
                 </Text>
@@ -118,6 +145,7 @@ export function OutputWindowComponent() {
     ? 'revenue-circle'
     : 'district';
 
+  const routerParams = useParams();
   const sidePaneQuery: any = !searchParams.get('revenue-code')
     ? ANALYTICS_DISTRICT_DATA
     : ANALYTICS_REVENUE_TABLE_DATA;
@@ -131,7 +159,12 @@ export function OutputWindowComponent() {
         {
           indcFilter: { slug: indicator },
           dataFilter: { dataPeriod: time_period },
-          ...(region && { geoFilter: { code: region } }),
+          geoFilter: {
+            code:
+              region === null || typeof region === 'undefined' || region === ''
+                ? STATE_CODES[routerParams.state as keyof typeof STATE_CODES]
+                : region,
+          },
         }
       ),
     {
@@ -164,7 +197,7 @@ export function OutputWindowComponent() {
         <OutputWindow
           data={
             sidePaneData?.data[
-              !searchParams.get('revenue-code')
+              !searchParams?.get('revenue-code')
                 ? 'districtViewData'
                 : 'revCircleViewData'
             ]

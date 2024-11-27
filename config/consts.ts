@@ -66,6 +66,17 @@ const STATE_CODES = {
   'himachal-pradesh': '02',
 };
 
+const STATE_CODES_DROPDOWN = [
+  {
+    label: 'Assam',
+    value: 'assam',
+  },
+  {
+    label: 'Himachal Pradesh',
+    value: 'himachal-pradesh',
+  },
+];
+
 // Datasets page
 const DatasetSource = 'Source';
 const LastUpdated = 'Last Updated';
@@ -187,4 +198,5 @@ export {
   CDLPartnershipTextTwo,
   CDLPartnershipTextThree,
   STATE_CODES,
+  STATE_CODES_DROPDOWN,
 };
