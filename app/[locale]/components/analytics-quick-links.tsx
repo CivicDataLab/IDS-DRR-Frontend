@@ -18,13 +18,13 @@ export const QuickLinks = () => {
       name: 'Assam',
       status: 'active',
       icon: '/logo/states/Assam.svg',
-      link: AnalyticsURL,
+      link: `/assam${AnalyticsURL}`,
     },
     {
       name: 'Himachal Pradesh',
-      status: 'inactive',
+      status: 'active',
       icon: '/logo/states/Hp.svg',
-      link: '',
+      link: `/himachal-pradesh${AnalyticsURL}`,
     },
     {
       name: 'Odisha',

@@ -312,12 +312,12 @@ export function Content() {
           options={DistrictDropDownOption}
         />
         <Select
-          label="Select Revenue Circle"
+          label={`Select ${stateCode === '02' ? 'Tehsil' : 'Revenue Circle'}`}
           value={revenueCode || ''}
           placeholder={
             !districtCode
               ? 'Select a district to enable'
-              : 'Select a revenue circle'
+              : `Select a ${stateCode === '02' ? 'tehsil' : 'revenue circle'}`
           }
           name="revenue-circle-select"
           className=" flex-grow"

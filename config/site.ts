@@ -66,7 +66,7 @@ export const mainConfig: MainConfig = {
     },
     {
       title: 'Analytics',
-      href: AnalyticsURL,
+      href: `/assam${AnalyticsURL}`,
     },
     {
       title: 'Datasets',
