@@ -24,8 +24,7 @@ export default async function Home({
     await queryClient.prefetchQuery([`timePeriods`], () =>
       GraphQL(
         `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_TIME_PERIODS,
-        []
+        ANALYTICS_TIME_PERIODS
       )
     );
 

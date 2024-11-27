@@ -149,8 +149,7 @@ export function Content() {
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_TIME_PERIODS,
-        []
+        ANALYTICS_TIME_PERIODS
       ),
     {
       refetchOnMount: false,
