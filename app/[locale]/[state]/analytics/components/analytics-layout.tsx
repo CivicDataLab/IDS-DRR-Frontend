@@ -59,7 +59,7 @@ export function Content() {
   const stateCode = STATE_CODES[routerParams.state as keyof typeof STATE_CODES];
 
   const mapData = useQuery(
-    [`mapQuery_district_${indicator}_${timePeriodSelected}`],
+    [`mapQuery_district_${stateCode}_${indicator}_${timePeriodSelected}`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
@@ -80,7 +80,7 @@ export function Content() {
   );
 
   const revenueMapData = useQuery(
-    [`mapQuery_revenue-circle_${indicator}_${timePeriodSelected}`],
+    [`mapQuery_revenue-circle_${stateCode}_${indicator}_${timePeriodSelected}`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
@@ -101,7 +101,7 @@ export function Content() {
   );
 
   const districtGeographiesData = useQuery(
-    [`geographies_data_district`],
+    [`geographies_data_district_${stateCode}`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
@@ -121,7 +121,7 @@ export function Content() {
   );
 
   const revenueGeographiesData = useQuery(
-    [`geographies_data_revenue`],
+    [`geographies_data_revenue_${stateCode}`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
@@ -176,7 +176,7 @@ export function Content() {
   );
 
   const tableData = useQuery(
-    [`table_data_${indicator}_${districtCode}`],
+    [`table_data_${stateCode}_${indicator}_${districtCode}`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
@@ -266,13 +266,6 @@ export function Content() {
       RevCircleDropdownOptions.sort((a, b) => a.label.localeCompare(b.label));
     }
   }
-
-  React.useEffect(() => {
-    districtGeographiesData.refetch();
-    mapData.refetch();
-    revenueMapData.refetch();
-    revenueGeographiesData.refetch();
-  }, [stateCode]);
 
   React.useEffect(() => {
     if (revenueCode !== '') {
