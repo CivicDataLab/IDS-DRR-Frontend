@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { parseDate } from '@internationalized/date';
 import { useQuery } from '@tanstack/react-query';
 import { parseAsString, useQueryState } from 'next-usequerystate';
@@ -16,6 +17,7 @@ import {
   Text,
 } from 'opub-ui';
 
+import { STATE_CODES } from '@/config/consts';
 import { STATE_CODES } from '@/config/consts';
 import {
   ANALYTICS_DISTRICT_MAP_DATA,
@@ -57,6 +59,13 @@ export function Content() {
   const routerParams = useParams();
 
   const stateCode = STATE_CODES[routerParams.state as keyof typeof STATE_CODES];
+
+  const params = useParams();
+  const state = params.state;
+  const urlToFetch =
+    state === 'asssam'
+      ? process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL
+      : process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL_HP;
 
   const mapData = useQuery(
     [`mapQuery_district_${stateCode}_${indicator}_${timePeriodSelected}`],
