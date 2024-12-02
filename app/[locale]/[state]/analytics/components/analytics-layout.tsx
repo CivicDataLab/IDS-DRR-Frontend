@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
-import { useParams, useSearchParams } from 'next/navigation';
 import { parseDate } from '@internationalized/date';
 import { useQuery } from '@tanstack/react-query';
 import { parseAsString, useQueryState } from 'next-usequerystate';
@@ -17,7 +16,6 @@ import {
   Text,
 } from 'opub-ui';
 
-import { STATE_CODES } from '@/config/consts';
 import { STATE_CODES } from '@/config/consts';
 import {
   ANALYTICS_DISTRICT_DATA,

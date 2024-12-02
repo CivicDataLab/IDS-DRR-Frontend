@@ -21,7 +21,6 @@ import {
 } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { cn, copyCurrentURL, formatDate } from '@/lib/utils';
-import { cn, copyCurrentURL, formatDate } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { OutputWindowComponent } from './analytics-layout';
 import { FactorList } from './factor-list';
