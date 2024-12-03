@@ -186,8 +186,11 @@ export function Content() {
           dataFilter: { dataPeriod: timePeriodSelected },
           geoFilter: {
             code: [
-              districtCode ??
-                STATE_CODES[routerParams.state as keyof typeof STATE_CODES],
+              districtCode === '' ||
+              districtCode === null ||
+              typeof districtCode === 'undefined'
+                ? STATE_CODES[routerParams.state as keyof typeof STATE_CODES]
+                : districtCode,
             ],
           },
         }
