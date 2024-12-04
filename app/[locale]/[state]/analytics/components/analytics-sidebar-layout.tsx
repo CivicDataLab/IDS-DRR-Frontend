@@ -18,7 +18,7 @@ interface DashboardLayoutProps {
   children?: React.ReactNode;
 }
 
-export function AnalyticsDashboardLayout({ children }: DashboardLayoutProps) {
+export function AnalyticsSideBarLayout({ children }: DashboardLayoutProps) {
   const [isClient, setIsClient] = React.useState(false);
 
   React.useEffect(() => {
