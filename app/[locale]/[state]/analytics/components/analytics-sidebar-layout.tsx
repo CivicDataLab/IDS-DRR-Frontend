@@ -6,11 +6,6 @@ import { useQuery } from '@tanstack/react-query';
 import { Select, Spinner, Text } from 'opub-ui';
 
 import { STATE_CODES, STATE_CODES_DROPDOWN } from '@/config/consts';
-import {
-  ANALYTICS_DISTRICT_DATA,
-  ANALYTICS_INDICATORS,
-  ANALYTICS_REVENUE_TABLE_DATA,
-} from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
@@ -123,90 +118,7 @@ export function IndicatorListWrapper() {
             </div>
           </div>
         </aside>
-        {region !== null && region.length > 0 && view === 'map' && (
-          <OutputWindowComponent />
-        )}
-      </MediaRendering>
-      {/* Mobile View */}
-      <MediaRendering minWidth={null} maxWidth="1023">
-        <OutputWindowComponent />
       </MediaRendering>
     </React.Fragment>
-  );
-}
-
-export function OutputWindowComponent() {
-  const searchParams = useSearchParams();
-  const indicator = searchParams.get('indicator');
-  const time_period = searchParams.get('time-period');
-  const region =
-    searchParams.get('revenue-code') || searchParams.get('district-code');
-  const boundary = searchParams.get('revenue-code')
-    ? 'revenue-circle'
-    : 'district';
-
-  const routerParams = useParams();
-  const sidePaneQuery: any = !searchParams.get('revenue-code')
-    ? ANALYTICS_DISTRICT_DATA
-    : ANALYTICS_REVENUE_TABLE_DATA;
-
-  const sidePaneData: any = useQuery(
-    [`sidePaneData_${indicator}_${region}_${boundary}_${time_period}`],
-    () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        sidePaneQuery,
-        {
-          indcFilter: { slug: indicator },
-          dataFilter: { dataPeriod: time_period },
-          geoFilter: {
-            code:
-              region === null || typeof region === 'undefined' || region === ''
-                ? STATE_CODES[routerParams.state as keyof typeof STATE_CODES]
-                : region,
-          },
-        }
-      ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
-
-  const indicatorDescriptions: any = useQuery(
-    [`indicators_${indicator}`],
-    () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_INDICATORS,
-        {
-          indcFilter: { slug: indicator },
-        }
-      ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
-
-  return (
-    <>
-      {sidePaneData.isFetched && (
-        <OutputWindow
-          data={
-            sidePaneData?.data[
-              !searchParams?.get('revenue-code')
-                ? 'districtViewData'
-                : 'revCircleViewData'
-            ]
-          }
-          indicatorDescriptions={indicatorDescriptions?.data?.indicators}
-          indicator={indicator}
-          boundary={boundary}
-        />
-      )}
-    </>
   );
 }

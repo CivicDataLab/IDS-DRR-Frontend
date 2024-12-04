@@ -22,6 +22,7 @@ import {
 import { GraphQL } from '@/lib/api';
 import { cn, copyCurrentURL, formatDate } from '@/lib/utils';
 import Icons from '@/components/icons';
+import { OutputWindowComponent } from './analytics-layout';
 import { FactorList } from './factor-list';
 import { FilterComp } from './filter-component';
 import { MapComponent } from './map-component';
@@ -398,6 +399,8 @@ export function AnalyticsMobileLayout({
           <RenderView selectedView={view} />
         )}
       </div>
+
+      <OutputWindowComponent />
 
       <div className="sticky bottom-0 flex h-[86px] w-full flex-row justify-between gap-1 bg-baseIndigoSolid1 p-1">
         {buttons.map((button, index) =>

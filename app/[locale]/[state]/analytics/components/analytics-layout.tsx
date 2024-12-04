@@ -18,16 +18,19 @@ import {
 
 import { STATE_CODES } from '@/config/consts';
 import {
+  ANALYTICS_DISTRICT_DATA,
   ANALYTICS_DISTRICT_MAP_DATA,
   ANALYTICS_GEOGRAPHY_DATA,
   ANALYTICS_INDICATORS,
   ANALYTICS_REVENUE_MAP_DATA,
+  ANALYTICS_REVENUE_TABLE_DATA,
   ANALYTICS_TABLE_DATA,
   ANALYTICS_TIME_PERIODS,
 } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
 import { MapComponent } from './map-component';
+import { OutputWindow } from './output-window';
 import { TableComponent } from './table-component';
 
 export function Content() {
@@ -57,6 +60,13 @@ export function Content() {
   const routerParams = useParams();
 
   const stateCode = STATE_CODES[routerParams.state as keyof typeof STATE_CODES];
+
+  const params = useParams();
+  const state = params.state;
+  const urlToFetch =
+    state === 'asssam'
+      ? process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL
+      : process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL_HP;
 
   const mapData = useQuery(
     [`mapQuery_district_${stateCode}_${indicator}_${timePeriodSelected}`],
@@ -336,6 +346,7 @@ export function Content() {
     );
   }
 
+  const region = searchParams.get('district-code') || '';
   return (
     <React.Fragment>
       <Tabs
@@ -397,6 +408,9 @@ export function Content() {
                 revenueMapData={revenueMapData?.data?.revCircleMapData}
                 mapData={mapData?.data?.districtMapData}
               />
+              {region !== null && region.length > 0 && view === 'map' && (
+                <OutputWindowComponent />
+              )}
             </div>
           )}
         </TabPanel>
@@ -415,5 +429,81 @@ export function Content() {
         </TabPanel>
       </Tabs>
     </React.Fragment>
+  );
+}
+
+export function OutputWindowComponent() {
+  const searchParams = useSearchParams();
+  const indicator = searchParams.get('indicator');
+  const time_period = searchParams.get('time-period');
+  const region =
+    searchParams.get('revenue-code') || searchParams.get('district-code');
+  const boundary = searchParams.get('revenue-code')
+    ? 'revenue-circle'
+    : 'district';
+
+  const routerParams = useParams();
+  const sidePaneQuery: any = !searchParams.get('revenue-code')
+    ? ANALYTICS_DISTRICT_DATA
+    : ANALYTICS_REVENUE_TABLE_DATA;
+
+  const sidePaneData: any = useQuery(
+    [`sidePaneData_${indicator}_${region}_${boundary}_${time_period}`],
+    () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        sidePaneQuery,
+        {
+          indcFilter: { slug: indicator },
+          dataFilter: { dataPeriod: time_period },
+          geoFilter: {
+            code:
+              region === null || typeof region === 'undefined' || region === ''
+                ? STATE_CODES[routerParams.state as keyof typeof STATE_CODES]
+                : region,
+          },
+        }
+      ),
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
+
+  const indicatorDescriptions: any = useQuery(
+    [`indicators_${indicator}`],
+    () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_INDICATORS,
+        {
+          indcFilter: { slug: indicator },
+        }
+      ),
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
+
+  return (
+    <>
+      {sidePaneData.isFetched && (
+        <OutputWindow
+          data={
+            sidePaneData?.data[
+              !searchParams?.get('revenue-code')
+                ? 'districtViewData'
+                : 'revCircleViewData'
+            ]
+          }
+          indicatorDescriptions={indicatorDescriptions?.data?.indicators}
+          indicator={indicator}
+          boundary={boundary}
+        />
+      )}
+    </>
   );
 }
