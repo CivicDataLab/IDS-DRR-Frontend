@@ -49,15 +49,7 @@ export default async function Home({
 
   return (
     <Hydrate state={dehydratedState}>
-      <MediaRendering minWidth={null} maxWidth="1023">
-        <AnalyticsMobileLayout
-          timePeriod={searchParams['time-period']}
-          indicator={searchParams?.indicator}
-        />
-      </MediaRendering>
-      <MediaRendering minWidth="1024" maxWidth={null}>
-        <Content />
-      </MediaRendering>
+      <Content />
     </Hydrate>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { DataTable, Spinner, Text } from 'opub-ui';
+import { Spinner, Table, Text } from 'opub-ui';
 
 import { Factors, RiskText } from '@/config/consts';
 
@@ -90,16 +90,12 @@ export function TableComponent({ data, isLoading }: any) {
 
   return (
     <div className="max-h-svh p-4">
-      <DataTable
+      <Table
         key={JSON.stringify(rows)}
         truncate
         columns={columns}
         theme="climate"
         hasZebraStripingOnData
-        addToolbar
-        hideSelection
-        hideViewSelector
-        placeholder="Search"
         sortColumns={columns.map((column) => column.accessorKey)}
         rows={rows}
       />

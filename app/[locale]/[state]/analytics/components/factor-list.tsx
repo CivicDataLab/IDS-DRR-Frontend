@@ -107,7 +107,7 @@ export function FactorList() {
   ): { label: string; value: string }[] => {
     let options: { label: string; value: string }[] = [];
 
-    nodes.forEach((node) => {
+    nodes?.forEach((node) => {
       options.push({
         label: `${'\u00A0'.repeat(level * 3)}${node.name}`, // Use string concatenation
         value: node.slug,

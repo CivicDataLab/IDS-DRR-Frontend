@@ -4,7 +4,7 @@ export const ANALYTICS_REVENUE_TABLE_DATA = graphql(`
   query revCircleViewData(
     $indcFilter: IndicatorFilter!
     $dataFilter: DataFilter!
-    $geoFilter: GeoFilter
+    $geoFilter: GeoFilter!
   ) {
     revCircleViewData(
       indcFilter: $indcFilter

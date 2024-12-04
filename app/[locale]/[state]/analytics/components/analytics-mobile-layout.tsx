@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useLockBody } from '@/hooks/use-lock-body';
 import { type TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { useQuery } from '@tanstack/react-query';
@@ -11,6 +12,7 @@ import {
 } from 'next-usequerystate';
 import { Button, Icon, Menu, Select, Text } from 'opub-ui';
 
+import { STATE_CODES } from '@/config/consts';
 import {
   ANALYTICS_DISTRICT_MAP_DATA,
   ANALYTICS_GEOGRAPHY_DATA,
@@ -38,9 +40,23 @@ interface Option {
 export function AnalyticsMobileLayout({
   timePeriod,
   indicator,
+  mapData,
+  revenueMapData,
+  districtGeographiesData,
+  revenueGeographiesData,
+  timePeriods,
+  indicatorsData,
+  tableData,
 }: {
   timePeriod: string;
   indicator: string;
+  mapData: any;
+  revenueMapData: any;
+  districtGeographiesData: any;
+  revenueGeographiesData: any;
+  timePeriods: any;
+  indicatorsData: any;
+  tableData: any;
 }) {
   //Remove default page scroll to make only the content scrollable
   useLockBody();
@@ -79,143 +95,23 @@ export function AnalyticsMobileLayout({
     },
   ];
 
+  const routerParams = useParams();
+  const stateCode = STATE_CODES[routerParams.state as keyof typeof STATE_CODES];
+
   const [view, setView] = useQueryState(
     'view',
     parseAsString.withDefault('map')
   );
 
-  const mapData = useQuery(
-    [`mobile_mapQuery_district_${indicator}_${timePeriodSelected}`],
-    () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_DISTRICT_MAP_DATA,
-        {
-          indcFilter: { slug: indicator },
-          dataFilter: { dataPeriod: timePeriodSelected },
-        }
-      ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
-
-  const revenueMapData = useQuery(
-    [`mobile_mapQuery_revenue-circle_${indicator}_${timePeriodSelected}`],
-    () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_REVENUE_MAP_DATA,
-        {
-          indcFilter: { slug: indicator },
-          dataFilter: { dataPeriod: timePeriodSelected },
-        }
-      ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
-
-  const districtGeographiesData = useQuery(
-    [`mobile_geographies_data_district`],
-    () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_GEOGRAPHY_DATA,
-        {
-          geoFilter: { type: 'district' },
-        }
-      ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      onError: (error) => {
-        console.error('Error fetching district geographies:', error);
-      },
-    }
-  );
-
-  const revenueGeographiesData = useQuery(
-    [`mobile_geographies_data_revenue`],
-    () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_GEOGRAPHY_DATA,
-        {
-          geoFilter: { type: 'revenue-circle' },
-        }
-      ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      onError: (error) => {
-        console.error('Error fetching revenue geographies:', error);
-      },
-    }
-  );
-
-  const timePeriods = useQuery(
-    [`mobile_timePeriods`],
-    () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_TIME_PERIODS
-      ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
-
-  const indicatorsData = useQuery(
-    [`mobile_indicators_${indicator}`],
-    () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_INDICATORS,
-        {
-          indcFilter: { slug: indicator },
-        }
-      ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
-  const tableData = useQuery(
-    [`table_data_${indicator}_${districtCode}`],
-    () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_TABLE_DATA,
-        {
-          indcFilter: { slug: indicator },
-          dataFilter: { dataPeriod: timePeriodSelected },
-          ...(districtCode && { geoFilter: { code: [districtCode] } }),
-        }
-      ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
-
   let minDate, maxDate;
   if (timePeriods.data) {
-    const datesArray = timePeriods?.data?.getDataTimePeriods.map((date) => {
-      const [year, month] = date.value.split('_');
-      return new Date(parseInt(year), parseInt(month));
-    });
-    const timestamps = datesArray.map((date) => date.getTime());
+    const datesArray = timePeriods?.data?.getDataTimePeriods.map(
+      (date: any) => {
+        const [year, month] = date.value.split('_');
+        return new Date(parseInt(year), parseInt(month));
+      }
+    );
+    const timestamps = datesArray.map((date: any) => date.getTime());
     // Find the minimum and maximum timestamps
     const minTimestamp = Math.min(...timestamps);
     const maxTimestamp = Math.max(...timestamps);
@@ -248,13 +144,18 @@ export function AnalyticsMobileLayout({
       for (const revenueCircle in rawData) {
         const revenueCircles = rawData[revenueCircle];
         revenueCircles.forEach(
-          (circle: {
-            'revenue-circle': string;
-            code: string;
-            district_code: string;
-          }) => {
+          (
+            circle: any
+            //   {
+            //   'revenue-circle': string;
+            //   code: string;
+            //   district_code: string;
+            // }
+          ) => {
             RevCircleDropdownOptions.push({
-              label: circle['revenue-circle'],
+              label:
+                circle[stateCode == '02' ? 'tehsil' : 'revenue-circle'] ||
+                circle['revenue-circle'],
               value: circle.code,
               districtCode: circle.district_code,
             });
