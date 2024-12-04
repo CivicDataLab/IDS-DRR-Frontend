@@ -29,7 +29,7 @@ export type DataFilter = {
   period?: InputMaybe<Scalars['String']>;
 };
 
-/** Geography(id, name, code, type, parentId, geom) */
+/** Geography(id, name, code, type, parentId, geom, slug) */
 export type GeoFilter = {
   AND?: InputMaybe<GeoFilter>;
   OR?: InputMaybe<GeoFilter>;
@@ -52,6 +52,7 @@ export type Query = {
   districtViewData: Scalars['JSON'];
   getDataTimePeriods: Array<CustomDataPeriodList>;
   getDistrictRevCircle: Scalars['JSON'];
+  getStates: Scalars['JSON'];
   getTimeTrends: Scalars['JSON'];
   indicators: Scalars['JSON'];
   indicatorsByCategory: Scalars['JSON'];
