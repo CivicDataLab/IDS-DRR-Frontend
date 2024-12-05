@@ -4,6 +4,7 @@ import { dehydrate, Hydrate } from '@tanstack/react-query';
 import {
   ANALYTICS_INDICATORS,
   ANALYTICS_TIME_PERIODS,
+  PLATFORM_STATES_LIST,
 } from '@/config/graphql/analaytics-queries';
 import { getQueryClient, GraphQL } from '@/lib/api';
 import { AnalyticsMainLayout } from './components/analytics-layout';
@@ -31,6 +32,13 @@ export default async function Home({
           ANALYTICS_INDICATORS,
           { indcFilter: { slug: searchParams?.['indicator'] } }
         )
+    );
+
+    await queryClient.prefetchQuery([`states_list`], () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        PLATFORM_STATES_LIST
+      )
     );
   } catch (error) {
     captureException(error);
