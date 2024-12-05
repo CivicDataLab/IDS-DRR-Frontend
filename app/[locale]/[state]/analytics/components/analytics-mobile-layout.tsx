@@ -1,27 +1,11 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
+import React, { useState } from 'react';
+import { useParams } from 'next/navigation';
 import { useLockBody } from '@/hooks/use-lock-body';
-import { type TypedDocumentNode } from '@graphql-typed-document-node/core';
-import { useQuery } from '@tanstack/react-query';
-import {
-  parseAsArrayOf,
-  parseAsString,
-  useQueryState,
-} from 'next-usequerystate';
+import { parseAsString, useQueryState } from 'next-usequerystate';
 import { Button, Icon, Menu, Select, Text } from 'opub-ui';
 
-import { STATE_CODES } from '@/config/consts';
-import {
-  ANALYTICS_DISTRICT_MAP_DATA,
-  ANALYTICS_GEOGRAPHY_DATA,
-  ANALYTICS_INDICATORS,
-  ANALYTICS_REVENUE_MAP_DATA,
-  ANALYTICS_TABLE_DATA,
-  ANALYTICS_TIME_PERIODS,
-} from '@/config/graphql/analaytics-queries';
-import { GraphQL } from '@/lib/api';
 import { cn, copyCurrentURL, formatDate } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { OutputWindowComponent } from './analytics-layout';
@@ -47,6 +31,8 @@ export function AnalyticsMobileLayout({
   timePeriods,
   indicatorsData,
   tableData,
+  currentSelectedState,
+  statesList,
 }: {
   timePeriod: string;
   indicator: string;
@@ -57,6 +43,8 @@ export function AnalyticsMobileLayout({
   timePeriods: any;
   indicatorsData: any;
   tableData: any;
+  currentSelectedState: any;
+  statesList: Array<any>;
 }) {
   //Remove default page scroll to make only the content scrollable
   useLockBody();
@@ -95,8 +83,7 @@ export function AnalyticsMobileLayout({
     },
   ];
 
-  const routerParams = useParams();
-  const stateCode = STATE_CODES[routerParams.state as keyof typeof STATE_CODES];
+  const stateCode = currentSelectedState.code;
 
   const [view, setView] = useQueryState(
     'view',
@@ -250,6 +237,7 @@ export function AnalyticsMobileLayout({
             setRevenueRegion={setRevenueCode}
             revenueMapData={revenueMapData?.data?.revCircleMapData}
             mapData={mapData?.data?.districtMapData}
+            currentSelectedState={currentSelectedState}
           />
         );
 
@@ -287,7 +275,11 @@ export function AnalyticsMobileLayout({
       >
         <div className="fixed top-[56px] z-9 flex h-[10%] w-full items-center bg-[#FFFF] px-4">
           <FactorList />
-          <FilterComp timePeriod={timePeriod} />
+          <FilterComp
+            timePeriod={timePeriod}
+            currentSelectedState={currentSelectedState}
+            statesList={statesList}
+          />
         </div>
 
         {mapData.isLoading ? (
