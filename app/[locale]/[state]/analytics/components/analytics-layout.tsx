@@ -29,6 +29,8 @@ import {
 } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
+import { MediaRendering } from '@/components/media-rendering';
+import { AnalyticsMobileLayout } from './analytics-mobile-layout';
 import { MapComponent } from './map-component';
 import { OutputWindow } from './output-window';
 import { TableComponent } from './table-component';
@@ -340,87 +342,106 @@ export function Content() {
 
   const region = searchParams.get('district-code') || '';
   return (
-    <React.Fragment>
-      <Tabs
-        onValueChange={(value: string) => setView(value, { shallow: false })}
-        defaultValue={view || 'map'}
-      >
-        <TabList fitted className="p-2 pb-0">
-          <Tab theme="climate" value="map">
-            Map View
-          </Tab>
-          <div
-            className={`ml-4 h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'map' ? 'hidden' : ''}`}
-          />
-          <Tab
-            theme="climate"
-            title="coming soon"
-            className=" cursor-not-allowed"
-            disabled
-            value="chart"
-          >
-            Chart View
-          </Tab>
-          <div
-            className={`ml-4 h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'table' ? 'hidden' : ''}`}
-          />{' '}
-          <Tab theme="climate" value="table">
-            Table View
-          </Tab>
-        </TabList>
-        <TabPanel value="map">
-          {revenueMapData?.data && mapData?.data && (
-            <div className=" mt-2 h-[calc(100dvh_-_140px)]">
-              <div className="mb-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
-                <SelectOptions />
-                <MonthPicker
-                  name="time-period-select"
-                  defaultValue={parseDate(
-                    `${timePeriodSelected.split('_')[0]}-${timePeriodSelected.split('_')[1]}-01` ||
-                      '23-08-01'
-                  )}
-                  label="Select Month"
-                  minValue={parseDate(minDate || '2023-01-04')}
-                  maxValue={parseDate(maxDate || '2023-01-04')}
-                  onChange={(date) => {
-                    setTimePeriod(
-                      `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`,
-                      { shallow: false }
-                    );
-                  }}
-                />
-              </div>
-              <MapComponent
-                indicator={indicator}
-                mapDataloading={mapData?.isFetching}
-                revenueMapDataLoading={revenueMapData?.isFetching}
-                indicatorsData={indicatorsData?.data?.indicators}
-                setRegion={setDistrictCode}
-                setRevenueRegion={setRevenueCode}
-                revenueMapData={revenueMapData?.data?.revCircleMapData}
-                mapData={mapData?.data?.districtMapData}
-              />
-              {region !== null && region.length > 0 && view === 'map' && (
-                <OutputWindowComponent />
-              )}
-            </div>
-          )}
-        </TabPanel>
-        <TabPanel value="table">
-          <div className="mb-2 mt-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
-            <SelectOptions />
-          </div>
-          <TableComponent
-            data={
-              filteredTableData?.length > 0
-                ? filteredTableData
-                : tableData.data?.tableData
+    <>
+      <MediaRendering minWidth={null} maxWidth="1023">
+        <AnalyticsMobileLayout
+          timePeriod={timePeriod}
+          indicator={indicator}
+          mapData={mapData}
+          revenueMapData={revenueMapData}
+          districtGeographiesData={districtGeographiesData}
+          revenueGeographiesData={revenueGeographiesData}
+          timePeriods={timePeriods}
+          indicatorsData={indicatorsData}
+          tableData={tableData}
+        />
+      </MediaRendering>
+      <MediaRendering minWidth="1024" maxWidth={null}>
+        <React.Fragment>
+          <Tabs
+            onValueChange={(value: string) =>
+              setView(value, { shallow: false })
             }
-            isLoading={tableData.isLoading}
-          />
-        </TabPanel>
-      </Tabs>
-    </React.Fragment>
+            defaultValue={view || 'map'}
+          >
+            <TabList fitted className="p-2 pb-0">
+              <Tab theme="climate" value="map">
+                Map View
+              </Tab>
+              <div
+                className={`ml-4 h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'map' ? 'hidden' : ''}`}
+              />
+              <Tab
+                theme="climate"
+                title="coming soon"
+                className=" cursor-not-allowed"
+                disabled
+                value="chart"
+              >
+                Chart View
+              </Tab>
+              <div
+                className={`ml-4 h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'table' ? 'hidden' : ''}`}
+              />{' '}
+              <Tab theme="climate" value="table">
+                Table View
+              </Tab>
+            </TabList>
+            <TabPanel value="map">
+              {revenueMapData?.data && mapData?.data && (
+                <div className=" mt-2 h-[calc(100dvh_-_140px)]">
+                  <div className="mb-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
+                    <SelectOptions />
+                    <MonthPicker
+                      name="time-period-select"
+                      defaultValue={parseDate(
+                        `${timePeriodSelected.split('_')[0]}-${timePeriodSelected.split('_')[1]}-01` ||
+                          '23-08-01'
+                      )}
+                      label="Select Month"
+                      minValue={parseDate(minDate || '2023-01-04')}
+                      maxValue={parseDate(maxDate || '2023-01-04')}
+                      onChange={(date) => {
+                        setTimePeriod(
+                          `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`,
+                          { shallow: false }
+                        );
+                      }}
+                    />
+                  </div>
+                  <MapComponent
+                    indicator={indicator}
+                    mapDataloading={mapData?.isFetching}
+                    revenueMapDataLoading={revenueMapData?.isFetching}
+                    indicatorsData={indicatorsData?.data?.indicators}
+                    setRegion={setDistrictCode}
+                    setRevenueRegion={setRevenueCode}
+                    revenueMapData={revenueMapData?.data?.revCircleMapData}
+                    mapData={mapData?.data?.districtMapData}
+                  />
+                  {region !== null && region.length > 0 && view === 'map' && (
+                    <OutputWindowComponent />
+                  )}
+                </div>
+              )}
+            </TabPanel>
+            <TabPanel value="table">
+              <div className="mb-2 mt-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
+                <SelectOptions />
+              </div>
+              <TableComponent
+                data={
+                  filteredTableData?.length > 0
+                    ? filteredTableData
+                    : tableData.data?.tableData
+                }
+                isLoading={tableData.isLoading}
+              />
+            </TabPanel>
+          </Tabs>
+        </React.Fragment>
+      </MediaRendering>
+    </>
   );
 }
 
@@ -482,7 +503,7 @@ export function OutputWindowComponent() {
 
   return (
     <>
-      {sidePaneData.isFetched && (
+      {sidePaneData?.isFetched && (
         <OutputWindow
           data={
             sidePaneData?.data[

@@ -1,4 +1,7 @@
+'use client';
+
 import React, { useCallback, useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import { parseDate } from '@internationalized/date';
 import { useQuery } from '@tanstack/react-query';
 import { parseAsString, useQueryState } from 'next-usequerystate';
@@ -12,6 +15,7 @@ import {
   YearCalendar,
 } from 'opub-ui';
 
+import { STATE_CODES, STATE_CODES_DROPDOWN } from '@/config/consts';
 import {
   ANALYTICS_GEOGRAPHY_DATA,
   ANALYTICS_TIME_PERIODS,
@@ -63,7 +67,8 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
   const [timePeriodSelected, setTimePeriodSelected] = useState(timePeriodParam);
 
   //filter variables
-  const [filterOption, setFilterOption] = useState('district');
+  const [filterOption, setFilterOption] = useState('state');
+  const routerParams = useParams();
 
   useEffect(() => {
     setRegionSelected(regionSelected || '');
@@ -73,13 +78,16 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
 
   // Fetch district geographies data
   const districtGeographiesData = useQuery(
-    [`geographies_data_district`],
+    [`geographies_data_district_${routerParams.state}`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_GEOGRAPHY_DATA,
         {
-          geoFilter: { type: 'district' },
+          geoFilter: {
+            type: 'district',
+            code: [STATE_CODES[routerParams.state as keyof typeof STATE_CODES]],
+          },
         }
       ),
     {
@@ -121,6 +129,10 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
       refetchOnReconnect: false,
     }
   );
+
+  const getStateOptions = useCallback(() => {
+    return STATE_CODES_DROPDOWN;
+  }, []);
 
   // Function to format district options
   const getDistrictOptions = useCallback(() => {
@@ -193,6 +205,12 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
 
   const FilterOptions: FilterButtonOption = [
     {
+      title: 'State',
+      value: 'state',
+      options: getStateOptions(),
+      type: 'radio-button',
+    },
+    {
       title: 'District',
       value: 'district',
       options: getDistrictOptions(),
@@ -264,6 +282,9 @@ export const RenderOptions = ({
   handleDistrictChange,
 }: any) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedState, setSelectedState] = useState('');
+  const routerParams = useParams();
+  const router = useRouter();
 
   const findSelectedValue = filterOptions.filter(
     (opt: { value: string }) => opt.value === selectedOption
@@ -278,10 +299,20 @@ export const RenderOptions = ({
   );
 
   const onRadioButtonChange = (selectedValue: string, value: string) => {
-    if (value === 'district') {
+    setSelectedState(selectedValue);
+
+    if (value === 'state') {
+      // const selectedStateValue = STATE_CODES_DROPDOWN.find(
+      //   (item) => item.value === routerParams.state
+      // )?.value;
+
+      router.push(
+        `/${selectedValue}/analytics/?indicator=risk-score&time-period=${process.env.TIME_PERIOD || process.env.NEXT_PUBLIC_TIME_PERIOD}&view=map`
+      );
+    } else if (value === 'district') {
       setRegionSelected(selectedValue); // Directly set the region
       // regionOptions(selectedValue);
-    } else if (value === 'revenue-circle') {
+    } else if (value === 'revenue-circle' || value === 'tehsil') {
       setRevenueSelected(selectedValue);
       // revenueOptions(selectedValue);
     }
@@ -310,8 +341,13 @@ export const RenderOptions = ({
         <RadioGroup
           onChange={(e) => onRadioButtonChange(e, value)}
           name={value}
-          value={value === 'district' ? regionSelected : revenueSelected}
-          // value={regionSelected}
+          value={
+            value === 'state'
+              ? selectedState
+              : value === 'district'
+                ? regionSelected
+                : revenueSelected
+          }
         >
           {options.map((item: any, idx: any) =>
             item.type === 'group' ? (
@@ -337,7 +373,6 @@ export const RenderOptions = ({
       return (
         <div className=" self-center">
           <YearCalendar
-            // defaultValue={parseDate('2023-08-01')}
             defaultValue={parseDate(
               `${timePeriodSelected.split('_')[0]}-${timePeriodSelected.split('_')[1]}-01` ||
                 '23-08-01'
