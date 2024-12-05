@@ -1,17 +1,12 @@
-import React from 'react';
-import { redirect } from 'next/navigation';
 import { captureException } from '@sentry/nextjs';
 import { dehydrate, Hydrate } from '@tanstack/react-query';
 
-import { AnalyticsURL } from '@/config/consts';
 import {
   ANALYTICS_INDICATORS,
   ANALYTICS_TIME_PERIODS,
 } from '@/config/graphql/analaytics-queries';
 import { getQueryClient, GraphQL } from '@/lib/api';
-import { MediaRendering } from '@/components/media-rendering';
-import { Content } from './components/analytics-layout';
-import { AnalyticsMobileLayout } from './components/analytics-mobile-layout';
+import { AnalyticsMainLayout } from './components/analytics-layout';
 
 export default async function Home({
   searchParams,
@@ -49,7 +44,7 @@ export default async function Home({
 
   return (
     <Hydrate state={dehydratedState}>
-      <Content />
+      <AnalyticsMainLayout />
     </Hydrate>
   );
 }
