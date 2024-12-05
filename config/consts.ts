@@ -59,24 +59,6 @@ const RiskText: {
   },
 };
 
-//State Codes
-
-const STATE_CODES = {
-  assam: '18',
-  'himachal-pradesh': '02',
-};
-
-const STATE_CODES_DROPDOWN = [
-  {
-    label: 'Assam',
-    value: 'assam',
-  },
-  {
-    label: 'Himachal Pradesh',
-    value: 'himachal-pradesh',
-  },
-];
-
 // Datasets page
 const DatasetSource = 'Source';
 const LastUpdated = 'Last Updated';
@@ -197,6 +179,4 @@ export {
   CDLPartnershipTextOne,
   CDLPartnershipTextTwo,
   CDLPartnershipTextThree,
-  STATE_CODES,
-  STATE_CODES_DROPDOWN,
 };
