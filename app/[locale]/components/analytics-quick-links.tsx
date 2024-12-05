@@ -28,9 +28,9 @@ export const QuickLinks = () => {
     },
     {
       name: 'Odisha',
-      status: 'inactive',
+      status: 'active',
       icon: '/logo/states/Odisha.svg',
-      link: '',
+      link: `/odisha${AnalyticsURL}`,
     },
     {
       name: 'Bihar',
