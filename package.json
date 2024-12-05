@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npm run generate & next dev",
-    "build": "next build",
+    "build": "graphql-codegen --require dotenv/config --config ./config/codegen.ts & next build",
     "start": "next start",
     "lint": "next lint",
     "build:tokens": "node ./config/tokens/generate.mjs",
