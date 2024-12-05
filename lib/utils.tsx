@@ -206,7 +206,7 @@ export function copyDefinedURL(url: any) {
 }
 
 export function toTitleCase(str: string) {
-  return str.replace(/\b\w/g, function (char: string) {
+  return str.toLowerCase().replace(/\b\w/g, function (char: string) {
     return char.toUpperCase();
   });
 }

@@ -1,29 +1,26 @@
 'use client';
 
 import React from 'react';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { Select, Spinner, Text } from 'opub-ui';
 
-import { STATE_CODES, STATE_CODES_DROPDOWN } from '@/config/consts';
-import { GraphQL } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
-import { DefaultWindow } from './default-output-window';
 import { FactorList } from './factor-list';
-import { OutputWindow } from './output-window';
 import styles from './styles.module.scss';
 
 interface DashboardLayoutProps {
   children?: React.ReactNode;
+  currentState: any;
+  statesList: any;
 }
 
-export function AnalyticsSideBarLayout({ children }: DashboardLayoutProps) {
+export function AnalyticsSideBarLayout({
+  children,
+  currentState,
+  statesList,
+}: DashboardLayoutProps) {
   const [isClient, setIsClient] = React.useState(false);
-
-  React.useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   // To prevent a hydration mismatch fix:https://nextjs.org/docs/messages/react-hydration-error.
   React.useEffect(() => {
@@ -42,7 +39,10 @@ export function AnalyticsSideBarLayout({ children }: DashboardLayoutProps) {
       {' '}
       {isClient ? (
         <div className="relative max-h-[calc(100vh_-_60px)] min-h-[calc(100vh_-_60px)] grow flex-row gap-1 overflow-y-hidden md:flex">
-          <IndicatorListWrapper />
+          <IndicatorListWrapper
+            statesList={statesList}
+            currentState={currentState}
+          />
           <main className={cn(styles.Main)}>{children}</main>
         </div>
       ) : (
@@ -55,13 +55,8 @@ export function AnalyticsSideBarLayout({ children }: DashboardLayoutProps) {
   );
 }
 
-export function IndicatorListWrapper() {
-  const searchParams = useSearchParams();
-  const routerParams = useParams();
+export function IndicatorListWrapper({ statesList, currentState }: any) {
   const router = useRouter();
-
-  const region = searchParams.get('district-code') || '';
-  const view = searchParams.get('view') || '';
 
   return (
     <React.Fragment>
@@ -94,12 +89,13 @@ export function IndicatorListWrapper() {
                 <Select
                   name={'State'}
                   label={''}
-                  value={
-                    STATE_CODES_DROPDOWN.find(
-                      (item) => item.value === routerParams.state
-                    )?.value
-                  }
-                  options={STATE_CODES_DROPDOWN}
+                  value={currentState.slug}
+                  options={statesList.map((state: any) => {
+                    return {
+                      label: state.name,
+                      value: state.slug,
+                    };
+                  })}
                   onChange={(e) => {
                     router.push(
                       `/${e}/analytics/?indicator=risk-score&time-period=${process.env.TIME_PERIOD || process.env.NEXT_PUBLIC_TIME_PERIOD}&view=map`

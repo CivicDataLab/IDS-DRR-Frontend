@@ -109,3 +109,9 @@ export const ANALYTICS_TIME_TRENDS = graphql(`
     )
   }
 `);
+
+export const PLATFORM_STATES_LIST = graphql(`
+  query getStatesList {
+    getStates
+  }
+`);

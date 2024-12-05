@@ -15,7 +15,6 @@ import {
   YearCalendar,
 } from 'opub-ui';
 
-import { STATE_CODES, STATE_CODES_DROPDOWN } from '@/config/consts';
 import {
   ANALYTICS_GEOGRAPHY_DATA,
   ANALYTICS_TIME_PERIODS,
@@ -28,7 +27,15 @@ import {
   MobileFilterContent,
 } from '@/components/MobileFilterBox';
 
-export function FilterComp({ timePeriod }: { timePeriod: string }) {
+export function FilterComp({
+  timePeriod,
+  currentSelectedState,
+  statesList,
+}: {
+  timePeriod: string;
+  currentSelectedState: any;
+  statesList: Array<any>;
+}) {
   interface OptionType {
     label: string;
     value: string;
@@ -86,7 +93,7 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
         {
           geoFilter: {
             type: 'district',
-            code: [STATE_CODES[routerParams.state as keyof typeof STATE_CODES]],
+            code: currentSelectedState.code,
           },
         }
       ),
@@ -129,10 +136,6 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
       refetchOnReconnect: false,
     }
   );
-
-  const getStateOptions = useCallback(() => {
-    return STATE_CODES_DROPDOWN;
-  }, []);
 
   // Function to format district options
   const getDistrictOptions = useCallback(() => {
@@ -207,7 +210,9 @@ export function FilterComp({ timePeriod }: { timePeriod: string }) {
     {
       title: 'State',
       value: 'state',
-      options: getStateOptions(),
+      options: statesList.map((state: any) => {
+        return { label: state.name, value: state.slug };
+      }),
       type: 'radio-button',
     },
     {

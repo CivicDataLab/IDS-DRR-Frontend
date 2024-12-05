@@ -16,7 +16,6 @@ import {
   Text,
 } from 'opub-ui';
 
-import { STATE_CODES } from '@/config/consts';
 import {
   ANALYTICS_DISTRICT_DATA,
   ANALYTICS_DISTRICT_MAP_DATA,
@@ -26,16 +25,17 @@ import {
   ANALYTICS_REVENUE_TABLE_DATA,
   ANALYTICS_TABLE_DATA,
   ANALYTICS_TIME_PERIODS,
+  PLATFORM_STATES_LIST,
 } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
-import { formatDate } from '@/lib/utils';
+import { formatDate, toTitleCase } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
 import { AnalyticsMobileLayout } from './analytics-mobile-layout';
 import { MapComponent } from './map-component';
 import { OutputWindow } from './output-window';
 import { TableComponent } from './table-component';
 
-export function Content() {
+export function AnalyticsMainLayout() {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator') || '';
   const timePeriod = searchParams.get('time-period') || '';
@@ -60,10 +60,35 @@ export function Content() {
   const [view, setView] = useQueryState('view');
   const routerParams = useParams();
 
-  const stateCode = STATE_CODES[routerParams.state as keyof typeof STATE_CODES];
+  const statesListData = useQuery([`states_list`], () =>
+    GraphQL(
+      `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+      PLATFORM_STATES_LIST
+    )
+  );
+
+  const [currentSelectedState, setCurrentSelectedState] = useState(
+    statesListData.data?.getStates.find(
+      (item: any) => item.slug === routerParams.state
+    )
+  );
+
+  React.useEffect(() => {
+    if (!statesListData.isFetching && !statesListData.isError) {
+      setCurrentSelectedState(
+        statesListData?.data?.getStates?.find(
+          (item: any) => item.slug === routerParams.state
+        )
+      );
+    }
+  }, [statesListData, routerParams.state]);
+
+  // const stateCode = STATE_CODES[routerParams.state as keyof typeof STATE_CODES];
 
   const mapData = useQuery(
-    [`mapQuery_district_${stateCode}_${indicator}_${timePeriodSelected}`],
+    [
+      `mapQuery_district_${currentSelectedState.code}_${indicator}_${timePeriodSelected}`,
+    ],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
@@ -72,7 +97,7 @@ export function Content() {
           indcFilter: { slug: indicator },
           dataFilter: { dataPeriod: timePeriodSelected },
           geoFilter: {
-            code: [STATE_CODES[routerParams.state as keyof typeof STATE_CODES]],
+            code: [currentSelectedState.code],
           },
         }
       ),
@@ -84,7 +109,9 @@ export function Content() {
   );
 
   const revenueMapData = useQuery(
-    [`mapQuery_revenue-circle_${stateCode}_${indicator}_${timePeriodSelected}`],
+    [
+      `mapQuery_revenue-circle_${currentSelectedState.code}_${indicator}_${timePeriodSelected}`,
+    ],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
@@ -93,7 +120,7 @@ export function Content() {
           indcFilter: { slug: indicator },
           dataFilter: { dataPeriod: timePeriodSelected },
           geoFilter: {
-            code: [STATE_CODES[routerParams.state as keyof typeof STATE_CODES]],
+            code: [currentSelectedState.code],
           },
         }
       ),
@@ -105,7 +132,7 @@ export function Content() {
   );
 
   const districtGeographiesData = useQuery(
-    [`geographies_data_district_${stateCode}`],
+    [`geographies_data_district_${currentSelectedState.code}`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
@@ -113,7 +140,7 @@ export function Content() {
         {
           geoFilter: {
             type: 'district',
-            code: [STATE_CODES[routerParams.state as keyof typeof STATE_CODES]],
+            code: [currentSelectedState.code],
           },
         }
       ),
@@ -125,19 +152,15 @@ export function Content() {
   );
 
   const revenueGeographiesData = useQuery(
-    [`geographies_data_revenue_${stateCode}`],
+    [`geographies_data_revenue_${currentSelectedState.code}`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_GEOGRAPHY_DATA,
         {
           geoFilter: {
-            type:
-              STATE_CODES[routerParams.state as keyof typeof STATE_CODES] ==
-              '02'
-                ? 'tehsil'
-                : 'revenue-circle',
-            code: [STATE_CODES[routerParams.state as keyof typeof STATE_CODES]],
+            type: currentSelectedState.child_type,
+            code: [currentSelectedState.code],
           },
         }
       ),
@@ -180,7 +203,7 @@ export function Content() {
   );
 
   const tableData = useQuery(
-    [`table_data_${stateCode}_${indicator}_${districtCode}`],
+    [`table_data_${currentSelectedState.code}_${indicator}_${districtCode}`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
@@ -193,7 +216,7 @@ export function Content() {
               districtCode === '' ||
               districtCode === null ||
               typeof districtCode === 'undefined'
-                ? STATE_CODES[routerParams.state as keyof typeof STATE_CODES]
+                ? currentSelectedState.code
                 : districtCode,
             ],
           },
@@ -261,7 +284,7 @@ export function Content() {
           ) => {
             RevCircleDropdownOptions.push({
               label:
-                circle[stateCode == '02' ? 'tehsil' : 'revenue-circle'] ||
+                circle[currentSelectedState.child_type] ||
                 circle['revenue-circle'],
               value: circle.code,
               districtCode: circle.district_code,
@@ -312,12 +335,12 @@ export function Content() {
           options={DistrictDropDownOption}
         />
         <Select
-          label={`Select ${stateCode === '02' ? 'Tehsil' : 'Revenue Circle'}`}
+          label={`Select ${toTitleCase(currentSelectedState.child_type)}`}
           value={revenueCode || ''}
           placeholder={
             !districtCode
               ? 'Select a district to enable'
-              : `Select a ${stateCode === '02' ? 'tehsil' : 'revenue circle'}`
+              : `Select a ${toTitleCase(currentSelectedState.child_type)}`
           }
           name="revenue-circle-select"
           className=" flex-grow"
@@ -341,6 +364,7 @@ export function Content() {
   }
 
   const region = searchParams.get('district-code') || '';
+
   return (
     <>
       <MediaRendering minWidth={null} maxWidth="1023">
@@ -354,6 +378,8 @@ export function Content() {
           timePeriods={timePeriods}
           indicatorsData={indicatorsData}
           tableData={tableData}
+          currentSelectedState={currentSelectedState}
+          statesList={statesListData.data?.getStates || []}
         />
       </MediaRendering>
       <MediaRendering minWidth="1024" maxWidth={null}>
@@ -418,9 +444,12 @@ export function Content() {
                     setRevenueRegion={setRevenueCode}
                     revenueMapData={revenueMapData?.data?.revCircleMapData}
                     mapData={mapData?.data?.districtMapData}
+                    currentSelectedState={currentSelectedState}
                   />
                   {region !== null && region.length > 0 && view === 'map' && (
-                    <OutputWindowComponent />
+                    <OutputWindowComponent
+                      currentStateCode={currentSelectedState.code}
+                    />
                   )}
                 </div>
               )}
@@ -445,7 +474,7 @@ export function Content() {
   );
 }
 
-export function OutputWindowComponent() {
+export function OutputWindowComponent({ currentStateCode }: any) {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator');
   const time_period = searchParams.get('time-period');
@@ -455,7 +484,6 @@ export function OutputWindowComponent() {
     ? 'revenue-circle'
     : 'district';
 
-  const routerParams = useParams();
   const sidePaneQuery: any = !searchParams.get('revenue-code')
     ? ANALYTICS_DISTRICT_DATA
     : ANALYTICS_REVENUE_TABLE_DATA;
@@ -472,7 +500,7 @@ export function OutputWindowComponent() {
           geoFilter: {
             code:
               region === null || typeof region === 'undefined' || region === ''
-                ? STATE_CODES[routerParams.state as keyof typeof STATE_CODES]
+                ? currentStateCode
                 : region,
           },
         }
@@ -506,11 +534,13 @@ export function OutputWindowComponent() {
       {sidePaneData?.isFetched && (
         <OutputWindow
           data={
-            sidePaneData?.data[
-              !searchParams?.get('revenue-code')
-                ? 'districtViewData'
-                : 'revCircleViewData'
-            ]
+            sidePaneData?.data
+              ? sidePaneData?.data[
+                  !searchParams?.get('revenue-code')
+                    ? 'districtViewData'
+                    : 'revCircleViewData'
+                ]
+              : []
           }
           indicatorDescriptions={indicatorDescriptions?.data?.indicators}
           indicator={indicator}
