@@ -1,13 +1,12 @@
 'use client';
 
 import React from 'react';
-import { useParams } from 'next/navigation';
 import { useWindowSize } from '@/hooks/use-window-size';
 import * as d3 from 'd3-scale';
 import { interpolateBlues } from 'd3-scale-chromatic';
 import { Spinner, Text } from 'opub-ui';
 
-import { Factors, RiskText, STATE_CODES } from '@/config/consts';
+import { Factors, RiskText } from '@/config/consts';
 import MapChart from '@/components/MapChart';
 import { getFactorNameBySlug, getUnitsBySlug } from '../utils/utils';
 
@@ -20,6 +19,7 @@ export const MapComponent = ({
   revenueMapData,
   setRegion,
   setRevenueRegion,
+  currentSelectedState,
 }: {
   indicator: string;
   mapDataloading: boolean;
@@ -35,15 +35,13 @@ export const MapComponent = ({
   revenueMapData: any;
   setRegion: any;
   setRevenueRegion: any;
+  currentSelectedState: any;
 }) => {
   const [map, setMap] = React.useState<any>(null);
   const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
 
   const params = new URLSearchParams(window.location.search);
   const districtCode = params.get('district-code');
-
-  const routerParams = useParams();
-  const stateCode = STATE_CODES[routerParams.state as keyof typeof STATE_CODES];
 
   const { width } = useWindowSize();
   const isMobile = width < 768;
@@ -221,11 +219,9 @@ export const MapComponent = ({
 
   React.useEffect(() => {
     if (map && map.getContainer() && !districtCode) {
-      stateCode === '18'
-        ? map?.setView([26.193, 92.773], 7.4)
-        : map?.setView([32.193, 77.773], 8.4);
+      map?.setView(currentSelectedState.center, 7.4);
     }
-  }, [map, districtCode, stateCode]);
+  }, [map, districtCode, currentSelectedState]);
 
   if (mapDataloading || revenueMapDataLoading)
     return (
