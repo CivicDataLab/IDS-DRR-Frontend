@@ -448,7 +448,7 @@ export function AnalyticsMainLayout() {
                   />
                   {region !== null && region.length > 0 && view === 'map' && (
                     <OutputWindowComponent
-                      currentStateCode={currentSelectedState.code}
+                      currentState={currentSelectedState}
                     />
                   )}
                 </div>
@@ -474,7 +474,7 @@ export function AnalyticsMainLayout() {
   );
 }
 
-export function OutputWindowComponent({ currentStateCode }: any) {
+export function OutputWindowComponent({ currentState }: any) {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator');
   const time_period = searchParams.get('time-period');
@@ -500,7 +500,7 @@ export function OutputWindowComponent({ currentStateCode }: any) {
           geoFilter: {
             code:
               region === null || typeof region === 'undefined' || region === ''
-                ? currentStateCode
+                ? currentState.code
                 : region,
           },
         }
@@ -545,6 +545,7 @@ export function OutputWindowComponent({ currentStateCode }: any) {
           indicatorDescriptions={indicatorDescriptions?.data?.indicators}
           indicator={indicator}
           boundary={boundary}
+          currentState={currentState}
         />
       )}
     </>

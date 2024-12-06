@@ -13,36 +13,24 @@ import {
 import { InfoSquare } from '@/public/InfoCircle';
 import { useQuery } from '@tanstack/react-query';
 import { useQueryState } from 'next-usequerystate';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-  Button,
-  Icon,
-  IconButton,
-  ProgressBar,
-  Text,
-  Tooltip,
-  useScreenshot,
-} from 'opub-ui';
+import { Button, Icon, Text, Tooltip, useScreenshot } from 'opub-ui';
 
-import { Factors, RiskColorMap, RiskText } from '@/config/consts';
+import { Factors, RiskText } from '@/config/consts';
 import { ANALYTICS_TIME_TRENDS } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { cn, formatDateString } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import { getFactorNameBySlug } from '../utils/utils';
-import { RevenueCircle, ScoreInfo } from './revenue-circle-accordion';
+import { ScoreInfo } from './revenue-circle-accordion';
 import styles from './styles.module.scss';
-import { TimeTrends } from './time-trends';
 
 export function OutputWindow({
   data,
   indicatorDescriptions,
   indicator,
   boundary,
+  currentState,
 }: any) {
   const searchParams = useSearchParams();
   if (!process.env.NEXT_PUBLIC_TIME_PERIOD) {
@@ -107,15 +95,10 @@ export function OutputWindow({
     Object.hasOwnProperty.call(item, 'revenue circle')
   );
 
-  const GeographyMap: { [key: string]: string } = {
-    district: 'District',
-    'revenue-circle': 'Revenue Circle',
-  };
-
   const DataBasedOnBoundary = !RevenueRegion ? districtData : data;
   const RegionName = !RevenueRegion
     ? districtData[0]?.district
-    : data[0]?.['revenue-circle'];
+    : data[0]?.[data[0].type];
 
   const title = 'IDS DRR';
   const [svgURL, setSvgURL] = React.useState<string>('');
@@ -213,7 +196,8 @@ export function OutputWindow({
                 variant="headingLg"
                 fontWeight="semibold"
               >
-                {RegionName} {GeographyMap[boundary]}
+                {RegionName}{' '}
+                {RevenueRegion ? currentState.child_type : 'District'}
               </Text>
             )}
           </div>
@@ -346,7 +330,8 @@ export function OutputWindow({
                     variant="headingLg"
                     fontWeight="semibold"
                   >
-                    {RegionName} {GeographyMap[boundary]}
+                    {RegionName}{' '}
+                    {RevenueRegion ? currentState.child_type : 'District'}
                   </Text>
                 )}
               </div>
