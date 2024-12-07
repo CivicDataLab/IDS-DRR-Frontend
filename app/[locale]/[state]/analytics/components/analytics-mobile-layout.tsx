@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useLockBody } from '@/hooks/use-lock-body';
 import { parseAsString, useQueryState } from 'next-usequerystate';
 import { Button, Icon, Menu, Select, Text } from 'opub-ui';
@@ -89,6 +89,9 @@ export function AnalyticsMobileLayout({
     'view',
     parseAsString.withDefault('map')
   );
+  const searchParams = useSearchParams();
+  const region =
+    searchParams.get('revenue-code') || searchParams.get('district-code');
 
   let minDate, maxDate;
   if (timePeriods.data) {
@@ -277,8 +280,12 @@ export function AnalyticsMobileLayout({
           <FactorList />
           <FilterComp
             timePeriod={timePeriod}
+            timePeriods={timePeriods}
+            districtGeographiesData={districtGeographiesData}
+            revenueGeographiesData={revenueGeographiesData}
             currentSelectedState={currentSelectedState}
             statesList={statesList}
+            // getDistrictOptions={getDistrictOptions}
           />
         </div>
 
@@ -293,7 +300,10 @@ export function AnalyticsMobileLayout({
         )}
       </div>
 
-      <OutputWindowComponent />
+      {/* <OutputWindowComponent /> */}
+      {region !== null && region.length > 0 && view === 'map' && (
+        <OutputWindowComponent currentStateCode={currentSelectedState.code} />
+      )}
 
       <div className="sticky bottom-0 flex h-[86px] w-full flex-row justify-between gap-1 bg-baseIndigoSolid1 p-1">
         {buttons.map((button, index) =>

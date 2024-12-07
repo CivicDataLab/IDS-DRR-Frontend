@@ -90,6 +90,7 @@ export type QueryGetTimeTrendsArgs = {
 
 export type QueryIndicatorsArgs = {
   indcFilter?: InputMaybe<IndicatorFilter>;
+  stateCode?: InputMaybe<Scalars['Int']>;
 };
 
 
