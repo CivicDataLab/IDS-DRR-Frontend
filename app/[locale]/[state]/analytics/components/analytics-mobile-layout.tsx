@@ -270,10 +270,10 @@ export function AnalyticsMobileLayout({
     <section className="flex h-full flex-col items-center justify-center gap-2 bg-[#FFFF]">
       <div
         className={cn(
-          'relative h-[calc(100dvh_-_130px)] w-full flex-grow flex-col gap-3 overflow-y-scroll '
+          'relative h-[calc(100dvh_-_140px)] w-full flex-grow flex-col gap-3 overflow-y-scroll '
         )}
       >
-        <div className="fixed top-[56px] z-9 flex h-[10%] w-full items-center bg-[#FFFF] px-4">
+        <div className="fixed top-[69px] z-9 flex  h-[6%] w-full items-center bg-[#FFFF] px-4">
           <FactorList />
           <FilterComp
             timePeriod={timePeriod}
