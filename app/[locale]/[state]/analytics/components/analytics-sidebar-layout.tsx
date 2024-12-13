@@ -110,7 +110,7 @@ export function IndicatorListWrapper({ statesList, currentState }: any) {
                 </Text>
               </div>
 
-              <FactorList />
+              <FactorList currentState={currentState} />
             </div>
           </div>
         </aside>

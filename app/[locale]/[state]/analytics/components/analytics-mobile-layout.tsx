@@ -274,7 +274,7 @@ export function AnalyticsMobileLayout({
         )}
       >
         <div className="fixed top-[56px] z-9 flex h-[10%] w-full items-center bg-[#FFFF] px-4">
-          <FactorList />
+          <FactorList currentState={currentSelectedState} />
           <FilterComp
             timePeriod={timePeriod}
             currentSelectedState={currentSelectedState}
