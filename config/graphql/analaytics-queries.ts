@@ -35,8 +35,8 @@ export const ANALYTICS_INDICATORS = graphql(`
 `);
 
 export const ANALYTICS_INDICATORS_BY_CATEGORY = graphql(`
-  query indicatorsByCategory {
-    indicatorsByCategory
+  query indicatorsByCategory($stateCode: String) {
+    indicatorsByCategory(stateCode: $stateCode)
   }
 `);
 

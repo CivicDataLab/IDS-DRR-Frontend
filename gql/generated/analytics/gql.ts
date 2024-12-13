@@ -16,7 +16,7 @@ const documents = {
     "\n  query revCircleViewData(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n    $geoFilter: GeoFilter!\n  ) {\n    revCircleViewData(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": types.RevCircleViewDataDocument,
     "\n  query districtViewData(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n    $geoFilter: GeoFilter!\n  ) {\n    districtViewData(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": types.DistrictViewDataDocument,
     "\n  query indicators($indcFilter: IndicatorFilter) {\n    indicators(indcFilter: $indcFilter)\n  }\n": types.IndicatorsDocument,
-    "\n  query indicatorsByCategory {\n    indicatorsByCategory\n  }\n": types.IndicatorsByCategoryDocument,
+    "\n  query indicatorsByCategory($stateCode: String) {\n    indicatorsByCategory(stateCode: $stateCode)\n  }\n": types.IndicatorsByCategoryDocument,
     "\n  query dataTimePeriods {\n    getDataTimePeriods {\n      value\n    }\n  }\n": types.DataTimePeriodsDocument,
     "\n  query getDistrictRevCircle($geoFilter: GeoFilter!) {\n    getDistrictRevCircle(geoFilter: $geoFilter)\n  }\n": types.GetDistrictRevCircleDocument,
     "\n  query revenueCircleMapData(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n    $geoFilter: GeoFilter\n  ) {\n    revCircleMapData(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": types.RevenueCircleMapDataDocument,
@@ -55,7 +55,7 @@ export function graphql(source: "\n  query indicators($indcFilter: IndicatorFilt
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query indicatorsByCategory {\n    indicatorsByCategory\n  }\n"): (typeof documents)["\n  query indicatorsByCategory {\n    indicatorsByCategory\n  }\n"];
+export function graphql(source: "\n  query indicatorsByCategory($stateCode: String) {\n    indicatorsByCategory(stateCode: $stateCode)\n  }\n"): (typeof documents)["\n  query indicatorsByCategory($stateCode: String) {\n    indicatorsByCategory(stateCode: $stateCode)\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
