@@ -78,7 +78,7 @@ export function FactorList({ currentState }: any) {
   // );
 
   const indicatorsQuery = useQuery(
-    [`indicatorsByCategory`],
+    [`indicatorsByCategory_${currentState.code}`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
