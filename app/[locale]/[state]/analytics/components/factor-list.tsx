@@ -51,7 +51,7 @@ export function getIcon(slug: string) {
   }
 }
 
-export function FactorList() {
+export function FactorList({ currentState }: any) {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator');
   const [, setIndicatorSelected] = useQueryState('indicator');
@@ -60,29 +60,32 @@ export function FactorList() {
 
   const [selectedIndicator, setSelectedIndicator] = useState(indicator || '');
 
-  const factorData = useQuery(
-    [`indicators_risk-score`],
-    () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_INDICATORS,
-        {
-          indcFilter: { slug: 'risk-score' },
-        }
-      ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
+  // const factorData = useQuery(
+  //   [`indicators_risk-score`],
+  //   () =>
+  //     GraphQL(
+  //       `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+  //       ANALYTICS_INDICATORS,
+  //       {
+  //         indcFilter: { slug: 'risk-score' },
+  //       }
+  //     ),
+  //   {
+  //     refetchOnMount: false,
+  //     refetchOnWindowFocus: false,
+  //     refetchOnReconnect: false,
+  //   }
+  // );
 
   const indicatorsQuery = useQuery(
-    [`indicatorsByCategory`],
+    [`indicatorsByCategory_${currentState.code}`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_INDICATORS_BY_CATEGORY
+        ANALYTICS_INDICATORS_BY_CATEGORY,
+        {
+          stateCode: currentState?.code,
+        }
       ),
     {
       refetchOnMount: false,
