@@ -204,9 +204,9 @@ export const MapComponent = ({
       map.getContainer()
     ) {
       try {
-        setTimeout(() =>{
+        setTimeout(() => {
           map?.fitBounds(getBoundsData[0]?.properties?.bounds);
-        }, 200)
+        }, 200);
       } catch (error) {
         console.warn('Error fitting bounds:', error);
       }
@@ -221,12 +221,17 @@ export const MapComponent = ({
   }, [districtCode, map, mapData?.features, revenueMapData?.features]);
 
   React.useEffect(() => {
-    try {      
+    try {
       setTimeout(() => {
-        if (map && map.getContainer() && currentSelectedState.center && !districtCode) {
-          map.setView(currentSelectedState.center, 7.4);
+        if (
+          map &&
+          map?.getContainer() &&
+          currentSelectedState.center &&
+          !districtCode
+        ) {
+          map?.setView(currentSelectedState.center, 7.4);
         }
-      }, 100)
+      }, 100);
     } catch (error) {
       console.log(error);
     }

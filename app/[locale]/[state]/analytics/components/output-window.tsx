@@ -21,7 +21,10 @@ import { GraphQL } from '@/lib/api';
 import { cn, formatDateString } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
-import { getFactorNameBySlug } from '../utils/utils';
+import {
+  formatNumberToIndianSystem,
+  getFactorNameBySlug,
+} from '../utils/utils';
 import { ScoreInfo } from './revenue-circle-accordion';
 import styles from './styles.module.scss';
 
@@ -227,8 +230,11 @@ export function OutputWindow({
                       {getFactorNameBySlug(indicatorDescriptions, indicator)}
                     </Text>
                     {!Factors.includes(indicator) && (
+                      // <Text variant="bodyMd" fontWeight="bold">
+                      //   {data[indicator]['value']} **
+                      // </Text>
                       <Text variant="bodyMd" fontWeight="bold">
-                        {data[indicator]['value']}
+                        {formatNumberToIndianSystem(data[indicator]['value'])}**
                       </Text>
                     )}
                   </div>
@@ -484,7 +490,6 @@ export function OtherFactorScores({
           {getFactorNameBySlug(factorData, scoreType)}
         </Text>
       )}
-
       <ScoreInfo
         indicator={indicator}
         label={
@@ -495,7 +500,8 @@ export function OtherFactorScores({
         value={data?.[scoreType]['value']}
         scoreType={scoreType}
         indicatorDescription={getDescription(scoreType)}
-      />
+      />{' '}
+      ##
       <Tooltip
         content={getDescription(scoreType) || 'No description available'}
       >
