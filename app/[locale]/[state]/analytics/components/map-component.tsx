@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { hp_rivers_features } from '@/geo_json/hp_rivers_geojson';
 import { useWindowSize } from '@/hooks/use-window-size';
 import * as d3 from 'd3-scale';
 import { interpolateBlues } from 'd3-scale-chromatic';
@@ -231,6 +232,16 @@ export const MapComponent = ({
       </div>
     );
 
+  const addlFeaturesStyleArray = [
+    {
+      // Style for addl layer customized to rivers
+      weight: 1.5,
+      opacity: 1,
+      color: '#7bd4ef',
+      fillOpacity: 1,
+    },
+  ];
+
   return (
     <>
       {' '}
@@ -240,6 +251,11 @@ export const MapComponent = ({
         {' '}
         <MapChart
           features={mapFeatures || mapData.features}
+          addlFeaturesArray={
+            // Replace this logic soon with attribute returned from getStates call
+            currentSelectedState.code === '02' ? [hp_rivers_features] : []
+          }
+          addlFeaturesStyleArray={addlFeaturesStyleArray}
           mapZoom={isMobile ? 8 : 7.4}
           mapProperty={indicator}
           zoomOnClick={false}
