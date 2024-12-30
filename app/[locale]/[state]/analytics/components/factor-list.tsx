@@ -16,7 +16,12 @@ import {
   ANALYTICS_INDICATORS_BY_CATEGORY,
 } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
-import { cn, copyCurrentURL, handleRedirect } from '@/lib/utils';
+import {
+  cn,
+  copyCurrentURL,
+  downloadStateReport,
+  handleRedirect,
+} from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import RadioButton from './RadioButton';
@@ -59,6 +64,8 @@ export function FactorList({ currentState }: any) {
   const currentURL = typeof window !== 'undefined' ? window.location.href : '';
 
   const [selectedIndicator, setSelectedIndicator] = useState(indicator || '');
+
+  const [downloadReportLoading, setDownloadReportLoading] = useState(false);
 
   // const factorData = useQuery(
   //   [`indicators_risk-score`],
@@ -224,14 +231,27 @@ export function FactorList({ currentState }: any) {
             />
             <Button
               className="self-start"
-              onClick={(event) =>
-                handleRedirect(
-                  event,
-                  process.env.NEXT_PUBLIC_DOWNLOAD_REPORT_LINK
-                )
-              }
+              onClick={() => {
+                const confirmation = window.confirm(
+                  `Do you want to download the report for "${currentState.name}". `
+                );
+                if (confirmation) {
+                  try {
+                    setDownloadReportLoading(true);
+                    downloadStateReport(
+                      `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentState.code}`,
+                      `${currentState.name}-Report`
+                    );
+                  } catch (error) {
+                    alert(`Error Downloading Report. ${error}`);
+                  } finally {
+                    setDownloadReportLoading(false);
+                  }
+                }
+              }}
               monochrome={true}
               kind="tertiary"
+              // disabled={downloadReportLoading}
             >
               <div className="flex items-center gap-2">
                 <Icon source={Icons.download} />
