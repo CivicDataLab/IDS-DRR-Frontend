@@ -6,7 +6,7 @@ import { useLockBody } from '@/hooks/use-lock-body';
 import { parseAsString, useQueryState } from 'next-usequerystate';
 import { Button, Icon, Menu, Select, Text } from 'opub-ui';
 
-import { cn, copyCurrentURL, formatDate } from '@/lib/utils';
+import { cn, copyCurrentURL, downloadStateReport, formatDate } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { OutputWindowComponent } from './analytics-layout';
 import { FactorList } from './factor-list';
@@ -354,20 +354,12 @@ export function AnalyticsMobileLayout({
                 {
                   content: 'Download Report',
                   icon: Icons.download,
-                  onAction: (event) => {
-                    const downloadLink =
-                      process.env.NEXT_PUBLIC_DOWNLOAD_REPORT_LINK;
-                    if (!downloadLink) {
-                      console.error('Download link is undefined!');
-                      alert('Download link is not available.');
-                      return;
-                    }
-
+                  onAction: () => {
                     const confirmation = window.confirm(
-                      `You are being redirected to "${downloadLink}". `
+                      `Do you want to download the report for "${currentSelectedState.name}". `
                     );
                     if (confirmation) {
-                      window.open(downloadLink, '_blank');
+                      downloadStateReport(`${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentSelectedState.code}`, `${currentSelectedState.name}-Report`);
                     }
                   },
                 },
