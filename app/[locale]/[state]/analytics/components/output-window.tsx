@@ -21,10 +21,7 @@ import { GraphQL } from '@/lib/api';
 import { cn, formatDateString } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
-import {
-  formatNumberToIndianSystem,
-  getFactorNameBySlug,
-} from '../utils/utils';
+import { getFactorNameBySlug } from '../utils/utils';
 import { ScoreInfo } from './revenue-circle-accordion';
 import styles from './styles.module.scss';
 
@@ -230,11 +227,8 @@ export function OutputWindow({
                       {getFactorNameBySlug(indicatorDescriptions, indicator)}
                     </Text>
                     {!Factors.includes(indicator) && (
-                      // <Text variant="bodyMd" fontWeight="bold">
-                      //   {data[indicator]['value']} **
-                      // </Text>
                       <Text variant="bodyMd" fontWeight="bold">
-                        {formatNumberToIndianSystem(data[indicator]['value'])}**
+                        {data[indicator]['value']}
                       </Text>
                     )}
                   </div>
@@ -297,9 +291,9 @@ export function OutputWindow({
             {/* Apply conditional class for visibility */}
             <div
               className={cn(
-                'pb-2 pl-4 pr-4',
+                'p-4',
                 'bg-surfaceDefault shadow-basicMd',
-                'shadow-inset min-w-[373px] max-w-[380px] shrink-0 flex-row md:block',
+                'shadow-inset min-w-[373px] max-w-[380px] shrink-0 md:block',
                 'overflow-y-auto border-b-1 border-l-1 border-r-1 border-solid border-borderSubdued',
                 styles.mobileOverlay,
                 region !== null &&
@@ -310,10 +304,8 @@ export function OutputWindow({
               )}
               style={{ zIndex: '100000' }}
             >
-              <div
-                className="fixed left-0 right-0 m-0 flex h-[4%] w-full items-center justify-center bg-baseIndigoSolid1"
-                style={{ zIndex: '100008' }}
-              >
+              {/* <div className=" flex items-center">swipe up</div> */}
+              <div className="mb-2 flex items-center justify-center">
                 <Button onClick={toggleExpand} kind="tertiary">
                   {isExpanded ? (
                     <Icon source={Icons.down} /> // Swipe Down Icon
@@ -322,7 +314,7 @@ export function OutputWindow({
                   )}
                 </Button>
               </div>
-              <div className=" mt-14 flex h-[4%] items-center gap-2">
+              <div className="flex items-center gap-2">
                 <Button
                   onClick={() => {
                     setDistrictCode(null), setRevenueCode(null);
@@ -490,6 +482,7 @@ export function OtherFactorScores({
           {getFactorNameBySlug(factorData, scoreType)}
         </Text>
       )}
+
       <ScoreInfo
         indicator={indicator}
         label={
@@ -500,8 +493,7 @@ export function OtherFactorScores({
         value={data?.[scoreType]['value']}
         scoreType={scoreType}
         indicatorDescription={getDescription(scoreType)}
-      />{' '}
-      ##
+      />
       <Tooltip
         content={getDescription(scoreType) || 'No description available'}
       >

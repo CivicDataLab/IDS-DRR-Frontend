@@ -14,10 +14,7 @@ import {
 
 import { RiskColorMap } from '@/config/consts';
 import { deSlugify } from '@/lib/utils';
-import {
-  formatNumberToIndianSystem,
-  getFactorNameBySlug,
-} from '../utils/utils';
+import { getFactorNameBySlug } from '../utils/utils';
 
 interface RevenueProps {
   factorData: any;
@@ -124,7 +121,6 @@ export const ScoreInfo = ({
     searchParams.get('time-period') || process.env.NEXT_PUBLIC_TIME_PERIOD;
   const boundary = searchParams.get('boundary') || 'district';
   const region = searchParams.get('region') || '';
-
   return (
     <div className="flex-1">
       {indicator === 'risk-score' ? (
@@ -136,10 +132,7 @@ export const ScoreInfo = ({
       ) : (
         <span>{label}</span>
       )}{' '}
-      ++
-      {indicator !== 'risk-score' && (
-        <strong className="pl-2">{formatNumberToIndianSystem(value)}</strong>
-      )}
+      {indicator !== 'risk-score' && <strong className="pl-2">{value}</strong>}
     </div>
   );
 };

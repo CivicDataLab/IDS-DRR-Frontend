@@ -58,16 +58,3 @@ export function getUnitsBySlug(factorData: any, slug: string) {
   );
   return factorName[0]?.unit__name || '';
 }
-
-export function formatNumberToIndianSystem(number: number): string {
-  const [integerPart, decimalPart] = number.toString().split('.');
-  const lastThreeDigits = integerPart.slice(-3);
-  const otherDigits = integerPart.slice(0, -3);
-
-  const formattedNumber =
-    otherDigits.replace(/\B(?=(\d{2})+(?!\d))/g, ',') +
-    (otherDigits ? ',' : '') +
-    lastThreeDigits;
-
-  return decimalPart ? `${formattedNumber}.${decimalPart}` : formattedNumber;
-}
