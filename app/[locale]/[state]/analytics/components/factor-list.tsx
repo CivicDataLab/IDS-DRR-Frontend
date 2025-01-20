@@ -7,6 +7,7 @@ import {
   RiskScore,
   Vulnerability,
 } from '@/public/FactorIcons';
+import Hazard from '@/public/Hazard';
 import { useQuery } from '@tanstack/react-query';
 import { useQueryState } from 'next-usequerystate';
 import { Button, Icon, IconButton, Menu, Select, Text, Tooltip } from 'opub-ui';
@@ -67,23 +68,6 @@ export function FactorList({ currentState }: any) {
 
   const [downloadReportLoading, setDownloadReportLoading] = useState(false);
 
-  // const factorData = useQuery(
-  //   [`indicators_risk-score`],
-  //   () =>
-  //     GraphQL(
-  //       `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-  //       ANALYTICS_INDICATORS,
-  //       {
-  //         indcFilter: { slug: 'risk-score' },
-  //       }
-  //     ),
-  //   {
-  //     refetchOnMount: false,
-  //     refetchOnWindowFocus: false,
-  //     refetchOnReconnect: false,
-  //   }
-  // );
-
   const indicatorsQuery = useQuery(
     [`indicatorsByCategory_${currentState.code}`],
     () =>
@@ -108,6 +92,8 @@ export function FactorList({ currentState }: any) {
   }, [indicator]);
 
   const handleChange = (selected: string) => {
+    console.log('**', selected);
+
     setIndicatorSelected(selected, { shallow: false });
   };
 
@@ -119,7 +105,8 @@ export function FactorList({ currentState }: any) {
 
     nodes?.forEach((node) => {
       options.push({
-        label: `${'\u00A0'.repeat(level * 3)}${node.name}`, // Use string concatenation
+        label: `${'\u00A0'.repeat(level * 2)}${node.name}`, // Indent based on the level
+        // label: node.name,
         value: node.slug,
       });
 
@@ -143,7 +130,7 @@ export function FactorList({ currentState }: any) {
             label=""
             className="w-[246px] p-2"
             name="boundary-select"
-            // labelInline
+            labelInline
             options={
               indicatorsQuery.isFetched ? flattenIndicators(indicatorNodes) : []
             }

@@ -9,7 +9,11 @@ import { Spinner, Text } from 'opub-ui';
 
 import { Factors, RiskText } from '@/config/consts';
 import MapChart from '@/components/MapChart';
-import { getFactorNameBySlug, getUnitsBySlug } from '../utils/utils';
+import {
+  formatNumberToIndianSystem,
+  getFactorNameBySlug,
+  getUnitsBySlug,
+} from '../utils/utils';
 
 export const MapComponent = ({
   indicator,
@@ -72,13 +76,15 @@ export const MapComponent = ({
       const to = grades[i + 1];
 
       const isDuplicate = customLegendData.some(
-        (entry) => Math.round(from) === parseInt(entry.label.split(' ')[0])
+        (entry) =>
+          formatNumberToIndianSystem(Math.round(from)) ===
+          entry.label.split(' ')[0]
       );
 
       if (!isDuplicate) {
         customLegendData.push({
           color: colorScale(from),
-          label: `${Math.round(from)}${to ? ` - ${Math.round(to)}` : '+'}`,
+          label: `${formatNumberToIndianSystem(Math.round(from))}${to ? ` - ${formatNumberToIndianSystem(Math.round(to))}` : '+'}`,
         });
       }
     }
@@ -175,7 +181,14 @@ export const MapComponent = ({
           return `
       <div>
       <strong>${regionName.toUpperCase()}</strong><br/>
-      <span>${getFactorNameBySlug(indicatorsData, indicator)} : <span style="color: ${colorMap[riskValue]}; text-transform: ${Factors.includes(indicator) && 'uppercase'}; font-weight: bold;">${riskText}</span></span>
+      <span>${getFactorNameBySlug(indicatorsData, indicator)} : <span style="color: ${colorMap[riskValue]}; text-transform: ${Factors.includes(indicator) && 'uppercase'}; font-weight: bold;">${
+        Factors.includes(indicator)
+          ? riskText
+          : `${formatNumberToIndianSystem(riskValue)} ${getUnitsBySlug(
+              indicatorsData,
+              indicator
+            )}`
+      }</span></span>
       </div>`;
         },
         {
@@ -204,9 +217,9 @@ export const MapComponent = ({
       map.getContainer()
     ) {
       try {
-        setTimeout(() =>{
+        setTimeout(() => {
           map?.fitBounds(getBoundsData[0]?.properties?.bounds);
-        }, 200)
+        }, 200);
       } catch (error) {
         console.warn('Error fitting bounds:', error);
       }
@@ -221,12 +234,17 @@ export const MapComponent = ({
   }, [districtCode, map, mapData?.features, revenueMapData?.features]);
 
   React.useEffect(() => {
-    try {      
+    try {
       setTimeout(() => {
-        if (map && map.getContainer() && currentSelectedState.center && !districtCode) {
-          map.setView(currentSelectedState.center, 7.4);
+        if (
+          map &&
+          map?.getContainer() &&
+          currentSelectedState.center &&
+          !districtCode
+        ) {
+          map?.setView(currentSelectedState.center, 7.4);
         }
-      }, 100)
+      }, 100);
     } catch (error) {
       console.log(error);
     }
@@ -254,7 +272,7 @@ export const MapComponent = ({
     <>
       {' '}
       <div
-        className={`relative w-full ${isMobile ? 'h-full' : 'h-[90%]'} ${isMobile ? 'pt-[84px]' : ''}`}
+        className={`relative w-full ${isMobile ? 'h-full' : 'h-[90%]'} ${isMobile ? 'pt-[66px]' : ''}`}
       >
         {' '}
         <MapChart
@@ -286,7 +304,13 @@ export const MapComponent = ({
             const riskValue = layer.feature?.properties?.[indicator];
             const riskText = Factors.includes(indicator)
               ? RiskText[riskValue]?.indicatorText
-              : `${riskValue} ${getUnitsBySlug(indicatorsData, indicator)}`;
+              : `${formatNumberToIndianSystem(riskValue)} ${getUnitsBySlug(
+                  indicatorsData,
+                  indicator
+                )}`;
+            // const riskText = Factors.includes(indicator)
+            //   ? RiskText[riskValue]?.indicatorText
+            //   : `${riskValue} ${getUnitsBySlug(indicatorsData, indicator)}`;
             EnablePopup({ regionName, riskValue, riskText, layer });
           }}
           mouseout={(layer) => {

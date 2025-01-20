@@ -6,7 +6,12 @@ import { useLockBody } from '@/hooks/use-lock-body';
 import { parseAsString, useQueryState } from 'next-usequerystate';
 import { Button, Icon, Menu, Select, Text } from 'opub-ui';
 
-import { cn, copyCurrentURL, downloadStateReport, formatDate } from '@/lib/utils';
+import {
+  cn,
+  copyCurrentURL,
+  downloadStateReport,
+  formatDate,
+} from '@/lib/utils';
 import Icons from '@/components/icons';
 import { OutputWindowComponent } from './analytics-layout';
 import { FactorList } from './factor-list';
@@ -273,7 +278,7 @@ export function AnalyticsMobileLayout({
     <section className="flex h-full flex-col items-center justify-center gap-2 bg-[#FFFF]">
       <div
         className={cn(
-          'relative h-[calc(100dvh_-_130px)] w-full flex-grow flex-col gap-3 overflow-y-scroll '
+          'relative h-[calc(100dvh_-_140px)] w-full flex-grow flex-col gap-3 overflow-y-scroll '
         )}
       >
         <div className="fixed top-[56px] z-9 flex h-[10%] w-full items-center bg-[#FFFF] px-4">
@@ -359,7 +364,10 @@ export function AnalyticsMobileLayout({
                       `Do you want to download the report for "${currentSelectedState.name}". `
                     );
                     if (confirmation) {
-                      downloadStateReport(`${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentSelectedState.code}`, `${currentSelectedState.name}-Report`);
+                      downloadStateReport(
+                        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentSelectedState.code}`,
+                        `${currentSelectedState.name}-Report`
+                      );
                     }
                   },
                 },
