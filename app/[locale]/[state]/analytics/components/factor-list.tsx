@@ -92,8 +92,6 @@ export function FactorList({ currentState }: any) {
   }, [indicator]);
 
   const handleChange = (selected: string) => {
-    console.log('**', selected);
-
     setIndicatorSelected(selected, { shallow: false });
   };
 
