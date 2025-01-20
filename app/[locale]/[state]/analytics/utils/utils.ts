@@ -59,7 +59,10 @@ export function getUnitsBySlug(factorData: any, slug: string) {
   return factorName[0]?.unit__name || '';
 }
 
-export function formatNumberToIndianSystem(number: number): string {
+export function formatNumberToIndianSystem(number: number): string | number {
+  if (number <= 0 || isNaN(number)) {
+    return number;
+  }
   const [integerPart, decimalPart] = number.toString().split('.');
   const lastThreeDigits = integerPart.slice(-3);
   const otherDigits = integerPart.slice(0, -3);
