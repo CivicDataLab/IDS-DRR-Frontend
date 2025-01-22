@@ -86,7 +86,7 @@
   bottom: -100%; /* Initially off-screen */
   z-index: 99999;
   height: calc(100dvh - 86%);
-  opacity: 95%;
+  opacity: 97%;
   box-shadow: var(--shadow-basic-md);
   transition:
     bottom 0.4s ease,
@@ -98,12 +98,12 @@
 }
 
 .mobileOverlayActive {
-  bottom: 86px;
-  right: 0;
+  bottom: 80px;
+  right: 5px;
 }
 
 .expandedOverlay {
-  bottom: 86px;
+  bottom: 80px;
   height: calc(100dvh - 160px);
 }
 
