@@ -56,7 +56,9 @@ export function TableComponent({ data, isLoading }: any) {
             ? RiskText[parseInt((value as { value: string }).value)][
                 'indicatorText'
               ]
-            : formatNumberToIndianSystem((value as { value: any }).value);
+            : formatNumberToIndianSystem(
+                (value as { value: any }).value
+              ).toString();
         }
       });
       return row;
