@@ -4,7 +4,7 @@ export const ANALYTICS_REVENUE_TABLE_DATA = graphql(`
   query revCircleViewData(
     $indcFilter: IndicatorFilter!
     $dataFilter: DataFilter!
-    $geoFilter: GeoFilter
+    $geoFilter: GeoFilter!
   ) {
     revCircleViewData(
       indcFilter: $indcFilter
@@ -18,7 +18,7 @@ export const ANALYTICS_DISTRICT_DATA = graphql(`
   query districtViewData(
     $indcFilter: IndicatorFilter!
     $dataFilter: DataFilter!
-    $geoFilter: GeoFilter
+    $geoFilter: GeoFilter!
   ) {
     districtViewData(
       indcFilter: $indcFilter
@@ -35,8 +35,8 @@ export const ANALYTICS_INDICATORS = graphql(`
 `);
 
 export const ANALYTICS_INDICATORS_BY_CATEGORY = graphql(`
-  query indicatorsByCategory {
-    indicatorsByCategory
+  query indicatorsByCategory($stateCode: String) {
+    indicatorsByCategory(stateCode: $stateCode)
   }
 `);
 
@@ -58,8 +58,13 @@ export const ANALYTICS_REVENUE_MAP_DATA = graphql(`
   query revenueCircleMapData(
     $indcFilter: IndicatorFilter!
     $dataFilter: DataFilter!
+    $geoFilter: GeoFilter
   ) {
-    revCircleMapData(indcFilter: $indcFilter, dataFilter: $dataFilter)
+    revCircleMapData(
+      indcFilter: $indcFilter
+      dataFilter: $dataFilter
+      geoFilter: $geoFilter
+    )
   }
 `);
 
@@ -67,8 +72,13 @@ export const ANALYTICS_DISTRICT_MAP_DATA = graphql(`
   query districtMapData(
     $indcFilter: IndicatorFilter!
     $dataFilter: DataFilter!
+    $geoFilter: GeoFilter
   ) {
-    districtMapData(indcFilter: $indcFilter, dataFilter: $dataFilter)
+    districtMapData(
+      indcFilter: $indcFilter
+      dataFilter: $dataFilter
+      geoFilter: $geoFilter
+    )
   }
 `);
 
@@ -97,5 +107,11 @@ export const ANALYTICS_TIME_TRENDS = graphql(`
       dataFilter: $dataFilter
       geoFilter: $geoFilter
     )
+  }
+`);
+
+export const PLATFORM_STATES_LIST = graphql(`
+  query getStatesList {
+    getStates
   }
 `);

@@ -1,17 +1,13 @@
-import React from 'react';
-import { redirect } from 'next/navigation';
 import { captureException } from '@sentry/nextjs';
 import { dehydrate, Hydrate } from '@tanstack/react-query';
 
-import { AnalyticsURL } from '@/config/consts';
 import {
   ANALYTICS_INDICATORS,
   ANALYTICS_TIME_PERIODS,
+  PLATFORM_STATES_LIST,
 } from '@/config/graphql/analaytics-queries';
 import { getQueryClient, GraphQL } from '@/lib/api';
-import { MediaRendering } from '@/components/media-rendering';
-import { Content } from './components/analytics-layout';
-import { AnalyticsMobileLayout } from './components/analytics-mobile-layout';
+import { AnalyticsMainLayout } from './components/analytics-layout';
 
 export default async function Home({
   searchParams,
@@ -19,8 +15,6 @@ export default async function Home({
   searchParams: { [key: string]: string };
 }) {
   const queryClient = getQueryClient();
-
-  const boundary = searchParams['revenue-code'] ? 'revenue-circle' : 'district';
 
   try {
     await queryClient.prefetchQuery([`timePeriods`], () =>
@@ -39,28 +33,26 @@ export default async function Home({
           { indcFilter: { slug: searchParams?.['indicator'] } }
         )
     );
+
+    await queryClient.prefetchQuery([`states_list`], () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        PLATFORM_STATES_LIST
+      )
+    );
   } catch (error) {
     captureException(error);
   }
 
-  if (Object.keys(searchParams).length === 0) {
-    redirect(AnalyticsURL);
-  }
+  // if (Object.keys(searchParams).length === 0) {
+  //   redirect(AnalyticsURL);
+  // }
 
   const dehydratedState = dehydrate(queryClient);
 
   return (
     <Hydrate state={dehydratedState}>
-      <MediaRendering minWidth={null} maxWidth="1023">
-        <AnalyticsMobileLayout
-          timePeriod={searchParams['time-period']}
-          indicator={searchParams?.indicator}
-          boundary={boundary}
-        />
-      </MediaRendering>
-      <MediaRendering minWidth="1024" maxWidth={null}>
-        <Content />
-      </MediaRendering>
+      <AnalyticsMainLayout />
     </Hydrate>
   );
 }

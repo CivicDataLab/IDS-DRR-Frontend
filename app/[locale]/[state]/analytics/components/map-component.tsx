@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { hp_rivers_features } from '@/geo_json/hp_rivers_geojson';
 import { useWindowSize } from '@/hooks/use-window-size';
 import * as d3 from 'd3-scale';
 import { interpolateBlues } from 'd3-scale-chromatic';
@@ -8,8 +9,11 @@ import { Spinner, Text } from 'opub-ui';
 
 import { Factors, RiskText } from '@/config/consts';
 import MapChart from '@/components/MapChart';
-import { MediaRendering } from '@/components/media-rendering';
-import { getFactorNameBySlug, getUnitsBySlug } from '../utils/utils';
+import {
+  formatNumberToIndianSystem,
+  getFactorNameBySlug,
+  getUnitsBySlug,
+} from '../utils/utils';
 
 export const MapComponent = ({
   indicator,
@@ -20,6 +24,7 @@ export const MapComponent = ({
   revenueMapData,
   setRegion,
   setRevenueRegion,
+  currentSelectedState,
 }: {
   indicator: string;
   mapDataloading: boolean;
@@ -35,6 +40,7 @@ export const MapComponent = ({
   revenueMapData: any;
   setRegion: any;
   setRevenueRegion: any;
+  currentSelectedState: any;
 }) => {
   const [map, setMap] = React.useState<any>(null);
   const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
@@ -70,13 +76,15 @@ export const MapComponent = ({
       const to = grades[i + 1];
 
       const isDuplicate = customLegendData.some(
-        (entry) => Math.round(from) === parseInt(entry.label.split(' ')[0])
+        (entry) =>
+          formatNumberToIndianSystem(Math.round(from)) ===
+          entry.label.split(' ')[0]
       );
 
       if (!isDuplicate) {
         customLegendData.push({
           color: colorScale(from),
-          label: `${Math.round(from)}${to ? ` - ${Math.round(to)}` : '+'}`,
+          label: `${formatNumberToIndianSystem(Math.round(from))}${to ? ` - ${formatNumberToIndianSystem(Math.round(to))}` : '+'}`,
         });
       }
     }
@@ -173,7 +181,14 @@ export const MapComponent = ({
           return `
       <div>
       <strong>${regionName.toUpperCase()}</strong><br/>
-      <span>${getFactorNameBySlug(indicatorsData, indicator)} : <span style="color: ${colorMap[riskValue]}; text-transform: ${Factors.includes(indicator) && 'uppercase'}; font-weight: bold;">${riskText}</span></span>
+      <span>${getFactorNameBySlug(indicatorsData, indicator)} : <span style="color: ${colorMap[riskValue]}; text-transform: ${Factors.includes(indicator) && 'uppercase'}; font-weight: bold;">${
+        Factors.includes(indicator)
+          ? riskText
+          : `${formatNumberToIndianSystem(riskValue)} ${getUnitsBySlug(
+              indicatorsData,
+              indicator
+            )}`
+      }</span></span>
       </div>`;
         },
         {
@@ -202,7 +217,9 @@ export const MapComponent = ({
       map.getContainer()
     ) {
       try {
-        map?.fitBounds(getBoundsData[0]?.properties?.bounds);
+        setTimeout(() => {
+          map?.fitBounds(getBoundsData[0]?.properties?.bounds);
+        }, 200);
       } catch (error) {
         console.warn('Error fitting bounds:', error);
       }
@@ -217,10 +234,21 @@ export const MapComponent = ({
   }, [districtCode, map, mapData?.features, revenueMapData?.features]);
 
   React.useEffect(() => {
-    if (map && map.getContainer() && !districtCode) {
-      map?.setView([26.193, 92.773], 7.4);
+    try {
+      setTimeout(() => {
+        if (
+          map &&
+          map?.getContainer() &&
+          currentSelectedState.center &&
+          !districtCode
+        ) {
+          map?.setView(currentSelectedState.center, 7.4);
+        }
+      }, 100);
+    } catch (error) {
+      console.log(error);
     }
-  }, [map, districtCode]);
+  }, [map, districtCode, currentSelectedState]);
 
   if (mapDataloading || revenueMapDataLoading)
     return (
@@ -230,15 +258,30 @@ export const MapComponent = ({
       </div>
     );
 
+  const addlFeaturesStyleArray = [
+    {
+      // Style for addl layer customized to rivers
+      weight: 1.5,
+      opacity: 1,
+      color: '#7bd4ef',
+      fillOpacity: 1,
+    },
+  ];
+
   return (
     <>
       {' '}
       <div
-        className={`relative w-full ${isMobile ? 'h-full' : 'h-[90%]'} ${isMobile ? 'pt-[84px]' : ''}`}
+        className={`relative w-full ${isMobile ? 'h-full' : 'h-[90%]'} ${isMobile ? 'pt-[66px]' : ''}`}
       >
         {' '}
         <MapChart
           features={mapFeatures || mapData.features}
+          addlFeaturesArray={
+            // Replace this logic soon with attribute returned from getStates call
+            currentSelectedState.code === '02' ? [hp_rivers_features] : []
+          }
+          addlFeaturesStyleArray={addlFeaturesStyleArray}
           mapZoom={isMobile ? 8 : 7.4}
           mapProperty={indicator}
           zoomOnClick={false}
@@ -261,7 +304,13 @@ export const MapComponent = ({
             const riskValue = layer.feature?.properties?.[indicator];
             const riskText = Factors.includes(indicator)
               ? RiskText[riskValue]?.indicatorText
-              : `${riskValue} ${getUnitsBySlug(indicatorsData, indicator)}`;
+              : `${formatNumberToIndianSystem(riskValue)} ${getUnitsBySlug(
+                  indicatorsData,
+                  indicator
+                )}`;
+            // const riskText = Factors.includes(indicator)
+            //   ? RiskText[riskValue]?.indicatorText
+            //   : `${riskValue} ${getUnitsBySlug(indicatorsData, indicator)}`;
             EnablePopup({ regionName, riskValue, riskText, layer });
           }}
           mouseout={(layer) => {

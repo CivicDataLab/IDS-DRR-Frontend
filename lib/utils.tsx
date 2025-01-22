@@ -206,7 +206,7 @@ export function copyDefinedURL(url: any) {
 }
 
 export function toTitleCase(str: string) {
-  return str.replace(/\b\w/g, function (char: string) {
+  return str.toLowerCase().replace(/\b\w/g, function (char: string) {
     return char.toUpperCase();
   });
 }
@@ -232,4 +232,34 @@ export function formatReferenceDate(
         // day: 'numeric',
         year: 'numeric',
       });
+}
+
+export async function downloadStateReport(link:string, fileName:string){
+  try {
+    const response = await fetch(link, {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch PDF: ${response.status} ${response.statusText}`);
+    }
+
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+
+    const elLink = document.createElement('a');
+    elLink.href = url;
+    elLink.download = fileName; // Specify the filename for download
+    elLink.style.display = 'none'; // Hide the link element
+
+    document.body.appendChild(elLink);
+    elLink.click();
+
+    // Clean up
+    document.body.removeChild(elLink);
+    URL.revokeObjectURL(url); // Clean up the URL object
+
+  } catch (error) {
+    console.error('Error downloading PDF:', error);
+  }
 }

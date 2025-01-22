@@ -7,6 +7,7 @@ import {
   RiskScore,
   Vulnerability,
 } from '@/public/FactorIcons';
+import Hazard from '@/public/Hazard';
 import { useQuery } from '@tanstack/react-query';
 import { useQueryState } from 'next-usequerystate';
 import { Button, Icon, IconButton, Menu, Select, Text, Tooltip } from 'opub-ui';
@@ -16,7 +17,12 @@ import {
   ANALYTICS_INDICATORS_BY_CATEGORY,
 } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
-import { cn, copyCurrentURL, handleRedirect } from '@/lib/utils';
+import {
+  cn,
+  copyCurrentURL,
+  downloadStateReport,
+  handleRedirect,
+} from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import RadioButton from './RadioButton';
@@ -51,7 +57,7 @@ export function getIcon(slug: string) {
   }
 }
 
-export function FactorList() {
+export function FactorList({ currentState }: any) {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator');
   const [, setIndicatorSelected] = useQueryState('indicator');
@@ -60,29 +66,17 @@ export function FactorList() {
 
   const [selectedIndicator, setSelectedIndicator] = useState(indicator || '');
 
-  const factorData = useQuery(
-    [`indicators_risk-score`],
-    () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_INDICATORS,
-        {
-          indcFilter: { slug: 'risk-score' },
-        }
-      ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
+  const [downloadReportLoading, setDownloadReportLoading] = useState(false);
 
   const indicatorsQuery = useQuery(
-    [`indicatorsByCategory`],
+    [`indicatorsByCategory_${currentState.code}`],
     () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_INDICATORS_BY_CATEGORY
+        ANALYTICS_INDICATORS_BY_CATEGORY,
+        {
+          stateCode: currentState?.code,
+        }
       ),
     {
       refetchOnMount: false,
@@ -107,9 +101,10 @@ export function FactorList() {
   ): { label: string; value: string }[] => {
     let options: { label: string; value: string }[] = [];
 
-    nodes.forEach((node) => {
+    nodes?.forEach((node) => {
       options.push({
-        label: `${'\u00A0'.repeat(level * 3)}${node.name}`, // Use string concatenation
+        label: `${'\u00A0'.repeat(level * 2)}${node.name}`, // Indent based on the level
+        // label: node.name,
         value: node.slug,
       });
 
@@ -133,7 +128,7 @@ export function FactorList() {
             label=""
             className="w-[246px] p-2"
             name="boundary-select"
-            // labelInline
+            labelInline
             options={
               indicatorsQuery.isFetched ? flattenIndicators(indicatorNodes) : []
             }
@@ -221,14 +216,27 @@ export function FactorList() {
             />
             <Button
               className="self-start"
-              onClick={(event) =>
-                handleRedirect(
-                  event,
-                  process.env.NEXT_PUBLIC_DOWNLOAD_REPORT_LINK
-                )
-              }
+              onClick={() => {
+                const confirmation = window.confirm(
+                  `Do you want to download the report for "${currentState.name}". `
+                );
+                if (confirmation) {
+                  try {
+                    setDownloadReportLoading(true);
+                    downloadStateReport(
+                      `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentState.code}`,
+                      `${currentState.name}-Report`
+                    );
+                  } catch (error) {
+                    alert(`Error Downloading Report. ${error}`);
+                  } finally {
+                    setDownloadReportLoading(false);
+                  }
+                }
+              }}
               monochrome={true}
               kind="tertiary"
+              // disabled={downloadReportLoading}
             >
               <div className="flex items-center gap-2">
                 <Icon source={Icons.download} />
