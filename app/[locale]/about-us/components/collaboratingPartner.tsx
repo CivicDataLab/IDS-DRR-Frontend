@@ -14,9 +14,12 @@ import { MediaRendering } from '@/components/media-rendering';
 export function CollaboratingPartner() {
   const [showMore, setShowMore] = useState(false);
   return (
-    <section className="flex h-full flex-col flex-wrap py-14 ">
+    <section
+      className="flex h-full flex-col flex-wrap py-14 "
+      aria-label="Partners collaborating on this project"
+    >
       <div className="container flex flex-col gap-8">
-        <Text variant="heading2xl" fontWeight="bold" color="default">
+        <Text variant="heading2xl" fontWeight="bold" color="default" as="h2">
           Collaborating partner
         </Text>
         {/* DESKTOP  */}
@@ -37,7 +40,7 @@ export function CollaboratingPartner() {
                   handleRedirect(event, 'https://asdma.assam.gov.in/')
                 }
               >
-                <img src="/web.svg" alt="web" />
+                <img src="/web.svg" alt="ASDMA website link" />
               </Button>
               <Button
                 monochrome={true}
@@ -46,7 +49,7 @@ export function CollaboratingPartner() {
                   handleRedirect(event, 'https://asdma.assam.gov.in/')
                 }
               >
-                <img src="/linkedin.svg" alt="linkedin" />{' '}
+                <img src="/linkedin.svg" alt="ASDMA LinkedIn link" />{' '}
               </Button>
               <Button
                 monochrome={true}
@@ -55,12 +58,17 @@ export function CollaboratingPartner() {
                   handleRedirect(event, 'https://x.com/sdma_assam')
                 }
               >
-                <img src="/x.svg" alt="x" />{' '}
+                <img src="/x.svg" alt="ASDMA Twitter link" />{' '}
               </Button>
             </div>
           </div>
           <div className=" flex  flex-col gap-3">
-            <Text variant="headingXl" fontWeight="medium" color="default">
+            <Text
+              variant="headingXl"
+              fontWeight="medium"
+              color="default"
+              as="h3"
+            >
               Assam State Disaster Management Authority
             </Text>
 
@@ -80,7 +88,7 @@ export function CollaboratingPartner() {
               src="/logo/hp.png"
               height={190}
               width={230}
-              alt="ASDMA Logo"
+              alt="HPSDMA Logo"
               className=" object-contain "
             />
             <div className="flex flex-row items-center justify-between self-stretch">
@@ -91,7 +99,7 @@ export function CollaboratingPartner() {
                   handleRedirect(event, 'https://hpsdma.nic.in/')
                 }
               >
-                <img src="/web.svg" alt="web" />
+                <img src="/web.svg" alt="HPSDMA website link" />
               </Button>
               <Button
                 monochrome={true}
@@ -100,7 +108,7 @@ export function CollaboratingPartner() {
                   handleRedirect(event, 'https://hpsdma.nic.in/')
                 }
               >
-                <img src="/linkedin.svg" alt="linkedin" />{' '}
+                <img src="/linkedin.svg" alt="HPSDMA LinkedIn link" />{' '}
               </Button>
               <Button
                 monochrome={true}
@@ -109,12 +117,17 @@ export function CollaboratingPartner() {
                   handleRedirect(event, 'https://x.com/hpsdma')
                 }
               >
-                <img src="/x.svg" alt="x" />{' '}
+                <img src="/x.svg" alt="HPSDMA Twitter link" />{' '}
               </Button>
             </div>
           </div>
           <div className=" flex  flex-col gap-3">
-            <Text variant="headingXl" fontWeight="medium" color="default">
+            <Text
+              variant="headingXl"
+              fontWeight="medium"
+              color="default"
+              as="h3"
+            >
               Himachal Pradesh State Disaster Management Authority
             </Text>
 

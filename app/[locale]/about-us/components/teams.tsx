@@ -33,15 +33,21 @@ const teamMembers: TeamMember[] = [
   },
   { name: 'Deepthi Chand', role: 'Founder', imageUrl: '/teams/dc.jpg' },
   {
-    name: 'Ruthvik',
-    role: 'Associate Lead Engineer',
-    imageUrl: '/teams/ruthvik.jpg',
-  },
-  {
     name: 'Aparna',
     role: 'Associate Product Designer',
     imageUrl: '/teams/aparna.jpg',
   },
+  {
+    name: 'Bhavabhuthi',
+    role: 'Senior Frontend Engineer',
+    imageUrl: '/teams/bhavabhuthi.jpg',
+  },
+  {
+    name: 'Ruthvik',
+    role: 'Associate Lead Engineer',
+    imageUrl: '/teams/ruthvik.jpg',
+  },
+
   {
     name: 'Sanjay',
     role: 'Frontend Engineer',
@@ -80,10 +86,13 @@ const teamMembers: TeamMember[] = [
 
 export function TheTeam() {
   return (
-    <section className=" py-14 ">
+    <section
+      className=" py-14 "
+      aria-label="The team behind the IDS-DRR project"
+    >
       {/* DESKTOP  */}
       <div className="container mb-2 flex flex-col gap-8 ">
-        <Text variant="heading2xl" fontWeight="bold" color="default">
+        <Text variant="heading2xl" fontWeight="bold" color="default" as="h2">
           Co-created by
         </Text>
 
@@ -104,7 +113,7 @@ export function TheTeam() {
                   handleRedirect(event, 'https://www.open-contracting.org/')
                 }
               >
-                <img src="/web.svg" alt="web" />
+                <img src="/web.svg" alt="OCP website link" />
               </Button>
               <Button
                 monochrome={true}
@@ -116,7 +125,7 @@ export function TheTeam() {
                   )
                 }
               >
-                <img src="/linkedin.svg" alt="linkedin" />{' '}
+                <img src="/linkedin.svg" alt="OCP link to LinkedIn" />{' '}
               </Button>
               <Button
                 monochrome={true}
@@ -125,12 +134,17 @@ export function TheTeam() {
                   handleRedirect(event, 'https://twitter.com/opencontracting')
                 }
               >
-                <img src="/x.svg" alt="x" />{' '}
+                <img src="/x.svg" alt="OCP link to Twitter/X" />{' '}
               </Button>
             </div>
           </div>
           <div className="flex flex-col gap-3">
-            <Text variant="headingXl" fontWeight="medium" color="default">
+            <Text
+              variant="headingXl"
+              fontWeight="medium"
+              color="default"
+              as="h3"
+            >
               Open Contracting Partnership
             </Text>
             <div className="flex flex-col gap-5">
@@ -149,7 +163,7 @@ export function TheTeam() {
               src="/logo/cdl_logo.svg"
               height={120}
               width={230}
-              alt="Open Contracting Partnership Logo"
+              alt="Civic Data Lab Logo"
               className=" object-contain "
             />
             <div className="flex flex-row items-center justify-between self-stretch">
@@ -160,7 +174,7 @@ export function TheTeam() {
                   handleRedirect(event, 'https://civicdatalab.in/')
                 }
               >
-                <img src="/web.svg" alt="web" />
+                <img src="/web.svg" alt="CDL website link" />
               </Button>
               <Button
                 monochrome={true}
@@ -172,7 +186,7 @@ export function TheTeam() {
                   )
                 }
               >
-                <img src="/linkedin.svg" alt="linkedin" />{' '}
+                <img src="/linkedin.svg" alt="CDL link to LinkedIn" />{' '}
               </Button>
               <Button
                 monochrome={true}
@@ -181,12 +195,17 @@ export function TheTeam() {
                   handleRedirect(event, 'https://x.com/CivicDataLab')
                 }
               >
-                <img src="/x.svg" alt="x" />{' '}
+                <img src="/x.svg" alt="CDL link to Twitter/X" />{' '}
               </Button>
             </div>
           </div>
           <div className="flex flex-col gap-3">
-            <Text variant="headingXl" fontWeight="medium" color="default">
+            <Text
+              variant="headingXl"
+              fontWeight="medium"
+              color="default"
+              as="h3"
+            >
               CivicDataLab{' '}
             </Text>
             <div className="flex flex-col gap-5">
@@ -207,7 +226,7 @@ export function TheTeam() {
             <div key={index} className={styles.card}>
               <Image
                 src={member.imageUrl}
-                alt={member.name}
+                alt={`${member.name}'s picture`}
                 height={100}
                 width={200}
                 className="object-contain pt-4 "
