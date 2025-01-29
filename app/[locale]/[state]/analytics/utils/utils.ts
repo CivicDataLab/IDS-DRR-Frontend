@@ -60,9 +60,9 @@ export function getUnitsBySlug(factorData: any, slug: string) {
 }
 
 export function formatNumberToIndianSystem(number: number): string | number {
-  if (number <= 0 || isNaN(number)) {
-    return number;
-  }
+  // if (number <= 0 || isNaN(number)) {
+  //   return number;
+  // }
   const [integerPart, decimalPart] = number.toString().split('.');
   const lastThreeDigits = integerPart.slice(-3);
   const otherDigits = integerPart.slice(0, -3);
