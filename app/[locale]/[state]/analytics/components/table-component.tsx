@@ -46,7 +46,7 @@ export function TableComponent({ data, isLoading }: any) {
 
   function transformRowData(data: Record<string, any>[]) {
     const rows = data?.map((item) => {
-      const row: Record<string, string> = {};
+      const row: Record<string, any> = {};
       row['region-name'] = item['region-name'] as string;
       row['region-type'] = BOUNDARY_MAP[item.type as keyof typeof BOUNDARY_MAP];
       Object.keys(item).forEach((key) => {

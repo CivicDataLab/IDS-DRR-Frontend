@@ -61,9 +61,12 @@ const blogArray: BlogArray[] = [
 
 export function DataStories() {
   return (
-    <section className="flex h-[549px] flex-col flex-wrap py-8 ">
+    <section
+      className="flex h-[549px] flex-col flex-wrap py-8 "
+      aria-label="Data stories"
+    >
       <div className="container mb-2 flex flex-col gap-4  ">
-        <Text variant="heading2xl" fontWeight="bold" color="default">
+        <Text variant="heading2xl" fontWeight="bold" color="default" as="h2">
           Data Stories
         </Text>
         <Carousel>

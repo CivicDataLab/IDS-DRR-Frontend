@@ -4,7 +4,10 @@ import { Text } from 'opub-ui';
 const Partners = () => {
   return (
     <>
-      <section className="flex h-full w-full bg-surfaceDefault px-5 py-6 lg:px-6 lg:py-20">
+      <section
+        className="flex h-full w-full bg-surfaceDefault px-5 py-6 lg:px-6 lg:py-20"
+        aria-labelledby="partners section"
+      >
         <div className="container flex w-full  flex-wrap gap-8  lg:gap-24">
           <div className="flex flex-col  gap-9">
             <Text className=" text-basePureBlack" variant="headingXl">
@@ -55,7 +58,7 @@ const Partners = () => {
                 src="/logo/hp.png"
                 width={92}
                 height={72}
-                alt="ASDMA Logo"
+                alt="HPSDMA Logo"
                 className="object-contain"
                 style={{
                   width: '92',

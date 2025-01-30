@@ -15,9 +15,12 @@ import { MediaRendering } from '@/components/media-rendering';
 export function SupportedBy() {
   const [showMore, setShowMore] = useState(false);
   return (
-    <section className="flex  flex-col flex-wrap py-14 ">
+    <section
+      className="flex  flex-col flex-wrap py-14 "
+      aria-label="Supported by"
+    >
       <div className="container mb-2 flex flex-col gap-8 ">
-        <Text variant="heading2xl" fontWeight="bold" color="default">
+        <Text variant="heading2xl" fontWeight="bold" color="default" as="h2">
           Supported By
         </Text>
         <div className="flex flex-wrap items-center justify-center gap-10 bg-baseIndigoSolid1 p-9 lg:flex-nowrap ">
@@ -37,7 +40,7 @@ export function SupportedBy() {
                   handleRedirect(event, 'https://rockefellerfoundation.org/')
                 }
               >
-                <img src="/web.svg" alt="web" />
+                <img src="/web.svg" alt="RF link to website" />
               </Button>
               <Button
                 monochrome={true}
@@ -49,7 +52,7 @@ export function SupportedBy() {
                   )
                 }
               >
-                <img src="/linkedin.svg" alt="linkedin" />{' '}
+                <img src="/linkedin.svg" alt="RF link to LinkedIn" />{' '}
               </Button>
               <Button
                 monochrome={true}
@@ -58,12 +61,17 @@ export function SupportedBy() {
                   handleRedirect(event, 'https://twitter.com/rockefellerfdn')
                 }
               >
-                <img src="/x.svg" alt="x" />{' '}
+                <img src="/x.svg" alt="RF link to Twitter/X" />{' '}
               </Button>
             </div>
           </div>
           <div className=" flex   flex-col gap-3">
-            <Text variant="headingXl" fontWeight="medium" color="default">
+            <Text
+              variant="headingXl"
+              fontWeight="medium"
+              color="default"
+              as="h3"
+            >
               The Rockefeller Foundation
             </Text>
             <div className="flex flex-col gap-5">
@@ -94,7 +102,7 @@ export function SupportedBy() {
               src="/logo/PJMc.png"
               height={190}
               width={230}
-              alt="Open Contracting Partnership Logo"
+              alt="Patrick J. McGovern Foundation logo"
               className=" object-contain "
             />
             <div className="flex flex-row items-center justify-between self-stretch">
@@ -105,7 +113,7 @@ export function SupportedBy() {
                   handleRedirect(event, 'https://www.mcgovern.org/')
                 }
               >
-                <img src="/web.svg" alt="web" />
+                <img src="/web.svg" alt="PJMF link to website" />
               </Button>
               <Button
                 monochrome={true}
@@ -117,7 +125,7 @@ export function SupportedBy() {
                   )
                 }
               >
-                <img src="/linkedin.svg" alt="linkedin" />{' '}
+                <img src="/linkedin.svg" alt="PJMF link to LinkedIn" />{' '}
               </Button>
               <Button
                 monochrome={true}
@@ -126,12 +134,17 @@ export function SupportedBy() {
                   handleRedirect(event, 'https://x.com/PJMFnd')
                 }
               >
-                <img src="/x.svg" alt="x" />{' '}
+                <img src="/x.svg" alt="PJMF link to Twitter/X" />{' '}
               </Button>
             </div>
           </div>
           <div className="flex flex-col gap-3">
-            <Text variant="headingXl" fontWeight="medium" color="default">
+            <Text
+              variant="headingXl"
+              fontWeight="medium"
+              color="default"
+              as="h3"
+            >
               Patrick J. McGovern Foundation{' '}
             </Text>
             <div className="flex flex-col gap-5">

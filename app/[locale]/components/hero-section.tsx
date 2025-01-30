@@ -7,23 +7,30 @@ import styles from './styles.module.scss';
 
 export const HeroSection = () => {
   return (
-    <section className={cn(styles.HeroSection)}>
+    <section
+      className={cn(styles.HeroSection)}
+      aria-label="Hero Section showcasing IDS-DRR"
+    >
       <div className=" container flex h-full w-full flex-col items-center justify-end self-center py-14">
+        <Text className=" sr-only" variant="heading4xl" as="h1">
+          IDS-DRR
+        </Text>
         <Image
           src="/logo/IDS-yellow.png"
           width={741}
           height={84}
-          alt="Assam DRR Dashboard"
+          alt="IDS-DRR logo"
           className=" hidden lg:block"
         />
         <Image
           src="/logo/IDS-yellow.png"
           width={360}
           height={56}
-          alt="Assam DRR Dashboard"
+          alt="IDS-DRR expanded logo"
           layout="responsive"
           className=" block lg:hidden"
         />
+
         <Text
           className="pt-4 text-center text-surfaceDefault"
           fontWeight="regular"

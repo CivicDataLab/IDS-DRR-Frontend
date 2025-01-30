@@ -63,7 +63,10 @@ export function MobileNav({ data }: { data: MainConfig }) {
         </div>
       </header>
       {open && (
-        <div className="fixed z-10 flex h-[95vh] w-[100vw] flex-shrink-0 flex-col items-start justify-between border-t-1 border-solid border-baseGraySlateSolid11 bg-backgroundSolidDark px-5 py-8 text-textOnBGDefault">
+        <div
+          className="fixed z-10 flex h-[95vh] w-[100vw] flex-shrink-0 flex-col items-start justify-between border-t-1 border-solid border-baseGraySlateSolid11 bg-backgroundSolidDark px-5 py-8 text-textOnBGDefault"
+          style={{ zIndex: '100009' }}
+        >
           <div className="flex w-full items-center gap-3 p-3 pr-5">
             {data.mainNav.length > 0 && (
               <div>
