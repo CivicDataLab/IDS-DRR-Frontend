@@ -19,39 +19,47 @@ export const QuickLinks = () => {
       status: 'active',
       icon: '/logo/states/Assam.svg',
       link: `/assam${AnalyticsURL}`,
+      alt: 'assam state boundary image',
     },
     {
       name: 'Himachal Pradesh',
       status: 'active',
       icon: '/logo/states/Hp.svg',
       link: `/himachal-pradesh${AnalyticsURL}`,
+      alt: 'HP state boundary image',
     },
     {
       name: 'Odisha',
       status: 'active',
       icon: '/logo/states/Odisha.svg',
       link: `/odisha${AnalyticsURL}`,
+      alt: 'Odisha state boundary image',
     },
     {
       name: 'Bihar',
       status: 'inactive',
       icon: '/logo/states/Bihar.svg',
       link: '',
+      alt: 'Bihar state boundary image',
     },
     {
       name: 'Uttar Pradesh',
       status: 'inactive',
       icon: '/logo/states/Up.svg',
       link: '',
+      alt: 'UP state boundary image',
     },
   ];
   return (
-    <section className=" flex h-full w-full flex-col gap-9 px-5 py-6 lg:px-6 lg:py-20">
+    <section
+      className=" flex h-full w-full flex-col gap-9 px-5 py-6 lg:px-6 lg:py-20"
+      aria-label="Quick links to deep dive into different states"
+    >
       <div className="container flex flex-col gap-4 ">
-        <Text variant="heading4xl" fontWeight="bold" color="default">
+        <Text variant="heading3xl" fontWeight="bold" color="default" as="h2">
           Analytics Dashboard
         </Text>
-        <Text variant="headingMd" fontWeight="regular" color="default">
+        <Text variant="bodyLg" fontWeight="regular" color="default">
           {AnalyticsQuickLinksText}
         </Text>
       </div>
@@ -78,10 +86,14 @@ export const QuickLinks = () => {
                         width={200}
                         height={160}
                         src={item.icon}
-                        alt="blog Logo"
+                        alt={item.alt}
                         className={`h-32 w-32 object-contain px-3 ${styles.stateIcon}`}
                       />
-                      <Text variant="headingLg" className=" whitespace-nowrap">
+                      <Text
+                        variant="headingLg"
+                        className=" whitespace-nowrap"
+                        as="h3"
+                      >
                         {item.name}
                       </Text>
                     </div>

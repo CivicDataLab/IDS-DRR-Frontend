@@ -20,6 +20,7 @@ const DataStories = () => {
         'Today, it is essential that we look at Disaster Risk Reduction (DRR) that goes beyond rescue and relief for building resilient communities',
       subTitle: 'By line',
       date: '16/05/2024',
+      alt: 'Flooded Houses',
       image:
         'https://miro.medium.com/v2/resize:fit:720/format:webp/1*MYJWdHX-BuGX0UB5bgEbkg.jpeg',
       link: 'https://medium.com/civicdatalab/using-data-for-disaster-risk-reduction-drr-and-enhanced-climate-adaptation-f2465a91446c',
@@ -30,6 +31,7 @@ const DataStories = () => {
         'In order to harness the potential of the data-for-public-good ecosystem for addressing the growing impact of Climate Change, data-based',
       subTitle: 'By line',
       date: '01/04/2024',
+      alt: 'data image',
       link: 'https://medium.com/civicdatalab/establishing-a-resilient-climate-data-environment-ebe680ba7a9a',
       image:
         'https://miro.medium.com/v2/resize:fit:720/format:webp/1*_UlVG5lEb8ChOgFrthHp_w.jpeg',
@@ -40,6 +42,7 @@ const DataStories = () => {
         'Evidence based interventions for climate action and disaster risk reduction (DRR) must engage communities to ensure resilience.',
       subTitle: 'By line',
       date: '25/09/2024',
+      alt: 'Cloudy Mountains',
       link: 'https://medium.com/civicdatalab/critical-role-of-local-communities-for-drr-3cae00f6c89c',
       image:
         'https://miro.medium.com/v2/resize:fit:720/format:webp/0*RWVURinKnqLkvZbZ',
@@ -51,6 +54,7 @@ const DataStories = () => {
         'How we identified and curated relevant datasets which can be used to study, model and address the issue of floods in the state of Assam.',
       subTitle: 'By line',
       date: '22/05/2023',
+      alt: 'IDEA-FRM image',
       link: 'https://medium.com/civicdatalab/introducing-intelligent-open-data-ecosystem-for-assam-flood-response-and-management-ca5481908dd4',
       image:
         'https://miro.medium.com/v2/resize:fit:720/format:webp/1*KzBOx8poqVyG4m1JY4PsMQ.jpeg',
@@ -60,12 +64,19 @@ const DataStories = () => {
     <section
       className=" flex h-full w-full flex-col gap-10 px-5 py-6 lg:w-fit lg:px-6 lg:py-14"
       style={{ backgroundColor: '#222136' }}
+      aria-label="Data stories carousel showcasing important publications and articles"
     >
       <div className="  flex flex-col gap-4 lg:pl-12">
-        <Text variant="heading4xl" fontWeight="bold" color="onBgDefault">
+        <Text
+          variant="heading3xl"
+          fontWeight="bold"
+          color="onBgDefault"
+          as="h2"
+        >
           Data Stories{' '}
         </Text>
-        <Text variant="headingMd" fontWeight="regular" color="onBgDefault">
+
+        <Text variant="bodyLg" fontWeight="regular" color="onBgDefault">
           {DataStoriesText}
         </Text>
       </div>
@@ -93,7 +104,7 @@ const DataStories = () => {
                       />
                     </div>
                     <div className=" min-h-12">
-                      <Text variant="headingLg" fontWeight="semibold">
+                      <Text variant="headingLg" fontWeight="semibold" as="h3">
                         {item.title}
                       </Text>
                     </div>

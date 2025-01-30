@@ -8,10 +8,10 @@ import {
 
 export const Introduction = () => {
   return (
-    <section>
+    <section aria-label="A short intorduction on IDS-DRR">
       <div className="container flex h-full gap-5 py-8">
         <div className="flex flex-col justify-center gap-8 ">
-          <Text variant="heading2xl" fontWeight="bold" color="default">
+          <Text variant="heading2xl" fontWeight="bold" color="default" as="h2">
             Introducing IDS-DRR
           </Text>
           <Text variant="bodyLg" fontWeight="regular" color="default">

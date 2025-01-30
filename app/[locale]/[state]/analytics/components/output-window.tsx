@@ -303,7 +303,8 @@ export function OutputWindow({
                 region !== null &&
                   region.length > 0 &&
                   styles.mobileOverlayActive,
-                region == null && 'hidden', // Use the 'hidden' class to hide the aside when it's not visible
+                region == null ? 'hidden' : '',
+                // region == null && 'hidden', // Use the 'hidden' class to hide the aside when it's not visible
                 isExpanded && styles.expandedOverlay
               )}
               style={{ zIndex: '100000' }}
@@ -326,7 +327,8 @@ export function OutputWindow({
               <div className=" mt-14 flex h-[4%] items-center gap-2">
                 <Button
                   onClick={() => {
-                    setDistrictCode(null), setRevenueCode(null);
+                    setDistrictCode(null);
+                    setRevenueCode(null);
                     isExpanded ? setIsExpanded(false) : '';
                   }}
                   kind="tertiary"
@@ -377,7 +379,10 @@ export function OutputWindow({
                           </Text>
                           {!Factors.includes(indicator) && (
                             <Text variant="bodyMd" fontWeight="bold">
-                              {data[indicator]['value']}
+                              {formatNumberToIndianSystem(
+                                data[indicator]['value']
+                              )}
+                              {/* {data[indicator]['value']} */}
                             </Text>
                           )}
                         </div>

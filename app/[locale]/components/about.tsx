@@ -16,8 +16,12 @@ export function About() {
     <section
       className=" h-full w-full md:p-6"
       style={{ backgroundColor: '#222136' }}
+      aria-labelledby="about-section"
     >
-      <div className="container flex flex-wrap place-content-center items-center text-surfaceDefault">
+      <div
+        className="container flex flex-wrap place-content-center items-center text-surfaceDefault"
+        aria-describedby="about-text-description"
+      >
         <MediaRendering minWidth="1024" maxWidth={null}>
           {/* DESKTOP  */}
           <Image
@@ -84,7 +88,7 @@ export function About() {
             >
               The Rockefeller Foundation
             </Button>{' '}
-            and the
+            and the{' '}
             <Button
               size="large"
               className="pl-5 text-baseIndigoSolid1 underline"
@@ -93,9 +97,9 @@ export function About() {
                 handleRedirect(event, 'https://www.mcgovern.org/')
               }
             >
-              Patrick J McGovern Foundation
+              Patrick J McGovern Foundation,
             </Button>
-            , has developed a data driven framework -{' '}
+            has developed a data driven framework -{' '}
             <strong>
               Intelligent Data Solution for Disaster Risk Reduction (IDS-DRR)
             </strong>

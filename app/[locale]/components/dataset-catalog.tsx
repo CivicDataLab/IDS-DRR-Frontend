@@ -12,6 +12,7 @@ export const DatasetCatalog = () => {
       link: '/datasets?categories=Hazard',
       description:
         'Hazards or Potential of a physical event that may cause loss of life or property',
+      alt: 'hazard logo',
     },
     {
       name: 'Exposure',
@@ -19,6 +20,7 @@ export const DatasetCatalog = () => {
       link: '/datasets?categories=Exposure',
       description:
         'Hazards or Potential of a physical event that may cause loss of life or property',
+      alt: 'exposure logo',
     },
     {
       name: 'Vulnerability',
@@ -26,6 +28,7 @@ export const DatasetCatalog = () => {
       link: '/datasets?categories=Vulnerability',
       description:
         'Physical, Social, Economic, and Environmental vulnerabilities which increase susceptibility of an area or a community to impact of hazards',
+      alt: 'vulnerability logo',
     },
     {
       name: 'Government Response',
@@ -33,15 +36,19 @@ export const DatasetCatalog = () => {
       link: '/datasets?categories=Government+Response',
       description:
         'Government Response with respect to capacities or resources that can reduce the level of risk, or the effects of disasters',
+      alt: 'government response logo',
     },
   ];
   return (
-    <section className="flex w-full flex-col gap-9 px-5 py-6 lg:px-6 lg:py-20">
+    <section
+      className="flex w-full flex-col gap-9 px-5 py-6 lg:px-6 lg:py-20"
+      aria-label="Catalog of available datasets"
+    >
       <div className="container flex flex-col gap-4 ">
-        <Text variant="heading4xl" fontWeight="bold" color="default">
+        <Text variant="heading3xl" fontWeight="bold" color="default" as="h2">
           Dataset Catalog
         </Text>
-        <Text variant="headingMd" fontWeight="regular" color="default">
+        <Text variant="bodyLg" fontWeight="regular" color="default">
           {DatasetCatalogText}
         </Text>
       </div>
@@ -52,14 +59,12 @@ export const DatasetCatalog = () => {
             className="flex rounded-1 bg-surfaceDefault p-6 shadow-elementCard"
           >
             <Link href={item.link} className=" flex items-center gap-4">
-              <Image src={item.icon} alt={''} width={66} height={66} />
+              <Image src={item.icon} alt={item.alt} width={66} height={66} />
               <div className=" flex flex-col justify-center gap-2">
-                <Text variant="headingMd" className="  ">
+                <Text variant="headingMd" as="h4">
                   {item.name}
                 </Text>
-                <Text variant="bodySm" className="">
-                  {item.description}
-                </Text>
+                <Text variant="bodySm">{item.description}</Text>
               </div>
             </Link>
           </div>
