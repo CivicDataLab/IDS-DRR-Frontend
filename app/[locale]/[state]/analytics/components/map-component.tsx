@@ -249,7 +249,7 @@ export const MapComponent = ({
     } catch (error) {
       console.log(error);
     }
-  }, [map, indicator, districtCode, currentSelectedState]);
+  }, [map, districtCode, currentSelectedState]);
 
   if (mapDataloading || revenueMapDataLoading)
     return (
