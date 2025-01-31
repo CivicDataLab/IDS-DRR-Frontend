@@ -240,7 +240,8 @@ export const MapComponent = ({
           map &&
           map?.getContainer() &&
           currentSelectedState.center &&
-          !districtCode
+          !districtCode &&
+          currentSelectedState.code !== '18'
         ) {
           map?.setView(currentSelectedState.center, 7.4);
         }
@@ -248,7 +249,7 @@ export const MapComponent = ({
     } catch (error) {
       console.log(error);
     }
-  }, [map, districtCode, currentSelectedState]);
+  }, [map, indicator, districtCode, currentSelectedState]);
 
   if (mapDataloading || revenueMapDataLoading)
     return (
