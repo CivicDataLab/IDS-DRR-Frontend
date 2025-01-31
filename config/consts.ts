@@ -65,7 +65,7 @@ const LastUpdated = 'Last Updated';
 const UpdateFreq = 'Update Frequency';
 const datasetsPageHeader = 'Assam DRR : Datasets';
 const datasetsExplorerPageHeader = 'Assam DRR : Datasets';
-const DatasetsURL = `/datasets`;
+const DatasetsURL = `/datasets?size=5&page=1&sort=recent`;
 const GithubRepoLink = `https://github.com/CivicDataLab/flood-data-ecosystem-Assam/tree/main/Sources`;
 
 //analytics page
