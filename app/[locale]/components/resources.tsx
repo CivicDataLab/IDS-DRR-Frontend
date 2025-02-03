@@ -204,7 +204,7 @@ const Resources = () => {
                           ) || 'NA'}
                         </Text>
                       </div>
-                      {item?.formats.length > 0 && (
+                      {item?.formats?.length > 0 && (
                         <div className=" flex gap-2">
                           {item?.formats?.map((fileType: any, index: any) => (
                             <Tag key={index} background-color="#E1F0FF">
