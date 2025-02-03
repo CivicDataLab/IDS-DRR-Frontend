@@ -488,9 +488,11 @@ export function OtherFactorScores({
 
   const FactorVariables = Object.keys(clonedData);
 
-  return FactorVariables.map((scoreType) => (
+  // TODO: Change the filteration to the factor specific structure for it to work with data having objects
+  return FactorVariables.filter(
+    (scoreType: any) => typeof data[scoreType] === 'object'
+  ).map((scoreType) => (
     <div key={scoreType} className=" flex items-center gap-4">
-      {/* {IconMap[scoreType]} */}
       {/* //change  */}
       <div className="flex-shrink-0">
         <div className="h-6 w-6">{IconMap[scoreType]}</div>
