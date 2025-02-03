@@ -488,7 +488,10 @@ export function OtherFactorScores({
 
   const FactorVariables = Object.keys(clonedData);
 
-  return FactorVariables.map((scoreType) => (
+  // TODO: Change the filteration to the factor specific structure for it to work with data having objects
+  return FactorVariables.filter(
+    (scoreType: any) => typeof data[scoreType] === 'object'
+  ).map((scoreType) => (
     <div key={scoreType} className=" flex  items-center  gap-4">
       {IconMap[scoreType]}
       {indicator === 'risk-score' && (
