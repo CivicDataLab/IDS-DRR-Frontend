@@ -489,8 +489,11 @@ export function OtherFactorScores({
   const FactorVariables = Object.keys(clonedData);
 
   return FactorVariables.map((scoreType) => (
-    <div key={scoreType} className=" flex  items-center  gap-4">
-      {IconMap[scoreType]}
+    <div key={scoreType} className=" flex items-center gap-4">
+      {/* {IconMap[scoreType]} */}
+      <div className="flex-shrink-0">
+        <div className="h-6 w-6">{IconMap[scoreType]}</div>
+      </div>
       {indicator === 'risk-score' && (
         <Text className="shrink-1 min-w-[200px]">
           {getFactorNameBySlug(factorData, scoreType)}
