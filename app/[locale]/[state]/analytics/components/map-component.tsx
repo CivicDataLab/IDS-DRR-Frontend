@@ -80,9 +80,10 @@ export const MapComponent = ({
         if (num < 1) {
           return num < 0.001 ? '0' : num.toFixed(3);
         }
-        return num > 1
-          ? Math.round(num).toString()
-          : formatNumberToIndianSystem(Math.round(num));
+        // return num > 1
+        //   ? Math.round(num).toString()
+        //   : formatNumberToIndianSystem(Math.round(num));
+        return formatNumberToIndianSystem(Math.round(num));
       };
 
       const isDuplicate = customLegendData.some(
