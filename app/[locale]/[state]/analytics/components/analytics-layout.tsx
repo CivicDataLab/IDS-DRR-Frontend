@@ -34,6 +34,7 @@ import { AnalyticsMobileLayout } from './analytics-mobile-layout';
 import { MapComponent } from './map-component';
 import { OutputWindow } from './output-window';
 import { TableComponent } from './table-component';
+import { ChartView } from './chart-view';
 
 export function AnalyticsMainLayout() {
   const searchParams = useSearchParams();
@@ -395,20 +396,14 @@ export function AnalyticsMainLayout() {
                 Map View
               </Tab>
               <div
-                className={`ml-4 h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'map' ? 'hidden' : ''}`}
+                className={`h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'map' || view === 'chart' ? 'hidden' : ''}`}
               />
-              <Tab
-                theme="climate"
-                title="coming soon"
-                className=" cursor-not-allowed"
-                disabled
-                value="chart"
-              >
+              <Tab theme="climate" value="chart">
                 Chart View
               </Tab>
               <div
-                className={`ml-4 h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'table' ? 'hidden' : ''}`}
-              />{' '}
+                className={`h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'chart' || view === 'table' ? 'hidden' : ''}`}
+              />
               <Tab theme="climate" value="table">
                 Table View
               </Tab>
@@ -466,6 +461,11 @@ export function AnalyticsMainLayout() {
                 }
                 isLoading={tableData.isLoading}
               />
+            </TabPanel>
+            <TabPanel value="chart">
+              <div className=" mt-2 h-[calc(100dvh_-_140px)]">
+                <ChartView />
+              </div>
             </TabPanel>
           </Tabs>
         </React.Fragment>
