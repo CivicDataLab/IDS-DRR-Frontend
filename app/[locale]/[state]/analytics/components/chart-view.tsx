@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { parseDate } from '@internationalized/date';
+import { useQuery } from '@tanstack/react-query';
 import ReactECharts from 'echarts-for-react';
 import { parseAsString, useQueryState } from 'next-usequerystate';
-import { MonthPicker, Spinner, Text } from 'opub-ui';
+import { MultiMonthPicker, Spinner, Text } from 'opub-ui';
 
+import { ANALYTICS_INDICATORS_BY_CATEGORY } from '@/config/graphql/analaytics-queries';
+import { GraphQL } from '@/lib/api';
 import FilterDropdownOptions, { Option } from './filter-dropdown-options';
 
 export const ChartView = ({
@@ -26,8 +29,6 @@ export const ChartView = ({
     parseAsString.withDefault('')
   );
   const [revenueCode] = useQueryState('revenue-code');
-
-  const stateResource = '5d343516-2587-48e0-a92e-96d2a07eb6da';
 
   const riskscoreFields = [
     {
@@ -65,22 +66,50 @@ export const ChartView = ({
     parseAsString.withDefault(timePeriod)
   );
 
+  const indicatorsQuery = useQuery(
+    [`indicatorsByCategory_${currentSelectedState.code}`],
+    () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_INDICATORS_BY_CATEGORY,
+        {
+          stateCode: currentSelectedState?.code,
+        }
+      ),
+    {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
+
   useEffect(() => {
     setLoading(true);
     const body = {
-      chart_type: 'GROUPED_BAR_VERTICAL',
+      chart_type:
+        indicator === 'risk-score' ? 'GROUPED_BAR_VERTICAL' : 'BAR_VERTICAL',
       x_axis_column: 'timeperiod',
+      time_column: 'timeperiod',
       x_axis_label: 'Time Period',
-      y_axis_column: indicator === 'risk-score' ? riskscoreFields : indicator,
+      y_axis_column:
+        indicator === 'risk-score'
+          ? riskscoreFields
+          : [
+              {
+                field_name: indicator,
+                color: '#8B5E3C',
+                label: indicator,
+              },
+            ],
       y_axis_label: 'Score',
       // aggregate_type: 'SUM',
       show_legend: true,
       filters: [
-        {
-          column: 'timeperiod',
-          operator: 'in',
-          value: timePeriodSelected,
-        },
+        // {
+        //   column: 'timeperiod',
+        //   operator: 'in',
+        //   value: timePeriodSelected,
+        // },
         {
           column: 'object-id',
           operator: '==',
@@ -90,7 +119,7 @@ export const ChartView = ({
     };
 
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/generate-dynamic-chart/${stateResource}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/generate-dynamic-chart/${currentSelectedState.resource_id}`,
       {
         method: 'POST',
         headers: {
@@ -113,7 +142,24 @@ export const ChartView = ({
         setChartData(null);
         console.log(error);
       });
-  }, [districtCode, revenueCode, timePeriodSelected]);
+  }, [districtCode, revenueCode, timePeriodSelected, indicator]);
+
+  const findNameBySlug = (data: any, slug: string): string | undefined => {
+    if (data.slug === slug) {
+      return data.name;
+    }
+
+    if (data.children && Array.isArray(data.children)) {
+      for (const child of data.children) {
+        const foundName = findNameBySlug(child, slug);
+        if (foundName) {
+          return foundName;
+        }
+      }
+    }
+
+    return undefined;
+  };
 
   return (
     <div>
@@ -124,24 +170,35 @@ export const ChartView = ({
             RevCircleDropdownOptions={RevCircleDropdownOptions}
             DistrictDropDownOption={DistrictDropDownOption}
           />
-          <MonthPicker
-            name="time-period-select"
-            defaultValue={parseDate(
-              `${timePeriodSelected.split('_')[0]}-${timePeriodSelected.split('_')[1]}-01` ||
-                '23-08-01'
-            )}
-            label="Select Month"
+
+          <MultiMonthPicker
+            // name="time-period-select"
+            selectedValues={[]}
+            label="Select Months"
             // minValue={parseDate(minDate || '2023-01-04')}
             // maxValue={parseDate(maxDate || '2023-01-04')}
-            onChange={(date) => {
-              setTimePeriod(
-                `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`,
-                { shallow: false }
-              );
+            onChange={(dates: any) => {
+              console.log(dates);
+              // setTimePeriod(
+              //   `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`,
+              //   { shallow: false }
+              // );
             }}
           />
         </div>
-        <div className="w-full  bg-surfaceDefault p-6 text-center max-sm:p-2">
+        <div className="mt-2 w-full bg-surfaceDefault p-4 pb-0 pt-8 max-sm:p-2">
+          <Text variant="headingLg" fontWeight="semibold">
+            {`${
+              findNameBySlug(
+                indicatorsQuery?.data?.indicatorsByCategory[0] || {},
+                indicator
+              ) || indicator
+            } - `}
+            {revenueCode &&
+              `${RevCircleDropdownOptions.find((option) => option.value === revenueCode)?.label}, `}
+            {districtCode &&
+              `${DistrictDropDownOption.find((option) => option.value === districtCode)?.label} District`}
+          </Text>
           {loading ? (
             <div className="flex h-[calc(100dvh_-_400px)] flex-col place-content-center items-center">
               <Spinner color="highlight" />
