@@ -31,10 +31,11 @@ import { GraphQL } from '@/lib/api';
 import { formatDate, toTitleCase } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
 import { AnalyticsMobileLayout } from './analytics-mobile-layout';
+import { ChartView } from './chart-view';
+import FilterDropdownOptions from './filter-dropdown-options';
 import { MapComponent } from './map-component';
 import { OutputWindow } from './output-window';
 import { TableComponent } from './table-component';
-import { ChartView } from './chart-view';
 
 export function AnalyticsMainLayout() {
   const searchParams = useSearchParams();
@@ -103,6 +104,7 @@ export function AnalyticsMainLayout() {
         }
       ),
     {
+      enabled: Boolean(view === 'map'),
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
@@ -126,6 +128,7 @@ export function AnalyticsMainLayout() {
         }
       ),
     {
+      enabled: Boolean(view === 'map'),
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
@@ -197,6 +200,7 @@ export function AnalyticsMainLayout() {
         }
       ),
     {
+      enabled: Boolean(view === 'map'),
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
@@ -224,6 +228,7 @@ export function AnalyticsMainLayout() {
         }
       ),
     {
+      enabled: Boolean(view === 'table'),
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
@@ -308,61 +313,14 @@ export function AnalyticsMainLayout() {
     }
   }, [revenueCode, tableData.data?.tableData]);
 
-  const getRevenueCircleOptions = () => {
-    const filterRevenueCircles = RevCircleDropdownOptions.filter(
-      (option) => option.districtCode === districtCode
-    );
-
-    filterRevenueCircles.unshift({ label: '', value: '' });
-
-    return filterRevenueCircles;
-  };
-
-  const handleDistrictChange = (districtCode: string) => {
-    setDistrictCode(districtCode, { shallow: false });
-  };
-
-  function SelectOptions() {
-    return (
-      <React.Fragment>
-        <Select
-          label="Select District"
-          value={districtCode || ''}
-          name="district-select"
-          className=" flex-grow"
-          onChange={(e) => {
-            handleDistrictChange(e);
-          }}
-          options={DistrictDropDownOption}
-        />
-        <Select
-          label={`Select ${toTitleCase(currentSelectedState.child_type)}`}
-          value={revenueCode || ''}
-          placeholder={
-            !districtCode
-              ? 'Select a district to enable'
-              : `Select a ${toTitleCase(currentSelectedState.child_type)}`
-          }
-          name="revenue-circle-select"
-          className=" flex-grow"
-          disabled={!districtCode}
-          onChange={(e) => {
-            setRevenueCode(e, { shallow: false });
-          }}
-          options={getRevenueCircleOptions()}
-        />
-      </React.Fragment>
-    );
-  }
-
-  if (mapData?.isFetching && revenueMapData?.isFetching) {
-    return (
-      <div className="flex h-full flex-col place-content-center items-center">
-        <Spinner color="highlight" />
-        <Text>Loading...</Text>
-      </div>
-    );
-  }
+  // if (mapData?.isFetching && revenueMapData?.isFetching) {
+  //   return (
+  //     <div className="flex h-full flex-col place-content-center items-center">
+  //       <Spinner color="highlight" />
+  //       <Text>Loading...</Text>
+  //     </div>
+  //   );
+  // }
 
   const region = searchParams.get('district-code') || '';
 
@@ -409,27 +367,39 @@ export function AnalyticsMainLayout() {
               </Tab>
             </TabList>
             <TabPanel value="map">
-              {revenueMapData?.data && mapData?.data && (
-                <div className=" mt-2 h-[calc(100dvh_-_140px)]">
-                  <div className="mb-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
-                    <SelectOptions />
-                    <MonthPicker
-                      name="time-period-select"
-                      defaultValue={parseDate(
-                        `${timePeriodSelected.split('_')[0]}-${timePeriodSelected.split('_')[1]}-01` ||
-                          '23-08-01'
-                      )}
-                      label="Select Month"
-                      minValue={parseDate(minDate || '2023-01-04')}
-                      maxValue={parseDate(maxDate || '2023-01-04')}
-                      onChange={(date) => {
-                        setTimePeriod(
-                          `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`,
-                          { shallow: false }
-                        );
-                      }}
-                    />
+              <div className=" mt-2 h-[calc(100dvh_-_140px)]">
+                <div className="mb-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
+                  <FilterDropdownOptions
+                    currentSelectedState={currentSelectedState}
+                    RevCircleDropdownOptions={RevCircleDropdownOptions}
+                    DistrictDropDownOption={DistrictDropDownOption}
+                  />
+                  <MonthPicker
+                    name="time-period-select"
+                    defaultValue={parseDate(
+                      `${timePeriodSelected.split('_')[0]}-${timePeriodSelected.split('_')[1]}-01` ||
+                        '23-08-01'
+                    )}
+                    label="Select Month"
+                    minValue={parseDate(minDate || '2023-01-04')}
+                    maxValue={parseDate(maxDate || '2023-01-04')}
+                    onChange={(date) => {
+                      setTimePeriod(
+                        `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`,
+                        { shallow: false }
+                      );
+                    }}
+                  />
+                </div>
+
+                {mapData?.isFetching && revenueMapData?.isFetching && (
+                  <div className="flex h-full flex-col place-content-center items-center">
+                    <Spinner color="highlight" />
+                    <Text>Loading...</Text>
                   </div>
+                )}
+
+                {revenueMapData?.data && mapData?.data && (
                   <MapComponent
                     indicator={indicator}
                     mapDataloading={mapData?.isFetching}
@@ -441,17 +411,19 @@ export function AnalyticsMainLayout() {
                     mapData={mapData?.data?.districtMapData}
                     currentSelectedState={currentSelectedState}
                   />
-                  {region !== null && region.length > 0 && view === 'map' && (
-                    <OutputWindowComponent
-                      currentState={currentSelectedState}
-                    />
-                  )}
-                </div>
-              )}
+                )}
+                {region !== null && region.length > 0 && view === 'map' && (
+                  <OutputWindowComponent currentState={currentSelectedState} />
+                )}
+              </div>
             </TabPanel>
             <TabPanel value="table">
               <div className="mb-2 mt-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
-                <SelectOptions />
+                <FilterDropdownOptions
+                  currentSelectedState={currentSelectedState}
+                  RevCircleDropdownOptions={RevCircleDropdownOptions}
+                  DistrictDropDownOption={DistrictDropDownOption}
+                />
               </div>
               <TableComponent
                 data={
@@ -464,7 +436,11 @@ export function AnalyticsMainLayout() {
             </TabPanel>
             <TabPanel value="chart">
               <div className=" mt-2 h-[calc(100dvh_-_140px)]">
-                <ChartView />
+                <ChartView
+                  currentSelectedState={currentSelectedState}
+                  RevCircleDropdownOptions={RevCircleDropdownOptions}
+                  DistrictDropDownOption={DistrictDropDownOption}
+                />
               </div>
             </TabPanel>
           </Tabs>
