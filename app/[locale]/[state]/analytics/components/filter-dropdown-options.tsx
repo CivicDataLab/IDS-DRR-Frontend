@@ -44,6 +44,7 @@ export default function FilterDropdownOptions({
         className=" flex-grow"
         onChange={(e) => {
           setDistrictCode(e, { shallow: false });
+          setRevenueCode('');
         }}
         options={DistrictDropDownOption}
       />
