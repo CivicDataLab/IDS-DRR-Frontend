@@ -13,6 +13,7 @@ import {
   formatDate,
 } from '@/lib/utils';
 import Icons from '@/components/icons';
+import { getLatestDate } from '../utils/utils';
 import { OutputWindowComponent } from './analytics-layout';
 import { FactorList } from './factor-list';
 import { FilterComp } from './filter-component';
@@ -163,7 +164,14 @@ export function AnalyticsMobileLayout({
   // Sync time period from URL on component mount
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const timePeriod = params.get('time-period');
+    let processedTime = getLatestDate(
+      params.get('time-period')?.split(',') || []
+    )?.split('-');
+
+    const timePeriod = processedTime
+      ? `${processedTime[0]}_${processedTime[1]}`
+      : process.env.NEXT_PUBLIC_TIME_PERIOD;
+
     if (timePeriod) {
       setTimePeriod(timePeriod);
     }

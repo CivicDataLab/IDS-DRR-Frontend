@@ -24,6 +24,7 @@ import { MediaRendering } from '@/components/media-rendering';
 import {
   formatNumberToIndianSystem,
   getFactorNameBySlug,
+  getLatestDate,
 } from '../utils/utils';
 import { ScoreInfo } from './revenue-circle-accordion';
 import styles from './styles.module.scss';
@@ -40,12 +41,19 @@ export function OutputWindow({
     throw new Error('TIME_PERIOD is not defined');
   }
   const DEFAULT_TIME_PERIOD: string = process.env.NEXT_PUBLIC_TIME_PERIOD;
-  const timePeriod = searchParams.get('time-period') || DEFAULT_TIME_PERIOD;
+  let processedTime = getLatestDate(
+    searchParams.get('time-period')?.split(',') || []
+  )?.split('-');
+  const timePeriod = processedTime
+    ? `${processedTime[0]}_${processedTime[1]}`
+    : DEFAULT_TIME_PERIOD;
+
   const formattedTimePeriod = formatDateString(timePeriod);
   const region = searchParams.get('district-code') || '';
   const view = searchParams.get('view') || '';
 
   const RevenueRegion = searchParams.get('revenue-code') || '';
+
   const [revenueCode, setDistrictCode] = useQueryState('district-code');
   const [districtCode, setRevenueCode] = useQueryState('revenue-code');
   const [indicatorCode, setIndicatorCode] = useQueryState('indicator');
@@ -93,12 +101,14 @@ export function OutputWindow({
   const districtData = data?.filter((item: any) =>
     Object.hasOwnProperty.call(item, 'district')
   );
+
   // To filter out revenue circles from the district data boundary
   const revenueCircleData = data?.filter((item: any) =>
     Object.hasOwnProperty.call(item, 'revenue circle')
   );
 
   const DataBasedOnBoundary = !RevenueRegion ? districtData : data;
+
   const RegionName = !RevenueRegion
     ? districtData[0]?.district
     : data[0]?.[data[0].type];
