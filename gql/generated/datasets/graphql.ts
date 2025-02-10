@@ -186,6 +186,10 @@ export enum ApiResourceChartDetailsChartTypeEnum {
   BarHorizontal = 'BAR_HORIZONTAL',
   /** Bar Vertical */
   BarVertical = 'BAR_VERTICAL',
+  /** Grouped Bar Horizontal */
+  GroupedBarHorizontal = 'GROUPED_BAR_HORIZONTAL',
+  /** Grouped Bar Vertical */
+  GroupedBarVertical = 'GROUPED_BAR_VERTICAL',
   /** Line */
   Line = 'LINE'
 }
@@ -259,6 +263,8 @@ export enum ChartTypes {
   AssamRc = 'ASSAM_RC',
   BarHorizontal = 'BAR_HORIZONTAL',
   BarVertical = 'BAR_VERTICAL',
+  GroupedBarHorizontal = 'GROUPED_BAR_HORIZONTAL',
+  GroupedBarVertical = 'GROUPED_BAR_VERTICAL',
   Line = 'LINE'
 }
 
@@ -380,6 +386,12 @@ export enum FieldType {
   Number = 'NUMBER',
   String = 'STRING'
 }
+
+export type FilterInput = {
+  column: Scalars['String'];
+  operator: Scalars['String'];
+  value: Scalars['String'];
+};
 
 /** Metadata(id, label, data_standard, urn, data_type, options, validator, validator_options, type, model, enabled, filterable) */
 export type MetadataFilter = {
@@ -789,6 +801,7 @@ export type Query = {
   accessModelResources: Array<TypeAccessModel>;
   categories: Array<TypeCategory>;
   chartsDetails: Array<TypeResourceChart>;
+  datasetResourceCharts: Array<TypeResourceChartImage>;
   datasetResources: Array<TypeResource>;
   datasets: Array<TypeDataset>;
   dataspaces: Array<TypeDataSpace>;
@@ -820,6 +833,11 @@ export type QueryCategoriesArgs = {
 
 
 export type QueryChartsDetailsArgs = {
+  datasetId: Scalars['UUID'];
+};
+
+
+export type QueryDatasetResourceChartsArgs = {
   datasetId: Scalars['UUID'];
 };
 
@@ -909,11 +927,12 @@ export type ResourceChartImageInputPartial = {
   name?: InputMaybe<Scalars['String']>;
 };
 
-/** ResourceChartDetails(id, resource, name, description, chart_type, x_axis_label, y_axis_label, x_axis_column, y_axis_column, show_legend, aggregate_type, region_column, value_column, modified) */
+/** ResourceChartDetails(id, resource, name, description, chart_type, x_axis_label, y_axis_label, x_axis_column, y_axis_column, show_legend, aggregate_type, region_column, value_column, modified, filters, y_axis_column_list) */
 export type ResourceChartInput = {
   aggregateType?: AggregateType;
   chartId?: InputMaybe<Scalars['UUID']>;
   description?: InputMaybe<Scalars['String']>;
+  filters?: InputMaybe<Array<FilterInput>>;
   name?: InputMaybe<Scalars['String']>;
   regionColumn?: InputMaybe<Scalars['String']>;
   resource: Scalars['UUID'];
@@ -1106,13 +1125,14 @@ export type TypeResourceAccessModel = {
   type: ApiAccessModelTypeEnum;
 };
 
-/** ResourceChartDetails(id, resource, name, description, chart_type, x_axis_label, y_axis_label, x_axis_column, y_axis_column, show_legend, aggregate_type, region_column, value_column, modified) */
+/** ResourceChartDetails(id, resource, name, description, chart_type, x_axis_label, y_axis_label, x_axis_column, y_axis_column, show_legend, aggregate_type, region_column, value_column, modified, filters, y_axis_column_list) */
 export type TypeResourceChart = {
   __typename?: 'TypeResourceChart';
   aggregateType: ApiResourceChartDetailsAggregateTypeEnum;
   chart: Scalars['JSON'];
   chartType: ApiResourceChartDetailsChartTypeEnum;
   description: Scalars['String'];
+  filters: Scalars['JSON'];
   id: Scalars['UUID'];
   modified: Scalars['DateTime'];
   name: Scalars['String'];
@@ -1123,6 +1143,7 @@ export type TypeResourceChart = {
   xAxisColumn?: Maybe<TypeResourceSchema>;
   xAxisLabel: Scalars['String'];
   yAxisColumn?: Maybe<TypeResourceSchema>;
+  yAxisColumnList: Scalars['JSON'];
   yAxisLabel: Scalars['String'];
 };
 

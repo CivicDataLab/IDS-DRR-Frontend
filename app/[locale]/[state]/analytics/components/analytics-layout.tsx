@@ -1,20 +1,10 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
-import { parseDate } from '@internationalized/date';
 import { useQuery } from '@tanstack/react-query';
 import { parseAsString, useQueryState } from 'next-usequerystate';
-import {
-  MonthPicker,
-  Select,
-  Spinner,
-  Tab,
-  TabList,
-  TabPanel,
-  Tabs,
-  Text,
-} from 'opub-ui';
+import { Spinner, Tab, TabList, TabPanel, Tabs, Text } from 'opub-ui';
 
 import {
   ANALYTICS_DISTRICT_DATA,
@@ -28,29 +18,33 @@ import {
   PLATFORM_STATES_LIST,
 } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
-import { formatDate, toTitleCase } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
+import { getLatestDate } from '../utils/utils';
 import { AnalyticsMobileLayout } from './analytics-mobile-layout';
+import { ChartView } from './chart-view';
+import FilterDropdownOptions from './filter-dropdown-options';
 import { MapComponent } from './map-component';
 import { OutputWindow } from './output-window';
 import { TableComponent } from './table-component';
 
+interface Option {
+  disabled?: boolean;
+  value: string;
+  label: string;
+  districtCode?: string;
+}
+
 export function AnalyticsMainLayout() {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator') || '';
-  const timePeriod = searchParams.get('time-period') || '';
 
-  interface Option {
-    disabled?: boolean;
-    value: string;
-    label: string;
-    districtCode?: string;
-  }
+  const timePeriod = getLatestDate(
+    searchParams.getAll('time-period') || process.env.NEXT_PUBLIC_TIME_PERIOD
+  )?.split('-');
 
-  const [timePeriodSelected, setTimePeriod] = useQueryState(
-    'time-period',
-    parseAsString.withDefault(timePeriod)
-  );
+  const timePeriodSelected = timePeriod
+    ? `${timePeriod[0]}_${timePeriod[1]}`
+    : process.env.NEXT_PUBLIC_TIME_PERIOD;
 
   const [districtCode, setDistrictCode] = useQueryState(
     'district-code',
@@ -102,6 +96,7 @@ export function AnalyticsMainLayout() {
         }
       ),
     {
+      enabled: Boolean(view === 'map'),
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
@@ -125,6 +120,7 @@ export function AnalyticsMainLayout() {
         }
       ),
     {
+      enabled: Boolean(view === 'map'),
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
@@ -196,6 +192,7 @@ export function AnalyticsMainLayout() {
         }
       ),
     {
+      enabled: Boolean(view === 'map'),
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
@@ -223,6 +220,7 @@ export function AnalyticsMainLayout() {
         }
       ),
     {
+      enabled: Boolean(view === 'table'),
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
@@ -232,24 +230,6 @@ export function AnalyticsMainLayout() {
   const [filteredTableData, setFilteredTableData] = useState(
     tableData.data?.tableData
   );
-
-  let minDate, maxDate;
-  if (timePeriods.data) {
-    const datesArray = timePeriods?.data?.getDataTimePeriods.map(
-      (date: any) => {
-        const [year, month] = date.value.split('_');
-        return new Date(parseInt(year), parseInt(month));
-      }
-    );
-    const timestamps = datesArray.map((date: any) => date.getTime());
-    // Find the minimum and maximum timestamps
-    const minTimestamp = Math.min(...timestamps);
-    const maxTimestamp = Math.max(...timestamps);
-
-    // Convert the timestamps back to dates
-    minDate = formatDate(minTimestamp, true);
-    maxDate = formatDate(maxTimestamp, true);
-  }
 
   let RevCircleDropdownOptions: Option[] = [{ label: '', value: '' }];
   let DistrictDropDownOption: Option[] = [{ label: '', value: '' }];
@@ -307,69 +287,13 @@ export function AnalyticsMainLayout() {
     }
   }, [revenueCode, tableData.data?.tableData]);
 
-  const getRevenueCircleOptions = () => {
-    const filterRevenueCircles = RevCircleDropdownOptions.filter(
-      (option) => option.districtCode === districtCode
-    );
-
-    filterRevenueCircles.unshift({ label: '', value: '' });
-
-    return filterRevenueCircles;
-  };
-
-  const handleDistrictChange = (districtCode: string) => {
-    setDistrictCode(districtCode, { shallow: false });
-  };
-
-  function SelectOptions() {
-    return (
-      <React.Fragment>
-        <Select
-          label="Select District"
-          value={districtCode || ''}
-          name="district-select"
-          className=" flex-grow"
-          onChange={(e) => {
-            handleDistrictChange(e);
-          }}
-          options={DistrictDropDownOption}
-        />
-        <Select
-          label={`Select ${toTitleCase(currentSelectedState.child_type)}`}
-          value={revenueCode || ''}
-          placeholder={
-            !districtCode
-              ? 'Select a district to enable'
-              : `Select a ${toTitleCase(currentSelectedState.child_type)}`
-          }
-          name="revenue-circle-select"
-          className=" flex-grow"
-          disabled={!districtCode}
-          onChange={(e) => {
-            setRevenueCode(e, { shallow: false });
-          }}
-          options={getRevenueCircleOptions()}
-        />
-      </React.Fragment>
-    );
-  }
-
-  if (mapData?.isFetching && revenueMapData?.isFetching) {
-    return (
-      <div className="flex h-full flex-col place-content-center items-center">
-        <Spinner color="highlight" />
-        <Text>Loading...</Text>
-      </div>
-    );
-  }
-
   const region = searchParams.get('district-code') || '';
 
   return (
     <>
       <MediaRendering minWidth={null} maxWidth="1023">
         <AnalyticsMobileLayout
-          timePeriod={timePeriod}
+          timePeriod={timePeriodSelected || ''}
           indicator={indicator}
           mapData={mapData}
           revenueMapData={revenueMapData}
@@ -395,46 +319,37 @@ export function AnalyticsMainLayout() {
                 Map View
               </Tab>
               <div
-                className={`ml-4 h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'map' ? 'hidden' : ''}`}
+                className={`h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'map' || view === 'chart' ? 'hidden' : ''}`}
               />
-              <Tab
-                theme="climate"
-                title="coming soon"
-                className=" cursor-not-allowed"
-                disabled
-                value="chart"
-              >
+              <Tab theme="climate" value="chart">
                 Chart View
               </Tab>
               <div
-                className={`ml-4 h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'table' ? 'hidden' : ''}`}
-              />{' '}
+                className={`h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'chart' || view === 'table' ? 'hidden' : ''}`}
+              />
               <Tab theme="climate" value="table">
                 Table View
               </Tab>
             </TabList>
             <TabPanel value="map">
-              {revenueMapData?.data && mapData?.data && (
-                <div className=" mt-2 h-[calc(100dvh_-_140px)]">
-                  <div className="mb-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
-                    <SelectOptions />
-                    <MonthPicker
-                      name="time-period-select"
-                      defaultValue={parseDate(
-                        `${timePeriodSelected.split('_')[0]}-${timePeriodSelected.split('_')[1]}-01` ||
-                          '23-08-01'
-                      )}
-                      label="Select Month"
-                      minValue={parseDate(minDate || '2023-01-04')}
-                      maxValue={parseDate(maxDate || '2023-01-04')}
-                      onChange={(date) => {
-                        setTimePeriod(
-                          `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`,
-                          { shallow: false }
-                        );
-                      }}
-                    />
+              <div className=" mt-2 h-[calc(100dvh_-_140px)]">
+                <div>
+                  <FilterDropdownOptions
+                    currentSelectedState={currentSelectedState}
+                    RevCircleDropdownOptions={RevCircleDropdownOptions}
+                    DistrictDropDownOption={DistrictDropDownOption}
+                    timeLimits={timePeriods}
+                  />
+                </div>
+
+                {mapData?.isFetching && revenueMapData?.isFetching && (
+                  <div className="flex h-full flex-col place-content-center items-center">
+                    <Spinner color="highlight" />
+                    <Text>Loading...</Text>
                   </div>
+                )}
+
+                {revenueMapData?.data && mapData?.data && (
                   <MapComponent
                     indicator={indicator}
                     mapDataloading={mapData?.isFetching}
@@ -446,17 +361,23 @@ export function AnalyticsMainLayout() {
                     mapData={mapData?.data?.districtMapData}
                     currentSelectedState={currentSelectedState}
                   />
-                  {region !== null && region.length > 0 && view === 'map' && (
-                    <OutputWindowComponent
-                      currentState={currentSelectedState}
-                    />
-                  )}
-                </div>
-              )}
+                )}
+                {region !== null && region.length > 0 && view === 'map' && (
+                  <OutputWindowComponent
+                    currentState={currentSelectedState}
+                    time_period={timePeriodSelected}
+                  />
+                )}
+              </div>
             </TabPanel>
             <TabPanel value="table">
-              <div className="mb-2 mt-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
-                <SelectOptions />
+              <div>
+                <FilterDropdownOptions
+                  currentSelectedState={currentSelectedState}
+                  RevCircleDropdownOptions={RevCircleDropdownOptions}
+                  DistrictDropDownOption={DistrictDropDownOption}
+                  timeLimits={timePeriods}
+                />
               </div>
               <TableComponent
                 data={
@@ -467,6 +388,16 @@ export function AnalyticsMainLayout() {
                 isLoading={tableData.isLoading}
               />
             </TabPanel>
+            <TabPanel value="chart">
+              <div className=" mt-2 h-[calc(100dvh_-_140px)]">
+                <ChartView
+                  currentSelectedState={currentSelectedState}
+                  RevCircleDropdownOptions={RevCircleDropdownOptions}
+                  DistrictDropDownOption={DistrictDropDownOption}
+                  timeLimits={timePeriods}
+                />
+              </div>
+            </TabPanel>
           </Tabs>
         </React.Fragment>
       </MediaRendering>
@@ -474,10 +405,9 @@ export function AnalyticsMainLayout() {
   );
 }
 
-export function OutputWindowComponent({ currentState }: any) {
+export function OutputWindowComponent({ currentState, time_period }: any) {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator');
-  const time_period = searchParams.get('time-period');
   const region =
     searchParams.get('revenue-code') || searchParams.get('district-code');
   const boundary = searchParams.get('revenue-code')
