@@ -14,15 +14,21 @@ export const ChartView = ({
   currentSelectedState,
   RevCircleDropdownOptions,
   DistrictDropDownOption,
+  timeLimits,
 }: {
   currentSelectedState: any;
   RevCircleDropdownOptions: Option[];
   DistrictDropDownOption: Option[];
+  timeLimits: any;
 }) => {
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const chartRef = useRef<ReactECharts>(null);
+  const searchParams = useSearchParams();
+  const indicator = searchParams.get('indicator') || '';
+
+  const timePeriod = searchParams.get('time-period') || '';
 
   const [districtCode] = useQueryState(
     'district-code',
@@ -57,14 +63,6 @@ export const ChartView = ({
       color: '#808000',
     },
   ];
-
-  const searchParams = useSearchParams();
-  const indicator = searchParams.get('indicator') || '';
-  const timePeriod = searchParams.get('time-period') || '';
-  const [timePeriodSelected, setTimePeriod] = useQueryState(
-    'time-period',
-    parseAsString.withDefault(timePeriod)
-  );
 
   const indicatorsQuery = useQuery(
     [`indicatorsByCategory_${currentSelectedState.code}`],
@@ -105,11 +103,11 @@ export const ChartView = ({
       // aggregate_type: 'SUM',
       show_legend: true,
       filters: [
-        // {
-        //   column: 'timeperiod',
-        //   operator: 'in',
-        //   value: timePeriodSelected,
-        // },
+        {
+          column: 'timeperiod',
+          operator: 'in',
+          value: timePeriod,
+        },
         {
           column: 'object-id',
           operator: '==',
@@ -142,7 +140,7 @@ export const ChartView = ({
         setChartData(null);
         console.log(error);
       });
-  }, [districtCode, revenueCode, timePeriodSelected, indicator]);
+  }, [districtCode, revenueCode, indicator, timePeriod]);
 
   const findNameBySlug = (data: any, slug: string): string | undefined => {
     if (data.slug === slug) {
@@ -164,28 +162,14 @@ export const ChartView = ({
   return (
     <div>
       <div className=" mt-2 h-[calc(100dvh_-_140px)]">
-        <div className="mb-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
-          <FilterDropdownOptions
-            currentSelectedState={currentSelectedState}
-            RevCircleDropdownOptions={RevCircleDropdownOptions}
-            DistrictDropDownOption={DistrictDropDownOption}
-          />
+        <FilterDropdownOptions
+          currentSelectedState={currentSelectedState}
+          RevCircleDropdownOptions={RevCircleDropdownOptions}
+          DistrictDropDownOption={DistrictDropDownOption}
+          timeLimits={timeLimits}
+          monthMulti={true}
+        />        
 
-          <MultiMonthPicker
-            // name="time-period-select"
-            selectedValues={[]}
-            label="Select Months"
-            // minValue={parseDate(minDate || '2023-01-04')}
-            // maxValue={parseDate(maxDate || '2023-01-04')}
-            onChange={(dates: any) => {
-              console.log(dates);
-              // setTimePeriod(
-              //   `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`,
-              //   { shallow: false }
-              // );
-            }}
-          />
-        </div>
         <div className="mt-2 w-full bg-surfaceDefault p-4 pb-0 pt-8 max-sm:p-2">
           <Text variant="headingLg" fontWeight="semibold">
             {`${
