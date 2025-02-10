@@ -71,20 +71,29 @@ export const MapComponent = ({
     const max = Math.max(...values);
     const step = (max - min) / 3;
     const grades = Array.from({ length: 3 + 1 }, (_, i) => min + step * i);
+
     for (let i = 0; i < grades.length; i++) {
       const from = grades[i];
       const to = grades[i + 1];
 
+      const formatValue = (num: any) => {
+        if (num < 1) {
+          return num < 0.001 ? '0' : num.toFixed(3);
+        }
+        // return num > 1
+        //   ? Math.round(num).toString()
+        //   : formatNumberToIndianSystem(Math.round(num));
+        return formatNumberToIndianSystem(Math.round(num));
+      };
+
       const isDuplicate = customLegendData.some(
-        (entry) =>
-          formatNumberToIndianSystem(Math.round(from)) ===
-          entry.label.split(' ')[0]
+        (entry) => formatValue(from) === entry.label.split(' ')[0]
       );
 
       if (!isDuplicate) {
         customLegendData.push({
           color: colorScale(from),
-          label: `${formatNumberToIndianSystem(Math.round(from))}${to ? ` - ${formatNumberToIndianSystem(Math.round(to))}` : '+'}`,
+          label: `${formatValue(from)}${to ? ` - ${formatValue(to)}` : '+'}`,
         });
       }
     }
@@ -240,7 +249,8 @@ export const MapComponent = ({
           map &&
           map?.getContainer() &&
           currentSelectedState.center &&
-          !districtCode
+          !districtCode &&
+          currentSelectedState.code !== '18'
         ) {
           map?.setView(currentSelectedState.center, 7.4);
         }
