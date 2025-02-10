@@ -1,20 +1,10 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
-import { parseDate } from '@internationalized/date';
 import { useQuery } from '@tanstack/react-query';
 import { parseAsString, useQueryState } from 'next-usequerystate';
-import {
-  MonthPicker,
-  Select,
-  Spinner,
-  Tab,
-  TabList,
-  TabPanel,
-  Tabs,
-  Text,
-} from 'opub-ui';
+import { Spinner, Tab, TabList, TabPanel, Tabs, Text } from 'opub-ui';
 
 import {
   ANALYTICS_DISTRICT_DATA,
@@ -28,8 +18,8 @@ import {
   PLATFORM_STATES_LIST,
 } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
-import { formatDate, toTitleCase } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
+import { getLatestDate } from '../utils/utils';
 import { AnalyticsMobileLayout } from './analytics-mobile-layout';
 import { ChartView } from './chart-view';
 import FilterDropdownOptions from './filter-dropdown-options';
@@ -37,22 +27,24 @@ import { MapComponent } from './map-component';
 import { OutputWindow } from './output-window';
 import { TableComponent } from './table-component';
 
+interface Option {
+  disabled?: boolean;
+  value: string;
+  label: string;
+  districtCode?: string;
+}
+
 export function AnalyticsMainLayout() {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator') || '';
-  const timePeriod = searchParams.get('time-period') || '';
 
-  interface Option {
-    disabled?: boolean;
-    value: string;
-    label: string;
-    districtCode?: string;
-  }
+  const timePeriod = getLatestDate(
+    searchParams.getAll('time-period') || process.env.NEXT_PUBLIC_TIME_PERIOD
+  )?.split('-');
 
-  const [timePeriodSelected, setTimePeriod] = useQueryState(
-    'time-period',
-    parseAsString.withDefault(timePeriod)
-  );
+  const timePeriodSelected = timePeriod
+    ? `${timePeriod[0]}_${timePeriod[1]}`
+    : process.env.NEXT_PUBLIC_TIME_PERIOD;
 
   const [districtCode, setDistrictCode] = useQueryState(
     'district-code',
@@ -239,24 +231,6 @@ export function AnalyticsMainLayout() {
     tableData.data?.tableData
   );
 
-  let minDate, maxDate;
-  if (timePeriods.data) {
-    const datesArray = timePeriods?.data?.getDataTimePeriods.map(
-      (date: any) => {
-        const [year, month] = date.value.split('_');
-        return new Date(parseInt(year), parseInt(month));
-      }
-    );
-    const timestamps = datesArray.map((date: any) => date.getTime());
-    // Find the minimum and maximum timestamps
-    const minTimestamp = Math.min(...timestamps);
-    const maxTimestamp = Math.max(...timestamps);
-
-    // Convert the timestamps back to dates
-    minDate = formatDate(minTimestamp, true);
-    maxDate = formatDate(maxTimestamp, true);
-  }
-
   let RevCircleDropdownOptions: Option[] = [{ label: '', value: '' }];
   let DistrictDropDownOption: Option[] = [{ label: '', value: '' }];
 
@@ -313,22 +287,13 @@ export function AnalyticsMainLayout() {
     }
   }, [revenueCode, tableData.data?.tableData]);
 
-  // if (mapData?.isFetching && revenueMapData?.isFetching) {
-  //   return (
-  //     <div className="flex h-full flex-col place-content-center items-center">
-  //       <Spinner color="highlight" />
-  //       <Text>Loading...</Text>
-  //     </div>
-  //   );
-  // }
-
   const region = searchParams.get('district-code') || '';
 
   return (
     <>
       <MediaRendering minWidth={null} maxWidth="1023">
         <AnalyticsMobileLayout
-          timePeriod={timePeriod}
+          timePeriod={timePeriodSelected || ''}
           indicator={indicator}
           mapData={mapData}
           revenueMapData={revenueMapData}
@@ -368,27 +333,12 @@ export function AnalyticsMainLayout() {
             </TabList>
             <TabPanel value="map">
               <div className=" mt-2 h-[calc(100dvh_-_140px)]">
-                <div className="mb-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
+                <div>
                   <FilterDropdownOptions
                     currentSelectedState={currentSelectedState}
                     RevCircleDropdownOptions={RevCircleDropdownOptions}
                     DistrictDropDownOption={DistrictDropDownOption}
-                  />
-                  <MonthPicker
-                    name="time-period-select"
-                    defaultValue={parseDate(
-                      `${timePeriodSelected.split('_')[0]}-${timePeriodSelected.split('_')[1]}-01` ||
-                        '23-08-01'
-                    )}
-                    label="Select Month"
-                    minValue={parseDate(minDate || '2023-01-04')}
-                    maxValue={parseDate(maxDate || '2023-01-04')}
-                    onChange={(date) => {
-                      setTimePeriod(
-                        `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`,
-                        { shallow: false }
-                      );
-                    }}
+                    timeLimits={timePeriods}
                   />
                 </div>
 
@@ -413,16 +363,20 @@ export function AnalyticsMainLayout() {
                   />
                 )}
                 {region !== null && region.length > 0 && view === 'map' && (
-                  <OutputWindowComponent currentState={currentSelectedState} />
+                  <OutputWindowComponent
+                    currentState={currentSelectedState}
+                    time_period={timePeriodSelected}
+                  />
                 )}
               </div>
             </TabPanel>
             <TabPanel value="table">
-              <div className="mb-2 mt-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
+              <div>
                 <FilterDropdownOptions
                   currentSelectedState={currentSelectedState}
                   RevCircleDropdownOptions={RevCircleDropdownOptions}
                   DistrictDropDownOption={DistrictDropDownOption}
+                  timeLimits={timePeriods}
                 />
               </div>
               <TableComponent
@@ -440,6 +394,7 @@ export function AnalyticsMainLayout() {
                   currentSelectedState={currentSelectedState}
                   RevCircleDropdownOptions={RevCircleDropdownOptions}
                   DistrictDropDownOption={DistrictDropDownOption}
+                  timeLimits={timePeriods}
                 />
               </div>
             </TabPanel>
@@ -450,10 +405,9 @@ export function AnalyticsMainLayout() {
   );
 }
 
-export function OutputWindowComponent({ currentState }: any) {
+export function OutputWindowComponent({ currentState, time_period }: any) {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator');
-  const time_period = searchParams.get('time-period');
   const region =
     searchParams.get('revenue-code') || searchParams.get('district-code');
   const boundary = searchParams.get('revenue-code')
