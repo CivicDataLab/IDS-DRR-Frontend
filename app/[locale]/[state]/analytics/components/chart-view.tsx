@@ -160,16 +160,20 @@ export const ChartView = ({
   };
 
   return (
-    <div>
-      <div className=" mt-2 h-[calc(100dvh_-_140px)]">
-        <FilterDropdownOptions
-          currentSelectedState={currentSelectedState}
-          RevCircleDropdownOptions={RevCircleDropdownOptions}
-          DistrictDropDownOption={DistrictDropDownOption}
-          timeLimits={timeLimits}
-          monthMulti={true}
-        />        
+    <>
+      <FilterDropdownOptions
+        currentSelectedState={currentSelectedState}
+        RevCircleDropdownOptions={RevCircleDropdownOptions}
+        DistrictDropDownOption={DistrictDropDownOption}
+        timeLimits={timeLimits}
+        monthMulti={true}
+      />
 
+      {timePeriod.length === 0 ? (
+        <div className="flex h-[calc(100dvh_-_400px)] flex-col place-content-center items-center">
+          <Text>Please select a time period</Text>
+        </div>
+      ) : (
         <div className="mt-2 w-full bg-surfaceDefault p-4 pb-0 pt-8 max-sm:p-2">
           <Text variant="headingLg" fontWeight="semibold">
             {`${
@@ -183,6 +187,7 @@ export const ChartView = ({
             {districtCode &&
               `${DistrictDropDownOption.find((option) => option.value === districtCode)?.label} District`}
           </Text>
+
           {loading ? (
             <div className="flex h-[calc(100dvh_-_400px)] flex-col place-content-center items-center">
               <Spinner color="highlight" />
@@ -213,7 +218,7 @@ export const ChartView = ({
             </div>
           )}
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };

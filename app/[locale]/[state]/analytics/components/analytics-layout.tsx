@@ -38,9 +38,11 @@ export function AnalyticsMainLayout() {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator') || '';
 
-  const timePeriod = getLatestDate(
-    searchParams.getAll('time-period') || process.env.NEXT_PUBLIC_TIME_PERIOD
-  )?.split('-');
+  const timePeriod = searchParams.get('time-period')
+    ? getLatestDate(searchParams.get('time-period')?.split(',') || [])?.split(
+        '-'
+      ) || process.env.NEXT_PUBLIC_TIME_PERIOD
+    : null;
 
   const timePeriodSelected = timePeriod
     ? `${timePeriod[0]}_${timePeriod[1]}`
@@ -342,51 +344,68 @@ export function AnalyticsMainLayout() {
                   />
                 </div>
 
-                {mapData?.isFetching && revenueMapData?.isFetching && (
-                  <div className="flex h-full flex-col place-content-center items-center">
-                    <Spinner color="highlight" />
-                    <Text>Loading...</Text>
+                {!timePeriod ? (
+                  <div className="flex h-[calc(100dvh_-_400px)] flex-col place-content-center items-center">
+                    <Text>Please select a time period</Text>
                   </div>
-                )}
+                ) : (
+                  <>
+                    {mapData?.isFetching && revenueMapData?.isFetching && (
+                      <div className="flex h-full flex-col place-content-center items-center">
+                        <Spinner color="highlight" />
+                        <Text>Loading...</Text>
+                      </div>
+                    )}
 
-                {revenueMapData?.data && mapData?.data && (
-                  <MapComponent
-                    indicator={indicator}
-                    mapDataloading={mapData?.isFetching}
-                    revenueMapDataLoading={revenueMapData?.isFetching}
-                    indicatorsData={indicatorsData?.data?.indicators}
-                    setRegion={setDistrictCode}
-                    setRevenueRegion={setRevenueCode}
-                    revenueMapData={revenueMapData?.data?.revCircleMapData}
-                    mapData={mapData?.data?.districtMapData}
-                    currentSelectedState={currentSelectedState}
-                  />
-                )}
-                {region !== null && region.length > 0 && view === 'map' && (
-                  <OutputWindowComponent
-                    currentState={currentSelectedState}
-                    time_period={timePeriodSelected}
-                  />
+                    {revenueMapData?.data && mapData?.data && (
+                      <MapComponent
+                        indicator={indicator}
+                        mapDataloading={mapData?.isFetching}
+                        revenueMapDataLoading={revenueMapData?.isFetching}
+                        indicatorsData={indicatorsData?.data?.indicators}
+                        setRegion={setDistrictCode}
+                        setRevenueRegion={setRevenueCode}
+                        revenueMapData={revenueMapData?.data?.revCircleMapData}
+                        mapData={mapData?.data?.districtMapData}
+                        currentSelectedState={currentSelectedState}
+                      />
+                    )}
+
+                    {region !== null && region.length > 0 && view === 'map' && (
+                      <OutputWindowComponent
+                        currentState={currentSelectedState}
+                        time_period={timePeriodSelected}
+                      />
+                    )}
+                  </>
                 )}
               </div>
             </TabPanel>
             <TabPanel value="table">
-              <div>
-                <FilterDropdownOptions
-                  currentSelectedState={currentSelectedState}
-                  RevCircleDropdownOptions={RevCircleDropdownOptions}
-                  DistrictDropDownOption={DistrictDropDownOption}
-                  timeLimits={timePeriods}
-                />
+              <div className=" mt-2 h-[calc(100dvh_-_140px)]">
+                <div>
+                  <FilterDropdownOptions
+                    currentSelectedState={currentSelectedState}
+                    RevCircleDropdownOptions={RevCircleDropdownOptions}
+                    DistrictDropDownOption={DistrictDropDownOption}
+                    timeLimits={timePeriods}
+                  />
+                </div>
+                {!timePeriod ? (
+                  <div className="flex h-[calc(100dvh_-_400px)] flex-col place-content-center items-center">
+                    <Text>Please select a time period</Text>
+                  </div>
+                ) : (
+                  <TableComponent
+                    data={
+                      filteredTableData?.length > 0
+                        ? filteredTableData
+                        : tableData.data?.tableData
+                    }
+                    isLoading={tableData.isLoading}
+                  />
+                )}
               </div>
-              <TableComponent
-                data={
-                  filteredTableData?.length > 0
-                    ? filteredTableData
-                    : tableData.data?.tableData
-                }
-                isLoading={tableData.isLoading}
-              />
             </TabPanel>
             <TabPanel value="chart">
               <div className=" mt-2 h-[calc(100dvh_-_140px)]">
