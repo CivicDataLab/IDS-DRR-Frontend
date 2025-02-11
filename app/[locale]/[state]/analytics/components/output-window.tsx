@@ -111,7 +111,7 @@ export function OutputWindow({
 
   const RegionName = !RevenueRegion
     ? districtData[0]?.district
-    : data[0]?.[data[0].type];
+    : data[0]?.[data[0].type.replace(/\s+/g, '-')];
 
   const title = 'IDS DRR';
   const [svgURL, setSvgURL] = React.useState<string>('');
