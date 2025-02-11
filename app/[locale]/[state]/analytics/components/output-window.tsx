@@ -491,6 +491,7 @@ export function OtherFactorScores({
   return FactorVariables.map((scoreType) => (
     <div key={scoreType} className=" flex items-center gap-4">
       {/* {IconMap[scoreType]} */}
+      {/* //change  */}
       <div className="flex-shrink-0">
         <div className="h-6 w-6">{IconMap[scoreType]}</div>
       </div>
