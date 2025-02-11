@@ -105,10 +105,12 @@ export default function FilterDropdownOptions({
               // name="time-period-select"
               // className="flex-1"
               selectedValues={
-                selectedTimePeriod?.map((timePeriod: string) => {
-                  const [year, month] = timePeriod.split('_');
-                  return parseDate(`${year}-${month.padStart(2, '0')}-01`);
-                }) || []
+                selectedTimePeriod
+                  ?.filter(Boolean)
+                  ?.map((timePeriod: string) => {
+                    const [year, month] = timePeriod.split('_');
+                    return parseDate(`${year}-${month.padStart(2, '0')}-01`);
+                  }) || []
               }
               label="Select Months"
               // minValue={parseDate(minDate || '2023-01-04')}
@@ -125,9 +127,14 @@ export default function FilterDropdownOptions({
           ) : (
             <MonthPicker
               name="time-period-select"
-              defaultValue={parseDate(
-                getLatestDate(selectedTimePeriod || []) || '2023-08-01'
-              )}
+              defaultValue={
+                selectedTimePeriod &&
+                selectedTimePeriod?.filter(Boolean)?.length > 0
+                  ? parseDate(
+                      getLatestDate(selectedTimePeriod || []) || '2023-08-01'
+                    )
+                  : null
+              }
               label="Select Month"
               minValue={parseDate(minDate || '2023-01-04')}
               maxValue={parseDate(maxDate || '2023-01-04')}
