@@ -113,9 +113,10 @@ export default function FilterDropdownOptions({
                   }) || []
               }
               label="Select Months"
-              // minValue={parseDate(minDate || '2023-01-04')}
-              // maxValue={parseDate(maxDate || '2023-01-04')}
+              minValue={parseDate(minDate || '2022-01-01')}
+              maxValue={parseDate(maxDate || '2024-09-30')}
               onChange={(dates: any) => {
+                // Update the state with valid dates only
                 setSelectedTimePeriod(
                   dates.map(
                     (date: any) =>
@@ -139,13 +140,6 @@ export default function FilterDropdownOptions({
               minValue={parseDate(minDate || '2023-01-04')}
               maxValue={parseDate(maxDate || '2023-01-04')}
               onChange={(date) => {
-                if (
-                  date.year > 2024 ||
-                  (date.year === 2024 && date.month > 9)
-                ) {
-                  alert('No data available beyond September 2024');
-                  return;
-                }
                 setSelectedTimePeriod(
                   [
                     `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`,
