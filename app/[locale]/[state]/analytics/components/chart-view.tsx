@@ -8,6 +8,7 @@ import { MultiMonthPicker, Spinner, Text } from 'opub-ui';
 
 import { ANALYTICS_INDICATORS_BY_CATEGORY } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
+import { toTitleCase } from '@/lib/utils';
 import FilterDropdownOptions, { Option } from './filter-dropdown-options';
 
 export const ChartView = ({
@@ -181,9 +182,10 @@ export const ChartView = ({
                 indicatorsQuery?.data?.indicatorsByCategory[0] || {},
                 indicator
               ) || indicator
-            } - `}
+            } `}
+            {(revenueCode || districtCode) && '- '}
             {revenueCode &&
-              `${RevCircleDropdownOptions.find((option) => option.value === revenueCode)?.label}, `}
+              `${RevCircleDropdownOptions.find((option) => option.value === revenueCode)?.label} ${toTitleCase(currentSelectedState?.child_type)}, `}
             {districtCode &&
               `${DistrictDropDownOption.find((option) => option.value === districtCode)?.label} District`}
           </Text>
