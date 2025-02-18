@@ -315,7 +315,10 @@ export function AnalyticsMobileLayout({
 
       {/* <OutputWindowComponent /> */}
       {region !== null && region.length > 0 && view === 'map' && (
-        <OutputWindowComponent currentState={currentSelectedState} />
+        <OutputWindowComponent
+          currentState={currentSelectedState}
+          time_period={timePeriodSelected}
+        />
       )}
 
       <div className="sticky bottom-0 flex h-[86px] w-full flex-row justify-between gap-1 bg-baseIndigoSolid1 p-1">
