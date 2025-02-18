@@ -87,14 +87,14 @@ const HeroSectionText =
   'Discover insights, assess risks and build disaster resilience for data-driven disaster risk reduction';
 
 const AnalyticsQuickLinksText =
-  'Gain insights from the IDS-DRR data model to understand the flood-risk profiles of districts and sub-district regions in various states across India.';
+  'Gain insights from the IDS-DRR data model to understand the flood-risk profiles of districts and sub-district regions in various states across India';
 
 const DatasetCatalogText = 'Explore and use high-value datasets';
 
 const ResourcesSectionText = 'Browse through the featured datasets';
 
 const DataStoriesText =
-  'Read about the impact, methods, and successes in using data for DRR.';
+  'Read about the impact, methods, and successes in using data for DRR';
 
 const YouTubeLink = 'https://www.youtube.com/watch?v=gTqcyUQ7esg';
 
