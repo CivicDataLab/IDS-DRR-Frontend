@@ -300,7 +300,14 @@ export const MapComponent = ({
           horizontalLegend={isMobile ? true : false}
           legendHeading={{
             heading: !Factors.includes(indicator)
-              ? `${getFactorNameBySlug(indicatorsData, indicator)} ${getUnitsBySlug(indicatorsData, indicator) && `(${getUnitsBySlug(indicatorsData, indicator)})`}`
+              ? `${getFactorNameBySlug(indicatorsData, indicator)} ${
+                  getUnitsBySlug(indicatorsData, indicator) &&
+                  `${
+                    getUnitsBySlug(indicatorsData, indicator).includes('(')
+                      ? ` ${getUnitsBySlug(indicatorsData, indicator)}`
+                      : ` (${getUnitsBySlug(indicatorsData, indicator)})`
+                  }`
+                }`
               : '',
           }}
           legendData={
