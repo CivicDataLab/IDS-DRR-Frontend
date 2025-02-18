@@ -8,6 +8,7 @@ import { MultiMonthPicker, Spinner, Text } from 'opub-ui';
 
 import { ANALYTICS_INDICATORS_BY_CATEGORY } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
+import { MediaRendering } from '@/components/media-rendering';
 import FilterDropdownOptions, { Option } from './filter-dropdown-options';
 
 export const ChartView = ({
@@ -40,27 +41,27 @@ export const ChartView = ({
     {
       field_name: 'risk-score',
       label: 'Risk Score',
-      color: '#8B5E3C',
+      color: '#7B4DD9',
     },
     {
       field_name: 'exposure',
       label: 'Exposure',
-      color: '#2E8B57',
+      color: '#89672A',
     },
     {
       field_name: 'vulnerability',
       label: 'Vulnerability',
-      color: '#9370DB',
+      color: '#3B8F44',
     },
     {
       field_name: 'flood-hazard',
       label: 'Flood Hazard',
-      color: '#FFB347',
+      color: '#C41C8D',
     },
     {
       field_name: 'government-response',
       label: 'Government Response',
-      color: '#808000',
+      color: '#FB4E93',
     },
   ];
 
@@ -161,13 +162,16 @@ export const ChartView = ({
 
   return (
     <>
-      <FilterDropdownOptions
-        currentSelectedState={currentSelectedState}
-        RevCircleDropdownOptions={RevCircleDropdownOptions}
-        DistrictDropDownOption={DistrictDropDownOption}
-        timeLimits={timeLimits}
-        monthMulti={true}
-      />
+      {/* desktop  */}
+      <MediaRendering minWidth="1024" maxWidth={null}>
+        <FilterDropdownOptions
+          currentSelectedState={currentSelectedState}
+          RevCircleDropdownOptions={RevCircleDropdownOptions}
+          DistrictDropDownOption={DistrictDropDownOption}
+          timeLimits={timeLimits}
+          monthMulti={true}
+        />
+      </MediaRendering>
 
       {timePeriod.length === 0 ? (
         <div className="flex h-[calc(100dvh_-_400px)] flex-col place-content-center items-center">
