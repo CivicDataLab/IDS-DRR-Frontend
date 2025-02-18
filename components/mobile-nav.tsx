@@ -40,7 +40,7 @@ export function MobileNav({ data }: { data: MainConfig }) {
   return (
     <>
       <header className="sticky top-0 z-2">
-        <div className=" flex items-center justify-between bg-backgroundSolidDark px-5 py-3 text-textOnBGDefault md:hidden">
+        <div className=" flex items-center justify-between bg-backgroundSolidDark px-5 py-3 text-textOnBGDefault ">
           <Link href={data.homeUrl}>
             <div className="flex items-center gap-2">
               <Image
