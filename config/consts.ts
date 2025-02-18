@@ -73,7 +73,7 @@ const AnalyticsURL = `/analytics/?indicator=risk-score&time-period=${process.env
 const learnMoreLink = `https://drive.google.com/file/d/1TerjJtQrWxziKJ1E5BvfvRELtWJWRw2M/view?usp=drive_link`;
 
 //home page
-const AboutText = 'About IDS DRR';
+const AboutText = 'About IDS-DRR';
 const AboutUsURL = '/about-us';
 const AboutTextContentOne =
   'CivicDataLab along with Open Contracting Partnership, supported by The Rockefeller Foundation and the Patrick J McGovern Foundation, has developed a data driven framework - Intelligent Data Solution for Disaster Risk Reduction (IDS-DRR).  ';
@@ -91,7 +91,7 @@ const AnalyticsQuickLinksText =
 
 const DatasetCatalogText = 'Explore and use high-value datasets';
 
-const ResourcesSectionText = 'Browse through our featured datasets';
+const ResourcesSectionText = 'Browse through the featured datasets';
 
 const DataStoriesText =
   'Read about the impact, methods, and successes in using data for DRR.';
