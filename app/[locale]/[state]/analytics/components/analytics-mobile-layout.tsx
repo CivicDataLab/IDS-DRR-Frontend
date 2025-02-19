@@ -15,6 +15,7 @@ import {
 import Icons from '@/components/icons';
 import { getLatestDate } from '../utils/utils';
 import { OutputWindowComponent } from './analytics-layout';
+import { ChartView } from './chart-view';
 import { FactorList } from './factor-list';
 import { FilterComp } from './filter-component';
 import { MapComponent } from './map-component';
@@ -71,9 +72,9 @@ export function AnalyticsMobileLayout({
     },
     {
       icon: Icons.IconChartBar,
-      title: 'Bar',
-      value: 'bar',
-      disabled: true,
+      title: 'Chart',
+      value: 'chart',
+      disabled: false,
     },
     {
       icon: Icons.IconTableAlias,
@@ -258,7 +259,16 @@ export function AnalyticsMobileLayout({
         );
 
       case 'chart':
-        return <div className="pt-[62px]"></div>;
+        return (
+          <div className="pt-[84px]">
+            <ChartView
+              currentSelectedState={currentSelectedState}
+              RevCircleDropdownOptions={RevCircleDropdownOptions}
+              DistrictDropDownOption={DistrictDropDownOption}
+              timeLimits={timePeriods}
+            />
+          </div>
+        );
 
       case 'table':
         return (
@@ -289,7 +299,7 @@ export function AnalyticsMobileLayout({
           'relative h-[calc(100dvh_-_140px)] w-full flex-grow flex-col gap-3 overflow-y-scroll '
         )}
       >
-        <div className="fixed top-[56px] z-9 flex h-[10%] w-full items-center bg-[#FFFF] px-4">
+        <div className="fixed top-[56px] z-9 flex h-[6%] w-full items-center bg-[#FFFF] px-4">
           <FactorList currentState={currentSelectedState} />
           <FilterComp
             timePeriod={timePeriod}
