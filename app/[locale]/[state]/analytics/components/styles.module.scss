@@ -7,18 +7,15 @@
 .FactorList {
   @media (max-width: 1280px) {
     overflow: hidden;
-    height: 200px;
-    &:hover {
-      overflow-y: auto;
-    }
   }
+  margin-bottom: 18px;
 }
 
 .Overlay {
   position: absolute;
   top: 145px;
   right: -100%; /* Hide off-screen initially */
-  z-index: 99999;
+  z-index: 99999; 
   height: calc(100dvh - 30%);
   opacity: 90%;
   box-shadow: var(--shadow-basic-md);
