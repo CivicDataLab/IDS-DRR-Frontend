@@ -19,7 +19,7 @@ export const DatasetCatalog = () => {
       icon: '/logo/Exposure.svg',
       link: '/datasets?categories=Exposure',
       description:
-        'Hazards or Potential of a physical event that may cause loss of life or property',
+        'The situation of people, infrastructure, housing, production capacities, and other tangible human assets located in hazard-prone areas',
       alt: 'exposure logo',
     },
     {
