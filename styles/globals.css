@@ -30,3 +30,7 @@ iframe.skiptranslate {
   border-radius: var(--border-radius-1);
   background-color: #fff !important;
 }
+
+.leaflet-attribution-flag{
+  display: none !important;
+}
