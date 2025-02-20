@@ -11,7 +11,7 @@ export const Footer = () => {
     <footer className="flex flex-col flex-wrap gap-4 bg-backgroundSolidDark px-5 py-4 md:flex-row md:justify-between md:px-10 md:py-8">
       <div className="flex flex-row items-center gap-3">
         <Image
-          src="/logo/IDSLogo.png"
+          src="/logo/IDS-Platform-Logo.png"
           width={245}
           height={24}
           alt="IDS-DRR Logo"
