@@ -13,6 +13,7 @@ import {
   formatDate,
 } from '@/lib/utils';
 import Icons from '@/components/icons';
+import { MediaRendering } from '@/components/media-rendering';
 import { getLatestDate } from '../utils/utils';
 import { OutputWindowComponent } from './analytics-layout';
 import { ChartView } from './chart-view';
@@ -272,10 +273,7 @@ export function AnalyticsMobileLayout({
 
       case 'table':
         return (
-          <div>
-            <div className="mb-2 mt-16 flex items-start justify-evenly gap-3 p-4 pb-1 pt-0">
-              <SelectOptions />
-            </div>
+          <div className="pt-[84px]">
             <TableComponent
               data={
                 filteredTableData?.length > 0
