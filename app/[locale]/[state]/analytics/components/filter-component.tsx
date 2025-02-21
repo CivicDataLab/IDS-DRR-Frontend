@@ -151,11 +151,7 @@ export function FilterComp({
       options:
         revenueGeographiesData?.data?.getDistrictRevCircle?.[regionName]?.map(
           (circle: { code: string; [key: string]: string }) => ({
-            label: circle['REVENUE CIRCLE']
-              ? circle['REVENUE CIRCLE']
-              : circle['TEHSIL']
-                ? circle['TEHSIL']
-                : circle['BLOCK'],
+            label: circle[currentSelectedState.child_type],
             value: circle.code,
           })
         ) || [],
