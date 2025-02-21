@@ -16,7 +16,7 @@ export const HeroSection = () => {
           IDS-DRR
         </Text>
         <Image
-          src="/logo/IDS-yellow.png"
+          src="/logo/IDS-yellow-new.png"
           width={741}
           height={84}
           alt="IDS-DRR logo"

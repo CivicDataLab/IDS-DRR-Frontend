@@ -83,8 +83,7 @@ const AboutTextContentTwo =
 
 const AboutTextContentThree = 'We have a 3-pronged approach: ';
 
-const HeroSectionText =
-  'Discover insights, assess risks and build disaster resilience for data-driven disaster risk reduction';
+const HeroSectionText = 'Discover insights, assess risks and build resilience';
 
 const AnalyticsQuickLinksText =
   'Gain insights from the IDS-DRR data model to understand the flood-risk profiles of districts and sub-district regions in various states across India';
