@@ -233,8 +233,8 @@ export function AnalyticsMainLayout() {
     tableData.data?.tableData
   );
 
-  let RevCircleDropdownOptions: Option[] = [{ label: '', value: '' }];
-  let DistrictDropDownOption: Option[] = [{ label: '', value: '' }];
+  let RevCircleDropdownOptions: Option[] = [];
+  let DistrictDropDownOption: Option[] = [];
 
   if (districtGeographiesData.data && !districtGeographiesData.isFetching) {
     districtGeographiesData.data?.getDistrictRevCircle?.forEach(

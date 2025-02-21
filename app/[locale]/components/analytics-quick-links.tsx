@@ -23,14 +23,14 @@ export const QuickLinks = () => {
     },
     {
       name: 'Himachal Pradesh',
-      status: 'active',
+      status: 'inactive',
       icon: '/logo/states/Hp.svg',
       link: `/himachal-pradesh${AnalyticsURL}`,
       alt: 'HP state boundary image',
     },
     {
       name: 'Odisha',
-      status: 'active',
+      status: 'inactive',
       icon: '/logo/states/Odisha.svg',
       link: `/odisha${AnalyticsURL}`,
       alt: 'Odisha state boundary image',

@@ -44,7 +44,7 @@ export function MobileNav({ data }: { data: MainConfig }) {
           <Link href={data.homeUrl}>
             <div className="flex items-center gap-2">
               <Image
-                src="/logo/IDSLogo.png"
+                src="/logo/IDS-Platform-Logo.png"
                 width={245}
                 height={24}
                 alt="IDS-DRR Logo"

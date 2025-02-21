@@ -36,8 +36,6 @@ export default function FilterDropdownOptions({
       (option: Option) => option.districtCode === districtCode
     );
 
-    filterRevenueCircles.unshift({ label: '', value: '' });
-
     return filterRevenueCircles;
   };
 
@@ -67,6 +65,21 @@ export default function FilterDropdownOptions({
     }
   );
 
+  const districtOptions = [
+    { label: 'Select a district', value: '' },
+    ...DistrictDropDownOption,
+  ];
+
+  const revenueOptions = [
+    {
+      label: !districtCode
+        ? 'Select a district to enable'
+        : `Select a ${toTitleCase(currentSelectedState.child_type)}`,
+      value: '',
+    },
+    ...(getRevenueCircleOptionsForDistrict(districtCode) || []),
+  ];
+
   return (
     <div>
       <div className="mb-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
@@ -79,23 +92,18 @@ export default function FilterDropdownOptions({
             setDistrictCode(e, { shallow: false });
             setRevenueCode('');
           }}
-          options={DistrictDropDownOption}
+          options={districtOptions}
         />
         <Select
           label={`Select ${toTitleCase(currentSelectedState.child_type)}`}
           value={revenueCode || ''}
-          placeholder={
-            !districtCode
-              ? 'Select a district to enable'
-              : `Select a ${toTitleCase(currentSelectedState.child_type)}`
-          }
           name="revenue-circle-select"
           className="flex-1"
           disabled={!districtCode}
           onChange={(e) => {
             setRevenueCode(e, { shallow: false });
           }}
-          options={getRevenueCircleOptionsForDistrict(districtCode) || []}
+          options={revenueOptions}
         />
 
         <div className="flex-1">
