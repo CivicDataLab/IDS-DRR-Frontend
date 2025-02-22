@@ -146,7 +146,7 @@ export default function FilterDropdownOptions({
               label="Select Month"
               minValue={parseDate(minDate || '2023-01-04')}
               maxValue={parseDate(maxDate || '2023-01-04')}
-              onChange={(date) => {
+              onChange={(date: any) => {
                 setSelectedTimePeriod(
                   [
                     `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`,
