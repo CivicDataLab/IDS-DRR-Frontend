@@ -121,8 +121,8 @@ export default function FilterDropdownOptions({
                   }) || []
               }
               label="Select Months"
-              // minValue={parseDate(minDate || '2023-01-04')}
-              // maxValue={parseDate(maxDate || '2023-01-04')}
+              minValue={parseDate(minDate || '2023-01-04')}
+              maxValue={parseDate(maxDate || '2023-01-04')}
               onChange={(dates: any) => {
                 setSelectedTimePeriod(
                   dates.map(
