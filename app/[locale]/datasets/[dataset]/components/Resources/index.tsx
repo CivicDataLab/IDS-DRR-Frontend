@@ -68,14 +68,11 @@ const Resources = () => {
           <Text variant="headingLg" className="mx-6 lg:mx-0">
             Downloadable Resources
           </Text>
-          <div className="mx-6 mt-5 flex flex-col gap-8 bg-surfaceDefault p-6  lg:mx-0">
+          <div className="mx-6 mt-5 flex flex-col gap-8 bg-surfaceDefault p-6 lg:mx-0">
             {data?.datasetResources.map((item: any, index: number) => (
-              <div
-                key={index}
-                className="flex flex-col gap-4  lg:flex-row lg:justify-between"
-              >
+              <div key={index} className="flex flex-wrap justify-between gap-4">
                 <div className="gap flex flex-col lg:w-4/5">
-                  <div className="item flex flex-wrap items-center gap-2">
+                  <div className="item flex items-center gap-2">
                     <Text variant="headingMd">{item.name}</Text>
                     <Tag>{item.fileDetails.format}</Tag>
                   </div>
@@ -109,7 +106,7 @@ const Resources = () => {
                   <Link
                     href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/download/resource/${item.id}`}
                     target="_blank"
-                    className="flex w-fit justify-center"
+                    className="flex justify-center"
                   >
                     <Button className=" bg-[#71E57DB2] font-Bold text-basePureBlack hover:bg-[#71E57DB2] hover:text-basePureBlack">
                       Download
