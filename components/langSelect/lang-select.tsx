@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Script from 'next/script';
 import { IconWorld } from '@tabler/icons-react';
 import { Select } from 'opub-ui';
@@ -15,41 +15,57 @@ const languages = [
 export function TranslateDropdown({
   prefLangCookie,
 }: {
-  prefLangCookie: string;
+  prefLangCookie: Promise<string> | string;
 }) {
-  const [langCookie, setLangCookie] = React.useState(
-    decodeURIComponent(prefLangCookie)
-  );
+  const [selectedLang, setSelectedLang] = useState('en');
 
-  const includedLanguages = languages.map((lang) => lang.value).join(',');
+  // Function to safely extract language from cookie
+  const getLangFromCookie = (cookie: string) => {
+    try {
+      const decoded = decodeURIComponent(cookie || '/en/');
+      const parts = decoded.split('/');
+      return parts.length > 2 ? parts[2] : 'en';
+    } catch (error) {
+      return 'en';
+    }
+  };
+
+  useEffect(() => {
+    if (prefLangCookie instanceof Promise) {
+      prefLangCookie
+        .then((cookie) => setSelectedLang(getLangFromCookie(cookie)))
+        .catch((err) => console.error('Failed to fetch lang cookie:', err));
+    } else {
+      setSelectedLang(getLangFromCookie(prefLangCookie));
+    }
+  }, [prefLangCookie]);
 
   const googleTranslateElementInit = () => {
     new (window as any).google.translate.TranslateElement(
       {
         pageLanguage: 'en',
-        includedLanguages,
+        includedLanguages: languages.map((lang) => lang.value).join(','),
         defaultLanguage: 'en',
       },
       'google_translate_element'
     );
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     (window as any).googleTranslateElementInit = googleTranslateElementInit;
-
-    if (langCookie.split('/')[2] === 'en') {
-      changeLang('en');
-    }
-  });
+  }, []);
 
   const changeLang = (value: string) => {
-    const lang = '/en/' + value;
-    setLangCookie(lang);
+    setSelectedLang(value); // Update state
+
+    // Update Google Translate dropdown
     const element = document.querySelector(
       '.goog-te-combo'
     ) as HTMLSelectElement;
-    element.value = value;
-    element.dispatchEvent(new Event('change'));
+    if (element) {
+      element.value = value;
+      element.dispatchEvent(new Event('change'));
+    }
   };
 
   return (
@@ -57,7 +73,7 @@ export function TranslateDropdown({
       <div id="google_translate_element" className="invisible h-px w-px"></div>
 
       <Select
-        name={'lang-select'}
+        name="lang-select"
         className={`notranslate ${styles.langSelectContainer}`}
         options={languages}
         label={
@@ -66,15 +82,9 @@ export function TranslateDropdown({
           </div>
         }
         labelInline
-        value={langCookie.split('/')[2]}
+        value={selectedLang}
         onChange={changeLang}
       />
-
-      {/* <TransparentSelector
-        onChange={changeLang}
-        value={langCookie.split('/')[2]}
-        label={<IconWorld color="white" size={'16px'} />}
-      /> */}
 
       <Script
         src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
@@ -83,34 +93,3 @@ export function TranslateDropdown({
     </div>
   );
 }
-
-// const TransparentSelector = ({
-//   onChange,
-//   value,
-//   label,
-// }: {
-//   onChange: any;
-//   value: string;
-//   label?: any | null;
-// }) => {
-//   return (
-//     <div
-//       className={`notranslate ${styles.transparentSelector}`}
-//       tabIndex={0}
-//       // onFocus={() => document.querySelector('select')?.focus()}
-//     >
-//       {label}
-//       <select
-//         onChange={(e) => onChange(e.target.value)}
-//         value={value}
-//         tabIndex={-1}
-//       >
-//         {languages.map((it) => (
-//           <option value={it.value} key={it.value}>
-//             {it.label}
-//           </option>
-//         ))}
-//       </select>
-//     </div>
-//   );
-// };
