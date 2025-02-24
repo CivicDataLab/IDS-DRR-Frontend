@@ -280,22 +280,26 @@ export const RenderOptions = ({
                 : revenueSelected
           }
         >
-          {options.map((item: any, idx: any) =>
-            item.type === 'group' ? (
-              <div
-                key={idx}
-                style={{
-                  backgroundColor: '#F7F7F8',
-                  padding: '10px',
-                  marginTop: '15px',
-                }}
-              >
-                <span>{item.label}</span>
-              </div>
-            ) : (
-              <RadioItem key={idx} value={item.value}>
-                {item.label}
-              </RadioItem>
+          {value === 'revenue-circle' && !regionSelected ? (
+            <div>Please select a district</div>
+          ) : (
+            options.map((item: any, idx: any) =>
+              item.type === 'group' ? (
+                <div
+                  key={idx}
+                  style={{
+                    backgroundColor: '#F7F7F8',
+                    padding: '10px',
+                    marginTop: '15px',
+                  }}
+                >
+                  <span>{item.label}</span>
+                </div>
+              ) : (
+                <RadioItem key={idx} value={item.value}>
+                  {item.label}
+                </RadioItem>
+              )
             )
           )}
         </RadioGroup>
