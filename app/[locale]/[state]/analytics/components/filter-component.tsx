@@ -150,8 +150,8 @@ export function FilterComp({
       // options: getRevenueOptions(),
       options:
         revenueGeographiesData?.data?.getDistrictRevCircle?.[regionName]?.map(
-          (circle: { code: string; 'revenue-circle': string }) => ({
-            label: circle['revenue-circle'],
+          (circle: { code: string; [key: string]: string }) => ({
+            label: circle[currentSelectedState.child_type],
             value: circle.code,
           })
         ) || [],
@@ -280,22 +280,26 @@ export const RenderOptions = ({
                 : revenueSelected
           }
         >
-          {options.map((item: any, idx: any) =>
-            item.type === 'group' ? (
-              <div
-                key={idx}
-                style={{
-                  backgroundColor: '#F7F7F8',
-                  padding: '10px',
-                  marginTop: '15px',
-                }}
-              >
-                <span>{item.label}</span>
-              </div>
-            ) : (
-              <RadioItem key={idx} value={item.value}>
-                {item.label}
-              </RadioItem>
+          {value === 'revenue-circle' && !regionSelected ? (
+            <div>Please select a district</div>
+          ) : (
+            options.map((item: any, idx: any) =>
+              item.type === 'group' ? (
+                <div
+                  key={idx}
+                  style={{
+                    backgroundColor: '#F7F7F8',
+                    padding: '10px',
+                    marginTop: '15px',
+                  }}
+                >
+                  <span>{item.label}</span>
+                </div>
+              ) : (
+                <RadioItem key={idx} value={item.value}>
+                  {item.label}
+                </RadioItem>
+              )
             )
           )}
         </RadioGroup>
