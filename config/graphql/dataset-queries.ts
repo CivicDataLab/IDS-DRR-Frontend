@@ -39,14 +39,34 @@ export const DATASET_QUERY: any = gql`
 export const CHARTS_QUERY: any = gql`
   query chartsData($datasetId: UUID!) {
     chartsDetails(datasetId: $datasetId) {
-      aggregateType
       chartType
       description
       id
       name
-      showLegend
-      xAxisLabel
-      yAxisLabel
+      options {
+        aggregateType
+        xAxisColumn {
+          id
+          fieldName
+        }
+        yAxisColumn {
+          field {
+            id
+            fieldName
+          }
+        }
+        showLegend
+        xAxisLabel
+        yAxisLabel
+        regionColumn {
+          id
+          fieldName
+        }
+        valueColumn {
+          id
+          fieldName
+        }
+      }
       chart
     }
   }
