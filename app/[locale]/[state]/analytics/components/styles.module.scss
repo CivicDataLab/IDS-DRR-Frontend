@@ -41,22 +41,22 @@
   min-width: 300px;
 }
 
-.mobileOverlayActive {
-  bottom: 86px;
-  right: 0;
-}
+// .mobileOverlayActive {
+//   bottom: 86px;
+//   right: 0;
+// }
 
-.expandedOverlay {
-  bottom: 86px;
-  height: calc(100dvh - 160px);
-}
+// .expandedOverlay {
+//   bottom: 86px;
+//   height: calc(100dvh - 160px);
+// }
 
-@media (max-width: 480px) {
-  .mobileOverlay {
-    max-width: 100%;
-    min-width: 280px;
-  }
-}
+// @media (max-width: 480px) {
+//   .mobileOverlay {
+//     max-width: 100%;
+//     min-width: 280px;
+//   }
+// }
 
 .bottomDrawer {
   position: absolute;
@@ -95,19 +95,20 @@
 }
 
 .mobileOverlayActive {
-  bottom: 80px;
-  right: 5px;
+  bottom: 8vh;
+  right: 3px;
 }
 
 .expandedOverlay {
-  bottom: 80px;
-  height: calc(100dvh - 140px);
+  bottom: 8vh;
+  height: calc(100dvh - 63px - 8vh);
 }
 
 @media (max-width: 1023px) {
   .mobileOverlay {
     max-width: 100%;
     min-width: 280px;
+    bottom: 8vh;
   }
 }
 
