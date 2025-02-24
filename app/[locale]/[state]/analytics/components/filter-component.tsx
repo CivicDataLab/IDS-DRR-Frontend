@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { parseDate } from '@internationalized/date';
 import { parseAsString, useQueryState } from 'next-usequerystate';
 import { Button, Icon, RadioGroup, RadioItem, YearCalendar } from 'opub-ui';
@@ -234,12 +234,14 @@ export const RenderOptions = ({
   const type = findSelectedValue[0]?.type;
   const value = findSelectedValue[0]?.value;
   const options = findSelectedValue[0]?.options;
+  const searchParams = useSearchParams();
+  const view = searchParams.get('view');
 
   const onRadioButtonChange = (selectedValue: string, value: string) => {
     if (value === 'state') {
       setSelectedState(selectedValue);
       router.push(
-        `/${selectedValue}/analytics/?indicator=risk-score&time-period=${process.env.TIME_PERIOD || process.env.NEXT_PUBLIC_TIME_PERIOD}&view=map`
+        `/${selectedValue}/analytics/?indicator=risk-score&time-period=${process.env.TIME_PERIOD || process.env.NEXT_PUBLIC_TIME_PERIOD}&view=${view}`
       );
       // console.log('---Selected State ---', selectedState);
     } else if (value === 'district') {
