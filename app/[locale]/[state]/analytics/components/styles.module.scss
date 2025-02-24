@@ -15,7 +15,7 @@
   position: absolute;
   top: 145px;
   right: -100%; /* Hide off-screen initially */
-  z-index: 99999; 
+  z-index: 99999;
   height: calc(100dvh - 30%);
   opacity: 90%;
   box-shadow: var(--shadow-basic-md);
@@ -101,10 +101,10 @@
 
 .expandedOverlay {
   bottom: 80px;
-  height: calc(100dvh - 160px);
+  height: calc(100dvh - 140px);
 }
 
-@media (max-width: 480px) {
+@media (max-width: 1023px) {
   .mobileOverlay {
     max-width: 100%;
     min-width: 280px;

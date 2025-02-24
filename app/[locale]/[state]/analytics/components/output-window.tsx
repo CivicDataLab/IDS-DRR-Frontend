@@ -297,7 +297,7 @@ export function OutputWindow({
           </section>
         </aside>
       </MediaRendering>
-      <MediaRendering minWidth={null} maxWidth="1023">
+      <MediaRendering minWidth={null} maxWidth="1024">
         {/* MOBILE  */}
 
         {view === 'map' && (
@@ -307,7 +307,8 @@ export function OutputWindow({
               className={cn(
                 'pb-2 pl-4 pr-4',
                 'bg-surfaceDefault shadow-basicMd',
-                'shadow-inset min-w-[373px] max-w-[380px] shrink-0  flex-row md:block',
+                // 'shadow-inset min-w-[373px] max-w-[380px] shrink-0  flex-row md:block md:w-[90%]',
+                'shadow-inset w-full shrink-0 flex-row md:block md:w-[90%]',
                 'overflow-y-auto border-b-1 border-l-1 border-r-1 border-solid border-borderSubdued',
                 styles.mobileOverlay,
                 region !== null &&
@@ -502,13 +503,11 @@ export function OtherFactorScores({
   return FactorVariables.filter(
     (scoreType: any) => typeof data[scoreType] === 'object'
   ).map((scoreType) => (
-
     <div key={scoreType} className=" flex items-center gap-4">
       {/* //change  */}
       <div className="flex-shrink-0">
         <div className="h-6 w-6">{IconMap[scoreType]}</div>
       </div>
-
       {indicator === 'risk-score' && (
         <Text className="shrink-1 min-w-[200px]">
           {getFactorNameBySlug(factorData, scoreType)}
