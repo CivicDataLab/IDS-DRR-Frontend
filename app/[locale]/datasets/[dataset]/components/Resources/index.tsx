@@ -82,7 +82,9 @@ const Resources = () => {
                   </div>
                   <div className="flex flex-col">
                     <div
-                      ref={(el) => (descriptionRefs.current[index] = el)}
+                      ref={(el) => {
+                        if (el) descriptionRefs.current[index] = el;
+                      }}
                       className={!showMore[index] ? 'line-clamp-2' : ''}
                     >
                       <Text>{item.description}</Text>
