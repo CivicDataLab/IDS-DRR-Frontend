@@ -294,10 +294,11 @@ export function AnalyticsMobileLayout({
     <section className="flex h-full flex-col items-center justify-center gap-2 bg-[#FFFF]">
       <div
         className={cn(
-          'relative h-[calc(100dvh_-_160px)] w-full flex-grow flex-col gap-3 overflow-y-scroll'
-          // 'sm:h-[calc(100dvh_-_120px)] md:h-[calc(100dvh_-_100px)]'
+          'relative h-[calc(100dvh_-_15vh)] w-full flex-grow flex-col gap-3 overflow-y-scroll',
+          'sm:h-[calc(100dvh_-_120px)] md:h-[calc(100dvh_-_100px)]'
         )}
       >
+        {/* <div className="flex w-full flex-grow flex-col overflow-y-scroll"> */}
         <div className="fixed top-[56px] z-9 flex h-[8vh] w-full items-center bg-[#FFFF] px-4 sm:h-[6%] sm:px-6 md:h-[5%] md:px-8">
           <FactorList currentState={currentSelectedState} />
           <FilterComp
@@ -330,7 +331,7 @@ export function AnalyticsMobileLayout({
         />
       )}
 
-      <div className="sticky bottom-0 flex h-[8vh] w-full flex-row justify-between gap-1 bg-baseIndigoSolid1 p-1 sm:p-2 md:p-3">
+      <div className="absolute bottom-0 flex h-[8vh] w-full flex-row justify-between gap-1 bg-baseIndigoSolid1 p-1 sm:p-2 md:p-3">
         {buttons.map((button, index) =>
           button.value === 'more' ? (
             // Render Menu for 'More' button
