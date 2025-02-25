@@ -8,6 +8,9 @@ export const metadata: Metadata = {
     index: false,
     follow: false,
   },
+  other: {
+    "google-site-verification":process.env.GOOGLE_SITE_VERIFICATION
+  }
 };
 
 export default function RootLayout({
