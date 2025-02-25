@@ -408,7 +408,8 @@ export function AnalyticsMainLayout() {
               </div>
             </TabPanel>
             <TabPanel value="chart">
-              <div className=" mt-2 h-[calc(100dvh_-_140px)]">
+              {/* <div className=" mt-2 h-[calc(100dvh_-_140px)]"> */}
+              <div className="mt-2 h-full overflow-hidden">
                 <ChartView
                   currentSelectedState={currentSelectedState}
                   RevCircleDropdownOptions={RevCircleDropdownOptions}
