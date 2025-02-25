@@ -38,3 +38,6 @@ next-env.d.ts
 # Ignore sitemap
 sitemap*.xml
 robots.txt
+
+# Ignore graphql generated files
+gql/generated/*
