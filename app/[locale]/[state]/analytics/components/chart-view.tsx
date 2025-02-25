@@ -6,6 +6,7 @@ import ReactECharts from 'echarts-for-react';
 import { parseAsString, useQueryState } from 'next-usequerystate';
 import { MultiMonthPicker, Spinner, Text } from 'opub-ui';
 
+import { Factors } from '@/config/consts';
 import { ANALYTICS_INDICATORS_BY_CATEGORY } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { toTitleCase } from '@/lib/utils';
@@ -38,141 +39,63 @@ export const ChartView = ({
   );
   const [revenueCode] = useQueryState('revenue-code');
 
+  const value_mapping_list = [
+    {
+      key: '0.0',
+      value: '',
+    },
+    {
+      key: '1.0',
+      value: 'Very Low Risk',
+    },
+    {
+      key: '2.0',
+      value: 'Low Risk',
+    },
+    {
+      key: '3.0',
+      value: 'Medium Risk',
+    },
+    {
+      key: '4.0',
+      value: 'High Risk',
+    },
+    {
+      key: '5.0',
+      value: 'Very High Risk',
+    },
+  ];
+
   const riskscoreFields = [
     {
       field_name: 'risk-score',
       label: 'Risk Score',
       color: '#7B4DD9',
-      value_mapping: [
-        {
-          key: '1.0',
-          value: 'Very Low Risk',
-        },
-        {
-          key: '2.0',
-          value: 'Low Risk',
-        },
-        {
-          key: '3.0',
-          value: 'Medium Risk',
-        },
-        {
-          key: '4.0',
-          value: 'High Risk',
-        },
-        {
-          key: '5.0',
-          value: 'Very High Risk',
-        },
-      ],
+      value_mapping: value_mapping_list,
     },
     {
       field_name: 'exposure',
       label: 'Exposure',
       color: '#89672A',
-      value_mapping: [
-        {
-          key: '1.0',
-          value: 'Very Low Risk',
-        },
-        {
-          key: '2.0',
-          value: 'Low Risk',
-        },
-        {
-          key: '3.0',
-          value: 'Medium Risk',
-        },
-        {
-          key: '4.0',
-          value: 'High Risk',
-        },
-        {
-          key: '5.0',
-          value: 'Very High Risk',
-        },
-      ],
+      value_mapping: value_mapping_list,
     },
     {
       field_name: 'vulnerability',
       label: 'Vulnerability',
       color: '#3B8F44',
-      value_mapping: [
-        {
-          key: '1.0',
-          value: 'Very Low Risk',
-        },
-        {
-          key: '2.0',
-          value: 'Low Risk',
-        },
-        {
-          key: '3.0',
-          value: 'Medium Risk',
-        },
-        {
-          key: '4.0',
-          value: 'High Risk',
-        },
-        {
-          key: '5.0',
-          value: 'Very High Risk',
-        },
-      ],
+      value_mapping: value_mapping_list,
     },
     {
       field_name: 'flood-hazard',
       label: 'Flood Hazard',
       color: '#C41C8D',
-      value_mapping: [
-        {
-          key: '1.0',
-          value: 'Very Low Risk',
-        },
-        {
-          key: '2.0',
-          value: 'Low Risk',
-        },
-        {
-          key: '3.0',
-          value: 'Medium Risk',
-        },
-        {
-          key: '4.0',
-          value: 'High Risk',
-        },
-        {
-          key: '5.0',
-          value: 'Very High Risk',
-        },
-      ],
+      value_mapping: value_mapping_list,
     },
     {
       field_name: 'government-response',
       label: 'Government Response',
       color: '#FB4E93',
-      value_mapping: [
-        {
-          key: '1.0',
-          value: 'Very Low Risk',
-        },
-        {
-          key: '2.0',
-          value: 'Low Risk',
-        },
-        {
-          key: '3.0',
-          value: 'Medium Risk',
-        },
-        {
-          key: '4.0',
-          value: 'High Risk',
-        },
-        {
-          key: '5.0',
-          value: 'Very High Risk',
-        },
-      ],
+      value_mapping: value_mapping_list,
     },
   ];
 
@@ -207,11 +130,16 @@ export const ChartView = ({
           : [
               {
                 field_name: indicator,
-                color: '#8B5E3C',
-                label: indicator,
+                color: '#222136',
+                label: toTitleCase(indicator).replaceAll('-', ' '),
+                ...(Factors.includes(indicator)
+                  ? {
+                      value_mapping: value_mapping_list,
+                    }
+                  : {}),
               },
             ],
-      y_axis_label: 'Score',
+      y_axis_label: Factors.includes(indicator) ? 'Score' : 'Units',
       // aggregate_type: 'SUM',
       show_legend: true,
       filters: [
