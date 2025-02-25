@@ -5,12 +5,12 @@ import '../styles/globals.css';
 
 export const metadata: Metadata = {
   robots: {
-    index: false,
-    follow: false,
+    index: process.env.NODE_ENV === 'production',
+    follow: process.env.NODE_ENV === 'production',
   },
   other: {
-    "google-site-verification":process.env.GOOGLE_SITE_VERIFICATION || ''
-  }
+    'google-site-verification': process.env.GOOGLE_SITE_VERIFICATION || '',
+  },
 };
 
 export default function RootLayout({
