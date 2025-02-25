@@ -3,7 +3,6 @@ import { Metadata } from 'next';
 
 import '../styles/globals.css';
 
-// A second layer of protection at meta tag level for crawlers
 export const metadata: Metadata = {
   robots: {
     index: false,
