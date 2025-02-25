@@ -49,7 +49,7 @@ export const MapComponent = ({
   const districtCode = params.get('district-code');
 
   const { width } = useWindowSize();
-  const isMobile = width < 768;
+  const isMobile = width < 1023;
 
   const values = [];
   for (let i = 0; i < mapFeatures?.length; i++) {
@@ -281,8 +281,11 @@ export const MapComponent = ({
   return (
     <>
       {' '}
+      {/* <div
+        className={`relative w-full ${isMobile ? 'h-full' : 'h-[98%]'} ${isMobile ? 'pt-[68px]' : ''}`}
+      > */}
       <div
-        className={`relative w-full ${isMobile ? 'h-full' : 'h-[90%]'} ${isMobile ? 'pt-[66px]' : ''}`}
+        className={`relative w-full ${isMobile ? 'h-full pt-[84px] sm:pt-[66px] md:pt-[50px]' : 'h-[95vh]'} sm:h-[85vh] md:h-[86vh]`}
       >
         {' '}
         <MapChart
