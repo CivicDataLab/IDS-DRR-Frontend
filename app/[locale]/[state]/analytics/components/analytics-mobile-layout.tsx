@@ -152,7 +152,7 @@ export function AnalyticsMobileLayout({
           ) => {
             RevCircleDropdownOptions.push({
               label:
-                circle[stateCode == '02' ? 'tehsil' : 'revenue-circle'] ||
+                circle[currentSelectedState.child_type] ||
                 circle['revenue-circle'],
               value: circle.code,
               districtCode: circle.district_code,

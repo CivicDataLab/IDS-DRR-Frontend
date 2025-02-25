@@ -123,14 +123,14 @@ export function FilterComp({
   };
 
   const FilterOptions: FilterButtonOption = [
-    {
-      title: 'State',
-      value: 'state',
-      options: statesList.map((state: any) => {
-        return { label: state.name, value: state.slug };
-      }),
-      type: 'radio-button',
-    },
+    // {
+    //   title: 'State',
+    //   value: 'state',
+    //   options: statesList.map((state: any) => {
+    //     return { label: state.name, value: state.slug };
+    //   }),
+    //   type: 'radio-button',
+    // },
     {
       title: 'District',
       value: 'district',
