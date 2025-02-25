@@ -7,10 +7,8 @@ import { useKeyDetect } from '@/hooks/use-key-detect';
 import { MainConfig } from '@/types';
 import { IconButton, Text } from 'opub-ui';
 
-import { getPrefLangCookie } from '@/lib/serverUtils';
 import { handleRedirect } from '@/lib/utils';
 import { Icons } from '@/components/icons';
-import { TranslateDropdown } from './langSelect/lang-select';
 
 export function MobileNav({ data }: { data: MainConfig }) {
   const [open, setOpen] = React.useState(false);
@@ -85,7 +83,6 @@ export function MobileNav({ data }: { data: MainConfig }) {
                 </div>
               )}
             </div>
-            <TranslateDropdown prefLangCookie={getPrefLangCookie()} />
           </div>
           <footer className="flex flex-col flex-wrap items-start gap-1 self-stretch bg-backgroundSolidDark px-5 py-4">
             <div className="flex flex-col items-center justify-center gap-4 self-center">
