@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     follow: false,
   },
   other: {
-    "google-site-verification":process.env.GOOGLE_SITE_VERIFICATION
+    "google-site-verification":process.env.GOOGLE_SITE_VERIFICATION || ''
   }
 };
 
