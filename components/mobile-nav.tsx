@@ -5,10 +5,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useKeyDetect } from '@/hooks/use-key-detect';
 import { MainConfig } from '@/types';
-import { Button, Icon, IconButton, Text } from 'opub-ui';
+import { IconButton, Text } from 'opub-ui';
 
+import { getPrefLangCookie } from '@/lib/serverUtils';
 import { handleRedirect } from '@/lib/utils';
 import { Icons } from '@/components/icons';
+import { TranslateDropdown } from './langSelect/lang-select';
 
 export function MobileNav({ data }: { data: MainConfig }) {
   const [open, setOpen] = React.useState(false);
@@ -67,24 +69,27 @@ export function MobileNav({ data }: { data: MainConfig }) {
           className="fixed z-10 flex h-[95vh] w-[100vw] flex-shrink-0 flex-col items-start justify-between border-t-1 border-solid border-baseGraySlateSolid11 bg-backgroundSolidDark px-5 py-8 text-textOnBGDefault"
           style={{ zIndex: '100009' }}
         >
-          <div className="flex w-full items-center gap-3 p-3 pr-5">
-            {data.mainNav.length > 0 && (
-              <div>
-                {data.mainNav.map((link) => (
-                  <ExploreLink
-                    key={link.title}
-                    href={link.href || ''}
-                    icon={link.icon || ''}
-                    text={link.title || ''}
-                    onClick={toggleMenu}
-                  />
-                ))}
-              </div>
-            )}
+          <div className="">
+            <div className="flex w-full items-center gap-3 p-3 pr-5">
+              {data.mainNav.length > 0 && (
+                <div>
+                  {data.mainNav.map((link) => (
+                    <ExploreLink
+                      key={link.title}
+                      href={link.href || ''}
+                      icon={link.icon || ''}
+                      text={link.title || ''}
+                      onClick={toggleMenu}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+            <TranslateDropdown prefLangCookie={getPrefLangCookie()} />
           </div>
           <footer className="flex flex-col flex-wrap items-start gap-1 self-stretch bg-backgroundSolidDark px-5 py-4">
             <div className="flex flex-col items-center justify-center gap-4 self-center">
-              <div className=" ">
+              <div>
                 <Text variant="headingSmSpaced" color="onBgDefault">
                   <strong>
                     made with{' '}
