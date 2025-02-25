@@ -7,22 +7,13 @@ import {
   RiskScore,
   Vulnerability,
 } from '@/public/FactorIcons';
-import Hazard from '@/public/Hazard';
 import { useQuery } from '@tanstack/react-query';
 import { useQueryState } from 'next-usequerystate';
-import { Button, Icon, IconButton, Menu, Select, Text, Tooltip } from 'opub-ui';
+import { Button, Icon, Menu, Select, Text, Tooltip } from 'opub-ui';
 
-import {
-  ANALYTICS_INDICATORS,
-  ANALYTICS_INDICATORS_BY_CATEGORY,
-} from '@/config/graphql/analaytics-queries';
+import { ANALYTICS_INDICATORS_BY_CATEGORY } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
-import {
-  cn,
-  copyCurrentURL,
-  downloadStateReport,
-  handleRedirect,
-} from '@/lib/utils';
+import { cn, copyCurrentURL, downloadStateReport } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import RadioButton from './RadioButton';
@@ -214,35 +205,41 @@ export function FactorList({ currentState }: any) {
                 },
               ]}
             />
-            <Button
-              className="self-start"
-              onClick={() => {
-                const confirmation = window.confirm(
-                  `Do you want to download the report for "${currentState.name}". `
-                );
-                if (confirmation) {
-                  try {
-                    setDownloadReportLoading(true);
-                    downloadStateReport(
-                      `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentState.code}`,
-                      `${currentState.name}-Report`
-                    );
-                  } catch (error) {
-                    alert(`Error Downloading Report. ${error}`);
-                  } finally {
-                    setDownloadReportLoading(false);
+            {downloadReportLoading ? (
+              <Icon source={Icons.loader} className="animate-spin" />
+            ) : (
+              <Button
+                className="self-start"
+                onClick={async () => {
+                  const confirmation = window.confirm(
+                    `Do you want to download the report for "${currentState.name}"?`
+                  );
+                  if (confirmation) {
+                    try {
+                      setDownloadReportLoading(true);
+                      await downloadStateReport(
+                        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentState.code}`,
+                        `${currentState.name}-Report`
+                      );
+                    } catch (error) {
+                      alert(`Error Downloading Report. ${error}`);
+                    } finally {
+                      setDownloadReportLoading(false);
+                    }
                   }
-                }
-              }}
-              monochrome={true}
-              kind="tertiary"
-              // disabled={downloadReportLoading}
-            >
-              <div className="flex items-center gap-2">
-                <Icon source={Icons.download} />
-                <Text variant="bodyMd">Download Report</Text>
-              </div>
-            </Button>
+                }}
+                monochrome={true}
+                kind="tertiary"
+
+                // disabled={downloadReportLoading}
+              >
+                <div className="flex items-center gap-2">
+                  <Icon source={Icons.download} />
+
+                  <Text variant="bodyMd">Download Report</Text>
+                </div>
+              </Button>
+            )}
           </div>
         </div>
       </MediaRendering>
