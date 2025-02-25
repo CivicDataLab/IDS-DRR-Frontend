@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import ReactECharts from 'echarts-for-react';
 import { parseAsString, useQueryState } from 'next-usequerystate';
 import { MultiMonthPicker, Spinner, Text } from 'opub-ui';
+
 import { ANALYTICS_INDICATORS_BY_CATEGORY } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { toTitleCase } from '@/lib/utils';
@@ -42,26 +43,136 @@ export const ChartView = ({
       field_name: 'risk-score',
       label: 'Risk Score',
       color: '#7B4DD9',
+      value_mapping: [
+        {
+          key: '1.0',
+          value: 'Very Low Risk',
+        },
+        {
+          key: '2.0',
+          value: 'Low Risk',
+        },
+        {
+          key: '3.0',
+          value: 'Medium Risk',
+        },
+        {
+          key: '4.0',
+          value: 'High Risk',
+        },
+        {
+          key: '5.0',
+          value: 'Very High Risk',
+        },
+      ],
     },
     {
       field_name: 'exposure',
       label: 'Exposure',
       color: '#89672A',
+      value_mapping: [
+        {
+          key: '1.0',
+          value: 'Very Low Risk',
+        },
+        {
+          key: '2.0',
+          value: 'Low Risk',
+        },
+        {
+          key: '3.0',
+          value: 'Medium Risk',
+        },
+        {
+          key: '4.0',
+          value: 'High Risk',
+        },
+        {
+          key: '5.0',
+          value: 'Very High Risk',
+        },
+      ],
     },
     {
       field_name: 'vulnerability',
       label: 'Vulnerability',
       color: '#3B8F44',
+      value_mapping: [
+        {
+          key: '1.0',
+          value: 'Very Low Risk',
+        },
+        {
+          key: '2.0',
+          value: 'Low Risk',
+        },
+        {
+          key: '3.0',
+          value: 'Medium Risk',
+        },
+        {
+          key: '4.0',
+          value: 'High Risk',
+        },
+        {
+          key: '5.0',
+          value: 'Very High Risk',
+        },
+      ],
     },
     {
       field_name: 'flood-hazard',
       label: 'Flood Hazard',
       color: '#C41C8D',
+      value_mapping: [
+        {
+          key: '1.0',
+          value: 'Very Low Risk',
+        },
+        {
+          key: '2.0',
+          value: 'Low Risk',
+        },
+        {
+          key: '3.0',
+          value: 'Medium Risk',
+        },
+        {
+          key: '4.0',
+          value: 'High Risk',
+        },
+        {
+          key: '5.0',
+          value: 'Very High Risk',
+        },
+      ],
     },
     {
       field_name: 'government-response',
       label: 'Government Response',
       color: '#FB4E93',
+      value_mapping: [
+        {
+          key: '1.0',
+          value: 'Very Low Risk',
+        },
+        {
+          key: '2.0',
+          value: 'Low Risk',
+        },
+        {
+          key: '3.0',
+          value: 'Medium Risk',
+        },
+        {
+          key: '4.0',
+          value: 'High Risk',
+        },
+        {
+          key: '5.0',
+          value: 'Very High Risk',
+        },
+      ],
     },
   ];
 
@@ -88,7 +199,7 @@ export const ChartView = ({
       chart_type:
         indicator === 'risk-score' ? 'GROUPED_BAR_VERTICAL' : 'BAR_VERTICAL',
       x_axis_column: 'timeperiod',
-      time_column: 'timeperiod',
+      // time_column: 'timeperiod',
       x_axis_label: 'Time Period',
       y_axis_column:
         indicator === 'risk-score'
