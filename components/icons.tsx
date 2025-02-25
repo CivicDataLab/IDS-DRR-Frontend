@@ -33,6 +33,7 @@ import {
   IconLayoutSidebarLeftExpand,
   IconLink,
   IconListSearch,
+  IconLoader,
   IconMap,
   IconMenu,
   IconMinus,
@@ -104,6 +105,7 @@ export const Icons: {
   IconRefresh: IconRefresh,
   IconSwipeUp: IconSwipeUp,
   IconSwipeDown: IconSwipeDown,
+  loader: IconLoader,
 };
 
 export default Icons;
