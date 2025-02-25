@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "npm run generate & next dev",
     "build": "graphql-codegen --require dotenv/config --config ./config/codegen.ts & next build",
+    "postbuild": "next-sitemap --config ./next-sitemap.config.js",
     "start": "next start",
     "lint": "next lint",
     "build:tokens": "node ./config/tokens/generate.mjs",
@@ -29,6 +30,7 @@
     "leaflet": "^1.9.4",
     "next": "^14.0.4",
     "next-intl": "^3.4.0",
+    "next-sitemap": "^4.2.3",
     "next-usequerystate": "^1.8.1",
     "nextjs-toploader": "^1.3.2",
     "opub-ui": "^0.3.65",
