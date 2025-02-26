@@ -331,7 +331,7 @@ export function AnalyticsMobileLayout({
         />
       )}
 
-      <div className="absolute bottom-0 flex h-[8vh] w-full flex-row justify-between gap-1 bg-baseIndigoSolid1 p-1 sm:p-2 md:p-3">
+      <div className="sticky bottom-0 flex h-[8vh] w-full flex-row justify-between gap-1 bg-baseIndigoSolid1 p-1 sm:p-2 md:p-3">
         {buttons.map((button, index) =>
           button.value === 'more' ? (
             // Render Menu for 'More' button
@@ -386,7 +386,7 @@ export function AnalyticsMobileLayout({
                     );
                     if (confirmation) {
                       downloadStateReport(
-                        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentSelectedState.code}`,
+                        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentSelectedState.code}&time_period=${timePeriodSelected}`,
                         `${currentSelectedState.name}-Report`
                       );
                     }

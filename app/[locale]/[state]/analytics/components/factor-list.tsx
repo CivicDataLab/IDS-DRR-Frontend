@@ -51,6 +51,8 @@ export function getIcon(slug: string) {
 export function FactorList({ currentState }: any) {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator');
+  const time_period = searchParams.get('time-period');
+
   const [, setIndicatorSelected] = useQueryState('indicator');
 
   const currentURL = typeof window !== 'undefined' ? window.location.href : '';
@@ -218,7 +220,7 @@ export function FactorList({ currentState }: any) {
                     try {
                       setDownloadReportLoading(true);
                       await downloadStateReport(
-                        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentState.code}`,
+                        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentState.code}&time_period=${time_period}`,
                         `${currentState.name}-Report`
                       );
                     } catch (error) {
