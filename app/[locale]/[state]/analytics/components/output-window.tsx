@@ -323,7 +323,7 @@ export function OutputWindow({
               {/* <div className=" flex items-center">swipe up</div> */}
               {/* <div className="mb-2 flex items-center justify-center"> */}
               <div
-                className="fixed left-0 right-0 m-0 flex h-[4%] w-full items-center justify-center bg-baseIndigoSolid1"
+                className="fixed left-0 right-0 m-0 flex h-[4%] w-full items-center justify-center bg-baseGreenSolid5"
                 style={{ zIndex: '100008' }}
               >
                 <Button onClick={toggleExpand} kind="tertiary">
