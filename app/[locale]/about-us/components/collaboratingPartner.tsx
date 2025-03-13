@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { Button, Icon, Text } from 'opub-ui';
 
 import {
   CollaboratingPartnerHPText,
   CollaboratingPartnerTextOne,
-  CollaboratingPartnerTextTwo,
 } from '@/config/consts';
 import { handleRedirect } from '@/lib/utils';
 import Icons from '@/components/icons';
@@ -13,6 +12,23 @@ import { MediaRendering } from '@/components/media-rendering';
 
 export function CollaboratingPartner() {
   const [showMore, setShowMore] = useState(false);
+  const [isDescriptionLong, setIsDescriptionLong] = useState(false);
+
+  const descriptionRef = useRef<HTMLDivElement | null>(null);
+  const toggleShowMore = (event: React.MouseEvent) => {
+    event.preventDefault(); // Prevent link navigation
+    event.stopPropagation(); // Stop event from propagating to the card's link
+    setShowMore((prevState) => !prevState);
+  };
+
+  useEffect(() => {
+    if (descriptionRef.current) {
+      const isLong =
+        descriptionRef.current.scrollHeight >
+        descriptionRef.current.clientHeight;
+      setIsDescriptionLong(isLong);
+    }
+  }, []);
   return (
     <section
       className="flex h-full flex-col flex-wrap py-14 "
@@ -73,12 +89,32 @@ export function CollaboratingPartner() {
             </Text>
 
             <div className="flex flex-col gap-5">
-              <Text variant="bodyLg" fontWeight="regular" color="default">
-                {CollaboratingPartnerTextOne}
-              </Text>
-              <Text variant="bodyLg" fontWeight="regular" color="default">
-                {CollaboratingPartnerTextTwo}
-              </Text>
+              <div>
+                <div
+                  ref={descriptionRef}
+                  className={!showMore ? ' line-clamp-2 lg:line-clamp-5' : ''}
+                >
+                  <Text variant="bodyLg" fontWeight="regular" color="default">
+                    {/* {CollaboratingPartnerTextOne} */}
+                    {CollaboratingPartnerTextOne}
+                  </Text>
+                </div>
+
+                {/* Only show the "Show more" button on medium and small screens */}
+                {isDescriptionLong && (
+                  <div className="block md:hidden">
+                    <Button
+                      className="self-start p-2"
+                      onClick={toggleShowMore}
+                      variant="interactive"
+                      size="slim"
+                      kind="tertiary"
+                    >
+                      {showMore ? 'Show less' : 'Show more'}
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -132,9 +168,31 @@ export function CollaboratingPartner() {
             </Text>
 
             <div className="flex flex-col gap-5">
-              <Text variant="bodyLg" fontWeight="regular" color="default">
-                {CollaboratingPartnerHPText}
-              </Text>
+              <div>
+                <div
+                  ref={descriptionRef}
+                  className={!showMore ? ' line-clamp-2 lg:line-clamp-5' : ''}
+                >
+                  <Text variant="bodyLg" fontWeight="regular" color="default">
+                    {CollaboratingPartnerHPText}
+                  </Text>
+                </div>
+
+                {/* Only show the "Show more" button on medium and small screens */}
+                {isDescriptionLong && (
+                  <div className="block md:hidden">
+                    <Button
+                      className="self-start p-2"
+                      onClick={toggleShowMore}
+                      variant="interactive"
+                      size="slim"
+                      kind="tertiary"
+                    >
+                      {showMore ? 'Show less' : 'Show more'}
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

@@ -1,10 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { Button, Icon, Text } from 'opub-ui';
 
 import {
-  OpenContractingPartnershipTextOne,
-  OpenContractingPartnershipTextTwo,
   PJMcPartnershipText,
   TheRockefellerFoundationTextOne,
 } from '@/config/consts';
@@ -14,6 +12,23 @@ import { MediaRendering } from '@/components/media-rendering';
 
 export function SupportedBy() {
   const [showMore, setShowMore] = useState(false);
+  const [isDescriptionLong, setIsDescriptionLong] = useState(false);
+
+  const descriptionRef = useRef<HTMLDivElement | null>(null);
+  const toggleShowMore = (event: React.MouseEvent) => {
+    event.preventDefault(); // Prevent link navigation
+    event.stopPropagation(); // Stop event from propagating to the card's link
+    setShowMore((prevState) => !prevState);
+  };
+
+  useEffect(() => {
+    if (descriptionRef.current) {
+      const isLong =
+        descriptionRef.current.scrollHeight >
+        descriptionRef.current.clientHeight;
+      setIsDescriptionLong(isLong);
+    }
+  }, []);
   return (
     <section
       className="flex  flex-col flex-wrap py-14 "
@@ -23,7 +38,7 @@ export function SupportedBy() {
         <Text variant="heading2xl" fontWeight="bold" color="default" as="h2">
           Supported By
         </Text>
-        <div className="flex flex-wrap items-center justify-center gap-10 bg-baseIndigoSolid1 p-9 lg:flex-nowrap ">
+        <div className="flex flex-wrap items-center justify-center gap-10 rounded-2 bg-baseIndigoSolid1 p-9 lg:flex-nowrap ">
           <div className="flex flex-col items-center gap-4 text-surfaceDefault">
             <Image
               src="/logo/Rockefeller.png"
@@ -75,28 +90,45 @@ export function SupportedBy() {
               The Rockefeller Foundation
             </Text>
             <div className="flex flex-col gap-5">
-              <Text variant="bodyLg" fontWeight="regular" color="default">
-                {TheRockefellerFoundationTextOne}
-              </Text>
-              <Text variant="bodyLg" fontWeight="regular" color="default">
-                For more information, sign up for their newsletter at{' '}
-                <Button
-                  size="large"
-                  className="underline"
-                  kind="tertiary"
-                  variant="basic"
-                  onClick={(event) =>
-                    handleRedirect(event, 'https://rockefellerfoundation.org/')
-                  }
+              <div>
+                <div
+                  ref={descriptionRef}
+                  className={!showMore ? ' line-clamp-2 lg:line-clamp-5' : ''}
                 >
-                  rockefellerfoundation.org
-                </Button>{' '}
-                and follow them on X @RockefellerFdn.
-              </Text>
+                  <Text variant="bodyLg" fontWeight="regular" color="default">
+                    {TheRockefellerFoundationTextOne} For more information, sign
+                    up for their newsletter at{' '}
+                    <a
+                      href="https://rockefellerfoundation.org/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-link underline"
+                    >
+                      rockefellerfoundation.org
+                    </a>{' '}
+                    and follow them on X @RockefellerFdn
+                  </Text>
+                </div>
+
+                {/* Only show the "Show more" button on medium and small screens */}
+                {isDescriptionLong && (
+                  <div className="block md:hidden">
+                    <Button
+                      className="self-start p-2"
+                      onClick={toggleShowMore}
+                      variant="interactive"
+                      size="slim"
+                      kind="tertiary"
+                    >
+                      {showMore ? 'Show less' : 'Show more'}
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
-        <div className="flex flex-wrap items-center justify-center gap-10 bg-baseIndigoSolid1 p-9 lg:flex-nowrap ">
+        <div className="flex flex-wrap items-center justify-center gap-10 rounded-2 bg-baseIndigoSolid1 p-9 lg:flex-nowrap ">
           <div className="flex flex-col items-center gap-4 text-surfaceDefault">
             <Image
               src="/logo/PJMc.png"
@@ -148,9 +180,31 @@ export function SupportedBy() {
               Patrick J. McGovern Foundation{' '}
             </Text>
             <div className="flex flex-col gap-5">
-              <Text variant="bodyLg" fontWeight="regular" color="default">
-                {PJMcPartnershipText}
-              </Text>
+              <div>
+                <div
+                  ref={descriptionRef}
+                  className={!showMore ? ' line-clamp-2 lg:line-clamp-5' : ''}
+                >
+                  <Text variant="bodyLg" fontWeight="regular" color="default">
+                    {PJMcPartnershipText}
+                  </Text>
+                </div>
+
+                {/* Only show the "Show more" button on medium and small screens */}
+                {isDescriptionLong && (
+                  <div className="block md:hidden">
+                    <Button
+                      className="self-start p-2"
+                      onClick={toggleShowMore}
+                      variant="interactive"
+                      size="slim"
+                      kind="tertiary"
+                    >
+                      {showMore ? 'Show less' : 'Show more'}
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

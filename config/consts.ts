@@ -86,7 +86,7 @@ const AboutTextContentThree = 'We have a 3-pronged approach: ';
 const HeroSectionText = 'Discover insights, assess risks and build resilience';
 
 const AnalyticsQuickLinksText =
-  'Gain insights from the IDS-DRR data model to understand the flood-risk profiles of districts and sub-district regions in various states across India';
+  'Explore flood-risk profiles at the district and sub-district level across states in India, developed using the IDS-DRR data model';
 
 const DatasetCatalogText = 'Explore and use high-value datasets';
 
@@ -110,10 +110,10 @@ const IntroTextContentThree =
   'This 4-year project led by CivicDataLab & Open Contracting Partnership is planned to improve disaster risk reduction processes & practices in the state of Assam. It is supported by The Rockefeller Foundation.';
 
 const CollaboratingPartnerTextOne =
-  'The Assam State Disaster Management Authority was notified in the year 2007 with the adoption of the Disaster Management Act in the year 2006. Honourable Chief Minister, Assam is its Chairperson and Honorable Minister Revenue and Disaster Management is its Vice Chairperson. To execute the mandate of the Authority the State Executive Committee with the Chief Secretary, Assam as its Chairperson has also been notified as per provision of the Disaster Management Act. The ASDMA Secretariat with officers, consultants and employees, for carrying out the functions of the State Authority, became fully functional in the year 2010. ';
+  'The Assam State Disaster Management Authority was notified in the year 2007 with the adoption of the Disaster Management Act in the year 2006. Honourable Chief Minister, Assam is its Chairperson and Honorable Minister Revenue and Disaster Management is its Vice Chairperson. To execute the mandate of the Authority the State Executive Committee with the Chief Secretary, Assam as its Chairperson has also been notified as per provision of the Disaster Management Act. The ASDMA Secretariat with officers, consultants and employees, for carrying out the functions of the State Authority, became fully functional in the year 2010. ASDMA has also notified the District Disaster Management Authority in all the 33 districts of Assam and placed officers for carrying out disaster management activities at the district.';
 
-const CollaboratingPartnerTextTwo =
-  'ASDMA has also notified the District Disaster Management Authority in all the 33 districts of Assam and placed officers for carrying out disaster management activities at the district.';
+// const CollaboratingPartnerTextTwo =
+// 'ASDMA has also notified the District Disaster Management Authority in all the 33 districts of Assam and placed officers for carrying out disaster management activities at the district.';
 
 const CollaboratingPartnerHPText =
   'The HP SDMA has been constituted under the chairmanship of Chief  Minister of Himachal Pradesh. Revenue Minister has been nominated as  member. Chief Secretary is the Chief Executive Officer of the SDMA. ACS  cum FC (Revenue), Principal Secretary (Home), Principal Secretary (PWD/I  & PH), Principal Secretary (Health) and Director General of Police  have also been notified as member. Additional Chief Secretary (Revenue)  is the Member Secretary of the Authority.';
@@ -123,10 +123,10 @@ const TheRockefellerFoundationTextOne =
 const TheRockefellerFoundationTextTwo =
   'For more information, sign up for their newsletter at rockefellerfoundation.org and follow them on X @RockefellerFdn.';
 const OpenContractingPartnershipTextOne =
-  'Open Contracting Partnership is an independent non-profit working in over 50 countries. OCP is a silo-busting collaboration across governments, businesses, civil society, and technologists to improve public procurement by designing goal-driven reforms, building coalitions of change and co-creating digital solutions, powered by open data. ';
+  'Open Contracting Partnership is an independent non-profit working in over 50 countries. OCP is a silo-busting collaboration across governments, businesses, civil society, and technologists to improve public procurement by designing goal-driven reforms, building coalitions of change and co-creating digital solutions, powered by open data. OCP is unique in bringing these three approaches together and at scale. OCP makes sure public money is spent openly, fairly and effectively on public contracts, delivering fundamentally better public spending outcomes that benefit people and protect the planet.';
 
-const OpenContractingPartnershipTextTwo =
-  'OCP is unique in bringing these three approaches together and at scale. OCP makes sure public money is spent openly, fairly and effectively on public contracts, delivering fundamentally better public spending outcomes that benefit people and protect the planet.';
+// const OpenContractingPartnershipTextTwo =
+//   'OCP is unique in bringing these three approaches together and at scale. OCP makes sure public money is spent openly, fairly and effectively on public contracts, delivering fundamentally better public spending outcomes that benefit people and protect the planet.';
 
 const PJMcPartnershipText =
   'The Patrick J. McGovern Foundation (PJMF) is a philanthropic organization dedicated to advancing artificial intelligence and data science solutions to create a thriving, equitable, and sustainable future for all. PJMF works in partnership with public, private, and social institutions to drive progress on our most pressing challenges, including digital health, climate change, broad digital access, and data maturity in the social sector.';
@@ -164,9 +164,9 @@ export {
   IntroTextContentThree,
   aboutUsText,
   CollaboratingPartnerTextOne,
-  CollaboratingPartnerTextTwo,
+  // CollaboratingPartnerTextTwo,
   OpenContractingPartnershipTextOne,
-  OpenContractingPartnershipTextTwo,
+  // OpenContractingPartnershipTextTwo,
   TheRockefellerFoundationTextOne,
   TheRockefellerFoundationTextTwo,
   learnMoreLink,
