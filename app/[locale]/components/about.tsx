@@ -41,7 +41,7 @@ export function About() {
             width={250}
             height={297}
             objectFit="contain"
-            className="pt-10"
+            className=" mx-auto pt-10"
             alt="An image representing global climate action"
           />
         </MediaRendering>

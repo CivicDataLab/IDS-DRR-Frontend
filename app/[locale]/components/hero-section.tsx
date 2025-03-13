@@ -23,7 +23,7 @@ export const HeroSection = () => {
           className=" hidden lg:block"
         />
         <Image
-          src="/logo/IDS-yellow.png"
+          src="/logo/IDS-yellow-new.png"
           width={360}
           height={56}
           alt="IDS-DRR expanded logo"
