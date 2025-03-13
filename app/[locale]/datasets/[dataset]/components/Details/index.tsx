@@ -105,7 +105,7 @@ const Details = () => {
                                   color="default"
                                 />
                               </Button>{' '}
-                              <Button
+                              {/* <Button
                                 kind="secondary"
                                 className="bg-[#E0F8E2] p-2"
                                 disabled={true}
@@ -115,7 +115,7 @@ const Details = () => {
                                   size={20}
                                   color="default"
                                 />
-                              </Button>
+                              </Button> */}
                             </div>
                           ) : (
                             <div className="flex gap-2">
@@ -168,7 +168,7 @@ const Details = () => {
                                   },
                                 ]}
                               />
-                              <Link
+                              {/* <Link
                                 href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/download/chart/${item.id}`}
                                 target="_blank"
                                 className="flex justify-center"
@@ -183,7 +183,7 @@ const Details = () => {
                                     color="default"
                                   />
                                 </Button>
-                              </Link>
+                              </Link> */}
                             </div>
                           )}
                         </div>
