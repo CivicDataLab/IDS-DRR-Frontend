@@ -56,7 +56,8 @@ export const DatasetCatalog = () => {
         {Catalog.map((item, index) => (
           <div
             key={index}
-            className="flex rounded-1 bg-surfaceDefault p-6 shadow-elementCard"
+            // className="flex rounded-2 bg-surfaceDefault p-6 shadow-elementCard"
+            className="flex h-full min-h-[150px] rounded-2 bg-surfaceDefault p-6 shadow-elementCard"
           >
             <Link href={item.link} className=" flex items-center gap-4">
               <Image src={item.icon} alt={item.alt} width={66} height={66} />

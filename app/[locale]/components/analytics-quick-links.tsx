@@ -64,8 +64,9 @@ export const QuickLinks = () => {
         </Text>
       </div>
       <div>
-        <Carousel className="flex w-full items-center justify-center">
-          <div className="block xl:hidden">
+        {/* <Carousel className="flex w-full items-center justify-center"> */}
+        <Carousel className="flex w-full items-center justify-center gap-2 px-2">
+          <div className="mr-2 rounded-1 bg-surfaceDefault">
             <CarouselPrevious />
           </div>
           <CarouselContent className="container flex w-full gap-0 px-4 md:gap-6 lg:gap-2">
@@ -81,7 +82,7 @@ export const QuickLinks = () => {
                     className={`cursor-pointer ${styles.stateCard}`}
                   >
                     {/* Ensure items take up flexible width */}
-                    <div className="flex h-48 w-56 flex-col items-center justify-between rounded-4 bg-surfaceDefault p-4 text-center shadow-elementCard">
+                    <div className="flex h-48 w-56 flex-col items-center justify-between rounded-2 bg-surfaceDefault p-4 text-center shadow-elementCard">
                       <Image
                         width={200}
                         height={160}
@@ -124,7 +125,7 @@ export const QuickLinks = () => {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <div className="block xl:hidden">
+          <div className="ml-2 rounded-1 bg-surfaceDefault">
             <CarouselNext />
           </div>
         </Carousel>

@@ -63,11 +63,11 @@ const Resources = () => {
 
   return (
     <section
-      className="flex h-full w-full flex-col gap-10  px-5 py-6 lg:px-6 lg:py-14"
+      className="flex h-full w-full flex-col gap-10 px-5 py-6 lg:px-6 lg:py-14"
       style={{ backgroundColor: '#222136' }}
       aria-label="Various resources for data exploration"
     >
-      <div className=" container flex flex-col gap-4 ">
+      <div className="container flex flex-col gap-4 ">
         <Text
           variant="heading3xl"
           fontWeight="bold"
@@ -81,18 +81,20 @@ const Resources = () => {
         </Text>
       </div>
       <div>
-        <Carousel className="flex w-full items-center justify-center">
+        {/* <Carousel className="flex w-full items-center justify-center"> */}
+        <Carousel className="flex w-full items-center justify-center gap-2 px-2">
           <div className="mr-2 rounded-1 bg-surfaceDefault">
             <CarouselPrevious />
           </div>
           {data.length > 0 ? (
-            <CarouselContent className="container flex w-full gap-4 px-4 lg:gap-4 ">
-              <CarouselItem className="ml-2  overflow-hidden rounded-2 bg-surfaceDefault p-3 md:basis-1/2 lg:ml-0 lg:basis-1/3  lg:p-6 ">
+            // <CarouselContent className="container flex w-full gap-4 px-4 lg:gap-4 ">
+            <CarouselContent className="flex w-full justify-between gap-4  pl-4 pr-1 lg:container lg:gap-6">
+              <CarouselItem className="ml-2 overflow-hidden rounded-2 bg-surfaceDefault p-6 md:basis-1/2 lg:ml-0 lg:basis-1/3  lg:p-6 ">
                 <Link
                   href={`https://supersetv2.civicdatalab.in/superset/dashboard/p/Od0XQzvMNmr/`}
                   className="w-full"
                 >
-                  <div className="flex w-full flex-col items-baseline justify-between gap-3">
+                  <div className="flex w-full flex-col items-baseline justify-between gap-4">
                     <div className=" flex flex-col gap-1 ">
                       <Text variant="bodyLg">
                         <b> Assam Tenders Dashboard</b>
@@ -150,7 +152,7 @@ const Resources = () => {
                   className="ml-2  overflow-hidden rounded-2 bg-surfaceDefault p-3 md:basis-1/2 lg:ml-0 lg:basis-1/3  lg:p-6 "
                 >
                   <Link href={`/datasets/${item.id}`} className="w-full">
-                    <div className="flex w-full flex-col items-baseline justify-between gap-3">
+                    <div className="flex w-full flex-col items-baseline justify-between gap-5">
                       <div className=" flex flex-col gap-1 ">
                         <Text variant="bodyLg">
                           <b>{item.title}</b>
