@@ -192,10 +192,12 @@ const Details = () => {
                   ))}
                 </CarouselContent>
               </div>
-              <div className="absolute inset-y-0 left-0 m-auto flex h-fit w-fit items-center rounded-4 bg-[#71E57DB2] p-1">
+              {/* <div className="absolute inset-y-0 left-0 m-auto flex h-fit w-fit items-center rounded-4 bg-[#71E57DB2] p-1"> */}
+              <div className="absolute inset-y-0 left-0 m-auto mr-2 flex h-fit w-fit items-center rounded-1 bg-surfaceDefault">
                 <CarouselPrevious />
               </div>
-              <div className="absolute inset-y-0 right-0 m-auto flex h-fit w-fit items-center rounded-4 bg-[#71E57DB2] p-1 ">
+              {/* <div className="absolute inset-y-0 right-0 m-auto flex h-fit w-fit items-center rounded-4 bg-[#71E57DB2] p-1 "> */}
+              <div className="absolute inset-y-0 right-0 m-auto ml-2 flex h-fit w-fit items-center rounded-1 bg-surfaceDefault">
                 <CarouselNext />
               </div>
             </Carousel>
