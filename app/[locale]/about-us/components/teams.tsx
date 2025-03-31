@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { Button, Text } from 'opub-ui';
 
@@ -6,7 +7,6 @@ import {
   CDLPartnershipTextThree,
   CDLPartnershipTextTwo,
   OpenContractingPartnershipTextOne,
-  OpenContractingPartnershipTextTwo,
 } from '@/config/consts';
 import { handleRedirect } from '@/lib/utils';
 import styles from './styles.module.scss';
@@ -43,31 +43,33 @@ const teamMembers: TeamMember[] = [
     imageUrl: '/teams/bhavabhuthi.jpg',
   },
   {
-    name: 'Ruthvik',
-    role: 'Associate Lead Engineer',
-    imageUrl: '/teams/ruthvik.jpg',
+    name: 'Saqib',
+    role: 'Quality Assurance Engineer',
+    imageUrl: '/teams/saqib.jpg',
   },
+
+  { name: 'Swati', role: 'Frontend Engineer', imageUrl: '/teams/swati1.jpg' },
 
   {
     name: 'Sanjay',
     role: 'Frontend Engineer',
     imageUrl: '/teams/sanjay.jpg',
   },
-  {
-    name: 'Sumit',
-    role: 'Senior Design Researcher',
-    imageUrl: '/teams/sumit.jpg',
-  },
-  { name: 'Swati', role: 'Frontend Engineer', imageUrl: '/teams/swati1.jpg' },
-  {
-    name: 'Saqib',
-    role: 'Quality Assurance Engineer',
-    imageUrl: '/teams/saqib.jpg',
-  },
+
   {
     name: 'Abhinandita',
     role: 'Senior Product Designer',
     imageUrl: '/teams/abhinandita.jpg',
+  },
+  {
+    name: 'Ruthvik',
+    role: 'Associate Lead Engineer',
+    imageUrl: '/teams/ruthvik.jpg',
+  },
+  {
+    name: 'Sumit',
+    role: 'Senior Design Researcher',
+    imageUrl: '/teams/sumit.jpg',
   },
   {
     name: 'Kakoli',
@@ -85,6 +87,24 @@ const teamMembers: TeamMember[] = [
 ];
 
 export function TheTeam() {
+  const [showMore, setShowMore] = useState(false);
+  const [isDescriptionLong, setIsDescriptionLong] = useState(false);
+
+  const descriptionRef = useRef<HTMLDivElement | null>(null);
+  const toggleShowMore = (event: React.MouseEvent) => {
+    event.preventDefault(); // Prevent link navigation
+    event.stopPropagation(); // Stop event from propagating to the card's link
+    setShowMore((prevState) => !prevState);
+  };
+
+  useEffect(() => {
+    if (descriptionRef.current) {
+      const isLong =
+        descriptionRef.current.scrollHeight >
+        descriptionRef.current.clientHeight;
+      setIsDescriptionLong(isLong);
+    }
+  }, []);
   return (
     <section
       className=" py-14 "
@@ -96,7 +116,7 @@ export function TheTeam() {
           Co-created by
         </Text>
 
-        <div className="flex flex-wrap items-center justify-center gap-10 bg-baseIndigoSolid1 p-9 lg:flex-nowrap ">
+        <div className="flex flex-wrap items-center justify-center gap-10 rounded-2 bg-baseIndigoSolid1 p-9 lg:flex-nowrap ">
           <div className="flex flex-col items-center gap-4 text-surfaceDefault">
             <Image
               src="/logo/OpenContracting.png"
@@ -148,16 +168,35 @@ export function TheTeam() {
               Open Contracting Partnership
             </Text>
             <div className="flex flex-col gap-5">
-              <Text variant="bodyLg" fontWeight="regular" color="default">
-                {OpenContractingPartnershipTextOne}
-              </Text>
-              <Text variant="bodyLg" fontWeight="regular" color="default">
-                {OpenContractingPartnershipTextTwo}
-              </Text>
+              <div>
+                <div
+                  ref={descriptionRef}
+                  className={!showMore ? ' line-clamp-2 lg:line-clamp-5' : ''}
+                >
+                  <Text variant="bodyLg" fontWeight="regular" color="default">
+                    {OpenContractingPartnershipTextOne}
+                  </Text>
+                </div>
+
+                {/* Only show the "Show more" button on medium and small screens */}
+                {isDescriptionLong && (
+                  <div className="block md:hidden">
+                    <Button
+                      className="self-start p-2"
+                      onClick={toggleShowMore}
+                      variant="interactive"
+                      size="slim"
+                      kind="tertiary"
+                    >
+                      {showMore ? 'Show less' : 'Show more'}
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
-        <div className="flex flex-wrap items-center justify-center gap-10 bg-baseIndigoSolid1 p-9 lg:flex-nowrap ">
+        <div className="flex flex-wrap items-center justify-center gap-10 rounded-2 bg-baseIndigoSolid1 p-9 lg:flex-nowrap ">
           <div className="flex flex-col items-center gap-4 text-surfaceDefault">
             <Image
               src="/logo/cdl_logo.svg"
@@ -212,16 +251,39 @@ export function TheTeam() {
               <Text variant="bodyLg" fontWeight="regular" color="default">
                 {CDLPartnershipTextOne}
               </Text>
-              <Text variant="bodyLg" fontWeight="regular" color="default">
-                {CDLPartnershipTextTwo}
-              </Text>
-              <Text variant="bodyLg" fontWeight="regular" color="default">
-                {CDLPartnershipTextThree}
-              </Text>
+              {/* --------------  */}
+
+              <div>
+                <div
+                  ref={descriptionRef}
+                  className={!showMore ? ' line-clamp-2 lg:line-clamp-5' : ''}
+                >
+                  <Text variant="bodyLg" fontWeight="regular" color="default">
+                    {CDLPartnershipTextTwo} {CDLPartnershipTextThree}
+                  </Text>
+                </div>
+
+                {/* Only show the "Show more" button on medium and small screens */}
+                {isDescriptionLong && (
+                  <div className="block md:hidden">
+                    <Button
+                      className="self-start p-2"
+                      onClick={toggleShowMore}
+                      variant="interactive"
+                      size="slim"
+                      kind="tertiary"
+                    >
+                      {showMore ? 'Show less' : 'Show more'}
+                    </Button>
+                  </div>
+                )}
+              </div>
+              {/* --------------  */}
             </div>
           </div>
         </div>
-        <div className="mt-6 grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 ">
+        {/* <div className="mt-6 grid grid-cols-1 gap-10 rounded-2 md:grid-cols-2 lg:grid-cols-3 "> */}
+        <div className="mt-6 grid grid-cols-2 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
           {teamMembers.map((member, index) => (
             <div key={index} className={styles.card}>
               <Image
