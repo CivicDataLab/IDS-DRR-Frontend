@@ -16,6 +16,7 @@ import { GraphQL } from '@/lib/api';
 import { cn, copyCurrentURL, downloadStateReport } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
+import { getLatestDate } from '../utils/utils';
 import RadioButton from './RadioButton';
 import styles from './styles.module.scss';
 
@@ -218,9 +219,29 @@ export function FactorList({ currentState }: any) {
                   );
                   if (confirmation) {
                     try {
+                      if (!time_period) {
+                        throw new Error('Time period is not defined');
+                      }
+
+                      let time_period_array = time_period?.split(
+                        ','
+                      ) as string[];
+
+                      let time_period_latest;
+
+                      if (time_period_array?.length > 1) {
+                        let time_period_latest_date = new Date(
+                          getLatestDate(time_period_array) as string
+                        );
+                        time_period_latest =
+                          `${time_period_latest_date.getFullYear()}_${String(time_period_latest_date.getMonth() + 1).padStart(2, '0')}` as string;
+                      } else {
+                        time_period_latest = time_period;
+                      }
+
                       setDownloadReportLoading(true);
                       await downloadStateReport(
-                        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentState.code}&time_period=${time_period}`,
+                        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentState.code}&time_period=${time_period_latest}`,
                         `${currentState.name}-Report`
                       );
                     } catch (error) {
