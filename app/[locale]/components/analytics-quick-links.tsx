@@ -37,9 +37,9 @@ export const QuickLinks = () => {
     },
     {
       name: 'Bihar',
-      status: 'inactive',
+      status: 'active',
       icon: '/logo/states/Bihar.svg',
-      link: '',
+      link: `bihar${AnalyticsURL}`,
       alt: 'Bihar state boundary image',
     },
     {
