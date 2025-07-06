@@ -44,9 +44,9 @@ export const QuickLinks = () => {
     },
     {
       name: 'Uttar Pradesh',
-      status: 'inactive',
+      status: 'active',
       icon: '/logo/states/Up.svg',
-      link: '',
+      link: `uttar-pradesh${AnalyticsURL}`,
       alt: 'UP state boundary image',
     },
   ];
