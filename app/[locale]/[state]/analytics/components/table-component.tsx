@@ -11,11 +11,6 @@ type ColumnDefinition = {
 };
 
 export function TableComponent({ data, isLoading }: any) {
-  const BOUNDARY_MAP: { DISTRICT: string; 'REVENUE CIRCLE': string } = {
-    DISTRICT: 'District',
-    'REVENUE CIRCLE': 'Revenue Circle',
-  };
-
   function transformColumnData(data: ColumnDefinition[]) {
     const transformed: { accessorKey: string; header: any; id?: string }[] = [];
     // Add district column
@@ -48,12 +43,12 @@ export function TableComponent({ data, isLoading }: any) {
     const rows = data?.map((item) => {
       const row: Record<string, any> = {};
       row['region-name'] = item['region-name'] as string;
-      row['region-type'] = BOUNDARY_MAP[item.type as keyof typeof BOUNDARY_MAP];
+      row['region-type'] = item.type;
       Object.keys(item).forEach((key) => {
         const value = item[key];
         if (value !== null && typeof value === 'object' && 'value' in value) {
           row[key] = Factors.includes(key)
-            ? RiskText[parseInt((value as { value: string }).value)][
+            ? RiskText[parseInt((value as { value: string }).value)]?.[
                 'indicatorText'
               ]
             : formatNumberToIndianSystem(
