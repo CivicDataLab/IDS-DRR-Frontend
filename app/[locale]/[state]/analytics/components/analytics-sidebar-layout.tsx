@@ -89,7 +89,7 @@ export function IndicatorListWrapper({ statesList, currentState }: any) {
                 <Select
                   name={'State'}
                   label={''}
-                  value={currentState.slug}
+                  value={currentState?.slug}
                   options={statesList.map((state: any) => {
                     return {
                       label: state.name,

@@ -42,7 +42,12 @@ export const RevenueCircle = ({
   const FactorVariables = Object.keys(clonedRevenueCircleData);
 
   return (
-    <Accordion type="single" defaultValue={`revenue-circle-0`} collapsible>
+    <Accordion
+      type="single"
+      data-testid="accordion"
+      defaultValue={`revenue-circle-0`}
+      collapsible
+    >
       {revenueCircleData.map((item: any, index: number) => (
         <AccordionItem
           key={`revenue-circle-${index}`}

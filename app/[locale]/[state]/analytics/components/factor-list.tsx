@@ -209,7 +209,11 @@ export function FactorList({ currentState }: any) {
               ]}
             />
             {downloadReportLoading ? (
-              <Icon source={Icons.loader} className="animate-spin" />
+              <Icon
+                source={Icons.loader}
+                data-testid="loader-icon"
+                className="animate-spin"
+              />
             ) : (
               <Button
                 className="self-start"
@@ -375,7 +379,7 @@ const NestedSidebarItem: React.FC<{
 const NestedSidebar: React.FC<NestedSidebarProps> = ({ data, indicator }) => {
   return (
     <div>
-      {data.map((node) => (
+      {data?.map((node) => (
         <NestedSidebarItem
           key={node.slug}
           node={node}
