@@ -6,9 +6,10 @@ export const Button = ({ children, onClick, kind, ...props }: any) => (
   </button>
 );
 
-export const Text = ({ children, ...props }: any) => (
-  <span {...props}>{children}</span>
-);
+export const Text = ({ children, as, ...props }: any) => {
+  const Component = as || 'span';
+  return <Component {...props}>{children}</Component>;
+};
 
 export const Spinner = ({ color }: any) => (
   <div color={color} data-testid="spinner">
@@ -317,6 +318,37 @@ export const useScreenshot = () => ({
   domToUrl: jest.fn(() => Promise.resolve('dom-url')),
 });
 
+// Carousel components
+export const Carousel = ({ children, className }: any) => (
+  <div data-testid="carousel" className={className}>
+    {children}
+  </div>
+);
+
+export const CarouselContent = ({ children, className }: any) => (
+  <div data-testid="carousel-content" className={className}>
+    {children}
+  </div>
+);
+
+export const CarouselItem = ({ children, className }: any) => (
+  <div data-testid="carousel-item" className={className}>
+    {children}
+  </div>
+);
+
+export const CarouselNext = ({ ...props }: any) => (
+  <button data-testid="carousel-next" {...props}>
+    Next
+  </button>
+);
+
+export const CarouselPrevious = ({ ...props }: any) => (
+  <button data-testid="carousel-previous" {...props}>
+    Previous
+  </button>
+);
+
 // Chart components
 export const BarChart = ({ options, height, showLabel }: any) => (
   <div data-testid="bar-chart" style={{ height }}>
@@ -382,6 +414,11 @@ export default {
   Divider,
   ShareDialog,
   useScreenshot,
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
   BarChart,
   LineChart,
   AreaChart,
