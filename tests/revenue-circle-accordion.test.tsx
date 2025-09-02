@@ -50,6 +50,9 @@ jest.mock('@/public/InfoCircle', () => ({
 }));
 
 describe('RevenueCircle', () => {
+  beforeAll(() => {
+    process.env.NEXT_PUBLIC_TIME_PERIOD = '2023_08';
+  });
   const mockFactorData = {
     'risk-score': { name: 'Risk Score' },
     exposure: { name: 'Exposure' },
