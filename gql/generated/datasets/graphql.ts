@@ -53,13 +53,6 @@ export type AddUpdateDatasetMetadataPayload = OperationInfo | TypeDataset;
 
 export type AddUseCasePayload = OperationInfo | TypeUseCase;
 
-export enum AggregateType {
-  Average = 'AVERAGE',
-  Count = 'COUNT',
-  None = 'NONE',
-  Sum = 'SUM'
-}
-
 /** access model | type */
 export enum ApiAccessModelTypeEnum {
   /** Private */
@@ -164,36 +157,6 @@ export enum ApiOrganizationOrganizationTypesEnum {
   UrbanLocalBody = 'URBAN_LOCAL_BODY'
 }
 
-/** resource chart details | aggregate type */
-export enum ApiResourceChartDetailsAggregateTypeEnum {
-  /** Count */
-  Count = 'COUNT',
-  /** Average */
-  Mean = 'MEAN',
-  /** None */
-  None = 'NONE',
-  /** Sum */
-  Sum = 'SUM'
-}
-
-/** resource chart details | chart type */
-export enum ApiResourceChartDetailsChartTypeEnum {
-  /** Assam District */
-  AssamDistrict = 'ASSAM_DISTRICT',
-  /** Assam Rc */
-  AssamRc = 'ASSAM_RC',
-  /** Bar Horizontal */
-  BarHorizontal = 'BAR_HORIZONTAL',
-  /** Bar Vertical */
-  BarVertical = 'BAR_VERTICAL',
-  /** Grouped Bar Horizontal */
-  GroupedBarHorizontal = 'GROUPED_BAR_HORIZONTAL',
-  /** Grouped Bar Vertical */
-  GroupedBarVertical = 'GROUPED_BAR_VERTICAL',
-  /** Line */
-  Line = 'LINE'
-}
-
 /** resource schema | format */
 export enum ApiResourceSchemaFormatEnum {
   /** Boolean */
@@ -258,6 +221,31 @@ export type CategoryInputPartial = {
   slug?: InputMaybe<Scalars['String']>;
 };
 
+export type ChartOptions = {
+  aggregateType?: InputMaybe<Scalars['String']>;
+  regionColumn?: InputMaybe<Scalars['String']>;
+  showLegend?: Scalars['Boolean'];
+  timeColumn?: InputMaybe<Scalars['String']>;
+  valueColumn?: InputMaybe<Scalars['String']>;
+  xAxisColumn?: InputMaybe<Scalars['String']>;
+  xAxisLabel?: InputMaybe<Scalars['String']>;
+  yAxisColumn?: InputMaybe<Array<YAxisColumnConfig>>;
+  yAxisLabel?: InputMaybe<Scalars['String']>;
+};
+
+export type ChartOptionsType = {
+  __typename?: 'ChartOptionsType';
+  aggregateType?: Maybe<Scalars['String']>;
+  regionColumn?: Maybe<TypeResourceSchema>;
+  showLegend?: Maybe<Scalars['Boolean']>;
+  timeColumn?: Maybe<TypeResourceSchema>;
+  valueColumn?: Maybe<TypeResourceSchema>;
+  xAxisColumn?: Maybe<TypeResourceSchema>;
+  xAxisLabel?: Maybe<Scalars['String']>;
+  yAxisColumn?: Maybe<Array<YAxisColumnConfigType>>;
+  yAxisLabel?: Maybe<Scalars['String']>;
+};
+
 export enum ChartTypes {
   AssamDistrict = 'ASSAM_DISTRICT',
   AssamRc = 'ASSAM_RC',
@@ -265,7 +253,8 @@ export enum ChartTypes {
   BarVertical = 'BAR_VERTICAL',
   GroupedBarHorizontal = 'GROUPED_BAR_HORIZONTAL',
   GroupedBarVertical = 'GROUPED_BAR_VERTICAL',
-  Line = 'LINE'
+  Line = 'LINE',
+  Multiline = 'MULTILINE'
 }
 
 export type CreateAccessModelPayload = OperationInfo | TypeAccessModel;
@@ -389,6 +378,13 @@ export enum FieldType {
 
 export type FilterInput = {
   column: Scalars['String'];
+  operator: Scalars['String'];
+  value: Scalars['String'];
+};
+
+export type FilterType = {
+  __typename?: 'FilterType';
+  column?: Maybe<TypeResourceSchema>;
   operator: Scalars['String'];
   value: Scalars['String'];
 };
@@ -927,22 +923,15 @@ export type ResourceChartImageInputPartial = {
   name?: InputMaybe<Scalars['String']>;
 };
 
-/** ResourceChartDetails(id, resource, name, description, chart_type, x_axis_label, y_axis_label, x_axis_column, y_axis_column, show_legend, aggregate_type, region_column, value_column, modified, filters, y_axis_column_list) */
+/** ResourceChartDetails(id, resource, name, description, chart_type, options, modified, filters) */
 export type ResourceChartInput = {
-  aggregateType?: AggregateType;
   chartId?: InputMaybe<Scalars['UUID']>;
   description?: InputMaybe<Scalars['String']>;
   filters?: InputMaybe<Array<FilterInput>>;
   name?: InputMaybe<Scalars['String']>;
-  regionColumn?: InputMaybe<Scalars['String']>;
+  options?: InputMaybe<ChartOptions>;
   resource: Scalars['UUID'];
-  showLegend?: InputMaybe<Scalars['Boolean']>;
-  type: ChartTypes;
-  valueColumn?: InputMaybe<Scalars['String']>;
-  xAxisColumn?: InputMaybe<Scalars['String']>;
-  xAxisLabel?: InputMaybe<Scalars['String']>;
-  yAxisColumn?: InputMaybe<Scalars['String']>;
-  yAxisLabel?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<ChartTypes>;
 };
 
 export type SchemaUpdate = {
@@ -1125,26 +1114,18 @@ export type TypeResourceAccessModel = {
   type: ApiAccessModelTypeEnum;
 };
 
-/** ResourceChartDetails(id, resource, name, description, chart_type, x_axis_label, y_axis_label, x_axis_column, y_axis_column, show_legend, aggregate_type, region_column, value_column, modified, filters, y_axis_column_list) */
+/** ResourceChartDetails(id, resource, name, description, chart_type, options, modified, filters) */
 export type TypeResourceChart = {
   __typename?: 'TypeResourceChart';
-  aggregateType: ApiResourceChartDetailsAggregateTypeEnum;
   chart: Scalars['JSON'];
-  chartType: ApiResourceChartDetailsChartTypeEnum;
+  chartType: Scalars['String'];
   description: Scalars['String'];
-  filters: Scalars['JSON'];
+  filters?: Maybe<Array<FilterType>>;
   id: Scalars['UUID'];
   modified: Scalars['DateTime'];
   name: Scalars['String'];
-  regionColumn?: Maybe<TypeResourceSchema>;
+  options?: Maybe<ChartOptionsType>;
   resource: TypeResource;
-  showLegend: Scalars['Boolean'];
-  valueColumn?: Maybe<TypeResourceSchema>;
-  xAxisColumn?: Maybe<TypeResourceSchema>;
-  xAxisLabel: Scalars['String'];
-  yAxisColumn?: Maybe<TypeResourceSchema>;
-  yAxisColumnList: Scalars['JSON'];
-  yAxisLabel: Scalars['String'];
 };
 
 /** ResourceChartImage(id, name, description, image, dataset, modified) */
@@ -1304,6 +1285,32 @@ export enum ValidatorType {
   Regex = 'REGEX'
 }
 
+export type ValueMapping = {
+  key: Scalars['String'];
+  value: Scalars['String'];
+};
+
+export type ValueMappingType = {
+  __typename?: 'ValueMappingType';
+  key: Scalars['String'];
+  value: Scalars['String'];
+};
+
+export type YAxisColumnConfig = {
+  color?: InputMaybe<Scalars['String']>;
+  fieldName: Scalars['String'];
+  label?: InputMaybe<Scalars['String']>;
+  valueMapping?: InputMaybe<Array<ValueMapping>>;
+};
+
+export type YAxisColumnConfigType = {
+  __typename?: 'YAxisColumnConfigType';
+  color?: Maybe<Scalars['String']>;
+  field?: Maybe<TypeResourceSchema>;
+  label?: Maybe<Scalars['String']>;
+  valueMapping?: Maybe<Array<ValueMappingType>>;
+};
+
 export type DatasetsQueryVariables = Exact<{
   filters?: InputMaybe<DatasetFilter>;
 }>;
@@ -1316,7 +1323,7 @@ export type ChartsDataQueryVariables = Exact<{
 }>;
 
 
-export type ChartsDataQuery = { __typename?: 'Query', chartsDetails: Array<{ __typename?: 'TypeResourceChart', aggregateType: ApiResourceChartDetailsAggregateTypeEnum, chartType: ApiResourceChartDetailsChartTypeEnum, description: string, id: any, name: string, showLegend: boolean, xAxisLabel: string, yAxisLabel: string, chart: any }> };
+export type ChartsDataQuery = { __typename?: 'Query', chartsDetails: Array<{ __typename?: 'TypeResourceChart', chartType: string, description: string, id: any, name: string, chart: any, options?: { __typename?: 'ChartOptionsType', aggregateType?: string | null, showLegend?: boolean | null, xAxisLabel?: string | null, yAxisLabel?: string | null, xAxisColumn?: { __typename?: 'TypeResourceSchema', id: string, fieldName: string } | null, yAxisColumn?: Array<{ __typename?: 'YAxisColumnConfigType', field?: { __typename?: 'TypeResourceSchema', id: string, fieldName: string } | null }> | null, regionColumn?: { __typename?: 'TypeResourceSchema', id: string, fieldName: string } | null, valueColumn?: { __typename?: 'TypeResourceSchema', id: string, fieldName: string } | null } | null }> };
 
 export type DatasetResourcesQueryVariables = Exact<{
   datasetId: Scalars['UUID'];
@@ -1327,5 +1334,5 @@ export type DatasetResourcesQuery = { __typename?: 'Query', datasetResources: Ar
 
 
 export const DatasetsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"datasets"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filters"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DatasetFilter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasets"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filters"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filters"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tags"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"created"}},{"kind":"Field","name":{"kind":"Name","value":"modified"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"metadataItem"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"resources"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"created"}},{"kind":"Field","name":{"kind":"Name","value":"modified"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"categories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"formats"}}]}}]}}]} as unknown as DocumentNode<DatasetsQuery, DatasetsQueryVariables>;
-export const ChartsDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"chartsData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"datasetId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chartsDetails"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"datasetId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"datasetId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregateType"}},{"kind":"Field","name":{"kind":"Name","value":"chartType"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"showLegend"}},{"kind":"Field","name":{"kind":"Name","value":"xAxisLabel"}},{"kind":"Field","name":{"kind":"Name","value":"yAxisLabel"}},{"kind":"Field","name":{"kind":"Name","value":"chart"}}]}}]}}]} as unknown as DocumentNode<ChartsDataQuery, ChartsDataQueryVariables>;
+export const ChartsDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"chartsData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"datasetId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chartsDetails"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"datasetId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"datasetId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chartType"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"options"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregateType"}},{"kind":"Field","name":{"kind":"Name","value":"xAxisColumn"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"yAxisColumn"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldName"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"showLegend"}},{"kind":"Field","name":{"kind":"Name","value":"xAxisLabel"}},{"kind":"Field","name":{"kind":"Name","value":"yAxisLabel"}},{"kind":"Field","name":{"kind":"Name","value":"regionColumn"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"valueColumn"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldName"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"chart"}}]}}]}}]} as unknown as DocumentNode<ChartsDataQuery, ChartsDataQueryVariables>;
 export const DatasetResourcesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"datasetResources"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"datasetId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"datasetResources"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"datasetId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"datasetId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"created"}},{"kind":"Field","name":{"kind":"Name","value":"modified"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"accessModels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"modelResources"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"format"}},{"kind":"Field","name":{"kind":"Name","value":"fieldName"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"schema"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldName"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"format"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fileDetails"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"format"}}]}}]}}]}}]} as unknown as DocumentNode<DatasetResourcesQuery, DatasetResourcesQueryVariables>;
