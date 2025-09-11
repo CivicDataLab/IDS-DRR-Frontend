@@ -168,6 +168,9 @@ export const ChartView = ({
         // next: {
         //   tags: ['chart-data'],
         // }
+        // -----------
+
+        // cache: 'no-store', // Prevent caching for dynamic data
       }
     )
       .then((response) => response.json())

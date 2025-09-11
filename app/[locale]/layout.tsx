@@ -7,6 +7,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
 
 import { mainConfig, siteConfig } from '@/config/site';
+import { getPrefLangCookie } from '@/lib/serverUtils';
 import { MainNav } from '@/components/main-nav';
 import { MediaRendering } from '@/components/media-rendering';
 import { MobileNav } from '@/components/mobile-nav';
@@ -56,18 +57,21 @@ export async function generateMetadata() {
       icon: '/favicon.ico',
       shortcut: '/favicon-16x16.png',
       apple: `${siteConfig.url}/apple-touch-icon.png`,
+      // apple: '/apple-touch-icon.png',
     },
     manifest: `${siteConfig.url}/site.webmanifest`,
+    // manifest: '/site.webmanifest',
   };
 }
 
 export default async function LocaleLayout({
   children,
-  params: { locale },
+  params,
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
+  let locale = (await params).locale;
   let messages;
   try {
     messages = (await import(`../../locales/${locale}.json`)).default;
@@ -76,6 +80,9 @@ export default async function LocaleLayout({
     notFound();
   }
   unstable_setRequestLocale(locale);
+
+  // Get the language preference from cookies
+  const prefLangCookie = await getPrefLangCookie();
 
   return (
     <html lang={locale}>
@@ -113,7 +120,7 @@ export default async function LocaleLayout({
               <MobileNav data={mainConfig} />
             </MediaRendering>
             <MediaRendering minWidth="1024" maxWidth={null}>
-              <MainNav data={mainConfig} />
+              <MainNav data={mainConfig} prefLangCookie={prefLangCookie} />
             </MediaRendering>
 
             {children}

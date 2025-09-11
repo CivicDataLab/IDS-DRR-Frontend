@@ -5,10 +5,10 @@
   transition: transform var(--duration-400) ease 0s;
 }
 .FactorList {
+  margin-bottom: 18px;
   @media (max-width: 1280px) {
     overflow: hidden;
   }
-  margin-bottom: 18px;
 }
 
 .Overlay {

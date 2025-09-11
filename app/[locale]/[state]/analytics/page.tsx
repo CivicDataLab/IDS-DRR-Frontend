@@ -12,8 +12,9 @@ import { AnalyticsMainLayout } from './components/analytics-layout';
 export default async function Home({
   searchParams,
 }: {
-  searchParams: { [key: string]: string };
+  searchParams: Promise<{ [key: string]: string }>;
 }) {
+  const searchParamsHome = await searchParams;
   const queryClient = getQueryClient();
 
   try {
@@ -25,12 +26,12 @@ export default async function Home({
     );
 
     await queryClient.prefetchQuery(
-      [`indicators_${searchParams?.['indicator']}`],
+      [`indicators_${searchParamsHome?.['indicator']}`],
       () =>
         GraphQL(
           `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
           ANALYTICS_INDICATORS,
-          { indcFilter: { slug: searchParams?.['indicator'] } }
+          { indcFilter: { slug: searchParamsHome?.['indicator'] } }
         )
     );
 

@@ -46,6 +46,7 @@ export const MapComponent = ({
   const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
 
   const params = new URLSearchParams(window.location.search);
+  console.log('params', params.get('district-code'));
   const districtCode = params.get('district-code');
 
   const { width } = useWindowSize();
@@ -281,6 +282,7 @@ export const MapComponent = ({
   return (
     <>
       {' '}
+      {/* "react-leaflet": "^4.2.1", */}
       {/* <div
         className={`relative w-full ${isMobile ? 'h-full' : 'h-[98%]'} ${isMobile ? 'pt-[68px]' : ''}`}
       > */}
