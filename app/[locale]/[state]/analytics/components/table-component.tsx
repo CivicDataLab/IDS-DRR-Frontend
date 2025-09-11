@@ -27,7 +27,12 @@ export function TableComponent({ data, isLoading }: any) {
 
     // Dynamically transform other properties
     Object.entries(data).forEach(([key, item]) => {
-      if (typeof item === 'object' && 'value' in item && 'title' in item) {
+      if (
+        typeof item === 'object' &&
+        item !== null &&
+        'value' in item &&
+        'title' in item
+      ) {
         transformed.push({
           accessorKey: key,
           id: key,

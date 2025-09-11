@@ -170,6 +170,7 @@ export function FilterComp({
         className="m-0 ml-auto border-1 border-solid border-[#8C9196]"
         kind="tertiary"
         onClick={toggleDrawer}
+        aria-label="filter"
       >
         <Icon source={Icons.filter} />
       </Button>
