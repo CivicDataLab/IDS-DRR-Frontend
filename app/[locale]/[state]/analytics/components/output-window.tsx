@@ -79,9 +79,11 @@ export function OutputWindow({
 
   const [period, setPeriod] = React.useState(items[0].value || DEFAULT_PERIOD);
 
-  const chartData = useQuery(
-    [`chartData_${boundary}_${indicator}_${timePeriod}_${region}_${period}`],
-    () =>
+  const chartData = useQuery({
+    queryKey: [
+      `chartData_${boundary}_${indicator}_${timePeriod}_${region}_${period}`,
+    ],
+    queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_TIME_TRENDS,
@@ -91,12 +93,10 @@ export function OutputWindow({
           geoFilter: { code: [region] },
         }
       ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
   const districtData = data?.filter((item: any) =>
     Object.hasOwnProperty.call(item, 'district')
@@ -190,8 +190,8 @@ export function OutputWindow({
             <Button
               className="self-start"
               onClick={() => {
-                !RevenueRegion && setDistrictCode(null),
-                  RevenueRegion && setRevenueCode(null);
+                (!RevenueRegion && setDistrictCode(null),
+                  RevenueRegion && setRevenueCode(null));
               }}
               kind="tertiary"
             >

@@ -17,15 +17,15 @@ const Resources = () => {
     data,
     isLoading,
     refetch,
-  }: { data: any; isLoading: boolean; refetch: any } = useQuery(
-    [`resources_${params.dataset}`],
-    () =>
+  }: { data: any; isLoading: boolean; refetch: any } = useQuery({
+    queryKey: [`resources_${params.dataset}`],
+    queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/graphql`,
         DATASET_RESOURCES_QUERY,
         { datasetId: params.dataset }
-      )
-  );
+      ),
+  });
 
   // Use an object to manage the expanded state for each resource individually
   const [showMore, setShowMore] = useState<{ [key: number]: boolean }>({});

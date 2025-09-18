@@ -56,12 +56,14 @@ export function AnalyticsMainLayout() {
   const [view, setView] = useQueryState('view');
   const routerParams = useParams();
 
-  const statesListData = useQuery([`states_list`], () =>
-    GraphQL(
-      `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-      PLATFORM_STATES_LIST
-    )
-  );
+  const statesListData = useQuery({
+    queryKey: [`states_list`],
+    queryFn: () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        PLATFORM_STATES_LIST
+      ),
+  });
 
   const [currentSelectedState, setCurrentSelectedState] = useState(
     statesListData.data?.getStates.find(
@@ -81,11 +83,11 @@ export function AnalyticsMainLayout() {
 
   // const stateCode = STATE_CODES[routerParams.state as keyof typeof STATE_CODES];
 
-  const mapData = useQuery(
-    [
+  const mapData = useQuery({
+    queryKey: [
       `mapQuery_district_${currentSelectedState.code}_${indicator}_${timePeriodSelected}`,
     ],
-    () =>
+    queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_DISTRICT_MAP_DATA,
@@ -97,19 +99,18 @@ export function AnalyticsMainLayout() {
           },
         }
       ),
-    {
-      enabled: Boolean(view === 'map'),
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
 
-  const revenueMapData = useQuery(
-    [
+    enabled: Boolean(view === 'map'),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+  const revenueMapData = useQuery({
+    queryKey: [
       `mapQuery_revenue-circle_${currentSelectedState.code}_${indicator}_${timePeriodSelected}`,
     ],
-    () =>
+    queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_REVENUE_MAP_DATA,
@@ -121,17 +122,16 @@ export function AnalyticsMainLayout() {
           },
         }
       ),
-    {
-      enabled: Boolean(view === 'map'),
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
 
-  const districtGeographiesData = useQuery(
-    [`geographies_data_district_${currentSelectedState.code}`],
-    () =>
+    enabled: Boolean(view === 'map'),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+  const districtGeographiesData = useQuery({
+    queryKey: [`geographies_data_district_${currentSelectedState.code}`],
+    queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_GEOGRAPHY_DATA,
@@ -142,16 +142,14 @@ export function AnalyticsMainLayout() {
           },
         }
       ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
-  const revenueGeographiesData = useQuery(
-    [`geographies_data_revenue_${currentSelectedState.code}`],
-    () =>
+  const revenueGeographiesData = useQuery({
+    queryKey: [`geographies_data_revenue_${currentSelectedState.code}`],
+    queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_GEOGRAPHY_DATA,
@@ -162,30 +160,26 @@ export function AnalyticsMainLayout() {
           },
         }
       ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
-  const timePeriods = useQuery(
-    [`timePeriods`],
-    () =>
+  const timePeriods = useQuery({
+    queryKey: [`timePeriods`],
+    queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_TIME_PERIODS
       ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
-  const indicatorsData = useQuery(
-    [`indicators_${indicator}`],
-    () =>
+  const indicatorsData = useQuery({
+    queryKey: [`indicators_${indicator}`],
+    queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_INDICATORS,
@@ -193,17 +187,17 @@ export function AnalyticsMainLayout() {
           indcFilter: { slug: indicator },
         }
       ),
-    {
-      enabled: Boolean(view === 'map'),
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
+    enabled: Boolean(view === 'map'),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
-  const tableData = useQuery(
-    [`table_data_${currentSelectedState.code}_${indicator}_${districtCode}`],
-    () =>
+  const tableData = useQuery({
+    queryKey: [
+      `table_data_${currentSelectedState.code}_${indicator}_${districtCode}`,
+    ],
+    queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_TABLE_DATA,
@@ -221,13 +215,11 @@ export function AnalyticsMainLayout() {
           },
         }
       ),
-    {
-      enabled: Boolean(view === 'table'),
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
+    enabled: Boolean(view === 'table'),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
   const [filteredTableData, setFilteredTableData] = useState(
     tableData.data?.tableData
@@ -438,9 +430,11 @@ export function OutputWindowComponent({ currentState, time_period }: any) {
     ? ANALYTICS_DISTRICT_DATA
     : ANALYTICS_REVENUE_TABLE_DATA;
 
-  const sidePaneData: any = useQuery(
-    [`sidePaneData_${indicator}_${region}_${boundary}_${time_period}`],
-    () =>
+  const sidePaneData: any = useQuery({
+    queryKey: [
+      `sidePaneData_${indicator}_${region}_${boundary}_${time_period}`,
+    ],
+    queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         sidePaneQuery,
@@ -455,16 +449,14 @@ export function OutputWindowComponent({ currentState, time_period }: any) {
           },
         }
       ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
-  const indicatorDescriptions: any = useQuery(
-    [`indicators_${indicator}`],
-    () =>
+  const indicatorDescriptions: any = useQuery({
+    queryKey: [`indicators_${indicator}`],
+    queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_INDICATORS,
@@ -472,12 +464,10 @@ export function OutputWindowComponent({ currentState, time_period }: any) {
           indcFilter: { slug: indicator },
         }
       ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
   return (
     <>

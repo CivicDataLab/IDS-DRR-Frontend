@@ -1,5 +1,5 @@
 import { captureException } from '@sentry/nextjs';
-import { dehydrate, Hydrate } from '@tanstack/react-query';
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 
 import {
   ANALYTICS_INDICATORS,
@@ -18,29 +18,33 @@ export default async function Home({
   const queryClient = getQueryClient();
 
   try {
-    await queryClient.prefetchQuery([`timePeriods`], () =>
-      GraphQL(
-        `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_TIME_PERIODS
-      )
-    );
+    await queryClient.prefetchQuery({
+      queryKey: [`timePeriods`],
+      queryFn: () =>
+        GraphQL(
+          `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
+          ANALYTICS_TIME_PERIODS
+        ),
+    });
 
-    await queryClient.prefetchQuery(
-      [`indicators_${searchParamsHome?.['indicator']}`],
-      () =>
+    await queryClient.prefetchQuery({
+      queryKey: [`indicators_${searchParamsHome?.['indicator']}`],
+      queryFn: () =>
         GraphQL(
           `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
           ANALYTICS_INDICATORS,
           { indcFilter: { slug: searchParamsHome?.['indicator'] } }
-        )
-    );
+        ),
+    });
 
-    await queryClient.prefetchQuery([`states_list`], () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        PLATFORM_STATES_LIST
-      )
-    );
+    await queryClient.prefetchQuery({
+      queryKey: [`states_list`],
+      queryFn: () =>
+        GraphQL(
+          `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+          PLATFORM_STATES_LIST
+        ),
+    });
   } catch (error) {
     captureException(error);
   }
@@ -52,8 +56,8 @@ export default async function Home({
   const dehydratedState = dehydrate(queryClient);
 
   return (
-    <Hydrate state={dehydratedState}>
+    <HydrationBoundary state={dehydratedState}>
       <AnalyticsMainLayout />
-    </Hydrate>
+    </HydrationBoundary>
   );
 }

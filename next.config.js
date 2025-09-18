@@ -14,7 +14,7 @@ const nextConfig = {
       },
     ],
   },
-  // reactStrictMode: false,
+  reactStrictMode: false,
 };
 
 module.exports = withNextIntl(nextConfig);
@@ -55,4 +55,7 @@ module.exports = withSentryConfig(module.exports, {
   // https://docs.sentry.io/product/crons/
   // https://vercel.com/docs/cron-jobs
   automaticVercelMonitors: true,
+  sourcemaps: {
+    deleteSourcemapsAfterUpload: true, //delete sourcemaps after upload
+  },
 });

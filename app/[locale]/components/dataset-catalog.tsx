@@ -59,7 +59,10 @@ export const DatasetCatalog = () => {
             // className="flex rounded-2 bg-surfaceDefault p-6 shadow-elementCard"
             className="flex h-full min-h-[150px] rounded-2 bg-surfaceDefault p-6 shadow-elementCard"
           >
-            <Link href={item.link} className=" flex items-center gap-4">
+            <Link
+              href={item.link}
+              className=" flex items-center gap-4 no-underline"
+            >
               <Image src={item.icon} alt={item.alt} width={66} height={66} />
               <div className=" flex flex-col justify-center gap-2">
                 <Text variant="headingMd" as="h4">

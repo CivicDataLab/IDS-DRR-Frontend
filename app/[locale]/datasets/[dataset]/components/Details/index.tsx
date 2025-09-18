@@ -30,17 +30,17 @@ const Details = () => {
     data,
     isLoading,
     refetch,
-  }: { data: any; isLoading: boolean; refetch: any } = useQuery(
-    [`chartdata_${params.dataset}`],
-    () =>
+  }: { data: any; isLoading: boolean; refetch: any } = useQuery({
+    queryKey: [`chartdata_${params.dataset}`],
+    queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/graphql`,
         CHARTS_QUERY,
         {
           datasetId: params.dataset,
         }
-      )
-  );
+      ),
+  });
 
   const chartRef = useRef<ReactECharts>(null);
 

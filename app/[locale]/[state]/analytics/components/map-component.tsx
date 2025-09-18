@@ -226,13 +226,13 @@ export const MapComponent = ({
       map &&
       map.getContainer()
     ) {
-      try {
-        setTimeout(() => {
-          map?.fitBounds(getBoundsData[0]?.properties?.bounds);
-        }, 200);
-      } catch (error) {
-        console.warn('Error fitting bounds:', error);
-      }
+      map.whenReady(() => {
+        try {
+          map.fitBounds(getBoundsData[0]?.properties?.bounds);
+        } catch (error) {
+          console.warn('Error fitting bounds:', error);
+        }
+      });
     }
 
     const filterMapData = revenueMapData?.features.filter(

@@ -99,9 +99,9 @@ export const ChartView = ({
     },
   ];
 
-  const indicatorsQuery = useQuery(
-    [`indicatorsByCategory_${currentSelectedState.code}`],
-    () =>
+  const indicatorsQuery = useQuery({
+    queryKey: [`indicatorsByCategory_${currentSelectedState.code}`],
+    queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_INDICATORS_BY_CATEGORY,
@@ -109,12 +109,10 @@ export const ChartView = ({
           stateCode: currentSelectedState?.code,
         }
       ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
   useEffect(() => {
     setLoading(true);

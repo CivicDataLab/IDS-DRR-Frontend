@@ -96,7 +96,11 @@ const DataStories = () => {
                 key={index}
                 className="ml-2 overflow-hidden rounded-2 bg-surfaceDefault p-6 md:basis-1/2 lg:ml-0 lg:basis-1/3  lg:p-6 "
               >
-                <Link href={item.link} className=" w-full" target="_blank">
+                <Link
+                  href={item.link}
+                  className=" w-full no-underline"
+                  target="_blank"
+                >
                   <div className="flex flex-col gap-4 ">
                     <div className="w-full">
                       <Image

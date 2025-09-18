@@ -92,7 +92,7 @@ const Resources = () => {
               <CarouselItem className="ml-2 overflow-hidden rounded-2 bg-surfaceDefault p-6 md:basis-1/2 lg:ml-0 lg:basis-1/3  lg:p-6 ">
                 <Link
                   href={`https://supersetv2.civicdatalab.in/superset/dashboard/p/Od0XQzvMNmr/`}
-                  className="w-full"
+                  className="w-full no-underline"
                 >
                   <div className="flex w-full flex-col items-baseline justify-between gap-4">
                     <div className=" flex flex-col gap-1 ">
@@ -151,7 +151,10 @@ const Resources = () => {
                   key={index}
                   className="ml-2  overflow-hidden rounded-2 bg-surfaceDefault p-3 md:basis-1/2 lg:ml-0 lg:basis-1/3  lg:p-6 "
                 >
-                  <Link href={`/datasets/${item.id}`} className="w-full">
+                  <Link
+                    href={`/datasets/${item.id}`}
+                    className="w-full no-underline"
+                  >
                     <div className="flex w-full flex-col items-baseline justify-between gap-5">
                       <div className=" flex flex-col gap-1 ">
                         <Text variant="bodyLg">

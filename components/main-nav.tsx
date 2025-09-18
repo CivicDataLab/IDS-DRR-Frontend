@@ -73,7 +73,7 @@ const ExploreLink = ({
   text: string;
 }) => {
   return (
-    <NavLink href={href}>
+    <NavLink href={href} className="no-underline">
       <div className="hover:bg-surfaceHovered flex gap-1 rounded-1 px-2 py-2 sm:px-3">
         {Icons[icon] && <Icon color="default" source={Icons[icon]} />}
         <Text

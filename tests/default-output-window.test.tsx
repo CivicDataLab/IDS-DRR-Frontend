@@ -39,12 +39,16 @@ jest.mock('next/navigation', () => ({
 }));
 
 // Mock React Query
+// __mocks__/@tanstack/react-query.ts
 jest.mock('@tanstack/react-query', () => ({
-  useQuery: () => ({
+  useQuery: jest.fn(() => ({
     data: null,
     isLoading: false,
+    isFetching: false,
+    isError: false,
     error: null,
-  }),
+    refetch: jest.fn(),
+  })),
 }));
 
 // Mock icons

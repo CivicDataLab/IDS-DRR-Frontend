@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import { captureException } from '@sentry/nextjs';
 import { getRequestConfig } from 'next-intl/server';
 
-import locales from './config/locales';
+import locales from '../config/locales';
 
 export default getRequestConfig(async ({ requestLocale }) => {
   // Validate that the incoming `locale` parameter is valid
@@ -15,6 +15,6 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   return {
     locale,
-    messages: (await import(`./locales/${locale}.json`)).default,
+    messages: (await import(`../locales/${locale}.json`)).default,
   };
 });

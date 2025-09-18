@@ -324,15 +324,13 @@ describe('FactorList', () => {
 
     render(<FactorList currentState={mockCurrentState} />);
 
-    expect(useQuery).toHaveBeenCalledWith(
-      [`indicatorsByCategory_${mockCurrentState.code}`],
-      expect.any(Function),
-      {
-        refetchOnMount: false,
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: false,
-      }
-    );
+    expect(useQuery).toHaveBeenCalledWith({
+      queryKey: [`indicatorsByCategory_${mockCurrentState.code}`],
+      queryFn: expect.any(Function),
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    });
   });
 
   it('handles different current states', () => {

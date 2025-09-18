@@ -8,12 +8,14 @@ const getStatesList = cache(async () => {
   const queryClient = getQueryClient();
 
   const statesListData = await queryClient
-    .fetchQuery([`states_list`], () =>
-      GraphQL(
-        `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        PLATFORM_STATES_LIST
-      )
-    )
+    .fetchQuery({
+      queryKey: ['states_list'],
+      queryFn: () =>
+        GraphQL(
+          `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
+          PLATFORM_STATES_LIST
+        ),
+    })
     .then((res) => res?.getStates)
     .catch(() => {
       return [];
