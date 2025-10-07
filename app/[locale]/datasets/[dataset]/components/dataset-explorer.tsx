@@ -40,7 +40,7 @@ export function Content({ slug }: { slug: string }) {
             <DatasetResources
               key={index}
               id={resource?.id}
-              fileName={resource?.title || 'NA'}
+              fileName={`${resource?.title || 'File'} [${resource?.id}] - ${formatDate(resource?.modified) || 'N/A'}`}
               modified={resource?.modified}
               format={resource?.file_details?.format || 'NA'}
               description={resource?.description}
