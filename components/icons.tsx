@@ -1,4 +1,4 @@
-import React from 'react';
+import { ComponentProps, FC } from 'react';
 import {
   IconAnchor,
   IconArrowLeft,
@@ -37,6 +37,7 @@ import {
   IconMap,
   IconMenu,
   IconMinus,
+  IconProps,
   IconRefresh,
   IconReport,
   IconReportSearch,
@@ -50,11 +51,12 @@ import {
   IconUserCog,
   IconWorld,
   IconX,
-  TablerIconsProps,
 } from '@tabler/icons-react';
 
+type TablerIconComponent = FC<ComponentProps<typeof IconArrowLeft>>;
+
 export const Icons: {
-  [key: string]: (props: TablerIconsProps) => React.ReactElement;
+  [key: string]: TablerIconComponent;
 } = {
   back: IconArrowLeft,
   logo: IconAnchor,

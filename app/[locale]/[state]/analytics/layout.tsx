@@ -1,5 +1,4 @@
 import React, { cache } from 'react';
-import { useQuery } from '@tanstack/react-query';
 
 import { PLATFORM_STATES_LIST } from '@/config/graphql/analaytics-queries';
 import { getQueryClient, GraphQL } from '@/lib/api';
@@ -9,12 +8,14 @@ const getStatesList = cache(async () => {
   const queryClient = getQueryClient();
 
   const statesListData = await queryClient
-    .fetchQuery([`states_list`], () =>
-      GraphQL(
-        `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        PLATFORM_STATES_LIST
-      )
-    )
+    .fetchQuery({
+      queryKey: ['states_list'],
+      queryFn: () =>
+        GraphQL(
+          `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
+          PLATFORM_STATES_LIST
+        ),
+    })
     .then((res) => res?.getStates)
     .catch(() => {
       return [];
@@ -28,16 +29,16 @@ export default async function AnalyticsLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: { state: string };
+  params: Promise<{ state: string }>;
 }) {
+  const resolvedParams = await params;
+  const state = resolvedParams.state;
   const statesListData = await getStatesList();
 
   return (
     <>
       <AnalyticsSideBarLayout
-        currentState={statesListData?.find(
-          (item: any) => item.slug === params.state
-        )}
+        currentState={statesListData?.find((item: any) => item.slug === state)}
         statesList={statesListData}
       >
         {children}

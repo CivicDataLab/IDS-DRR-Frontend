@@ -62,9 +62,9 @@ export function FactorList({ currentState }: any) {
 
   const [downloadReportLoading, setDownloadReportLoading] = useState(false);
 
-  const indicatorsQuery = useQuery(
-    [`indicatorsByCategory_${currentState.code}`],
-    () =>
+  const indicatorsQuery = useQuery({
+    queryKey: [`indicatorsByCategory_${currentState.code}`],
+    queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_INDICATORS_BY_CATEGORY,
@@ -72,12 +72,10 @@ export function FactorList({ currentState }: any) {
           stateCode: currentState?.code,
         }
       ),
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
   const indicatorNodes = indicatorsQuery?.data?.indicatorsByCategory;
 

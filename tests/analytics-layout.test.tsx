@@ -98,8 +98,9 @@ jest.mock('@/app/[locale]/[state]/analytics/utils/utils', () => ({
 
 // Mock GraphQL queries usage via react-query useQuery
 jest.mock('@tanstack/react-query', () => ({
-  useQuery: (key: any, _fn?: any, _opts?: any) => {
-    const k = Array.isArray(key) ? key[0] : key;
+  useQuery: (q: { queryKey: any; queryFn?: any; [key: string]: any }) => {
+    const k = Array.isArray(q.queryKey) ? q.queryKey[0] : q.queryKey;
+
     if (typeof k === 'string' && k.startsWith('states_list')) {
       return {
         data: {
@@ -109,24 +110,28 @@ jest.mock('@tanstack/react-query', () => ({
         isError: false,
       };
     }
+
     if (typeof k === 'string' && k.startsWith('mapQuery_district')) {
       return {
         data: { districtMapData: [{ code: 'AS-01' }] },
         isFetching: false,
       } as any;
     }
+
     if (typeof k === 'string' && k.startsWith('mapQuery_revenue-circle')) {
       return {
         data: { revCircleMapData: [{ code: 'RC-01' }] },
         isFetching: false,
       } as any;
     }
+
     if (typeof k === 'string' && k.startsWith('geographies_data_district')) {
       return {
         data: { getDistrictRevCircle: [{ district: 'X', code: 'AS-01' }] },
         isFetching: false,
       } as any;
     }
+
     if (typeof k === 'string' && k.startsWith('geographies_data_revenue')) {
       return {
         data: {
@@ -137,18 +142,21 @@ jest.mock('@tanstack/react-query', () => ({
         isFetching: false,
       } as any;
     }
+
     if (typeof k === 'string' && k.startsWith('timePeriods')) {
       return {
         data: { timePeriods: ['2023_01', '2023_02'] },
         isFetching: false,
       } as any;
     }
+
     if (typeof k === 'string' && k.startsWith('indicators_')) {
       return {
         data: { indicators: [{ slug: 'risk-score' }] },
         isFetching: false,
       } as any;
     }
+
     if (typeof k === 'string' && k.startsWith('table_data_')) {
       return {
         data: { tableData: [{ 'revenue-circle-code': 'RC-01' }] },
@@ -156,12 +164,14 @@ jest.mock('@tanstack/react-query', () => ({
         isFetching: false,
       } as any;
     }
+
     if (typeof k === 'string' && k.startsWith('sidePaneData_')) {
       return {
         data: { districtViewData: [], revCircleViewData: [] },
         isFetched: true,
       } as any;
     }
+
     return { data: undefined, isFetching: false } as any;
   },
 }));

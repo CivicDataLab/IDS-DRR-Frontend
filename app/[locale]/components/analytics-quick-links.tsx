@@ -79,7 +79,7 @@ export const QuickLinks = () => {
                 {item.status === 'active' ? (
                   <Link
                     href={item.link}
-                    className={`cursor-pointer ${styles.stateCard}`}
+                    className={`cursor-pointer no-underline ${styles.stateCard}`}
                   >
                     {/* Ensure items take up flexible width */}
                     <div className="flex h-48 w-56 flex-col items-center justify-between rounded-2 bg-surfaceDefault p-4 text-center shadow-elementCard">
@@ -101,7 +101,7 @@ export const QuickLinks = () => {
                   </Link>
                 ) : (
                   <div
-                    className="relative flex h-48 w-56 cursor-no-drop flex-col items-center justify-between rounded-4 p-4 text-center shadow-elementCard"
+                    className="relative flex h-48 w-56 cursor-no-drop flex-col items-center justify-between rounded-4 p-4 text-center no-underline shadow-elementCard"
                     style={{ background: '#F9F9FB' }}
                   >
                     <Image

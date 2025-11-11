@@ -234,14 +234,17 @@ export function formatReferenceDate(
       });
 }
 
-export async function downloadStateReport(link:string, fileName:string){
+export async function downloadStateReport(link: string, fileName: string) {
   try {
     const response = await fetch(link, {
       method: 'GET',
+      // cache: 'no-store', // Prevent caching for dynamic downloads
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch PDF: ${response.status} ${response.statusText}`);
+      throw new Error(
+        `Failed to fetch PDF: ${response.status} ${response.statusText}`
+      );
     }
 
     const blob = await response.blob();
@@ -258,7 +261,6 @@ export async function downloadStateReport(link:string, fileName:string){
     // Clean up
     document.body.removeChild(elLink);
     URL.revokeObjectURL(url); // Clean up the URL object
-
   } catch (error) {
     console.error('Error downloading PDF:', error);
   }

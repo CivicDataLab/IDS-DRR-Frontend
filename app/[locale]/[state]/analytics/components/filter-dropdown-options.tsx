@@ -9,7 +9,7 @@ export interface Option {
   disabled?: boolean;
   value: string;
   label: string;
-  districtCode?: string;
+  districtCode?: string; // extra field we don’t want leaking into DOM
 }
 
 export default function FilterDropdownOptions({
@@ -32,12 +32,18 @@ export default function FilterDropdownOptions({
   const [revenueCode, setRevenueCode] = useQueryState('revenue-code');
 
   const getRevenueCircleOptionsForDistrict = (districtCode: string) => {
-    const filterRevenueCircles = RevCircleDropdownOptions.filter(
+    return RevCircleDropdownOptions.filter(
       (option: Option) => option.districtCode === districtCode
     );
-
-    return filterRevenueCircles;
   };
+
+  // helper: strip out custom props like districtCode
+  const sanitizeOptions = (options: Option[]) =>
+    options.map(({ value, label, disabled }) => ({
+      value,
+      label,
+      disabled,
+    }));
 
   let minDate, maxDate;
   // Below is code to set limits to the calendar
@@ -59,18 +65,16 @@ export default function FilterDropdownOptions({
   const [selectedTimePeriod, setSelectedTimePeriod] = useQueryState<string[]>(
     'time-period',
     {
-      parse: (value) => {
-        return value.split(',');
-      },
+      parse: (value) => value.split(','),
     }
   );
 
-  const districtOptions = [
+  const districtOptions = sanitizeOptions([
     { label: 'Select a district', value: '' },
     ...DistrictDropDownOption,
-  ];
+  ]);
 
-  const revenueOptions = [
+  const revenueOptions = sanitizeOptions([
     {
       label: !districtCode
         ? 'Select a district to enable'
@@ -78,7 +82,7 @@ export default function FilterDropdownOptions({
       value: '',
     },
     ...(getRevenueCircleOptionsForDistrict(districtCode) || []),
-  ];
+  ]);
 
   return (
     <div>
@@ -94,6 +98,7 @@ export default function FilterDropdownOptions({
           }}
           options={districtOptions}
         />
+
         <Select
           label={`Select ${toTitleCase(currentSelectedState.child_type)}`}
           value={revenueCode || ''}
@@ -127,7 +132,9 @@ export default function FilterDropdownOptions({
                 setSelectedTimePeriod(
                   dates.map(
                     (date: any) =>
-                      `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`
+                      `${date.year}_${
+                        date.month < 10 ? `0${date.month}` : `${date.month}`
+                      }`
                   )
                 );
               }}
@@ -149,7 +156,9 @@ export default function FilterDropdownOptions({
               onChange={(date: any) => {
                 setSelectedTimePeriod(
                   [
-                    `${date.year}_${date.month < 10 ? `0${date.month}` : `${date.month}`}`,
+                    `${date.year}_${
+                      date.month < 10 ? `0${date.month}` : `${date.month}`
+                    }`,
                   ],
                   { shallow: false }
                 );

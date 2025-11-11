@@ -26,7 +26,11 @@ const setupQueryState = (overrides: Record<string, [any, jest.Mock]> = {}) => {
 // ----------------------
 jest.mock('opub-ui');
 jest.mock('@tanstack/react-query', () => ({
-  useQuery: (key: any, fn: any, options: any) => mockUseQuery(key, fn, options),
+  // mock only what you need
+  useQuery: (options: { queryKey: any; queryFn: any; [key: string]: any }) =>
+    mockUseQuery(options),
+  // if you also need QueryClientProvider etc., you can forward them:
+  // ...jest.requireActual('@tanstack/react-query'),
 }));
 
 jest.mock('next-usequerystate', () => ({

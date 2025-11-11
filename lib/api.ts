@@ -42,6 +42,9 @@ export function useFetch(id: string, query: string) {
     queryFn: async () => {
       try {
         const data = await fetch(query).then((res) => res.json());
+        // const data = await fetch(query, { cache: 'no-store' }).then((res) =>
+        //   res.json()
+        // );
         return data;
       } catch (error: any) {
         captureException(error);
@@ -67,6 +70,8 @@ export const fetchDatasets = async (variables: any) => {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/search/dataset/${variables}`
+      // `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/search/dataset/${variables}`,
+      // { cache: 'no-store' }
     );
     const data = await response.json();
     return data;

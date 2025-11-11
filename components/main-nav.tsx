@@ -6,12 +6,17 @@ import { useKeyDetect } from '@/hooks/use-key-detect';
 import { MainConfig } from '@/types';
 import { Icon, Text } from 'opub-ui';
 
-import { getPrefLangCookie } from '@/lib/serverUtils';
 import { Icons } from '@/components/icons';
 import { TranslateDropdown } from './langSelect/lang-select';
 import NavLink from './nav-link';
 
-export function MainNav({ data }: { data: MainConfig }) {
+export function MainNav({
+  data,
+  prefLangCookie,
+}: {
+  data: MainConfig;
+  prefLangCookie: string;
+}) {
   const { key, metaKey } = useKeyDetect();
   const searchRef = React.useRef<HTMLInputElement>(null);
 
@@ -51,7 +56,7 @@ export function MainNav({ data }: { data: MainConfig }) {
             </div>
           )}
 
-          <TranslateDropdown prefLangCookie={getPrefLangCookie()} />
+          <TranslateDropdown prefLangCookie={prefLangCookie} />
         </div>
       </div>
     </header>
@@ -68,7 +73,7 @@ const ExploreLink = ({
   text: string;
 }) => {
   return (
-    <NavLink href={href}>
+    <NavLink href={href} className="no-underline">
       <div className="hover:bg-surfaceHovered flex gap-1 rounded-1 px-2 py-2 sm:px-3">
         {Icons[icon] && <Icon color="default" source={Icons[icon]} />}
         <Text

@@ -46,6 +46,7 @@ export const MapComponent = ({
   const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
 
   const params = new URLSearchParams(window.location.search);
+  console.log('params', params.get('district-code'));
   const districtCode = params.get('district-code');
 
   const { width } = useWindowSize();
@@ -225,13 +226,13 @@ export const MapComponent = ({
       map &&
       map.getContainer()
     ) {
-      try {
-        setTimeout(() => {
-          map?.fitBounds(getBoundsData[0]?.properties?.bounds);
-        }, 200);
-      } catch (error) {
-        console.warn('Error fitting bounds:', error);
-      }
+      map.whenReady(() => {
+        try {
+          map.fitBounds(getBoundsData[0]?.properties?.bounds);
+        } catch (error) {
+          console.warn('Error fitting bounds:', error);
+        }
+      });
     }
 
     const filterMapData = revenueMapData?.features.filter(
@@ -281,6 +282,7 @@ export const MapComponent = ({
   return (
     <>
       {' '}
+      {/* "react-leaflet": "^4.2.1", */}
       {/* <div
         className={`relative w-full ${isMobile ? 'h-full' : 'h-[98%]'} ${isMobile ? 'pt-[68px]' : ''}`}
       > */}
