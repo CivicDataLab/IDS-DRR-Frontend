@@ -272,12 +272,15 @@ export function AnalyticsMainLayout() {
   }
 
   React.useEffect(() => {
-    if (revenueCode !== '') {
+    if (revenueCode !== '' && revenueCode !== null) {
       const filteredTableData = tableData.data?.tableData.filter(
         (item: { [x: string]: string }) =>
           item['revenue-circle-code'] === revenueCode
       );
       setFilteredTableData(filteredTableData);
+    } else {
+      // Reset to show all district data when revenue circle is deselected
+      setFilteredTableData(tableData.data?.tableData);
     }
   }, [revenueCode, tableData.data?.tableData]);
 
