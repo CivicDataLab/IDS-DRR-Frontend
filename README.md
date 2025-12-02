@@ -1,6 +1,6 @@
 # IDS-DRR
 
-This is a frontend repository of IDS-DRR built using React and Next.js , GraphQl as the backend
+This is the frontend repository of IDS-DRR built using **React**, **Next.js**, and **GraphQL**.
 
 ## Dependencies
 
@@ -8,7 +8,7 @@ The following dependencies must be available globally on your system:
 
 - Download and install [https://nodejs.org/en/](NodeJS LTS v18+) and npm
 
-## Installation
+## Installation & Setup
 
 1. Clone the repository
 
@@ -20,7 +20,11 @@ The following dependencies must be available globally on your system:
 
 3. Install the dependencies.
 
-`npm install`
+`npm install --legacy-peer-deps`
+
+4. Create your local environment configuration from the sample file:
+
+`cp env.sample .env.local`
 
 ## Usage
 
