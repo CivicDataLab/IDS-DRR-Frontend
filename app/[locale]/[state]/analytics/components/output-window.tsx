@@ -16,7 +16,10 @@ import { useQueryState } from 'next-usequerystate';
 import { Button, Icon, Text, Tooltip, useScreenshot } from 'opub-ui';
 
 import { Factors, RiskText } from '@/config/consts';
-import { ANALYTICS_TIME_TRENDS } from '@/config/graphql/analaytics-queries';
+import {
+  ANALYTICS_TIME_PERIODS,
+  ANALYTICS_TIME_TRENDS,
+} from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { cn, formatDateString } from '@/lib/utils';
 import Icons from '@/components/icons';
@@ -37,16 +40,33 @@ export function OutputWindow({
   currentState,
 }: any) {
   const searchParams = useSearchParams();
-  if (!process.env.NEXT_PUBLIC_TIME_PERIOD) {
-    throw new Error('TIME_PERIOD is not defined');
-  }
-  const DEFAULT_TIME_PERIOD: string = process.env.NEXT_PUBLIC_TIME_PERIOD;
+  // if (!process.env.NEXT_PUBLIC_TIME_PERIOD) {
+  //   throw new Error('TIME_PERIOD is not defined');
+  // }
+  // const DEFAULT_TIME_PERIOD: string = process.env.NEXT_PUBLIC_TIME_PERIOD;
   let processedTime = getLatestDate(
     searchParams.get('time-period')?.split(',') || []
   )?.split('-');
+
+  const timePeriods = useQuery({
+    queryKey: [`timePeriods`],
+    queryFn: () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_TIME_PERIODS
+      ),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+  const latestTimePeriod =
+    timePeriods.data?.getDataTimePeriods[0]?.value ||
+    process.env.NEXT_PUBLIC_TIME_PERIOD;
+
   const timePeriod = processedTime
     ? `${processedTime[0]}_${processedTime[1]}`
-    : DEFAULT_TIME_PERIOD;
+    : (latestTimePeriod as string);
 
   const formattedTimePeriod = formatDateString(timePeriod);
   const region = searchParams.get('district-code') || '';
@@ -169,6 +189,7 @@ export function OutputWindow({
     setIsExpanded(!isExpanded); // Toggle expanded state
   };
 
+  console.log('DataBasedOnBoundary', DataBasedOnBoundary);
   return (
     <>
       <MediaRendering minWidth="1024" maxWidth={null}>
@@ -199,7 +220,10 @@ export function OutputWindow({
             </Button>
             {RevenueRegion && (
               <Text className="uppercase" variant="bodyLg">
-                {DataBasedOnBoundary[0]['district']} District
+                {DataBasedOnBoundary &&
+                  DataBasedOnBoundary.length > 0 &&
+                  DataBasedOnBoundary[0]['district']}{' '}
+                District
               </Text>
             )}
 

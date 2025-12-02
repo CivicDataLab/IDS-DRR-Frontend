@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { parseAsString, useQueryState } from 'next-usequerystate';
@@ -38,15 +38,28 @@ export function AnalyticsMainLayout() {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator') || '';
 
+  // console.log('searchParams.get', searchParams.get('time-period'));
+  const [maxTimePeriod, setMaxTimePeriod] = useState<string | null>(null);
+
   const timePeriod = searchParams.get('time-period')
     ? getLatestDate(searchParams.get('time-period')?.split(',') || [])?.split(
         '-'
       ) || process.env.NEXT_PUBLIC_TIME_PERIOD
     : null;
 
+  // console.log('timePeriod', timePeriod);
+
+  // Use latest time period from query (maxTimePeriod) as primary fallback, then env variable
   const timePeriodSelected = timePeriod
     ? `${timePeriod[0]}_${timePeriod[1]}`
-    : process.env.NEXT_PUBLIC_TIME_PERIOD;
+    : (maxTimePeriod ?? process.env.NEXT_PUBLIC_TIME_PERIOD);
+
+  // console.log('timePeriod', timePeriod);
+  // console.log(
+  //   'date now',
+  //   `${new Date().getFullYear()}_${new Date().getMonth() + 1}`
+  // );
+  // console.log('timePeriodSelected', timePeriodSelected);
 
   const [districtCode, setDistrictCode] = useQueryState(
     'district-code',
@@ -54,6 +67,7 @@ export function AnalyticsMainLayout() {
   );
   const [revenueCode, setRevenueCode] = useQueryState('revenue-code');
   const [view, setView] = useQueryState('view');
+  const [timePeriodParam, setTimePeriodParam] = useQueryState('time-period');
   const routerParams = useParams();
 
   const statesListData = useQuery({
@@ -105,6 +119,8 @@ export function AnalyticsMainLayout() {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
+
+  // console.log('mapData', mapData);
 
   const revenueMapData = useQuery({
     queryKey: [
@@ -176,6 +192,45 @@ export function AnalyticsMainLayout() {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
+
+  useEffect(() => {
+    if (
+      timePeriods.data?.getDataTimePeriods &&
+      timePeriods.data?.getDataTimePeriods.length > 0 &&
+      timePeriods.data?.getDataTimePeriods[0].value
+    ) {
+      setMaxTimePeriod(timePeriods.data?.getDataTimePeriods[0].value);
+    }
+  }, [timePeriods.data]);
+
+  // Auto-set latest time period to URL if no time-period is present initially
+  useEffect(() => {
+    if (
+      timePeriods.data?.getDataTimePeriods &&
+      timePeriods.data?.getDataTimePeriods.length > 0
+    ) {
+      const latestTimePeriod = timePeriods.data?.getDataTimePeriods[0]?.value;
+      if (
+        !timePeriodParam &&
+        latestTimePeriod &&
+        !timePeriods.isFetching &&
+        timePeriods.isFetched
+      ) {
+        setTimePeriodParam(latestTimePeriod, { shallow: false });
+      }
+    }
+  }, [
+    timePeriods.data,
+    timePeriods.isFetching,
+    timePeriods.isFetched,
+    timePeriodParam,
+    setTimePeriodParam,
+  ]);
+
+  // console.log(
+  //   'timePeriods for last',
+  //   timePeriods.data?.getDataTimePeriods[0].value
+  // );
 
   const indicatorsData = useQuery({
     queryKey: [`indicators_${indicator}`],

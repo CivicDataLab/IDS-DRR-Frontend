@@ -49,6 +49,12 @@ jest.mock('@/public/InfoCircle', () => ({
   InfoSquare: () => <div data-testid="info-square">Info</div>,
 }));
 
+jest.mock('@tanstack/react-query', () => ({
+  useQuery: jest.fn(() => ({
+    data: { getDataTimePeriods: [{ value: '2023_08' }] },
+  })),
+}));
+
 describe('RevenueCircle', () => {
   beforeAll(() => {
     process.env.NEXT_PUBLIC_TIME_PERIOD = '2023_08';

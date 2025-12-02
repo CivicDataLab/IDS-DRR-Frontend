@@ -25,10 +25,12 @@ export default function FilterDropdownOptions({
   monthMulti?: boolean;
   timeLimits: any;
 }) {
+  // console.log('timeLimits', timeLimits);
   const [districtCode, setDistrictCode] = useQueryState(
     'district-code',
     parseAsString.withDefault('')
   );
+  const [timePeriod] = useQueryState('time-period');
   const [revenueCode, setRevenueCode] = useQueryState('revenue-code');
 
   const getRevenueCircleOptionsForDistrict = (districtCode: string) => {
@@ -47,6 +49,7 @@ export default function FilterDropdownOptions({
 
   let minDate, maxDate;
   // Below is code to set limits to the calendar
+  // console.log('timeLimits', timeLimits.data);
   if (timeLimits.data) {
     const datesArray = timeLimits?.data?.getDataTimePeriods.map((date: any) => {
       const [year, month] = date.value.split('_');
@@ -83,6 +86,11 @@ export default function FilterDropdownOptions({
     },
     ...(getRevenueCircleOptionsForDistrict(districtCode) || []),
   ]);
+
+  const getDefaultDate = (timePeriod: string) => {
+    const [year, month] = timePeriod.split('_');
+    return parseDate(`${year}-${month?.padStart(2, '0')}-01`);
+  };
 
   return (
     <div>
@@ -125,6 +133,7 @@ export default function FilterDropdownOptions({
                     return parseDate(`${year}-${month.padStart(2, '0')}-01`);
                   }) || []
               }
+              // defaultValues={getDefaultDate(timePeriod || '')}
               label="Select Months"
               minValue={parseDate(minDate || '2023-01-04')}
               maxValue={parseDate(maxDate || '2023-01-04')}
@@ -148,7 +157,7 @@ export default function FilterDropdownOptions({
                   ? parseDate(
                       getLatestDate(selectedTimePeriod || []) || '2023-08-01'
                     )
-                  : null
+                  : getDefaultDate(timePeriod || '')
               }
               label="Select Month"
               minValue={parseDate(minDate || '2023-01-04')}

@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
 import {
   Carousel,
   CarouselContent,
@@ -10,43 +12,60 @@ import {
 } from 'opub-ui';
 
 import { AnalyticsQuickLinksText, AnalyticsURL } from '@/config/consts';
+import { ANALYTICS_TIME_PERIODS } from '@/config/graphql/analaytics-queries';
+import { GraphQL } from '@/lib/api';
 import styles from './analytics-quick-links.module.css';
 
 export const QuickLinks = () => {
+  // const [maxTimePeriod, setMaxTimePeriod] = useState<string | null>(null);
+  const timePeriods = useQuery({
+    queryKey: [`timePeriods`],
+    queryFn: () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_TIME_PERIODS
+      ),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+  const latestTimePeriod = timePeriods.data?.getDataTimePeriods[0]?.value;
+
   const Analytics = [
     {
       name: 'Assam',
       status: 'active',
       icon: '/logo/states/Assam.svg',
-      link: `/assam${AnalyticsURL}`,
+      link: `/assam${AnalyticsURL}&time-period=${latestTimePeriod}`,
       alt: 'assam state boundary image',
     },
     {
       name: 'Himachal Pradesh',
       status: 'active',
       icon: '/logo/states/Hp.svg',
-      link: `/himachal-pradesh${AnalyticsURL}`,
+      link: `/himachal-pradesh${AnalyticsURL}&time-period=${latestTimePeriod}`,
       alt: 'HP state boundary image',
     },
     {
       name: 'Odisha',
       status: 'active',
       icon: '/logo/states/Odisha.svg',
-      link: `/odisha${AnalyticsURL}`,
+      link: `/odisha${AnalyticsURL}&time-period=${latestTimePeriod}`,
       alt: 'Odisha state boundary image',
     },
     {
       name: 'Bihar',
       status: 'active',
       icon: '/logo/states/Bihar.svg',
-      link: `bihar${AnalyticsURL}`,
+      link: `bihar${AnalyticsURL}&time-period=${latestTimePeriod}`,
       alt: 'Bihar state boundary image',
     },
     {
       name: 'Uttar Pradesh',
       status: 'active',
       icon: '/logo/states/Up.svg',
-      link: `uttar-pradesh${AnalyticsURL}`,
+      link: `uttar-pradesh${AnalyticsURL}&time-period=${latestTimePeriod}`,
       alt: 'UP state boundary image',
     },
   ];
