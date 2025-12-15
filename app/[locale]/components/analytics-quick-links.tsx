@@ -30,7 +30,9 @@ export const QuickLinks = () => {
     refetchOnReconnect: false,
   });
 
-  const latestTimePeriod = timePeriods.data?.getDataTimePeriods[0]?.value;
+  const latestTimePeriod = timePeriods.data
+    ? timePeriods.data.getDataTimePeriods[0]?.value
+    : process.env.NEXT_PUBLIC_TIME_PERIOD;
 
   const Analytics = [
     {

@@ -302,8 +302,10 @@ describe('FilterDropdownOptions', () => {
 
       await user.type(input, '2023-02');
 
-      // The onChange handler should be called, but the exact format depends on the component implementation
-      expect(input).toHaveValue('2023-02');
+      expect(mockSetSelectedTimePeriod).toHaveBeenCalled();
+      expect(mockSetSelectedTimePeriod).toHaveBeenLastCalledWith(['2023_02'], {
+        shallow: false,
+      });
     });
 
     it('calls setSelectedTimePeriod with multiple dates when multi-month is selected', async () => {
@@ -331,8 +333,7 @@ describe('FilterDropdownOptions', () => {
 
       await user.type(input, '2023-03');
 
-      // The onChange handler should be called, but the exact format depends on the component implementation
-      expect(input).toHaveValue('2023-03');
+      expect(mockSetSelectedTimePeriod).toHaveBeenCalled();
     });
   });
 

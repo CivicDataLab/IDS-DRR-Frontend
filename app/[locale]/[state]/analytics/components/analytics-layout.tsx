@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { parseAsString, useQueryState } from 'next-usequerystate';
@@ -40,6 +40,7 @@ export function AnalyticsMainLayout() {
 
   // console.log('searchParams.get', searchParams.get('time-period'));
   const [maxTimePeriod, setMaxTimePeriod] = useState<string | null>(null);
+  const initialLandingHandledRef = useRef(false);
 
   const timePeriod = searchParams.get('time-period')
     ? getLatestDate(searchParams.get('time-period')?.split(',') || [])?.split(
@@ -193,6 +194,60 @@ export function AnalyticsMainLayout() {
     refetchOnReconnect: false,
   });
 
+  // On initial landing: if latest period has no data or is invalid, fall back to env period
+  useEffect(() => {
+    if (initialLandingHandledRef.current) return;
+    if (!timePeriods.isFetched || timePeriods.isFetching) return;
+
+    // Wait for map/revenue data to finish (default view is map)
+    if (!mapData.isFetched || !revenueMapData.isFetched) return;
+
+    const availablePeriods =
+      timePeriods.data?.getDataTimePeriods?.map(
+        (tp: { value: string }) => tp.value
+      ) || [];
+    const selectedPeriod = timePeriodSelected || '';
+    const fallbackPeriod =
+      (process.env.NEXT_PUBLIC_TIME_PERIOD as string) || '';
+
+    const mapFeatures = mapData.data?.districtMapData?.features as
+      | { properties?: Record<string, any> }[]
+      | undefined;
+
+    const mapHasRiskScore =
+      Array.isArray(mapFeatures) &&
+      mapFeatures.some(
+        (f) =>
+          f?.properties &&
+          typeof f.properties === 'object' &&
+          f.properties['risk-score'] !== undefined &&
+          f.properties['risk-score'] !== null
+      );
+
+    const mapEmpty = !mapHasRiskScore;
+
+    const selectedInvalid =
+      !selectedPeriod || !availablePeriods.includes(selectedPeriod);
+
+    if (mapEmpty || selectedInvalid) {
+      if (fallbackPeriod && fallbackPeriod !== selectedPeriod) {
+        setTimePeriodParam(fallbackPeriod, { shallow: false });
+      }
+    }
+
+    initialLandingHandledRef.current = true;
+  }, [
+    timePeriods.isFetched,
+    timePeriods.isFetching,
+    timePeriods.data,
+    mapData.isFetched,
+    mapData.data,
+    revenueMapData.isFetched,
+    revenueMapData.data,
+    timePeriodSelected,
+    setTimePeriodParam,
+  ]);
+
   useEffect(() => {
     if (
       timePeriods.data?.getDataTimePeriods &&
@@ -218,6 +273,10 @@ export function AnalyticsMainLayout() {
       ) {
         setTimePeriodParam(latestTimePeriod, { shallow: false });
       }
+    } else {
+      setTimePeriodParam(process.env.NEXT_PUBLIC_TIME_PERIOD as string, {
+        shallow: false,
+      });
     }
   }, [
     timePeriods.data,

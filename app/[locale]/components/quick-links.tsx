@@ -62,7 +62,7 @@ export const QuickLinks = () => {
           >
             <div className="flex flex-col items-start justify-between gap-4">
               <Text variant="headingLg" fontWeight="medium">
-                {item.district}kjkjnkjnkjn
+                {item.district}
               </Text>
               <Text variant="headingSm" color="subdued" fontWeight="regular">
                 {item.scheme}

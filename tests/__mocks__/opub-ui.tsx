@@ -94,7 +94,17 @@ export const MonthPicker = ({
       // Expose limits for assertions
       data-min={minValue ? JSON.stringify(minValue) : undefined}
       data-max={maxValue ? JSON.stringify(maxValue) : undefined}
-      onChange={(e) => onChange?.(e.target.value)}
+      onChange={(e) => {
+        const val = e.target.value; // "YYYY-MM"
+        if (onChange && val) {
+          const [yearStr, monthStr] = val.split('-');
+          onChange({
+            year: parseInt(yearStr, 10),
+            month: parseInt(monthStr, 10),
+            day: 1,
+          });
+        }
+      }}
       {...props}
     />
   </div>

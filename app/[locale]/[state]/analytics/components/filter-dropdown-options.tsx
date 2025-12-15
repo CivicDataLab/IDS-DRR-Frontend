@@ -92,6 +92,18 @@ export default function FilterDropdownOptions({
     return parseDate(`${year}-${month?.padStart(2, '0')}-01`);
   };
 
+  // Compute a controlled value for MonthPicker so it stays in sync with URL updates
+  const monthPickerValue =
+    selectedTimePeriod &&
+    Array.isArray(selectedTimePeriod) &&
+    selectedTimePeriod.filter(Boolean).length > 0
+      ? parseDate(
+          getLatestDate(selectedTimePeriod.filter(Boolean)) || '2023-08-01'
+        )
+      : timePeriod
+        ? getDefaultDate(timePeriod)
+        : getDefaultDate(process.env.NEXT_PUBLIC_TIME_PERIOD as string);
+
   return (
     <div>
       <div className="mb-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
@@ -151,14 +163,7 @@ export default function FilterDropdownOptions({
           ) : (
             <MonthPicker
               name="time-period-select"
-              defaultValue={
-                selectedTimePeriod &&
-                selectedTimePeriod?.filter(Boolean)?.length > 0
-                  ? parseDate(
-                      getLatestDate(selectedTimePeriod || []) || '2023-08-01'
-                    )
-                  : getDefaultDate(timePeriod || '')
-              }
+              value={monthPickerValue}
               label="Select Month"
               minValue={parseDate(minDate || '2023-01-04')}
               maxValue={parseDate(maxDate || '2023-01-04')}
