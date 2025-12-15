@@ -87,8 +87,12 @@ export default function FilterDropdownOptions({
     ...(getRevenueCircleOptionsForDistrict(districtCode) || []),
   ]);
 
-  const getDefaultDate = (timePeriod: string) => {
-    const [year, month] = timePeriod.split('_');
+  const getDefaultDate = (timePeriod?: string | null) => {
+    const fallback =
+      timePeriod ||
+      (process.env.NEXT_PUBLIC_TIME_PERIOD as string) ||
+      '2023_01';
+    const [year, month] = fallback.split('_');
     return parseDate(`${year}-${month?.padStart(2, '0')}-01`);
   };
 
@@ -100,9 +104,7 @@ export default function FilterDropdownOptions({
       ? parseDate(
           getLatestDate(selectedTimePeriod.filter(Boolean)) || '2023-08-01'
         )
-      : timePeriod
-        ? getDefaultDate(timePeriod)
-        : getDefaultDate(process.env.NEXT_PUBLIC_TIME_PERIOD as string);
+      : getDefaultDate(timePeriod);
 
   return (
     <div>
