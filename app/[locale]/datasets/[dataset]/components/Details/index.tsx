@@ -1,5 +1,4 @@
 import { useRef } from 'react';
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { renderGeoJSON } from '@/geo_json/render_geojson';
 import { useQuery } from '@tanstack/react-query';
@@ -26,11 +25,7 @@ import { Icons } from '@/components/icons'; /*  */
 const Details = () => {
   const params = useParams();
 
-  const {
-    data,
-    isLoading,
-    refetch,
-  }: { data: any; isLoading: boolean; refetch: any } = useQuery({
+  const { data, isLoading }: { data: any; isLoading: boolean } = useQuery({
     queryKey: [`chartdata_${params.dataset}`],
     queryFn: () =>
       GraphQL(

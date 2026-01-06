@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { parseDate } from '@internationalized/date';
 import { useQuery } from '@tanstack/react-query';
 import ReactECharts from 'echarts-for-react';
 import { parseAsString, useQueryState } from 'next-usequerystate';
-import { MultiMonthPicker, Spinner, Text } from 'opub-ui';
+import { Spinner, Text } from 'opub-ui';
 
 import { Factors } from '@/config/consts';
 import { ANALYTICS_INDICATORS_BY_CATEGORY } from '@/config/graphql/analaytics-queries';
@@ -39,65 +38,53 @@ export const ChartView = ({
   );
   const [revenueCode] = useQueryState('revenue-code');
 
-  const value_mapping_list = [
-    {
-      key: '0.0',
-      value: '',
-    },
-    {
-      key: '1.0',
-      value: 'Very Low Risk',
-    },
-    {
-      key: '2.0',
-      value: 'Low Risk',
-    },
-    {
-      key: '3.0',
-      value: 'Medium Risk',
-    },
-    {
-      key: '4.0',
-      value: 'High Risk',
-    },
-    {
-      key: '5.0',
-      value: 'Very High Risk',
-    },
-  ];
+  const value_mapping_list = useMemo(
+    () => [
+      { key: '0.0', value: '' },
+      { key: '1.0', value: 'Very Low Risk' },
+      { key: '2.0', value: 'Low Risk' },
+      { key: '3.0', value: 'Medium Risk' },
+      { key: '4.0', value: 'High Risk' },
+      { key: '5.0', value: 'Very High Risk' },
+    ],
+    []
+  );
 
-  const riskscoreFields = [
-    {
-      field_name: 'risk-score',
-      label: 'Risk Score',
-      color: '#7B4DD9',
-      value_mapping: value_mapping_list,
-    },
-    {
-      field_name: 'exposure',
-      label: 'Exposure',
-      color: '#89672A',
-      value_mapping: value_mapping_list,
-    },
-    {
-      field_name: 'vulnerability',
-      label: 'Vulnerability',
-      color: '#3B8F44',
-      value_mapping: value_mapping_list,
-    },
-    {
-      field_name: 'flood-hazard',
-      label: 'Flood Hazard',
-      color: '#C41C8D',
-      value_mapping: value_mapping_list,
-    },
-    {
-      field_name: 'government-response',
-      label: 'Government Response',
-      color: '#FB4E93',
-      value_mapping: value_mapping_list,
-    },
-  ];
+  const riskscoreFields = useMemo(
+    () => [
+      {
+        field_name: 'risk-score',
+        label: 'Risk Score',
+        color: '#7B4DD9',
+        value_mapping: value_mapping_list,
+      },
+      {
+        field_name: 'exposure',
+        label: 'Exposure',
+        color: '#89672A',
+        value_mapping: value_mapping_list,
+      },
+      {
+        field_name: 'vulnerability',
+        label: 'Vulnerability',
+        color: '#3B8F44',
+        value_mapping: value_mapping_list,
+      },
+      {
+        field_name: 'flood-hazard',
+        label: 'Flood Hazard',
+        color: '#C41C8D',
+        value_mapping: value_mapping_list,
+      },
+      {
+        field_name: 'government-response',
+        label: 'Government Response',
+        color: '#FB4E93',
+        value_mapping: value_mapping_list,
+      },
+    ],
+    [value_mapping_list]
+  );
 
   const indicatorsQuery = useQuery({
     queryKey: [`indicatorsByCategory_${currentSelectedState.code}`],
@@ -181,7 +168,15 @@ export const ChartView = ({
         setChartData(null);
         console.log(error);
       });
-  }, [districtCode, revenueCode, indicator, timePeriod]);
+  }, [
+    districtCode,
+    revenueCode,
+    indicator,
+    timePeriod,
+    currentSelectedState.resource_id,
+    riskscoreFields,
+    value_mapping_list,
+  ]);
 
   const findNameBySlug = (data: any, slug: string): string | undefined => {
     if (data.slug === slug) {

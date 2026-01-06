@@ -1,14 +1,13 @@
+/* eslint-disable @next/next/no-img-element */
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { Button, Icon, Text } from 'opub-ui';
+import { Button, Text } from 'opub-ui';
 
 import {
   CollaboratingPartnerHPText,
   CollaboratingPartnerTextOne,
 } from '@/config/consts';
 import { handleRedirect } from '@/lib/utils';
-import Icons from '@/components/icons';
-import { MediaRendering } from '@/components/media-rendering';
 
 export function CollaboratingPartner() {
   const [showMore, setShowMore] = useState(false);

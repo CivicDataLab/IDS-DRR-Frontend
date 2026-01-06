@@ -13,11 +13,7 @@ import { formatDate } from '@/lib/utils';
 const Resources = () => {
   const params = useParams();
 
-  const {
-    data,
-    isLoading,
-    refetch,
-  }: { data: any; isLoading: boolean; refetch: any } = useQuery({
+  const { data, isLoading }: { data: any; isLoading: boolean } = useQuery({
     queryKey: [`resources_${params.dataset}`],
     queryFn: () =>
       GraphQL(

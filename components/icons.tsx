@@ -37,7 +37,6 @@ import {
   IconMap,
   IconMenu,
   IconMinus,
-  IconProps,
   IconRefresh,
   IconReport,
   IconReportSearch,
