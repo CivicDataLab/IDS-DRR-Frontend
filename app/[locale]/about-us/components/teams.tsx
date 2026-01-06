@@ -119,86 +119,6 @@ export function TheTeam() {
         <div className="flex flex-wrap items-center justify-center gap-10 rounded-2 bg-baseIndigoSolid1 p-9 lg:flex-nowrap ">
           <div className="flex flex-col items-center gap-4 text-surfaceDefault">
             <Image
-              src="/logo/OpenContracting.png"
-              height={190}
-              width={230}
-              alt="Open Contracting Partnership Logo"
-              className=" object-contain "
-            />
-            <div className="flex flex-row items-center justify-between self-stretch">
-              <Button
-                monochrome={true}
-                kind="tertiary"
-                onClick={(event) =>
-                  handleRedirect(event, 'https://www.open-contracting.org/')
-                }
-              >
-                <img src="/web.svg" alt="OCP website link" />
-              </Button>
-              <Button
-                monochrome={true}
-                kind="tertiary"
-                onClick={(event) =>
-                  handleRedirect(
-                    event,
-                    'https://www.linkedin.com/company/opencontractingpartnership'
-                  )
-                }
-              >
-                <img src="/linkedin.svg" alt="OCP link to LinkedIn" />{' '}
-              </Button>
-              <Button
-                monochrome={true}
-                kind="tertiary"
-                onClick={(event) =>
-                  handleRedirect(event, 'https://twitter.com/opencontracting')
-                }
-              >
-                <img src="/x.svg" alt="OCP link to Twitter/X" />{' '}
-              </Button>
-            </div>
-          </div>
-          <div className="flex flex-col gap-3">
-            <Text
-              variant="headingXl"
-              fontWeight="medium"
-              color="default"
-              as="h3"
-            >
-              Open Contracting Partnership
-            </Text>
-            <div className="flex flex-col gap-5">
-              <div>
-                <div
-                  ref={descriptionRef}
-                  className={!showMore ? ' line-clamp-2 lg:line-clamp-5' : ''}
-                >
-                  <Text variant="bodyLg" fontWeight="regular" color="default">
-                    {OpenContractingPartnershipTextOne}
-                  </Text>
-                </div>
-
-                {/* Only show the "Show more" button on medium and small screens */}
-                {isDescriptionLong && (
-                  <div className="block md:hidden">
-                    <Button
-                      className="self-start p-2"
-                      onClick={toggleShowMore}
-                      variant="interactive"
-                      size="slim"
-                      kind="tertiary"
-                    >
-                      {showMore ? 'Show less' : 'Show more'}
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center justify-center gap-10 rounded-2 bg-baseIndigoSolid1 p-9 lg:flex-nowrap ">
-          <div className="flex flex-col items-center gap-4 text-surfaceDefault">
-            <Image
               src="/logo/cdl_logo.svg"
               height={120}
               width={230}
@@ -279,6 +199,87 @@ export function TheTeam() {
                 )}
               </div>
               {/* --------------  */}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-center gap-10 rounded-2 bg-baseIndigoSolid1 p-9 lg:flex-nowrap ">
+          <div className="flex flex-col items-center gap-4 text-surfaceDefault">
+            <Image
+              src="/logo/OpenContracting.png"
+              height={190}
+              width={230}
+              alt="Open Contracting Partnership Logo"
+              className=" object-contain "
+            />
+            <div className="flex flex-row items-center justify-between self-stretch">
+              <Button
+                monochrome={true}
+                kind="tertiary"
+                onClick={(event) =>
+                  handleRedirect(event, 'https://www.open-contracting.org/')
+                }
+              >
+                <img src="/web.svg" alt="OCP website link" />
+              </Button>
+              <Button
+                monochrome={true}
+                kind="tertiary"
+                onClick={(event) =>
+                  handleRedirect(
+                    event,
+                    'https://www.linkedin.com/company/opencontractingpartnership'
+                  )
+                }
+              >
+                <img src="/linkedin.svg" alt="OCP link to LinkedIn" />{' '}
+              </Button>
+              <Button
+                monochrome={true}
+                kind="tertiary"
+                onClick={(event) =>
+                  handleRedirect(event, 'https://twitter.com/opencontracting')
+                }
+              >
+                <img src="/x.svg" alt="OCP link to Twitter/X" />{' '}
+              </Button>
+            </div>
+          </div>
+          <div className="flex flex-col gap-3">
+            <Text
+              variant="headingXl"
+              fontWeight="medium"
+              color="default"
+              as="h3"
+            >
+              Open Contracting Partnership
+            </Text>
+            <div className="flex flex-col gap-5">
+              <div>
+                <div
+                  ref={descriptionRef}
+                  className={!showMore ? ' line-clamp-2 lg:line-clamp-5' : ''}
+                >
+                  <Text variant="bodyLg" fontWeight="regular" color="default">
+                    {OpenContractingPartnershipTextOne}
+                  </Text>
+                </div>
+
+                {/* Only show the "Show more" button on medium and small screens */}
+                {isDescriptionLong && (
+                  <div className="block md:hidden">
+                    <Button
+                      className="self-start p-2"
+                      onClick={toggleShowMore}
+                      variant="interactive"
+                      size="slim"
+                      kind="tertiary"
+                    >
+                      {showMore ? 'Show less' : 'Show more'}
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
