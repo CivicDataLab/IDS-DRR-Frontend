@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { InfoSquare } from '@/public/InfoCircle';
+import { useQuery } from '@tanstack/react-query';
 import {
   Accordion,
   AccordionContent,
@@ -13,6 +14,8 @@ import {
 } from 'opub-ui';
 
 import { RiskColorMap } from '@/config/consts';
+import { ANALYTICS_TIME_PERIODS } from '@/config/graphql/analaytics-queries';
+import { GraphQL } from '@/lib/api';
 import { deSlugify } from '@/lib/utils';
 import {
   formatNumberToIndianSystem,
@@ -122,11 +125,22 @@ export const ScoreInfo = ({
   indicatorDescription,
 }: ScoreProps) => {
   const searchParams = useSearchParams();
-  if (!process.env.NEXT_PUBLIC_TIME_PERIOD) {
-    throw new Error('TIME_PERIOD not specified');
-  }
+  const timePeriods = useQuery({
+    queryKey: [`timePeriods`],
+    queryFn: () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_TIME_PERIODS
+      ),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+  const latestTimePeriod =
+    timePeriods.data?.getDataTimePeriods[0]?.value ||
+    process.env.NEXT_PUBLIC_TIME_PERIOD;
   const time_period =
-    searchParams.get('time-period') || process.env.NEXT_PUBLIC_TIME_PERIOD;
+    searchParams.get('time-period') || (latestTimePeriod as string);
   const boundary = searchParams.get('boundary') || 'district';
   const region = searchParams.get('region') || '';
 

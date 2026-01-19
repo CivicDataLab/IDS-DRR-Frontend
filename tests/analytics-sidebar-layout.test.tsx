@@ -36,6 +36,12 @@ jest.mock('@/lib/utils', () => ({
   cn: (...classes: string[]) => classes.filter(Boolean).join(' '),
 }));
 
+jest.mock('@tanstack/react-query', () => ({
+  useQuery: jest.fn(() => ({
+    data: { getDataTimePeriods: [{ value: '2023_08' }] },
+  })),
+}));
+
 describe('AnalyticsSideBarLayout', () => {
   const mockCurrentState = {
     code: 'AS',

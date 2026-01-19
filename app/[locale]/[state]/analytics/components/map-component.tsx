@@ -46,7 +46,6 @@ export const MapComponent = ({
   const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
 
   const params = new URLSearchParams(window.location.search);
-  console.log('params', params.get('district-code'));
   const districtCode = params.get('district-code');
 
   const { width } = useWindowSize();
