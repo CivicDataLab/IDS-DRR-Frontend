@@ -41,7 +41,7 @@ const Partners = () => {
                     src="/logo/PJMc.png"
                     width={194}
                     height={72}
-                    alt="OCP Logo"
+                    alt="PJMF Logo"
                     className="h-auto w-full object-contain"
                     style={{
                       width: '194',
