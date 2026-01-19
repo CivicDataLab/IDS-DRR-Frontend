@@ -17,7 +17,6 @@ import { GraphQL } from '@/lib/api';
 import styles from './analytics-quick-links.module.css';
 
 export const QuickLinks = () => {
-  // const [maxTimePeriod, setMaxTimePeriod] = useState<string | null>(null);
   const timePeriods = useQuery({
     queryKey: [`timePeriods`],
     queryFn: () =>

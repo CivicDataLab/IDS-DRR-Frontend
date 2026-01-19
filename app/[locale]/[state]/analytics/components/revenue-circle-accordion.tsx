@@ -125,9 +125,6 @@ export const ScoreInfo = ({
   indicatorDescription,
 }: ScoreProps) => {
   const searchParams = useSearchParams();
-  // if (!process.env.NEXT_PUBLIC_TIME_PERIOD) {
-  //   throw new Error('TIME_PERIOD not specified');
-  // }
   const timePeriods = useQuery({
     queryKey: [`timePeriods`],
     queryFn: () =>

@@ -38,7 +38,6 @@ export function AnalyticsMainLayout() {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator') || '';
 
-  // console.log('searchParams.get', searchParams.get('time-period'));
   const [maxTimePeriod, setMaxTimePeriod] = useState<string | null>(null);
   const initialLandingHandledRef = useRef(false);
 
@@ -48,19 +47,12 @@ export function AnalyticsMainLayout() {
       ) || process.env.NEXT_PUBLIC_TIME_PERIOD
     : null;
 
-  // console.log('timePeriod', timePeriod);
 
   // Use latest time period from query (maxTimePeriod) as primary fallback, then env variable
   const timePeriodSelected = timePeriod
     ? `${timePeriod[0]}_${timePeriod[1]}`
     : (maxTimePeriod ?? process.env.NEXT_PUBLIC_TIME_PERIOD);
 
-  // console.log('timePeriod', timePeriod);
-  // console.log(
-  //   'date now',
-  //   `${new Date().getFullYear()}_${new Date().getMonth() + 1}`
-  // );
-  // console.log('timePeriodSelected', timePeriodSelected);
 
   const [districtCode, setDistrictCode] = useQueryState(
     'district-code',
@@ -96,7 +88,6 @@ export function AnalyticsMainLayout() {
     }
   }, [statesListData, routerParams.state]);
 
-  // const stateCode = STATE_CODES[routerParams.state as keyof typeof STATE_CODES];
 
   const mapData = useQuery({
     queryKey: [
@@ -121,7 +112,6 @@ export function AnalyticsMainLayout() {
     refetchOnReconnect: false,
   });
 
-  // console.log('mapData', mapData);
 
   const revenueMapData = useQuery({
     queryKey: [
@@ -286,10 +276,6 @@ export function AnalyticsMainLayout() {
     setTimePeriodParam,
   ]);
 
-  // console.log(
-  //   'timePeriods for last',
-  //   timePeriods.data?.getDataTimePeriods[0].value
-  // );
 
   const indicatorsData = useQuery({
     queryKey: [`indicators_${indicator}`],
