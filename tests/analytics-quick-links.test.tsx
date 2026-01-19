@@ -37,18 +37,24 @@ jest.mock('next/link', () => ({
 jest.mock('@/config/consts', () => ({
   AnalyticsQuickLinksText:
     'Explore flood-risk profiles at the district and sub-district level across states in India, developed using the IDS-DRR data model',
-  AnalyticsURL: '/analytics/?indicator=risk-score&time-period=2024&view=map',
+  AnalyticsURL: '/analytics/?indicator=risk-score&view=map',
+}));
+
+jest.mock('@tanstack/react-query', () => ({
+  useQuery: jest.fn(() => ({
+    data: { getDataTimePeriods: [{ value: '2023_08' }] },
+  })),
 }));
 
 describe('QuickLinks Component', () => {
-  beforeEach(() => {
-    // Set environment variable for consistent testing
-    process.env.TIME_PERIOD = '2024';
-  });
+  // beforeEach(() => {
+  //   // Set environment variable for consistent testing
+  //   process.env.TIME_PERIOD = '2024';
+  // });
 
-  afterEach(() => {
-    delete process.env.TIME_PERIOD;
-  });
+  // afterEach(() => {
+  //   delete process.env.TIME_PERIOD;
+  // });
 
   it('renders the main section with correct aria-label', () => {
     render(<QuickLinks />);
@@ -115,31 +121,31 @@ describe('QuickLinks Component', () => {
     const assamLink = screen.getByRole('link', { name: /Assam/i });
     expect(assamLink).toHaveAttribute(
       'href',
-      '/assam/analytics/?indicator=risk-score&time-period=2024&view=map'
+      '/assam/analytics/?indicator=risk-score&view=map&time-period=2023_08'
     );
 
     const hpLink = screen.getByRole('link', { name: /Himachal Pradesh/i });
     expect(hpLink).toHaveAttribute(
       'href',
-      '/himachal-pradesh/analytics/?indicator=risk-score&time-period=2024&view=map'
+      '/himachal-pradesh/analytics/?indicator=risk-score&view=map&time-period=2023_08'
     );
 
     const odishaLink = screen.getByRole('link', { name: /Odisha/i });
     expect(odishaLink).toHaveAttribute(
       'href',
-      '/odisha/analytics/?indicator=risk-score&time-period=2024&view=map'
+      '/odisha/analytics/?indicator=risk-score&view=map&time-period=2023_08'
     );
 
     const biharLink = screen.getByRole('link', { name: /Bihar/i });
     expect(biharLink).toHaveAttribute(
       'href',
-      'bihar/analytics/?indicator=risk-score&time-period=2024&view=map'
+      'bihar/analytics/?indicator=risk-score&view=map&time-period=2023_08'
     );
 
     const upLink = screen.getByRole('link', { name: /Uttar Pradesh/i });
     expect(upLink).toHaveAttribute(
       'href',
-      'uttar-pradesh/analytics/?indicator=risk-score&time-period=2024&view=map'
+      'uttar-pradesh/analytics/?indicator=risk-score&view=map&time-period=2023_08'
     );
   });
 
