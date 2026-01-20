@@ -214,7 +214,8 @@ export function OutputWindow({
             >
               <Icon source={Icons.back} />
             </Button>
-            {RevenueRegion && (
+
+            {RevenueRegion && DataBasedOnBoundary[0] && (
               <Text className="uppercase" variant="bodyLg">
                 {DataBasedOnBoundary &&
                   DataBasedOnBoundary.length > 0 &&
