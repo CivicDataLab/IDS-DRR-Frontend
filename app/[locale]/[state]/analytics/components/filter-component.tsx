@@ -241,8 +241,12 @@ export const RenderOptions = ({
   const onRadioButtonChange = (selectedValue: string, value: string) => {
     if (value === 'state') {
       setSelectedState(selectedValue);
+      // Use the latest time period from the query (first item, which is the most recent)
+      const latestTimePeriod =
+        timePeriodData?.data?.getDataTimePeriods[0]?.value ||
+        `${new Date().getFullYear()}_${new Date().getMonth() + 1}`;
       router.push(
-        `/${selectedValue}/analytics/?indicator=risk-score&time-period=${process.env.TIME_PERIOD || process.env.NEXT_PUBLIC_TIME_PERIOD}&view=${view}`
+        `/${selectedValue}/analytics/?indicator=risk-score&time-period=${latestTimePeriod}&view=${view}`
       );
       // console.log('---Selected State ---', selectedState);
     } else if (value === 'district') {
