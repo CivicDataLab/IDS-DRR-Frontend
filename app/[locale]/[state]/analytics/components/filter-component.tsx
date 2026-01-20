@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { parseDate } from '@internationalized/date';
 import { parseAsString, useQueryState } from 'next-usequerystate';
 import { Button, Icon, RadioGroup, RadioItem, YearCalendar } from 'opub-ui';
@@ -17,7 +17,6 @@ export function FilterComp({
   timePeriod,
   timePeriods,
   currentSelectedState,
-  statesList,
   districtGeographiesData,
   revenueGeographiesData,
   // getDistrictOptions,
@@ -27,16 +26,8 @@ export function FilterComp({
   districtGeographiesData: any;
   revenueGeographiesData: any;
   currentSelectedState: any;
-  statesList: Array<any>;
   // getDistrictOptions: any;
 }) {
-  interface OptionType {
-    label: string;
-    value: string;
-    type: 'group' | 'item';
-    options?: OptionType[]; // Only 'group' type will have nested options
-  }
-
   interface Option {
     disabled?: boolean;
     value: string;
@@ -72,7 +63,6 @@ export function FilterComp({
 
   //filter variables
   const [filterOption, setFilterOption] = useState('state');
-  const routerParams = useParams();
 
   useEffect(() => {
     setRegionSelected(regionSelected || '');
@@ -187,16 +177,6 @@ export function FilterComp({
           <RenderOptions
             filterOptions={FilterOptions || []}
             selectedOption={filterOption}
-            regionOptions={
-              FilterOptions.find((option) => option.value === 'district')
-                ?.options || []
-            }
-            revenueOptions={
-              FilterOptions.find((option) => option.value === 'revenue-circle')
-                ?.options || []
-            }
-            // regionOptions={getDistrictOptions()}
-            // revenueOptions={getRevenueOptions()}
             regionSelected={regionSelected}
             setRegionSelected={handleDistrictChange}
             revenueSelected={revenueSelected}
@@ -214,8 +194,6 @@ export function FilterComp({
 export const RenderOptions = ({
   filterOptions,
   selectedOption,
-  regionOptions,
-  revenueOptions, // New revenue options
   regionSelected,
   setRegionSelected,
   revenueSelected,
@@ -223,7 +201,6 @@ export const RenderOptions = ({
   timePeriodData,
   timePeriodSelected,
   setTimePeriodSelected,
-  handleDistrictChange,
 }: any) => {
   const [selectedState, setSelectedState] = useState('');
   const router = useRouter();

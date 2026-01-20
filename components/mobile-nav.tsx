@@ -75,7 +75,6 @@ export function MobileNav({ data }: { data: MainConfig }) {
                     <ExploreLink
                       key={link.title}
                       href={link.href || ''}
-                      icon={link.icon || ''}
                       text={link.title || ''}
                       onClick={toggleMenu}
                     />
@@ -142,12 +141,10 @@ export function MobileNav({ data }: { data: MainConfig }) {
 
 const ExploreLink = ({
   href,
-  icon,
   text,
   onClick,
 }: {
   href: string;
-  icon: string;
   text: string;
   onClick: () => void;
 }) => {

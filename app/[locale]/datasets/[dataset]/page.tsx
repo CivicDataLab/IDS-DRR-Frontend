@@ -1,9 +1,8 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { gql } from 'graphql-request';
 import { Spinner } from 'opub-ui';
 
 import { DATASET_QUERY } from '@/config/graphql/dataset-queries';
@@ -17,16 +16,11 @@ import Resources from './components/Resources';
 // Define the query as a gql template literal
 
 const DatasetDetailsPage = () => {
-  const [open, setOpen] = useState(false);
   const primaryDataRef = useRef<HTMLDivElement>(null); // Explicitly specify the type of ref
 
   const params = useParams();
 
-  const {
-    data,
-    isLoading,
-    refetch,
-  }: { data: any; isLoading: boolean; refetch: any } = useQuery({
+  const { data, isLoading }: { data: any; isLoading: boolean } = useQuery({
     queryKey: ['dataset_details', params.dataset],
     queryFn: () =>
       GraphQL(

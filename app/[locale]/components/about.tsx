@@ -4,7 +4,6 @@ import { Button, Text } from 'opub-ui';
 
 import {
   AboutText,
-  AboutTextContentThree,
   AboutTextContentTwo,
 } from '@/config/consts';
 import { handleRedirect } from '@/lib/utils';

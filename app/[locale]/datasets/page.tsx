@@ -133,7 +133,7 @@ const useUrlParams = (
 
   useEffect(() => {
     const filtersString = Object.entries(queryParams.filters)
-      .filter(([_, values]) => values.length > 0)
+      .filter(([, values]) => values.length > 0)
       .map(([key, values]) => `${key}=${values.join(',')}`)
       .join('&');
 
@@ -325,7 +325,7 @@ const DatasetsListing = () => {
               <div className="flex gap-2 border-b-2 border-solid border-baseGraySlateSolid4 pb-4">
                 {Object.entries(queryParams.filters).map(([category, values]) =>
                   values
-                    .filter((value) => category !== 'sort')
+                    .filter(() => category !== 'sort')
                     .map((value) => (
                       <Pill
                         key={`${category}-${value}`}
