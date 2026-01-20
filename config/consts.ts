@@ -69,7 +69,8 @@ const DatasetsURL = `/datasets?size=5&page=1&sort=recent`;
 const GithubRepoLink = `https://github.com/CivicDataLab/flood-data-ecosystem-Assam/tree/main/Sources`;
 
 //analytics page
-const AnalyticsURL = `/analytics/?indicator=risk-score&time-period=${process.env.TIME_PERIOD || process.env.NEXT_PUBLIC_TIME_PERIOD}&view=map`;
+// Note: time-period is omitted to default to the latest available data (getDataTimePeriods[0].value)
+const AnalyticsURL = `/analytics/?indicator=risk-score&view=map`;
 const learnMoreLink = `https://drive.google.com/file/d/1TerjJtQrWxziKJ1E5BvfvRELtWJWRw2M/view?usp=drive_link`;
 
 //home page

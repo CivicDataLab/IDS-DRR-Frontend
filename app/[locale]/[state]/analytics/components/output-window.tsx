@@ -14,6 +14,10 @@ import { useQueryState } from 'next-usequerystate';
 import { Button, Icon, Text, Tooltip } from 'opub-ui';
 
 import { Factors, RiskText } from '@/config/consts';
+import {
+  ANALYTICS_TIME_PERIODS,
+} from '@/config/graphql/analaytics-queries';
+import { GraphQL } from '@/lib/api';
 import { cn, formatDateString } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
@@ -24,6 +28,7 @@ import {
 } from '../utils/utils';
 import { ScoreInfo } from './revenue-circle-accordion';
 import styles from './styles.module.scss';
+import { useQuery } from '@tanstack/react-query';
 
 export function OutputWindow({
   data,
@@ -33,16 +38,29 @@ export function OutputWindow({
   currentState,
 }: any) {
   const searchParams = useSearchParams();
-  if (!process.env.NEXT_PUBLIC_TIME_PERIOD) {
-    throw new Error('TIME_PERIOD is not defined');
-  }
-  const DEFAULT_TIME_PERIOD: string = process.env.NEXT_PUBLIC_TIME_PERIOD;
   let processedTime = getLatestDate(
     searchParams.get('time-period')?.split(',') || []
   )?.split('-');
+
+  const timePeriods = useQuery({
+    queryKey: [`timePeriods`],
+    queryFn: () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_TIME_PERIODS
+      ),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+  const latestTimePeriod =
+    timePeriods.data?.getDataTimePeriods[0]?.value ||
+    process.env.NEXT_PUBLIC_TIME_PERIOD;
+
   const timePeriod = processedTime
     ? `${processedTime[0]}_${processedTime[1]}`
-    : DEFAULT_TIME_PERIOD;
+    : (latestTimePeriod as string);
 
   const formattedTimePeriod = formatDateString(timePeriod);
   const region = searchParams.get('district-code') || '';
@@ -95,6 +113,7 @@ export function OutputWindow({
     setIsExpanded(!isExpanded); // Toggle expanded state
   };
 
+  console.log('DataBasedOnBoundary', DataBasedOnBoundary);
   return (
     <>
       <MediaRendering minWidth="1024" maxWidth={null}>
@@ -107,9 +126,9 @@ export function OutputWindow({
             'overflow-y-auto border-r-1 border-solid border-borderSubdued',
             styles.Overlay,
             region !== null &&
-              region.length > 0 &&
-              view === 'map' &&
-              styles.OverlayActive
+            region.length > 0 &&
+            view === 'map' &&
+            styles.OverlayActive
           )}
         >
           <div className="flex flex-col gap-2">
@@ -123,9 +142,11 @@ export function OutputWindow({
             >
               <Icon source={Icons.back} />
             </Button>
-            {RevenueRegion && (
+
+            {RevenueRegion && DataBasedOnBoundary && DataBasedOnBoundary.length > 0 && DataBasedOnBoundary[0] && (
               <Text className="uppercase" variant="bodyLg">
-                {DataBasedOnBoundary[0]['district']} District
+                {DataBasedOnBoundary[0]['district']}{' '}
+                District
               </Text>
             )}
 
@@ -182,7 +203,7 @@ export function OutputWindow({
                     >
                       {Factors.includes(indicator) &&
                         RiskText[parseInt(data[indicator]['value'])][
-                          'indicatorText'
+                        'indicatorText'
                         ]}
                     </Text>
                     <Tooltip
@@ -238,8 +259,8 @@ export function OutputWindow({
                 'overflow-y-auto border-b-1 border-l-1 border-r-1 border-solid border-borderSubdued',
                 styles.mobileOverlay,
                 region !== null &&
-                  region.length > 0 &&
-                  styles.mobileOverlayActive,
+                region.length > 0 &&
+                styles.mobileOverlayActive,
                 region == null ? 'hidden' : '',
                 // region == null && 'hidden', // Use the 'hidden' class to hide the aside when it's not visible
                 isExpanded && styles.expandedOverlay
@@ -333,7 +354,7 @@ export function OutputWindow({
                           >
                             {Factors.includes(indicator) &&
                               RiskText[parseInt(data[indicator]['value'])][
-                                'indicatorText'
+                              'indicatorText'
                               ]}
                           </Text>
                           <Tooltip
