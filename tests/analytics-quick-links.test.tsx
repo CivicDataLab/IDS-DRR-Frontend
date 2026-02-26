@@ -121,31 +121,31 @@ describe('QuickLinks Component', () => {
     const assamLink = screen.getByRole('link', { name: /Assam/i });
     expect(assamLink).toHaveAttribute(
       'href',
-      '/assam/analytics/?indicator=risk-score&view=map&time-period=2023_08'
+      '/assam/analytics/?indicator=risk-score&view=map'
     );
 
     const hpLink = screen.getByRole('link', { name: /Himachal Pradesh/i });
     expect(hpLink).toHaveAttribute(
       'href',
-      '/himachal-pradesh/analytics/?indicator=risk-score&view=map&time-period=2023_08'
+      '/himachal-pradesh/analytics/?indicator=risk-score&view=map'
     );
 
     const odishaLink = screen.getByRole('link', { name: /Odisha/i });
     expect(odishaLink).toHaveAttribute(
       'href',
-      '/odisha/analytics/?indicator=risk-score&view=map&time-period=2023_08'
+      '/odisha/analytics/?indicator=risk-score&view=map'
     );
 
     const biharLink = screen.getByRole('link', { name: /Bihar/i });
     expect(biharLink).toHaveAttribute(
       'href',
-      'bihar/analytics/?indicator=risk-score&view=map&time-period=2023_08'
+      'bihar/analytics/?indicator=risk-score&view=map'
     );
 
     const upLink = screen.getByRole('link', { name: /Uttar Pradesh/i });
     expect(upLink).toHaveAttribute(
       'href',
-      'uttar-pradesh/analytics/?indicator=risk-score&view=map&time-period=2023_08'
+      'uttar-pradesh/analytics/?indicator=risk-score&view=map'
     );
   });
 
