@@ -97,79 +97,104 @@ jest.mock('@/app/[locale]/[state]/analytics/utils/utils', () => ({
 }));
 
 // Mock GraphQL queries usage via react-query useQuery
+const mockStatesListQuery = {
+  data: {
+    getStates: [
+      {
+        slug: 'assam',
+        code: 'AS',
+        child_type: 'tehsil',
+        latest_time_period: '2023_02',
+      },
+    ],
+  },
+  isFetching: false,
+  isError: false,
+};
+
+const mockDistrictMapQuery = {
+  data: { districtMapData: [{ code: 'AS-01' }] },
+  isFetching: false,
+} as any;
+
+const mockRevenueMapQuery = {
+  data: { revCircleMapData: [{ code: 'RC-01' }] },
+  isFetching: false,
+} as any;
+
+const mockDistrictGeoQuery = {
+  data: { getDistrictRevCircle: [{ district: 'X', code: 'AS-01' }] },
+  isFetching: false,
+} as any;
+
+const mockRevenueGeoQuery = {
+  data: {
+    getDistrictRevCircle: {
+      test: [{ tehsil: 'T1', code: 'RC-01', district_code: 'AS-01' }],
+    },
+  },
+  isFetching: false,
+} as any;
+
+const mockTimePeriodsQuery = {
+  data: { timePeriods: ['2023_01', '2023_02'] },
+  isFetching: false,
+} as any;
+
+const mockIndicatorsQuery = {
+  data: { indicators: [{ slug: 'risk-score' }] },
+  isFetching: false,
+} as any;
+
+const mockTableQuery = {
+  data: { tableData: [{ 'revenue-circle-code': 'RC-01' }] },
+  isLoading: false,
+  isFetching: false,
+} as any;
+
+const mockSidePaneQuery = {
+  data: { districtViewData: [], revCircleViewData: [] },
+  isFetched: true,
+} as any;
+
 jest.mock('@tanstack/react-query', () => ({
   useQuery: (q: { queryKey: any; queryFn?: any; [key: string]: any }) => {
     const k = Array.isArray(q.queryKey) ? q.queryKey[0] : q.queryKey;
 
     if (typeof k === 'string' && k.startsWith('states_list')) {
-      return {
-        data: {
-          getStates: [{ slug: 'assam', code: 'AS', child_type: 'tehsil' }],
-        },
-        isFetching: false,
-        isError: false,
-      };
+      return mockStatesListQuery;
     }
 
     if (typeof k === 'string' && k.startsWith('mapQuery_district')) {
-      return {
-        data: { districtMapData: [{ code: 'AS-01' }] },
-        isFetching: false,
-      } as any;
+      return mockDistrictMapQuery;
     }
 
     if (typeof k === 'string' && k.startsWith('mapQuery_revenue-circle')) {
-      return {
-        data: { revCircleMapData: [{ code: 'RC-01' }] },
-        isFetching: false,
-      } as any;
+      return mockRevenueMapQuery;
     }
 
     if (typeof k === 'string' && k.startsWith('geographies_data_district')) {
-      return {
-        data: { getDistrictRevCircle: [{ district: 'X', code: 'AS-01' }] },
-        isFetching: false,
-      } as any;
+      return mockDistrictGeoQuery;
     }
 
     if (typeof k === 'string' && k.startsWith('geographies_data_revenue')) {
-      return {
-        data: {
-          getDistrictRevCircle: {
-            test: [{ tehsil: 'T1', code: 'RC-01', district_code: 'AS-01' }],
-          },
-        },
-        isFetching: false,
-      } as any;
+      return mockRevenueGeoQuery;
     }
 
     if (typeof k === 'string' && k.startsWith('timePeriods')) {
-      return {
-        data: { timePeriods: ['2023_01', '2023_02'] },
-        isFetching: false,
-      } as any;
+      return mockTimePeriodsQuery;
     }
 
     if (typeof k === 'string' && k.startsWith('indicators_')) {
-      return {
-        data: { indicators: [{ slug: 'risk-score' }] },
-        isFetching: false,
-      } as any;
+      return mockIndicatorsQuery;
     }
 
     if (typeof k === 'string' && k.startsWith('table_data_')) {
-      return {
-        data: { tableData: [{ 'revenue-circle-code': 'RC-01' }] },
-        isLoading: false,
-        isFetching: false,
-      } as any;
+      return mockTableQuery;
     }
 
     if (typeof k === 'string' && k.startsWith('sidePaneData_')) {
-      return {
-        data: { districtViewData: [], revCircleViewData: [] },
-        isFetched: true,
-      } as any;
+      return mockSidePaneQuery;
     }
 
     return { data: undefined, isFetching: false } as any;
