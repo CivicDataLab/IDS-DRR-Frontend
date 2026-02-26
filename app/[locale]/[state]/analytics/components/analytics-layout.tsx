@@ -38,21 +38,23 @@ export function AnalyticsMainLayout() {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator') || '';
 
-  const [maxTimePeriod, setMaxTimePeriod] = useState<string | null>(null);
   const initialLandingHandledRef = useRef(false);
+
+  const [timePeriodSelected, setTimePeriodSelected] = useState<string | null>(
+    null
+  );
 
   const timePeriod = searchParams.get('time-period')
     ? getLatestDate(searchParams.get('time-period')?.split(',') || [])?.split(
         '-'
-      ) || process.env.NEXT_PUBLIC_TIME_PERIOD
+      )
     : null;
 
-
-  // Use latest time period from query (maxTimePeriod) as primary fallback, then env variable
-  const timePeriodSelected = timePeriod
-    ? `${timePeriod[0]}_${timePeriod[1]}`
-    : (maxTimePeriod ?? process.env.NEXT_PUBLIC_TIME_PERIOD);
-
+  React.useEffect(() => {
+    if (timePeriod && timePeriod.length > 0) {
+      setTimePeriodSelected(`${timePeriod[0]}_${timePeriod[1]}`);
+    }
+  }, [timePeriod]);
 
   const [districtCode, setDistrictCode] = useQueryState(
     'district-code',
@@ -78,6 +80,15 @@ export function AnalyticsMainLayout() {
     )
   );
 
+  const stateLatestTimePeriod =
+    currentSelectedState?.latest_time_period || null;
+  const envDefaultTimePeriod = process.env.NEXT_PUBLIC_TIME_PERIOD || null;
+
+  // URL-selected period takes precedence, otherwise use state latest period, then env default.
+  // const timePeriodSelected = timePeriod
+  //   ? `${timePeriod[0]}_${timePeriod[1]}`
+  //   : (stateLatestTimePeriod ?? envDefaultTimePeriod);
+
   React.useEffect(() => {
     if (!statesListData.isFetching && !statesListData.isError) {
       setCurrentSelectedState(
@@ -88,10 +99,9 @@ export function AnalyticsMainLayout() {
     }
   }, [statesListData, routerParams.state]);
 
-
   const mapData = useQuery({
     queryKey: [
-      `mapQuery_district_${currentSelectedState.code}_${indicator}_${timePeriodSelected}`,
+      `mapQuery_district_${currentSelectedState?.code}_${indicator}_${timePeriodSelected}`,
     ],
     queryFn: () =>
       GraphQL(
@@ -101,21 +111,20 @@ export function AnalyticsMainLayout() {
           indcFilter: { slug: indicator },
           dataFilter: { dataPeriod: timePeriodSelected },
           geoFilter: {
-            code: [currentSelectedState.code],
+            code: [currentSelectedState?.code],
           },
         }
       ),
 
-    enabled: Boolean(view === 'map'),
+    enabled: Boolean(view === 'map' && currentSelectedState?.code),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
 
-
   const revenueMapData = useQuery({
     queryKey: [
-      `mapQuery_revenue-circle_${currentSelectedState.code}_${indicator}_${timePeriodSelected}`,
+      `mapQuery_revenue-circle_${currentSelectedState?.code}_${indicator}_${timePeriodSelected}`,
     ],
     queryFn: () =>
       GraphQL(
@@ -125,19 +134,19 @@ export function AnalyticsMainLayout() {
           indcFilter: { slug: indicator },
           dataFilter: { dataPeriod: timePeriodSelected },
           geoFilter: {
-            code: [currentSelectedState.code],
+            code: [currentSelectedState?.code],
           },
         }
       ),
 
-    enabled: Boolean(view === 'map'),
+    enabled: Boolean(view === 'map' && currentSelectedState?.code),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
 
   const districtGeographiesData = useQuery({
-    queryKey: [`geographies_data_district_${currentSelectedState.code}`],
+    queryKey: [`geographies_data_district_${currentSelectedState?.code}`],
     queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
@@ -145,28 +154,32 @@ export function AnalyticsMainLayout() {
         {
           geoFilter: {
             type: 'district',
-            code: [currentSelectedState.code],
+            code: [currentSelectedState?.code],
           },
         }
       ),
+    enabled: Boolean(currentSelectedState?.code),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
 
   const revenueGeographiesData = useQuery({
-    queryKey: [`geographies_data_revenue_${currentSelectedState.code}`],
+    queryKey: [`geographies_data_revenue_${currentSelectedState?.code}`],
     queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_GEOGRAPHY_DATA,
         {
           geoFilter: {
-            type: currentSelectedState.child_type,
-            code: [currentSelectedState.code],
+            type: currentSelectedState?.child_type,
+            code: [currentSelectedState?.code],
           },
         }
       ),
+    enabled: Boolean(
+      currentSelectedState?.code && currentSelectedState?.child_type
+    ),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
@@ -188,6 +201,7 @@ export function AnalyticsMainLayout() {
   useEffect(() => {
     if (initialLandingHandledRef.current) return;
     if (!timePeriods.isFetched || timePeriods.isFetching) return;
+    if (statesListData.isFetching || statesListData.isError) return;
 
     // Wait for map/revenue data to finish (default view is map)
     if (!mapData.isFetched || !revenueMapData.isFetched) return;
@@ -197,8 +211,7 @@ export function AnalyticsMainLayout() {
         (tp: { value: string }) => tp.value
       ) || [];
     const selectedPeriod = timePeriodSelected || '';
-    const fallbackPeriod =
-      (process.env.NEXT_PUBLIC_TIME_PERIOD as string) || '';
+    const fallbackPeriod = stateLatestTimePeriod || envDefaultTimePeriod || '';
 
     const mapFeatures = mapData.data?.districtMapData?.features as
       | { properties?: Record<string, any> }[]
@@ -235,47 +248,30 @@ export function AnalyticsMainLayout() {
     revenueMapData.isFetched,
     revenueMapData.data,
     timePeriodSelected,
+    stateLatestTimePeriod,
+    envDefaultTimePeriod,
     setTimePeriodParam,
   ]);
 
+  // Initialize URL time-period from selected state's latest period; fallback to env default.
   useEffect(() => {
-    if (
-      timePeriods.data?.getDataTimePeriods &&
-      timePeriods.data?.getDataTimePeriods.length > 0 &&
-      timePeriods.data?.getDataTimePeriods[0].value
-    ) {
-      setMaxTimePeriod(timePeriods.data?.getDataTimePeriods[0].value);
-    }
-  }, [timePeriods.data]);
+    if (timePeriodParam) return;
+    if (statesListData.isFetching || statesListData.isError) return;
 
-  // Auto-set latest time period to URL if no time-period is present initially
-  useEffect(() => {
-    if (
-      timePeriods.data?.getDataTimePeriods &&
-      timePeriods.data?.getDataTimePeriods.length > 0
-    ) {
-      const latestTimePeriod = timePeriods.data?.getDataTimePeriods[0]?.value;
-      if (
-        !timePeriodParam &&
-        latestTimePeriod &&
-        !timePeriods.isFetching &&
-        timePeriods.isFetched
-      ) {
-        setTimePeriodParam(latestTimePeriod, { shallow: false });
-      }
-    } else {
-      setTimePeriodParam(process.env.NEXT_PUBLIC_TIME_PERIOD as string, {
+    const initialTimePeriod = stateLatestTimePeriod || envDefaultTimePeriod;
+    if (initialTimePeriod) {
+      setTimePeriodParam(initialTimePeriod, {
         shallow: false,
       });
     }
   }, [
-    timePeriods.data,
-    timePeriods.isFetching,
-    timePeriods.isFetched,
+    statesListData.isFetching,
+    statesListData.isError,
+    stateLatestTimePeriod,
+    envDefaultTimePeriod,
     timePeriodParam,
     setTimePeriodParam,
   ]);
-
 
   const indicatorsData = useQuery({
     queryKey: [`indicators_${indicator}`],
@@ -295,7 +291,7 @@ export function AnalyticsMainLayout() {
 
   const tableData = useQuery({
     queryKey: [
-      `table_data_${currentSelectedState.code}_${indicator}_${districtCode}`,
+      `table_data_${currentSelectedState?.code}_${indicator}_${districtCode}`,
     ],
     queryFn: () =>
       GraphQL(
@@ -309,13 +305,13 @@ export function AnalyticsMainLayout() {
               districtCode === '' ||
               districtCode === null ||
               typeof districtCode === 'undefined'
-                ? currentSelectedState.code
+                ? currentSelectedState?.code
                 : districtCode,
             ],
           },
         }
       ),
-    enabled: Boolean(view === 'table'),
+    enabled: Boolean(view === 'table' && currentSelectedState?.code),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
@@ -358,7 +354,7 @@ export function AnalyticsMainLayout() {
           ) => {
             RevCircleDropdownOptions.push({
               label:
-                circle[currentSelectedState.child_type] ||
+                circle[currentSelectedState?.child_type] ||
                 circle['revenue-circle'],
               value: circle.code,
               districtCode: circle.district_code,
@@ -439,13 +435,20 @@ export function AnalyticsMainLayout() {
                   />
                 </div>
 
-                {!timePeriod ? (
+                {!timePeriodSelected && statesListData?.isFetching ? (
+                  <div className="flex h-full flex-col place-content-center items-center">
+                    <Spinner color="highlight" />
+                    <Text>Loading...</Text>
+                  </div>
+                ) : !timePeriodSelected && !timePeriodParam ? (
                   <div className="flex h-[calc(100dvh_-_400px)] flex-col place-content-center items-center">
                     <Text>Please select a time period</Text>
                   </div>
                 ) : (
                   <>
-                    {mapData?.isFetching && revenueMapData?.isFetching && (
+                    {(statesListData?.isFetching ||
+                      !timePeriodSelected ||
+                      (mapData?.isFetching && revenueMapData?.isFetching)) && (
                       <div className="flex h-full flex-col place-content-center items-center">
                         <Spinner color="highlight" />
                         <Text>Loading...</Text>
@@ -486,7 +489,7 @@ export function AnalyticsMainLayout() {
                     timeLimits={timePeriods}
                   />
                 </div>
-                {!timePeriod ? (
+                {!timePeriodSelected ? (
                   <div className="flex h-[calc(100dvh_-_400px)] flex-col place-content-center items-center">
                     <Text>Please select a time period</Text>
                   </div>

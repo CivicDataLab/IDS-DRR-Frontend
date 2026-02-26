@@ -118,7 +118,7 @@ export function IndicatorListWrapper({ statesList, currentState }: any) {
                   })}
                   onChange={(e) => {
                     router.push(
-                      `/${e}/analytics/?indicator=risk-score&time-period=${latestTimePeriod}&view=map`
+                      `/${e}/analytics/?indicator=risk-score&view=map`
                     );
                   }}
                 />
