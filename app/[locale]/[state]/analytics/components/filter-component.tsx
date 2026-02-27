@@ -22,7 +22,7 @@ export function FilterComp({
   // getDistrictOptions,
 }: {
   timePeriod: string;
-  timePeriods: any;
+  timePeriods: string[];
   districtGeographiesData: any;
   revenueGeographiesData: any;
   currentSelectedState: any;
@@ -215,12 +215,18 @@ export const RenderOptions = ({
   const searchParams = useSearchParams();
   const view = searchParams.get('view');
 
+  const normalizedTimePeriods: string[] = Array.isArray(timePeriodData)
+    ? timePeriodData
+    : (timePeriodData?.data?.getDataTimePeriods || []).map(
+        (date: { value: string }) => date.value
+      );
+
   const onRadioButtonChange = (selectedValue: string, value: string) => {
     if (value === 'state') {
       setSelectedState(selectedValue);
-      // Use the latest time period from the query (first item, which is the most recent)
+      // Use the latest state-scoped time period when state changes.
       const latestTimePeriod =
-        timePeriodData?.data?.getDataTimePeriods[0]?.value ||
+        normalizedTimePeriods[0] ||
         `${new Date().getFullYear()}_${new Date().getMonth() + 1}`;
       router.push(
         `/${selectedValue}/analytics/?indicator=risk-score&time-period=${latestTimePeriod}&view=${view}`
@@ -235,20 +241,21 @@ export const RenderOptions = ({
 
   let minDate: string, maxDate: string;
 
-  const datesArray = timePeriodData?.data?.getDataTimePeriods.map(
-    (date: any) => {
-      const [year, month] = date.value.split('_');
-      return new Date(parseInt(year), parseInt(month));
-    }
-  );
+  const datesArray = normalizedTimePeriods.map((date: string) => {
+    const [year, month] = date.split('_');
+    return new Date(parseInt(year), parseInt(month));
+  });
   const timestamps = datesArray.map((date: any) => date.getTime());
-  // Find the minimum and maximum timestamps
-  const minTimestamp = Math.min(...timestamps);
-  const maxTimestamp = Math.max(...timestamps);
-
-  // Convert the timestamps back to dates
-  minDate = formatDate(minTimestamp, true);
-  maxDate = formatDate(maxTimestamp, true);
+  if (timestamps.length > 0) {
+    const minTimestamp = Math.min(...timestamps);
+    const maxTimestamp = Math.max(...timestamps);
+    minDate = formatDate(minTimestamp, true);
+    maxDate = formatDate(maxTimestamp, true);
+  } else {
+    const [year, month] = (timePeriodSelected || '2023_08').split('_');
+    minDate = `${year}-${month}-01`;
+    maxDate = `${year}-${month}-01`;
+  }
 
   switch (type) {
     case 'radio-button':

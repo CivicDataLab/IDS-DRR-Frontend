@@ -21,7 +21,7 @@ export const ChartView = ({
   currentSelectedState: any;
   RevCircleDropdownOptions: Option[];
   DistrictDropDownOption: Option[];
-  timeLimits: any;
+  timeLimits: string[];
 }) => {
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(true);

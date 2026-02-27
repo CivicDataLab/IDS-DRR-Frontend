@@ -23,7 +23,7 @@ export default function FilterDropdownOptions({
   RevCircleDropdownOptions: Option[];
   DistrictDropDownOption: Option[];
   monthMulti?: boolean;
-  timeLimits: any;
+  timeLimits: string[];
 }) {
   // console.log('timeLimits', timeLimits);
   const [districtCode, setDistrictCode] = useQueryState(
@@ -48,11 +48,9 @@ export default function FilterDropdownOptions({
     }));
 
   let minDate, maxDate;
-  // Below is code to set limits to the calendar
-  // console.log('timeLimits', timeLimits.data);
-  if (timeLimits.data) {
-    const datesArray = timeLimits?.data?.getDataTimePeriods.map((date: any) => {
-      const [year, month] = date.value.split('_');
+  if (Array.isArray(timeLimits) && timeLimits.length > 0) {
+    const datesArray = timeLimits.map((period: string) => {
+      const [year, month] = period.split('_');
       return new Date(parseInt(year), parseInt(month));
     });
     const timestamps = datesArray.map((date: any) => date.getTime());
@@ -90,6 +88,8 @@ export default function FilterDropdownOptions({
   const getDefaultDate = (timePeriod?: string | null) => {
     const fallback =
       timePeriod ||
+      currentSelectedState?.latest_time_period ||
+      timeLimits?.[0] ||
       (process.env.NEXT_PUBLIC_TIME_PERIOD as string) ||
       '2023_01';
     const [year, month] = fallback.split('_');

@@ -42,7 +42,15 @@ jest.mock('@/config/consts', () => ({
 
 jest.mock('@tanstack/react-query', () => ({
   useQuery: jest.fn(() => ({
-    data: { getDataTimePeriods: [{ value: '2023_08' }] },
+    data: {
+      getStates: [
+        { slug: 'assam', latest_time_period: '2025_03' },
+        { slug: 'himachal-pradesh', latest_time_period: '2025_06' },
+        { slug: 'odisha', latest_time_period: '2024_11' },
+        { slug: 'bihar', latest_time_period: '2024_12' },
+        { slug: 'uttar-pradesh', latest_time_period: '2025_01' },
+      ],
+    },
   })),
 }));
 
@@ -121,31 +129,31 @@ describe('QuickLinks Component', () => {
     const assamLink = screen.getByRole('link', { name: /Assam/i });
     expect(assamLink).toHaveAttribute(
       'href',
-      '/assam/analytics/?indicator=risk-score&view=map'
+      '/assam/analytics/?indicator=risk-score&view=map&time-period=2025_03'
     );
 
     const hpLink = screen.getByRole('link', { name: /Himachal Pradesh/i });
     expect(hpLink).toHaveAttribute(
       'href',
-      '/himachal-pradesh/analytics/?indicator=risk-score&view=map'
+      '/himachal-pradesh/analytics/?indicator=risk-score&view=map&time-period=2025_06'
     );
 
     const odishaLink = screen.getByRole('link', { name: /Odisha/i });
     expect(odishaLink).toHaveAttribute(
       'href',
-      '/odisha/analytics/?indicator=risk-score&view=map'
+      '/odisha/analytics/?indicator=risk-score&view=map&time-period=2024_11'
     );
 
     const biharLink = screen.getByRole('link', { name: /Bihar/i });
     expect(biharLink).toHaveAttribute(
       'href',
-      'bihar/analytics/?indicator=risk-score&view=map'
+      '/bihar/analytics/?indicator=risk-score&view=map&time-period=2024_12'
     );
 
     const upLink = screen.getByRole('link', { name: /Uttar Pradesh/i });
     expect(upLink).toHaveAttribute(
       'href',
-      'uttar-pradesh/analytics/?indicator=risk-score&view=map'
+      '/uttar-pradesh/analytics/?indicator=risk-score&view=map&time-period=2025_01'
     );
   });
 
