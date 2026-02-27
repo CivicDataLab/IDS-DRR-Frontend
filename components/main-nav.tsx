@@ -23,17 +23,6 @@ export function MainNav({
   const { key, metaKey } = useKeyDetect();
   const searchRef = React.useRef<HTMLInputElement>(null);
 
-  const timePeriods = useQuery({
-    queryKey: [`timePeriods`],
-    queryFn: () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_TIME_PERIODS
-      ),
-  });
-
-  const latestTimePeriod = timePeriods.data?.getDataTimePeriods[0]?.value;
-
   React.useEffect(() => {
     if (key === 'k' && metaKey) {
       searchRef.current?.focus();
@@ -64,7 +53,7 @@ export function MainNav({
                   key={link.title}
                   href={
                     link.title === 'Analytics'
-                      ? `${link.href}&time-period=${latestTimePeriod}`
+                      ? `${link.href}`
                       : link.href || ''
                   }
                   icon={link.icon || ''}
