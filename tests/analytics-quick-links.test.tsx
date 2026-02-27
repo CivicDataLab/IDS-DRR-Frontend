@@ -40,16 +40,18 @@ jest.mock('@/config/consts', () => ({
   AnalyticsURL: '/analytics/?indicator=risk-score&view=map',
 }));
 
+const mockedStates = [
+  { slug: 'assam', latest_time_period: '2025_03' },
+  { slug: 'himachal-pradesh', latest_time_period: '2025_06' },
+  { slug: 'odisha', latest_time_period: '2024_11' },
+  { slug: 'bihar', latest_time_period: '2024_12' },
+  { slug: 'uttar-pradesh', latest_time_period: '2025_01' },
+];
+
 jest.mock('@tanstack/react-query', () => ({
   useQuery: jest.fn(() => ({
     data: {
-      getStates: [
-        { slug: 'assam', latest_time_period: '2025_03' },
-        { slug: 'himachal-pradesh', latest_time_period: '2025_06' },
-        { slug: 'odisha', latest_time_period: '2024_11' },
-        { slug: 'bihar', latest_time_period: '2024_12' },
-        { slug: 'uttar-pradesh', latest_time_period: '2025_01' },
-      ],
+      getStates: mockedStates,
     },
   })),
 }));
@@ -125,36 +127,24 @@ describe('QuickLinks Component', () => {
   it('renders state cards with correct navigation links', () => {
     render(<QuickLinks />);
 
-    // Check for correct navigation links
-    const assamLink = screen.getByRole('link', { name: /Assam/i });
-    expect(assamLink).toHaveAttribute(
-      'href',
-      '/assam/analytics/?indicator=risk-score&view=map&time-period=2025_03'
-    );
+    const stateCards = [
+      { name: /Assam/i, slug: 'assam' },
+      { name: /Himachal Pradesh/i, slug: 'himachal-pradesh' },
+      { name: /Odisha/i, slug: 'odisha' },
+      { name: /Bihar/i, slug: 'bihar' },
+      { name: /Uttar Pradesh/i, slug: 'uttar-pradesh' },
+    ];
 
-    const hpLink = screen.getByRole('link', { name: /Himachal Pradesh/i });
-    expect(hpLink).toHaveAttribute(
-      'href',
-      '/himachal-pradesh/analytics/?indicator=risk-score&view=map&time-period=2025_06'
-    );
+    stateCards.forEach(({ name, slug }) => {
+      const matchedState = mockedStates.find((state) => state.slug === slug);
+      expect(matchedState).toBeDefined();
 
-    const odishaLink = screen.getByRole('link', { name: /Odisha/i });
-    expect(odishaLink).toHaveAttribute(
-      'href',
-      '/odisha/analytics/?indicator=risk-score&view=map&time-period=2024_11'
-    );
-
-    const biharLink = screen.getByRole('link', { name: /Bihar/i });
-    expect(biharLink).toHaveAttribute(
-      'href',
-      '/bihar/analytics/?indicator=risk-score&view=map&time-period=2024_12'
-    );
-
-    const upLink = screen.getByRole('link', { name: /Uttar Pradesh/i });
-    expect(upLink).toHaveAttribute(
-      'href',
-      '/uttar-pradesh/analytics/?indicator=risk-score&view=map&time-period=2025_01'
-    );
+      const link = screen.getByRole('link', { name });
+      expect(link).toHaveAttribute(
+        'href',
+        `/${slug}/analytics/?indicator=risk-score&view=map&time-period=${matchedState?.latest_time_period}`
+      );
+    });
   });
 
   it('renders all state cards as active (clickable)', () => {
