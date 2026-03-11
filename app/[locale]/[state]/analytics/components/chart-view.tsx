@@ -102,6 +102,14 @@ export const ChartView = ({
   });
 
   useEffect(() => {
+    // If no time period is selected, avoid making a chart API call.
+    // The UI already shows a "Please select a time period" message in this state.
+    if (!timePeriod || timePeriod.length === 0) {
+      setLoading(false);
+      setChartData(null);
+      return;
+    }
+
     setLoading(true);
     const body = {
       chart_type:

@@ -64,15 +64,24 @@ export function AnalyticsMainLayout() {
     currentSelectedState?.latest_time_period || null;
   const envDefaultTimePeriod = process.env.NEXT_PUBLIC_TIME_PERIOD || null;
   const stateTimePeriods: string[] = currentSelectedState?.time_periods || [];
-  const resolvedUrlTimePeriod = searchParams.get('time-period')
-    ? getLatestDate(searchParams.get('time-period')?.split(',') || [])
+  const timeLimitsForPicker: string[] = Array.from(
+    new Set([...(stateTimePeriods || []), stateLatestTimePeriod].filter(Boolean))
+  ) as string[];
+  const rawTimePeriodParam = searchParams.get('time-period');
+  const resolvedUrlTimePeriod = rawTimePeriodParam
+    ? getLatestDate(rawTimePeriodParam?.split(',') || [])
     : null;
   const normalizedUrlTimePeriod = resolvedUrlTimePeriod
     ? `${resolvedUrlTimePeriod.split('-')[0]}_${resolvedUrlTimePeriod.split('-')[1]}`
     : null;
+  const hasExplicitTimePeriodParam =
+    timePeriodParam !== null && timePeriodParam !== '';
+
   const timePeriodSelected =
     normalizedUrlTimePeriod ||
-    (!timePeriodParam ? (stateLatestTimePeriod ?? envDefaultTimePeriod) : null);
+    (!hasExplicitTimePeriodParam
+      ? stateLatestTimePeriod ?? envDefaultTimePeriod
+      : null);
 
   const mapData = useQuery({
     queryKey: [
@@ -160,9 +169,10 @@ export function AnalyticsMainLayout() {
     refetchOnReconnect: false,
   });
 
-  // Initialize URL time-period only when it is missing.
+  // Initialize URL time-period only when it is truly missing (no query param),
+  // not when the user has explicitly cleared it (empty string).
   useEffect(() => {
-    if (timePeriodParam) return;
+    if (timePeriodParam !== null) return;
     if (statesListData.isFetching || statesListData.isError) return;
 
     const initialTimePeriod = stateLatestTimePeriod || envDefaultTimePeriod;
@@ -177,6 +187,29 @@ export function AnalyticsMainLayout() {
     stateLatestTimePeriod,
     envDefaultTimePeriod,
     timePeriodParam,
+    setTimePeriodParam,
+  ]);
+
+  // For map view specifically: if the URL has an explicit empty time-period,
+  // normalize it to the latest/default time period so that the data and URL match.
+  useEffect(() => {
+    if (!isMapView) return;
+    if (timePeriodParam !== '') return;
+    if (statesListData.isFetching || statesListData.isError) return;
+
+    const initialTimePeriod = stateLatestTimePeriod || envDefaultTimePeriod;
+    if (initialTimePeriod) {
+      setTimePeriodParam(initialTimePeriod, {
+        shallow: true,
+      });
+    }
+  }, [
+    isMapView,
+    timePeriodParam,
+    statesListData.isFetching,
+    statesListData.isError,
+    stateLatestTimePeriod,
+    envDefaultTimePeriod,
     setTimePeriodParam,
   ]);
 
@@ -198,7 +231,7 @@ export function AnalyticsMainLayout() {
 
   const tableData = useQuery({
     queryKey: [
-      `table_data_${currentSelectedState?.code}_${indicator}_${districtCode}`,
+      `table_data_${currentSelectedState?.code}_${indicator}_${districtCode}_${timePeriodSelected}`,
     ],
     queryFn: () =>
       GraphQL(
@@ -347,16 +380,18 @@ export function AnalyticsMainLayout() {
                     currentSelectedState={currentSelectedState}
                     RevCircleDropdownOptions={RevCircleDropdownOptions}
                     DistrictDropDownOption={DistrictDropDownOption}
-                    timeLimits={stateTimePeriods}
+                    timeLimits={timeLimitsForPicker}
                   />
                 </div>
 
-                {!timePeriodSelected && statesListData?.isFetching ? (
+                {!timePeriodSelected &&
+                !hasExplicitTimePeriodParam &&
+                statesListData?.isFetching ? (
                   <div className="flex h-full flex-col place-content-center items-center">
                     <Spinner color="highlight" />
                     <Text>Loading...</Text>
                   </div>
-                ) : !timePeriodSelected && !timePeriodParam ? (
+                ) : !timePeriodSelected && hasExplicitTimePeriodParam ? (
                   <div className="flex h-[calc(100dvh_-_400px)] flex-col place-content-center items-center">
                     <Text>Please select a time period</Text>
                   </div>
@@ -402,7 +437,7 @@ export function AnalyticsMainLayout() {
                     currentSelectedState={currentSelectedState}
                     RevCircleDropdownOptions={RevCircleDropdownOptions}
                     DistrictDropDownOption={DistrictDropDownOption}
-                    timeLimits={stateTimePeriods}
+                    timeLimits={timeLimitsForPicker}
                   />
                 </div>
                 {!timePeriodSelected ? (
@@ -428,7 +463,7 @@ export function AnalyticsMainLayout() {
                   currentSelectedState={currentSelectedState}
                   RevCircleDropdownOptions={RevCircleDropdownOptions}
                   DistrictDropDownOption={DistrictDropDownOption}
-                  timeLimits={stateTimePeriods}
+                  timeLimits={timeLimitsForPicker}
                 />
               </div>
             </TabPanel>
