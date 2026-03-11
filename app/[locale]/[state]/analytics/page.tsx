@@ -3,7 +3,6 @@ import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 
 import {
   ANALYTICS_INDICATORS,
-  ANALYTICS_TIME_PERIODS,
   PLATFORM_STATES_LIST,
 } from '@/config/graphql/analaytics-queries';
 import { getQueryClient, GraphQL } from '@/lib/api';
@@ -18,15 +17,6 @@ export default async function Home({
   const queryClient = getQueryClient();
 
   try {
-    await queryClient.prefetchQuery({
-      queryKey: [`timePeriods`],
-      queryFn: () =>
-        GraphQL(
-          `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
-          ANALYTICS_TIME_PERIODS
-        ),
-    });
-
     await queryClient.prefetchQuery({
       queryKey: [`indicators_${searchParamsHome?.['indicator']}`],
       queryFn: () =>

@@ -2,7 +2,7 @@ import { parseDate } from '@internationalized/date';
 import { parseAsString, useQueryState } from 'next-usequerystate';
 import { MonthPicker, MultiMonthPicker, Select } from 'opub-ui';
 
-import { formatDate, toTitleCase } from '@/lib/utils';
+import { toTitleCase } from '@/lib/utils';
 import { getLatestDate } from '../utils/utils';
 
 export interface Option {
@@ -23,7 +23,7 @@ export default function FilterDropdownOptions({
   RevCircleDropdownOptions: Option[];
   DistrictDropDownOption: Option[];
   monthMulti?: boolean;
-  timeLimits: any;
+  timeLimits: string[];
 }) {
   // console.log('timeLimits', timeLimits);
   const [districtCode, setDistrictCode] = useQueryState(
@@ -47,23 +47,32 @@ export default function FilterDropdownOptions({
       disabled,
     }));
 
-  let minDate, maxDate;
-  // Below is code to set limits to the calendar
-  // console.log('timeLimits', timeLimits.data);
-  if (timeLimits.data) {
-    const datesArray = timeLimits?.data?.getDataTimePeriods.map((date: any) => {
-      const [year, month] = date.value.split('_');
-      return new Date(parseInt(year), parseInt(month));
-    });
-    const timestamps = datesArray.map((date: any) => date.getTime());
-    // Find the minimum and maximum timestamps
-    const minTimestamp = Math.min(...timestamps);
-    const maxTimestamp = Math.max(...timestamps);
-
-    // Convert the timestamps back to dates
-    minDate = formatDate(minTimestamp, true);
-    maxDate = formatDate(maxTimestamp, true);
+  // Derive min/max directly from `YYYY_MM` strings to avoid timezone issues
+  // (using Date/toISOString can shift to previous day/month).
+  let minPeriod: string | undefined;
+  let maxPeriod: string | undefined;
+  if (Array.isArray(timeLimits) && timeLimits.length > 0) {
+    const normalized = timeLimits
+      .filter(Boolean)
+      .filter((p) => /^\d{4}_\d{2}$/.test(p))
+      .sort(); // lexical sort works for YYYY_MM
+    minPeriod = normalized[0];
+    maxPeriod = normalized[normalized.length - 1];
   }
+
+  const minValue = minPeriod
+    ? (() => {
+        const [y, m] = minPeriod!.split('_');
+        return parseDate(`${y}-${m}-01`);
+      })()
+    : parseDate('2023-01-04');
+
+  const maxValue = maxPeriod
+    ? (() => {
+        const [y, m] = maxPeriod!.split('_');
+        return parseDate(`${y}-${m}-01`);
+      })()
+    : parseDate('2023-01-04');
 
   const [selectedTimePeriod, setSelectedTimePeriod] = useQueryState<string[]>(
     'time-period',
@@ -87,16 +96,31 @@ export default function FilterDropdownOptions({
     ...(getRevenueCircleOptionsForDistrict(districtCode) || []),
   ]);
 
-  const getDefaultDate = (timePeriod?: string | null) => {
-    const fallback =
+  const getDefaultDate = (timePeriod?: string | string[] | null) => {
+    let fallback: string | string[] | null | undefined =
       timePeriod ||
+      currentSelectedState?.latest_time_period ||
+      timeLimits?.[0] ||
       (process.env.NEXT_PUBLIC_TIME_PERIOD as string) ||
       '2023_01';
+
+    // Handle cases where fallback might be an array (e.g. from parsed query state)
+    if (Array.isArray(fallback)) {
+      fallback = fallback[0] || '2023_01';
+    }
+
+    if (typeof fallback !== 'string') {
+      fallback = '2023_01';
+    }
+
     const [year, month] = fallback.split('_');
     return parseDate(`${year}-${month?.padStart(2, '0')}-01`);
   };
 
-  // Compute a controlled value for MonthPicker so it stays in sync with URL updates
+  // Compute a controlled value for MonthPicker so it stays in sync with URL updates.
+  // When the user has explicitly cleared the time-period (empty string in URL),
+  // do not fall back to the latest date – leave the picker empty so the label acts as a placeholder.
+  const hasExplicitEmptyTimePeriod = timePeriod === '';
   const monthPickerValue =
     selectedTimePeriod &&
     Array.isArray(selectedTimePeriod) &&
@@ -104,7 +128,9 @@ export default function FilterDropdownOptions({
       ? parseDate(
           getLatestDate(selectedTimePeriod.filter(Boolean)) || '2023-08-01'
         )
-      : getDefaultDate(timePeriod);
+      : hasExplicitEmptyTimePeriod
+        ? undefined
+        : getDefaultDate(timePeriod);
 
   return (
     <div>
@@ -149,16 +175,23 @@ export default function FilterDropdownOptions({
               }
               // defaultValues={getDefaultDate(timePeriod || '')}
               label="Select Months"
-              minValue={parseDate(minDate || '2023-01-04')}
-              maxValue={parseDate(maxDate || '2023-01-04')}
+              minValue={minValue}
+              maxValue={maxValue}
               onChange={(dates: any) => {
+                if (!dates || dates.length === 0) {
+                  // Allow clearing all selected months without breaking the view.
+                  setSelectedTimePeriod([], { shallow: false });
+                  return;
+                }
+
                 setSelectedTimePeriod(
                   dates.map(
                     (date: any) =>
                       `${date.year}_${
                         date.month < 10 ? `0${date.month}` : `${date.month}`
                       }`
-                  )
+                  ),
+                  { shallow: false }
                 );
               }}
             />
@@ -167,8 +200,8 @@ export default function FilterDropdownOptions({
               name="time-period-select"
               value={monthPickerValue}
               label="Select Month"
-              minValue={parseDate(minDate || '2023-01-04')}
-              maxValue={parseDate(maxDate || '2023-01-04')}
+              minValue={minValue}
+              maxValue={maxValue}
               onChange={(date: any) => {
                 setSelectedTimePeriod(
                   [

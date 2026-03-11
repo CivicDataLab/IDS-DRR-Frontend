@@ -42,7 +42,7 @@ export function AnalyticsMobileLayout({
   revenueMapData: any;
   districtGeographiesData: any;
   revenueGeographiesData: any;
-  timePeriods: any;
+  timePeriods: string[];
   indicatorsData: any;
   tableData: any;
   currentSelectedState: any;
