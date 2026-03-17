@@ -1,20 +1,16 @@
+import { useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  Text,
-} from 'opub-ui';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, Text } from 'opub-ui';
+
+
 
 import { AnalyticsQuickLinksText, AnalyticsURL } from '@/config/consts';
 import { PLATFORM_STATES_LIST } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import styles from './analytics-quick-links.module.css';
+
 
 export const QuickLinks = () => {
   const statesList = useQuery({
@@ -28,7 +24,7 @@ export const QuickLinks = () => {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
-
+  // TODO: Update the status of the states based on the availability of the data
   const Analytics = [
     {
       name: 'Assam',
@@ -41,7 +37,7 @@ export const QuickLinks = () => {
     {
       name: 'Himachal Pradesh',
       slug: 'himachal-pradesh',
-      status: 'active',
+      status: 'inactive',
       icon: '/logo/states/Hp.svg',
       link: `/himachal-pradesh${AnalyticsURL}`,
       alt: 'HP state boundary image',
@@ -49,7 +45,7 @@ export const QuickLinks = () => {
     {
       name: 'Odisha',
       slug: 'odisha',
-      status: 'active',
+      status: 'inactive',
       icon: '/logo/states/Odisha.svg',
       link: `/odisha${AnalyticsURL}`,
       alt: 'Odisha state boundary image',
@@ -57,7 +53,7 @@ export const QuickLinks = () => {
     {
       name: 'Bihar',
       slug: 'bihar',
-      status: 'active',
+      status: 'inactive',
       icon: '/logo/states/Bihar.svg',
       link: `/bihar${AnalyticsURL}`,
       alt: 'Bihar state boundary image',
@@ -65,7 +61,7 @@ export const QuickLinks = () => {
     {
       name: 'Uttar Pradesh',
       slug: 'uttar-pradesh',
-      status: 'active',
+      status: 'inactive',
       icon: '/logo/states/Up.svg',
       link: `/uttar-pradesh${AnalyticsURL}`,
       alt: 'UP state boundary image',
