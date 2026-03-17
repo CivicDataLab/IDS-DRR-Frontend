@@ -1,7 +1,4 @@
 import React from 'react';
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { InfoSquare } from '@/public/InfoCircle';
 import {
   Accordion,
   AccordionContent,
@@ -13,7 +10,6 @@ import {
 } from 'opub-ui';
 
 import { RiskColorMap } from '@/config/consts';
-import { deSlugify } from '@/lib/utils';
 import {
   formatNumberToIndianSystem,
   getFactorNameBySlug,
@@ -23,16 +19,14 @@ interface RevenueProps {
   factorData: any;
   revenueCircleData: any;
   indicator: string;
-  indicatorDescriptions: any;
-  getDescription: any;
+  // indicatorDescriptions: any;
+  // getDescription: any;
 }
 
 export const RevenueCircle = ({
   factorData,
   revenueCircleData,
   indicator,
-  indicatorDescriptions,
-  getDescription,
 }: RevenueProps) => {
   const clonedRevenueCircleData = structuredClone(revenueCircleData[0]);
   delete clonedRevenueCircleData['revenue circle'];
@@ -94,8 +88,6 @@ export const RevenueCircle = ({
                         : item?.[scoreType]['title']
                     }
                     value={item?.[scoreType]['value']}
-                    scoreType={scoreType}
-                    indicatorDescription={getDescription(scoreType)}
                   />
                 )
             )}
@@ -110,25 +102,23 @@ interface ScoreProps {
   label: string;
   value: any;
   indicator: string;
-  scoreType: string;
-  indicatorDescription?: string;
 }
 
 export const ScoreInfo = ({
   label,
   value,
   indicator,
-  scoreType,
-  indicatorDescription,
+  // scoreType,
+  // indicatorDescription,
 }: ScoreProps) => {
-  const searchParams = useSearchParams();
-  if (!process.env.NEXT_PUBLIC_TIME_PERIOD) {
-    throw new Error('TIME_PERIOD not specified');
-  }
-  const time_period =
-    searchParams.get('time-period') || process.env.NEXT_PUBLIC_TIME_PERIOD;
-  const boundary = searchParams.get('boundary') || 'district';
-  const region = searchParams.get('region') || '';
+  // const searchParams = useSearchParams();
+  // if (!process.env.NEXT_PUBLIC_TIME_PERIOD) {
+  //   throw new Error('TIME_PERIOD not specified');
+  // }
+  // const time_period =
+  //   searchParams.get('time-period') || process.env.NEXT_PUBLIC_TIME_PERIOD;
+  // const boundary = searchParams.get('boundary') || 'district';
+  // const region = searchParams.get('region') || '';
 
   return (
     <div className="flex-1">

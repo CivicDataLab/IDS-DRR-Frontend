@@ -46,7 +46,6 @@ export const MapComponent = ({
   const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
 
   const params = new URLSearchParams(window.location.search);
-  console.log('params', params.get('district-code'));
   const districtCode = params.get('district-code');
 
   const { width } = useWindowSize();
@@ -287,7 +286,7 @@ export const MapComponent = ({
         className={`relative w-full ${isMobile ? 'h-full' : 'h-[98%]'} ${isMobile ? 'pt-[68px]' : ''}`}
       > */}
       <div
-        className={`relative w-full ${isMobile ? 'h-full pt-[8dvh] sm:pt-[7dvh] md:pt-[6dvh]' : 'h-[95vh]'} sm:h-[85vh] md:h-[86vh]`}
+        className={`relative w-full ${isMobile ? 'h-full pt-[8dvh] sm:pt-[7dvh] md:pt-[6dvh]' : 'h-[95vh]'} sm:h-[85vh] md:h-[72vh]`}
       >
         {' '}
         <MapChart
@@ -346,6 +345,7 @@ export const MapComponent = ({
           setMap={setMap}
           resetZoom
           scroolWheelZoom={false}
+          // height="75vh"
         />{' '}
       </div>{' '}
     </>

@@ -1,8 +1,6 @@
 import {
   About,
   CollaboratingPartner,
-  DataStories,
-  Engagements,
   Introduction,
   SupportedBy,
   TheTeam,

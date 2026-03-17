@@ -1,5 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import {
   Carousel,
   CarouselContent,
@@ -10,12 +12,27 @@ import {
 } from 'opub-ui';
 
 import { AnalyticsQuickLinksText, AnalyticsURL } from '@/config/consts';
+import { PLATFORM_STATES_LIST } from '@/config/graphql/analaytics-queries';
+import { GraphQL } from '@/lib/api';
 import styles from './analytics-quick-links.module.css';
 
 export const QuickLinks = () => {
+  const statesList = useQuery({
+    queryKey: [`states_list`],
+    queryFn: () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        PLATFORM_STATES_LIST
+      ),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
   const Analytics = [
     {
       name: 'Assam',
+      slug: 'assam',
       status: 'active',
       icon: '/logo/states/Assam.svg',
       link: `/assam${AnalyticsURL}`,
@@ -23,6 +40,7 @@ export const QuickLinks = () => {
     },
     {
       name: 'Himachal Pradesh',
+      slug: 'himachal-pradesh',
       status: 'active',
       icon: '/logo/states/Hp.svg',
       link: `/himachal-pradesh${AnalyticsURL}`,
@@ -30,6 +48,7 @@ export const QuickLinks = () => {
     },
     {
       name: 'Odisha',
+      slug: 'odisha',
       status: 'active',
       icon: '/logo/states/Odisha.svg',
       link: `/odisha${AnalyticsURL}`,
@@ -37,19 +56,40 @@ export const QuickLinks = () => {
     },
     {
       name: 'Bihar',
+      slug: 'bihar',
       status: 'active',
       icon: '/logo/states/Bihar.svg',
-      link: `bihar${AnalyticsURL}`,
+      link: `/bihar${AnalyticsURL}`,
       alt: 'Bihar state boundary image',
     },
     {
       name: 'Uttar Pradesh',
+      slug: 'uttar-pradesh',
       status: 'active',
       icon: '/logo/states/Up.svg',
-      link: `uttar-pradesh${AnalyticsURL}`,
+      link: `/uttar-pradesh${AnalyticsURL}`,
       alt: 'UP state boundary image',
     },
   ];
+
+  const analyticsWithResolvedLinks = useMemo(() => {
+    return Analytics.map((item) => {
+      const stateFromApi = statesList.data?.getStates?.find(
+        (state: any) => state.slug === item.slug
+      );
+      const resolvedTimePeriod =
+        stateFromApi?.latest_time_period ||
+        stateFromApi?.time_periods?.[0] ||
+        process.env.NEXT_PUBLIC_TIME_PERIOD;
+
+      return {
+        ...item,
+        link: resolvedTimePeriod
+          ? `${item.link}&time-period=${resolvedTimePeriod}`
+          : item.link,
+      };
+    });
+  }, [Analytics, statesList.data]);
   return (
     <section
       className=" flex h-full w-full flex-col gap-9 px-5 py-6 lg:px-6 lg:py-20"
@@ -71,7 +111,8 @@ export const QuickLinks = () => {
           </div>
           <CarouselContent className="container flex w-full gap-0 px-4 md:gap-6 lg:gap-2">
             {/* Adjust padding */}
-            {Analytics.map((item, index) => (
+            {analyticsWithResolvedLinks.map((item, index) => {
+              return (
               <CarouselItem
                 key={index}
                 className="lg flex items-center justify-center overflow-hidden px-1 md:basis-1/2 lg:basis-1/3 xl:basis-1/4 xl:px-7 2xl:basis-1/5"
@@ -123,7 +164,8 @@ export const QuickLinks = () => {
                   </div>
                 )}
               </CarouselItem>
-            ))}
+              );
+            })}
           </CarouselContent>
           <div className="ml-2 rounded-1 bg-surfaceDefault">
             <CarouselNext />

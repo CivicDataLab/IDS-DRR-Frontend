@@ -1,5 +1,4 @@
 import React from 'react';
-import Link from 'next/link';
 import {
   Ellipse,
   Exposure,
@@ -8,7 +7,6 @@ import {
   RiskScore,
   Vulnerability,
 } from '@/public/FactorIcons';
-import { useQuery } from '@tanstack/react-query';
 import { Divider, Icon, ProgressBar, Text } from 'opub-ui';
 
 import { learnMoreLink, RiskColorMap } from '@/config/consts';

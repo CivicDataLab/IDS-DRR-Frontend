@@ -1,19 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useLockBody } from '@/hooks/use-lock-body';
 import { parseAsString, useQueryState } from 'next-usequerystate';
-import { Button, Icon, Menu, Select, Text } from 'opub-ui';
+import { Button, Icon, Menu, Text } from 'opub-ui';
 
-import {
-  cn,
-  copyCurrentURL,
-  downloadStateReport,
-  formatDate,
-} from '@/lib/utils';
+import { cn, copyCurrentURL, downloadStateReport } from '@/lib/utils';
 import Icons from '@/components/icons';
-import { MediaRendering } from '@/components/media-rendering';
 import { getLatestDate } from '../utils/utils';
 import { OutputWindowComponent } from './analytics-layout';
 import { ChartView } from './chart-view';
@@ -48,7 +42,7 @@ export function AnalyticsMobileLayout({
   revenueMapData: any;
   districtGeographiesData: any;
   revenueGeographiesData: any;
-  timePeriods: any;
+  timePeriods: string[];
   indicatorsData: any;
   tableData: any;
   currentSelectedState: any;
@@ -57,8 +51,11 @@ export function AnalyticsMobileLayout({
   //Remove default page scroll to make only the content scrollable
   useLockBody();
 
-  const [districtCode, setDistrictCode] = useQueryState('district-code');
-  const [revenueCode, setRevenueCode] = useQueryState('revenue-code');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const unusedStatesList = statesList;
+
+  const [, setDistrictCode] = useQueryState('district-code');
+  const [, setRevenueCode] = useQueryState('revenue-code');
   const [timePeriodSelected, setTimePeriod] = useQueryState(
     'time-period',
     parseAsString.withDefault(timePeriod)
@@ -91,8 +88,6 @@ export function AnalyticsMobileLayout({
     },
   ];
 
-  const stateCode = currentSelectedState.code;
-
   const [view, setView] = useQueryState(
     'view',
     parseAsString.withDefault('map')
@@ -100,24 +95,6 @@ export function AnalyticsMobileLayout({
   const searchParams = useSearchParams();
   const region =
     searchParams.get('revenue-code') || searchParams.get('district-code');
-
-  let minDate, maxDate;
-  if (timePeriods.data) {
-    const datesArray = timePeriods?.data?.getDataTimePeriods.map(
-      (date: any) => {
-        const [year, month] = date.value.split('_');
-        return new Date(parseInt(year), parseInt(month));
-      }
-    );
-    const timestamps = datesArray.map((date: any) => date.getTime());
-    // Find the minimum and maximum timestamps
-    const minTimestamp = Math.min(...timestamps);
-    const maxTimestamp = Math.max(...timestamps);
-
-    // Convert the timestamps back to dates
-    minDate = formatDate(minTimestamp, true);
-    maxDate = formatDate(maxTimestamp, true);
-  }
 
   // Initialize dropdown options
   let RevCircleDropdownOptions: Option[] = [{ label: '', value: '' }];
@@ -177,72 +154,13 @@ export function AnalyticsMobileLayout({
     if (timePeriod) {
       setTimePeriod(timePeriod);
     }
-  }, []);
-
-  // Filter revenue circles based on selected district
-  const getRevenueCircleOptions = () => {
-    const filteredRevenueCircles = RevCircleDropdownOptions.filter(
-      (option) => option.districtCode === districtCode
-    );
-
-    filteredRevenueCircles.unshift({ label: '', value: '' });
-
-    return filteredRevenueCircles;
-  };
-
-  // Handle district change
-  const handleDistrictChange = (districtCode: string) => {
-    setDistrictCode(districtCode, { shallow: false });
-  };
+  }, [setTimePeriod]);
 
   const [activeButton, setActiveButton] = useState(view);
   // const [activeButton, setActiveButton] = useState(''); // State for managing active buttons
-  const [isShareOptionsVisible, setShareOptionsVisible] = useState(false); // State for share options visibility
-  const currentURL = window.location.href; // Get the current URL
-
-  const toggleShareOptions = () => {
-    setShareOptionsVisible((prev) => !prev); // Toggle visibility of share options
-  };
-  const [filteredTableData, setFilteredTableData] = useState(
-    tableData.data?.tableData
-  );
-
-  function SelectOptions() {
-    return (
-      <React.Fragment>
-        <Select
-          label="Select District"
-          value={districtCode || ''}
-          name="district-select"
-          className=" flex-grow"
-          onChange={(e) => {
-            handleDistrictChange(e);
-          }}
-          options={DistrictDropDownOption}
-        />
-        <Select
-          label="Select Revenue Circle"
-          value={revenueCode || ''}
-          placeholder={
-            !districtCode
-              ? 'Select a district to enable'
-              : 'Select a revenue circle'
-          }
-          name="revenue-circle-select"
-          className=" flex-grow"
-          disabled={!districtCode}
-          onChange={(e) => {
-            setRevenueCode(e, { shallow: false });
-          }}
-          options={getRevenueCircleOptions()}
-        />
-      </React.Fragment>
-    );
-  }
+  const [filteredTableData] = useState(tableData.data?.tableData);
 
   const RenderView = ({ selectedView }: any) => {
-    const isRegionSelected = Boolean(districtCode || revenueCode);
-
     switch (selectedView) {
       case 'map':
         return (
@@ -307,7 +225,6 @@ export function AnalyticsMobileLayout({
             districtGeographiesData={districtGeographiesData}
             revenueGeographiesData={revenueGeographiesData}
             currentSelectedState={currentSelectedState}
-            statesList={statesList}
             // getDistrictOptions={getDistrictOptions}
           />
         </div>

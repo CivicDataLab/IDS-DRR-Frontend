@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useWindowSize } from '@/hooks/use-window-size';
 import {
   Exposure,
   FloodHazard,
@@ -11,12 +10,13 @@ import {
   Vulnerability,
 } from '@/public/FactorIcons';
 import { InfoSquare } from '@/public/InfoCircle';
-import { useQuery } from '@tanstack/react-query';
 import { useQueryState } from 'next-usequerystate';
-import { Button, Icon, Text, Tooltip, useScreenshot } from 'opub-ui';
+import { Button, Icon, Text, Tooltip } from 'opub-ui';
 
 import { Factors, RiskText } from '@/config/consts';
-import { ANALYTICS_TIME_TRENDS } from '@/config/graphql/analaytics-queries';
+import {
+  ANALYTICS_TIME_PERIODS,
+} from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { cn, formatDateString } from '@/lib/utils';
 import Icons from '@/components/icons';
@@ -28,6 +28,7 @@ import {
 } from '../utils/utils';
 import { ScoreInfo } from './revenue-circle-accordion';
 import styles from './styles.module.scss';
+import { useQuery } from '@tanstack/react-query';
 
 export function OutputWindow({
   data,
@@ -37,16 +38,29 @@ export function OutputWindow({
   currentState,
 }: any) {
   const searchParams = useSearchParams();
-  if (!process.env.NEXT_PUBLIC_TIME_PERIOD) {
-    throw new Error('TIME_PERIOD is not defined');
-  }
-  const DEFAULT_TIME_PERIOD: string = process.env.NEXT_PUBLIC_TIME_PERIOD;
   let processedTime = getLatestDate(
     searchParams.get('time-period')?.split(',') || []
   )?.split('-');
+
+  const timePeriods = useQuery({
+    queryKey: [`timePeriods`],
+    queryFn: () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_TIME_PERIODS
+      ),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+  const latestTimePeriod =
+    timePeriods.data?.getDataTimePeriods[0]?.value ||
+    process.env.NEXT_PUBLIC_TIME_PERIOD;
+
   const timePeriod = processedTime
     ? `${processedTime[0]}_${processedTime[1]}`
-    : DEFAULT_TIME_PERIOD;
+    : (latestTimePeriod as string);
 
   const formattedTimePeriod = formatDateString(timePeriod);
   const region = searchParams.get('district-code') || '';
@@ -56,88 +70,18 @@ export function OutputWindow({
 
   const [revenueCode, setDistrictCode] = useQueryState('district-code');
   const [districtCode, setRevenueCode] = useQueryState('revenue-code');
-  const [indicatorCode, setIndicatorCode] = useQueryState('indicator');
-
-  const DEFAULT_PERIOD = '3M';
-
-  const { width, height } = useWindowSize();
-
-  const items = [
-    {
-      value: '3M',
-      label: '3 months',
-    },
-    {
-      value: '1Y',
-      label: '1 year',
-    },
-    {
-      value: 'ALL',
-      label: 'All Data',
-    },
-  ];
-
-  const [period, setPeriod] = React.useState(items[0].value || DEFAULT_PERIOD);
-
-  const chartData = useQuery({
-    queryKey: [
-      `chartData_${boundary}_${indicator}_${timePeriod}_${region}_${period}`,
-    ],
-    queryFn: () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_TIME_TRENDS,
-        {
-          indcFilter: { slug: indicator },
-          dataFilter: { dataPeriod: timePeriod, period: period },
-          geoFilter: { code: [region] },
-        }
-      ),
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
 
   const districtData = data?.filter((item: any) =>
     Object.hasOwnProperty.call(item, 'district')
   );
 
   // To filter out revenue circles from the district data boundary
-  const revenueCircleData = data?.filter((item: any) =>
-    Object.hasOwnProperty.call(item, 'revenue circle')
-  );
-
   const DataBasedOnBoundary = !RevenueRegion ? districtData : data;
 
   const RegionName = !RevenueRegion
     ? districtData[0]?.district
     : data[0]?.[data[0].type.replace(/\s+/g, '-')];
 
-  const title = 'IDS DRR';
-  const [svgURL, setSvgURL] = React.useState<string>('');
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
-
-  const { createSvg, svgToPngURL, downloadFile, domToUrl } = useScreenshot();
-
-  async function generateImage() {
-    setIsLoading(true);
-
-    const ele = window.document.querySelector('.opub-Tooltip ');
-
-    const dataImgURL = await domToUrl(ele as HTMLElement, {
-      width: width,
-      height: height,
-      backgroundColor: 'white',
-    });
-
-    const svg = await createSvg(<Template data={dataImgURL} title={title} />, {
-      width: width,
-    });
-    const dataURL = await svgToPngURL(svg);
-
-    setSvgURL(dataURL);
-    setIsLoading(false);
-  }
   const [tooltipOpen, setTooltipOpen] = React.useState(false);
 
   function getDescription(indicatorSlug: string) {
@@ -169,6 +113,7 @@ export function OutputWindow({
     setIsExpanded(!isExpanded); // Toggle expanded state
   };
 
+  console.log('DataBasedOnBoundary', DataBasedOnBoundary);
   return (
     <>
       <MediaRendering minWidth="1024" maxWidth={null}>
@@ -181,9 +126,9 @@ export function OutputWindow({
             'overflow-y-auto border-r-1 border-solid border-borderSubdued',
             styles.Overlay,
             region !== null &&
-              region.length > 0 &&
-              view === 'map' &&
-              styles.OverlayActive
+            region.length > 0 &&
+            view === 'map' &&
+            styles.OverlayActive
           )}
         >
           <div className="flex flex-col gap-2">
@@ -197,9 +142,11 @@ export function OutputWindow({
             >
               <Icon source={Icons.back} />
             </Button>
-            {RevenueRegion && (
+
+            {RevenueRegion && DataBasedOnBoundary && DataBasedOnBoundary.length > 0 && DataBasedOnBoundary[0] && (
               <Text className="uppercase" variant="bodyLg">
-                {DataBasedOnBoundary[0]['district']} District
+                {DataBasedOnBoundary[0]['district']}{' '}
+                District
               </Text>
             )}
 
@@ -256,7 +203,7 @@ export function OutputWindow({
                     >
                       {Factors.includes(indicator) &&
                         RiskText[parseInt(data[indicator]['value'])][
-                          'indicatorText'
+                        'indicatorText'
                         ]}
                     </Text>
                     <Tooltip
@@ -312,8 +259,8 @@ export function OutputWindow({
                 'overflow-y-auto border-b-1 border-l-1 border-r-1 border-solid border-borderSubdued',
                 styles.mobileOverlay,
                 region !== null &&
-                  region.length > 0 &&
-                  styles.mobileOverlayActive,
+                region.length > 0 &&
+                styles.mobileOverlayActive,
                 region == null ? 'hidden' : '',
                 // region == null && 'hidden', // Use the 'hidden' class to hide the aside when it's not visible
                 isExpanded && styles.expandedOverlay
@@ -407,7 +354,7 @@ export function OutputWindow({
                           >
                             {Factors.includes(indicator) &&
                               RiskText[parseInt(data[indicator]['value'])][
-                                'indicatorText'
+                              'indicatorText'
                               ]}
                           </Text>
                           <Tooltip
@@ -441,7 +388,6 @@ export function OutputWindow({
                             boundary={boundary}
                             IconMap={IconMap}
                             indicator={indicator}
-                            indicatorDescription={indicatorDescriptions}
                             getDescription={getDescription}
                           />
                         </div>
@@ -521,8 +467,6 @@ export function OtherFactorScores({
             : data?.[scoreType]['title']
         }
         value={data?.[scoreType]['value']}
-        scoreType={scoreType}
-        indicatorDescription={getDescription(scoreType)}
       />{' '}
       <Tooltip
         content={getDescription(scoreType) || 'No description available'}
@@ -535,43 +479,3 @@ export function OtherFactorScores({
   ));
 }
 
-const Template = ({
-  data,
-  title,
-  props,
-}: {
-  data: string | null;
-  title: string;
-  props?: {
-    height: number;
-    width: number;
-  };
-}) => {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: 'white',
-        gap: '8px',
-        alignItems: 'center',
-      }}
-    >
-      <p
-        style={{
-          fontSize: '24px',
-          fontWeight: 'bold',
-          textAlign: 'center',
-          padding: '20px',
-        }}
-      >
-        {title}
-      </p>
-      {data ? (
-        <img src={data} {...props} className="w-full" alt="SVG" />
-      ) : (
-        'Loading...'
-      )}
-    </div>
-  );
-};

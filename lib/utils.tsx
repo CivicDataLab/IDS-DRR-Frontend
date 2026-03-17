@@ -1,5 +1,3 @@
-import React from 'react';
-import { AlertDialog, Button } from 'opub-ui';
 import { ClassNameValue, twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassNameValue[]) {
@@ -30,15 +28,40 @@ export function formatDate(
 }
 
 // util function to format data in the following format "2023_08"
-export function formatDateString(dateString: string, isHyphenated = false) {
+export function formatDateString(
+  dateString: string | null | undefined,
+  isHyphenated = false
+) {
+  if (!dateString) {
+    return '';
+  }
+
   if (isHyphenated) {
     return dateString.replace('_', '-');
   }
+
   // Split the string into year and month parts
   const [year, month] = dateString.split('_');
 
+  const yearNum = parseInt(year, 10);
+  const monthNum = parseInt(month, 10);
+
+  // Guard against invalid values that would create an invalid Date
+  if (
+    Number.isNaN(yearNum) ||
+    Number.isNaN(monthNum) ||
+    monthNum < 1 ||
+    monthNum > 12
+  ) {
+    return '';
+  }
+
   // Create a Date object with the specified year and month (subtract 1 from the month, as months in JavaScript are zero-based)
-  const dateObject = new Date(parseInt(year), parseInt(month) - 1);
+  const dateObject = new Date(yearNum, monthNum - 1);
+
+  if (Number.isNaN(dateObject.getTime())) {
+    return '';
+  }
 
   // Format the date as "Month Year"
   const formattedDate = new Intl.DateTimeFormat('en-US', {

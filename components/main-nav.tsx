@@ -4,8 +4,11 @@ import React from 'react';
 import Image from 'next/image';
 import { useKeyDetect } from '@/hooks/use-key-detect';
 import { MainConfig } from '@/types';
+import { useQuery } from '@tanstack/react-query';
 import { Icon, Text } from 'opub-ui';
 
+import { ANALYTICS_TIME_PERIODS } from '@/config/graphql/analaytics-queries';
+import { GraphQL } from '@/lib/api';
 import { Icons } from '@/components/icons';
 import { TranslateDropdown } from './langSelect/lang-select';
 import NavLink from './nav-link';
@@ -48,7 +51,11 @@ export function MainNav({
               {data.mainNav.map((link) => (
                 <ExploreLink
                   key={link.title}
-                  href={link.href || ''}
+                  href={
+                    link.title === 'Analytics'
+                      ? `${link.href}`
+                      : link.href || ''
+                  }
                   icon={link.icon || ''}
                   text={link.title || ''}
                 />

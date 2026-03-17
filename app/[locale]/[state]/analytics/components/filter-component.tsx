@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { parseDate } from '@internationalized/date';
 import { parseAsString, useQueryState } from 'next-usequerystate';
 import { Button, Icon, RadioGroup, RadioItem, YearCalendar } from 'opub-ui';
@@ -17,26 +17,17 @@ export function FilterComp({
   timePeriod,
   timePeriods,
   currentSelectedState,
-  statesList,
   districtGeographiesData,
   revenueGeographiesData,
   // getDistrictOptions,
 }: {
   timePeriod: string;
-  timePeriods: any;
+  timePeriods: string[];
   districtGeographiesData: any;
   revenueGeographiesData: any;
   currentSelectedState: any;
-  statesList: Array<any>;
   // getDistrictOptions: any;
 }) {
-  interface OptionType {
-    label: string;
-    value: string;
-    type: 'group' | 'item';
-    options?: OptionType[]; // Only 'group' type will have nested options
-  }
-
   interface Option {
     disabled?: boolean;
     value: string;
@@ -72,7 +63,6 @@ export function FilterComp({
 
   //filter variables
   const [filterOption, setFilterOption] = useState('state');
-  const routerParams = useParams();
 
   useEffect(() => {
     setRegionSelected(regionSelected || '');
@@ -187,16 +177,6 @@ export function FilterComp({
           <RenderOptions
             filterOptions={FilterOptions || []}
             selectedOption={filterOption}
-            regionOptions={
-              FilterOptions.find((option) => option.value === 'district')
-                ?.options || []
-            }
-            revenueOptions={
-              FilterOptions.find((option) => option.value === 'revenue-circle')
-                ?.options || []
-            }
-            // regionOptions={getDistrictOptions()}
-            // revenueOptions={getRevenueOptions()}
             regionSelected={regionSelected}
             setRegionSelected={handleDistrictChange}
             revenueSelected={revenueSelected}
@@ -214,8 +194,6 @@ export function FilterComp({
 export const RenderOptions = ({
   filterOptions,
   selectedOption,
-  regionOptions,
-  revenueOptions, // New revenue options
   regionSelected,
   setRegionSelected,
   revenueSelected,
@@ -223,7 +201,6 @@ export const RenderOptions = ({
   timePeriodData,
   timePeriodSelected,
   setTimePeriodSelected,
-  handleDistrictChange,
 }: any) => {
   const [selectedState, setSelectedState] = useState('');
   const router = useRouter();
@@ -238,11 +215,21 @@ export const RenderOptions = ({
   const searchParams = useSearchParams();
   const view = searchParams.get('view');
 
+  const normalizedTimePeriods: string[] = Array.isArray(timePeriodData)
+    ? timePeriodData
+    : (timePeriodData?.data?.getDataTimePeriods || []).map(
+        (date: { value: string }) => date.value
+      );
+
   const onRadioButtonChange = (selectedValue: string, value: string) => {
     if (value === 'state') {
       setSelectedState(selectedValue);
+      // Use the latest state-scoped time period when state changes.
+      const latestTimePeriod =
+        normalizedTimePeriods[0] ||
+        `${new Date().getFullYear()}_${new Date().getMonth() + 1}`;
       router.push(
-        `/${selectedValue}/analytics/?indicator=risk-score&time-period=${process.env.TIME_PERIOD || process.env.NEXT_PUBLIC_TIME_PERIOD}&view=${view}`
+        `/${selectedValue}/analytics/?indicator=risk-score&time-period=${latestTimePeriod}&view=${view}`
       );
       // console.log('---Selected State ---', selectedState);
     } else if (value === 'district') {
@@ -254,20 +241,21 @@ export const RenderOptions = ({
 
   let minDate: string, maxDate: string;
 
-  const datesArray = timePeriodData?.data?.getDataTimePeriods.map(
-    (date: any) => {
-      const [year, month] = date.value.split('_');
-      return new Date(parseInt(year), parseInt(month));
-    }
-  );
+  const datesArray = normalizedTimePeriods.map((date: string) => {
+    const [year, month] = date.split('_');
+    return new Date(parseInt(year), parseInt(month));
+  });
   const timestamps = datesArray.map((date: any) => date.getTime());
-  // Find the minimum and maximum timestamps
-  const minTimestamp = Math.min(...timestamps);
-  const maxTimestamp = Math.max(...timestamps);
-
-  // Convert the timestamps back to dates
-  minDate = formatDate(minTimestamp, true);
-  maxDate = formatDate(maxTimestamp, true);
+  if (timestamps.length > 0) {
+    const minTimestamp = Math.min(...timestamps);
+    const maxTimestamp = Math.max(...timestamps);
+    minDate = formatDate(minTimestamp, true);
+    maxDate = formatDate(maxTimestamp, true);
+  } else {
+    const [year, month] = (timePeriodSelected || '2023_08').split('_');
+    minDate = `${year}-${month}-01`;
+    maxDate = `${year}-${month}-01`;
+  }
 
   switch (type) {
     case 'radio-button':
