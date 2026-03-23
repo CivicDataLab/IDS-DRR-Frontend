@@ -7,25 +7,30 @@ import {
   RiskScore,
   Vulnerability,
 } from '@/public/FactorIcons';
-import { Divider, Icon, ProgressBar, Text } from 'opub-ui';
+import { Button, Divider, Icon, ProgressBar, Text } from 'opub-ui';
 
-import { learnMoreLink, RiskColorMap } from '@/config/consts';
+import {
+  documentationLink,
+  learnMoreLink,
+  RiskColorMap,
+} from '@/config/consts';
 import { cn, handleRedirect } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import NavLink from '@/components/nav-link';
-import { OutputWindowHeader } from './output-window';
+import styles from './styles.module.scss';
 
 export function DefaultWindow({
   chartData,
   indicatorDescriptions,
   indicator,
   boundary,
+  onClose,
 }: any) {
   const list: { title: string; slug: string; description: string }[] = [];
 
   if (indicatorDescriptions) {
-    indicatorDescriptions.map(
+    indicatorDescriptions.forEach(
       (item: {
         name: string;
         slug: string;
@@ -49,15 +54,25 @@ export function DefaultWindow({
           className={cn(
             'p-4 pr-8',
             'bg-surfaceDefault shadow-basicMd',
-            'shadow-inset z-1 hidden w-[500px] shrink-0 md:block',
-            'border-r-1 border-solid border-borderSubdued',
-            'overflow-y-auto'
+            'shadow-inset z-1 hidden min-w-[420px] max-w-[450px] shrink-0 md:block',
+            'overflow-y-auto border-r-1 border-solid border-borderSubdued',
+            styles.Overlay,
+            styles.OverlayActive
           )}
         >
-          <OutputWindowHeader factorData={list} indicator={indicator} />
+          {/* State-level header with only close button (no icon/title) */}
+          <div className="mb-1 flex items-start justify-end ">
+            <Button
+              onClick={onClose}
+              kind="tertiary"
+              aria-label="Close details"
+            >
+              <Icon source={Icons.cross} />
+            </Button>
+          </div>
 
-          <Divider className="mt-2" />
-          <RenderSidebarContent />
+          {/* <Divider className="mt-2" /> */}
+          <AboutIndicator IndicatorData={list} onClose={onClose} />
         </aside>
       </MediaRendering>
       <MediaRendering minWidth={null} maxWidth="1023">
@@ -67,64 +82,114 @@ export function DefaultWindow({
       </MediaRendering>
     </>
   );
-
-  function RenderSidebarContent() {
-    return (
-      <>
-        <div className="mb-5 flex flex-col">
-          <Text variant="headingMd" fontWeight="bold" className=" mt-3">
-            {boundary === 'district'
-              ? 'HIGH RISK DISTRICTS'
-              : 'HIGH RISK REVENUE CIRCLES'}
-          </Text>
-          {chartData && (
-            <div className="flex flex-col pt-3">
-              {chartData
-                .slice(0, 5)
-                .map((item: any, index: React.Key | null | undefined): any => (
-                  <DistrictBar
-                    key={index}
-                    district={item[boundary]}
-                    value={item[indicator]['value']}
-                  />
-                ))}
-            </div>
-          )}
-          <br />
-
-          <div className="mt-2">
-            {list.map((indicator, index) => (
-              <IndicatorDescription
-                key={index}
-                title={indicator.title}
-                slug={indicator.slug}
-                desc={indicator.description}
-              />
-            ))}
-          </div>
-
-          <br />
-          <br />
-          <a
-            className="flex flex-row items-center gap-2"
-            href={learnMoreLink}
-            onClick={(event: any) => handleRedirect(event, learnMoreLink)}
-          >
-            <Icon source={Icons.link} color="interactive" />
-            <Text
-              variant="headingMd"
-              fontWeight="bold"
-              // className="mt-4"
-              color="interactive"
-            >
-              LEARN MORE
-            </Text>
-          </a>
-        </div>
-      </>
-    );
-  }
 }
+
+export const AboutIndicator = ({
+  IndicatorData,
+  onClose,
+}: {
+  IndicatorData: any;
+  onClose?: () => void;
+}) => {
+  const IconMap: { [key: string]: React.ReactNode } = {
+    'risk-score': <RiskScore color={'#000000'} />,
+    vulnerability: <Vulnerability color={'#000000'} />,
+    'flood-hazard': <FloodHazard color={'#000000'} />,
+    exposure: <Exposure color={'#000000'} />,
+    'government-response': <GovtResponse color={'#000000'} />,
+  };
+  return (
+    <div className="mx-1 mb-5 flex flex-col">
+      <Text variant="headingMd" fontWeight="bold" className="mb-5 uppercase">
+        Know your risk indicators
+      </Text>
+      <div className="flex flex-row items-start gap-2">
+        <div className="flex flex-col">
+          <Text variant="headingMd" fontWeight="semibold">
+            Overall Flood Risk
+          </Text>
+          <Text color="subdued">
+            Risk of disasters is a function of - hazard vulnerability, exposure
+            & coping capacity
+          </Text>
+        </div>
+        <div className="flex h-full items-start justify-start">
+          <Icon
+            source={Icons.IconSwimming}
+            // color={'default'}
+            stroke={2}
+            size={28}
+            className="text-[#000]"
+          />
+        </div>
+      </div>
+      <Text className="my-4" variant="bodyLg">
+        Overall Flood Risk is calculated using:
+      </Text>
+
+      <div className="flex flex-col items-start gap-4 p-3">
+        {IndicatorData.slice(1)?.map((indicator: any, index: number) => (
+          <div
+            key={indicator.slug ?? index}
+            className="flex flex-row items-start gap-2"
+          >
+            <Text variant="headingMd" fontWeight="semibold">
+              {index + 1 >= 1 && index + 1 < 10
+                ? `0${index + 1}.`
+                : `${index + 1}.`}
+            </Text>
+            <div className="flex flex-row items-start gap-4">
+              <div className="flex flex-col gap-1">
+                <Text variant="headingMd" fontWeight="semibold">
+                  {indicator.title}
+                </Text>
+                <Text color="subdued">{indicator.description}</Text>
+              </div>
+              <div className="flex h-full items-start justify-start">
+                {IconMap[indicator.slug] || <Ellipse color="#000000" />}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Read the user guide CTA */}
+      <div className="mt-4 flex w-full flex-col justify-end gap-4">
+        {/* TODO: Add the user guide link here */}
+        <a
+          // href={'#'}
+          // onClick={(event: any) => handleRedirect(event, learnMoreLink)}
+          // target="_blank"
+          className="rounded-lg flex h-12 w-full items-center justify-between gap-2 rounded-2 bg-[#F6F6F7] px-3 py-3"
+        >
+          <Text
+            variant="bodyMd"
+            fontWeight="semibold"
+            className="text-[#3E7844]"
+          >
+            Read the user guide
+          </Text>
+          <Icon source={Icons.IconArrowUpRight} className="text-[#3E7844]" />
+        </a>
+        <a
+          href={documentationLink}
+          // onClick={(event: any) => handleRedirect(event, learnMoreLink)}
+          target="_blank"
+          className="rounded-lg flex h-12 w-full items-center justify-between gap-2 rounded-2 bg-[#F6F6F7] px-3 py-3"
+        >
+          <Text
+            variant="bodyMd"
+            fontWeight="semibold"
+            className="text-[#3E7844]"
+          >
+            Read the documentation
+          </Text>
+          <Icon source={Icons.IconArrowUpRight} className="text-[#3E7844]" />
+        </a>
+      </div>
+    </div>
+  );
+};
 
 export const DistrictBar = ({
   district,
