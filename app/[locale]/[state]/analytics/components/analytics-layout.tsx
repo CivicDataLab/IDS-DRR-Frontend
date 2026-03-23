@@ -21,6 +21,7 @@ import { MediaRendering } from '@/components/media-rendering';
 import { getLatestDate } from '../utils/utils';
 import { AnalyticsMobileLayout } from './analytics-mobile-layout';
 import { ChartView } from './chart-view';
+import { DefaultWindow } from './default-output-window';
 import FilterDropdownOptions from './filter-dropdown-options';
 import { MapComponent } from './map-component';
 import { OutputWindow } from './output-window';
@@ -35,7 +36,8 @@ interface Option {
 
 export function AnalyticsMainLayout() {
   const searchParams = useSearchParams();
-  const indicator = searchParams.get('indicator') || '';
+  // Default to overall flood risk when URL doesn't specify an indicator.
+  const indicator = searchParams.get('indicator') || 'risk-score';
 
   const [districtCode, setDistrictCode] = useQueryState(
     'district-code',
@@ -46,6 +48,8 @@ export function AnalyticsMainLayout() {
   const [timePeriodParam, setTimePeriodParam] = useQueryState('time-period');
   const routerParams = useParams();
   const isMapView = !view || view === 'map';
+
+  const [isOutputPaneOpen, setIsOutputPaneOpen] = useState(true);
 
   const statesListData = useQuery({
     queryKey: [`states_list`],
@@ -65,7 +69,9 @@ export function AnalyticsMainLayout() {
   const envDefaultTimePeriod = process.env.NEXT_PUBLIC_TIME_PERIOD || null;
   const stateTimePeriods: string[] = currentSelectedState?.time_periods || [];
   const timeLimitsForPicker: string[] = Array.from(
-    new Set([...(stateTimePeriods || []), stateLatestTimePeriod].filter(Boolean))
+    new Set(
+      [...(stateTimePeriods || []), stateLatestTimePeriod].filter(Boolean)
+    )
   ) as string[];
   const rawTimePeriodParam = searchParams.get('time-period');
   const resolvedUrlTimePeriod = rawTimePeriodParam
@@ -80,7 +86,7 @@ export function AnalyticsMainLayout() {
   const timePeriodSelected =
     normalizedUrlTimePeriod ||
     (!hasExplicitTimePeriodParam
-      ? stateLatestTimePeriod ?? envDefaultTimePeriod
+      ? (stateLatestTimePeriod ?? envDefaultTimePeriod)
       : null);
 
   const mapData = useQuery({
@@ -100,7 +106,9 @@ export function AnalyticsMainLayout() {
         }
       ),
 
-    enabled: Boolean(isMapView && currentSelectedState?.code && timePeriodSelected),
+    enabled: Boolean(
+      isMapView && currentSelectedState?.code && timePeriodSelected
+    ),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
@@ -123,7 +131,9 @@ export function AnalyticsMainLayout() {
         }
       ),
 
-    enabled: Boolean(isMapView && currentSelectedState?.code && timePeriodSelected),
+    enabled: Boolean(
+      isMapView && currentSelectedState?.code && timePeriodSelected
+    ),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
@@ -212,8 +222,8 @@ export function AnalyticsMainLayout() {
     envDefaultTimePeriod,
     setTimePeriodParam,
   ]);
-
-  const indicatorsData = useQuery({
+  // Data used for map legends and factor labels (must match currently selected `indicator`)
+  const mapIndicatorsData = useQuery<any>({
     queryKey: [`indicators_${indicator}`],
     queryFn: () =>
       GraphQL(
@@ -221,13 +231,48 @@ export function AnalyticsMainLayout() {
         ANALYTICS_INDICATORS,
         {
           indcFilter: { slug: indicator },
-        }
+        } as any
       ),
     enabled: Boolean(isMapView),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
+
+  // Data used for the state-level "About indicator" pane (always root list)
+  const aboutIndicatorsData = useQuery<any>({
+    queryKey: ['indicators_risk-score'],
+    queryFn: () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_INDICATORS,
+        {
+          indcFilter: { slug: 'risk-score' },
+        } as any
+      ),
+    // Avoid a duplicate request when the selected indicator is already risk-score.
+    enabled: Boolean(isMapView && indicator !== 'risk-score'),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+  const uniqueAboutIndicators = React.useMemo(() => {
+    const raw =
+      indicator === 'risk-score'
+        ? mapIndicatorsData?.data?.indicators || []
+        : aboutIndicatorsData?.data?.indicators || [];
+    const map = new Map<string, any>();
+    for (const item of raw) {
+      if (!item?.slug) continue;
+      if (!map.has(item.slug)) map.set(item.slug, item);
+    }
+    return Array.from(map.values());
+  }, [
+    indicator,
+    mapIndicatorsData?.data?.indicators,
+    aboutIndicatorsData?.data?.indicators,
+  ]);
 
   const tableData = useQuery({
     queryKey: [
@@ -251,7 +296,9 @@ export function AnalyticsMainLayout() {
           },
         }
       ),
-    enabled: Boolean(view === 'table' && currentSelectedState?.code && timePeriodSelected),
+    enabled: Boolean(
+      view === 'table' && currentSelectedState?.code && timePeriodSelected
+    ),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
@@ -321,6 +368,14 @@ export function AnalyticsMainLayout() {
   }, [revenueCode, tableData.data?.tableData]);
 
   const region = searchParams.get('district-code') || '';
+  const hasAnyRegion = (region && region.length > 0) || !!revenueCode;
+
+  // Whenever indicator / district / revenue circle / time period changes in map view,
+  // auto-open the right-hand pane if it was closed.
+  useEffect(() => {
+    if (!isMapView) return;
+    setIsOutputPaneOpen(true);
+  }, [isMapView, indicator, region, revenueCode, timePeriodSelected]);
 
   if (!currentSelectedState) {
     return (
@@ -342,7 +397,8 @@ export function AnalyticsMainLayout() {
           districtGeographiesData={districtGeographiesData}
           revenueGeographiesData={revenueGeographiesData}
           timePeriods={stateTimePeriods}
-          indicatorsData={indicatorsData}
+          mapIndicatorsData={mapIndicatorsData}
+          aboutIndicatorsData={aboutIndicatorsData}
           tableData={tableData}
           currentSelectedState={currentSelectedState}
           statesList={statesListData.data?.getStates || []}
@@ -351,6 +407,7 @@ export function AnalyticsMainLayout() {
       <MediaRendering minWidth="1024" maxWidth={null}>
         <React.Fragment>
           <Tabs
+            className="overflow-y-hidden"
             onValueChange={(value: string) =>
               setView(value, { shallow: false })
             }
@@ -411,21 +468,36 @@ export function AnalyticsMainLayout() {
                         indicator={indicator}
                         mapDataloading={mapData?.isFetching}
                         revenueMapDataLoading={revenueMapData?.isFetching}
-                        indicatorsData={indicatorsData?.data?.indicators}
+                        indicatorsData={mapIndicatorsData?.data?.indicators}
                         setRegion={setDistrictCode}
                         setRevenueRegion={setRevenueCode}
                         revenueMapData={revenueMapData?.data?.revCircleMapData}
                         mapData={mapData?.data?.districtMapData}
                         currentSelectedState={currentSelectedState}
+                        isOutputPaneOpen={isOutputPaneOpen}
+                        onToggleOutputPane={() =>
+                          setIsOutputPaneOpen((prev) => !prev)
+                        }
                       />
                     )}
 
-                    {region !== null && region.length > 0 && view === 'map' && (
-                      <OutputWindowComponent
-                        currentState={currentSelectedState}
-                        time_period={timePeriodSelected}
-                      />
-                    )}
+                    {view === 'map' &&
+                      isOutputPaneOpen &&
+                      (hasAnyRegion ? (
+                        <OutputWindowComponent
+                          currentState={currentSelectedState}
+                          time_period={timePeriodSelected}
+                          onClose={() => setIsOutputPaneOpen(false)}
+                        />
+                      ) : (
+                        <DefaultWindow
+                          chartData={[]}
+                          indicatorDescriptions={uniqueAboutIndicators}
+                          indicator={indicator}
+                          boundary="district"
+                          onClose={() => setIsOutputPaneOpen(false)}
+                        />
+                      ))}
                   </>
                 )}
               </div>
@@ -474,7 +546,11 @@ export function AnalyticsMainLayout() {
   );
 }
 
-export function OutputWindowComponent({ currentState, time_period }: any) {
+export function OutputWindowComponent({
+  currentState,
+  time_period,
+  onClose,
+}: any) {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator');
   const region =
@@ -543,6 +619,7 @@ export function OutputWindowComponent({ currentState, time_period }: any) {
           indicator={indicator}
           boundary={boundary}
           currentState={currentState}
+          onClose={onClose}
         />
       )}
     </>

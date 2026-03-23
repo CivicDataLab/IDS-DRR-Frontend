@@ -11,6 +11,7 @@ import Icons from '@/components/icons';
 import { getLatestDate } from '../utils/utils';
 import { OutputWindowComponent } from './analytics-layout';
 import { ChartView } from './chart-view';
+import { AboutIndicator } from './default-output-window';
 import { FactorList } from './factor-list';
 import { FilterComp } from './filter-component';
 import { MapComponent } from './map-component';
@@ -31,7 +32,8 @@ export function AnalyticsMobileLayout({
   districtGeographiesData,
   revenueGeographiesData,
   timePeriods,
-  indicatorsData,
+  mapIndicatorsData,
+  aboutIndicatorsData,
   tableData,
   currentSelectedState,
   statesList,
@@ -43,7 +45,8 @@ export function AnalyticsMobileLayout({
   districtGeographiesData: any;
   revenueGeographiesData: any;
   timePeriods: string[];
-  indicatorsData: any;
+  mapIndicatorsData: any;
+  aboutIndicatorsData: any;
   tableData: any;
   currentSelectedState: any;
   statesList: Array<any>;
@@ -159,6 +162,31 @@ export function AnalyticsMobileLayout({
   const [activeButton, setActiveButton] = useState(view);
   // const [activeButton, setActiveButton] = useState(''); // State for managing active buttons
   const [filteredTableData] = useState(tableData.data?.tableData);
+  const [isOutputPaneOpen, setIsOutputPaneOpen] = useState(true);
+
+  const indicatorListForAbout = React.useMemo(() => {
+    const raw = aboutIndicatorsData?.data?.indicators || [];
+    const uniqueBySlug = new Map<string, any>();
+
+    for (const item of raw) {
+      if (!item?.slug) continue;
+      if (!uniqueBySlug.has(item.slug)) {
+        uniqueBySlug.set(item.slug, item);
+      }
+    }
+
+    return Array.from(uniqueBySlug.values()).map((item: any) => ({
+      title: item?.name,
+      slug: item?.slug,
+      description: item?.short_description || item?.long_description || 'NA',
+    }));
+  }, [aboutIndicatorsData?.data?.indicators]);
+
+  // Re-open mobile output pane when selection/filters change in map view
+  React.useEffect(() => {
+    if (view !== 'map') return;
+    setIsOutputPaneOpen(true);
+  }, [view, indicator, timePeriodSelected, region]);
 
   const RenderView = ({ selectedView }: any) => {
     switch (selectedView) {
@@ -168,7 +196,7 @@ export function AnalyticsMobileLayout({
             indicator={indicator}
             mapDataloading={mapData?.isFetching}
             revenueMapDataLoading={revenueMapData?.isFetching}
-            indicatorsData={indicatorsData?.data?.indicators}
+            indicatorsData={mapIndicatorsData?.data?.indicators}
             setRegion={setDistrictCode}
             setRevenueRegion={setRevenueCode}
             revenueMapData={revenueMapData?.data?.revCircleMapData}
@@ -241,12 +269,41 @@ export function AnalyticsMobileLayout({
       </div>
 
       {/* <OutputWindowComponent /> */}
-      {region !== null && region.length > 0 && view === 'map' && (
-        <OutputWindowComponent
-          currentState={currentSelectedState}
-          time_period={timePeriodSelected}
-        />
+      {view === 'map' && !isOutputPaneOpen && (
+        <div className="absolute right-6 top-[140px] z-[1001]">
+          <Button
+            kind="tertiary"
+            onClick={() => setIsOutputPaneOpen(true)}
+            className="border flex h-8 w-8 items-center justify-center border-borderSubdued bg-surfaceDefault shadow-basicSm"
+            aria-label="Open details"
+          >
+            <Icon source={Icons.layoutSidebarRightCollapse} />
+          </Button>
+        </div>
       )}
+
+      {view === 'map' &&
+        isOutputPaneOpen &&
+        (region !== null && region.length > 0 ? (
+          <OutputWindowComponent
+            currentState={currentSelectedState}
+            time_period={timePeriodSelected}
+            onClose={() => setIsOutputPaneOpen(false)}
+          />
+        ) : (
+          <div className="fixed bottom-[8vh] left-0 right-0 z-[1000] max-h-[70vh] overflow-y-auto border-t-1 border-solid border-borderSubdued bg-surfaceDefault px-4 py-3">
+            <div className="mb-2 flex justify-end">
+              <Button
+                onClick={() => setIsOutputPaneOpen(false)}
+                kind="tertiary"
+                aria-label="Close details"
+              >
+                <Icon source={Icons.cross} />
+              </Button>
+            </div>
+            <AboutIndicator IndicatorData={indicatorListForAbout} />
+          </div>
+        ))}
 
       <div className="sticky bottom-0 flex h-[8vh] w-full flex-row justify-between gap-1 bg-baseIndigoSolid1 p-1 sm:p-2 md:p-3">
         {buttons.map((button, index) =>

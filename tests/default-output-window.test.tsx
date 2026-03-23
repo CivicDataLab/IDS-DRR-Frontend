@@ -66,6 +66,10 @@ jest.mock('@/components/icons', () => ({
   default: {
     link: 'link-icon',
     externalLink: 'external-link-icon',
+    cross: 'cross-icon',
+    info: 'info-icon',
+    IconSwimming: 'swimming-icon',
+    IconArrowUpRight: 'arrow-up-right-icon',
   },
 }));
 
@@ -105,15 +109,31 @@ const mockChartData = {
 
 describe('DefaultWindow', () => {
   const defaultProps = {
-    chartData: [
-      { district: 'District A', 'risk-score': { value: '3' } },
-      { district: 'District B', 'risk-score': { value: '2' } },
-    ],
     indicatorDescriptions: [
       {
-        name: 'Risk Score',
+        name: 'Overall Flood Risk',
         slug: 'risk-score',
-        short_description: 'Risk assessment score',
+        short_description: 'Overall flood risk explanation',
+      },
+      {
+        name: 'Hazard',
+        slug: 'flood-hazard',
+        short_description: 'Hazard explanation',
+      },
+      {
+        name: 'Exposure',
+        slug: 'exposure',
+        short_description: 'Exposure explanation',
+      },
+      {
+        name: 'Vulnerability',
+        slug: 'vulnerability',
+        short_description: 'Vulnerability explanation',
+      },
+      {
+        name: 'Government Response',
+        slug: 'government-response',
+        short_description: 'Government response explanation',
       },
     ],
     indicator: 'risk-score',
@@ -122,22 +142,24 @@ describe('DefaultWindow', () => {
 
   it('renders without crashing', () => {
     render(<DefaultWindow {...defaultProps} />);
-    expect(screen.getByText('HIGH RISK DISTRICTS')).toBeInTheDocument();
+    expect(screen.getByText('Know your risk indicators')).toBeInTheDocument();
   });
 
   it('displays the correct indicator title', () => {
     render(<DefaultWindow {...defaultProps} />);
-    expect(screen.getByText('Risk Score')).toBeInTheDocument();
+    expect(screen.getByText('Overall Flood Risk')).toBeInTheDocument();
   });
 
   it('shows district data when available', () => {
     render(<DefaultWindow {...defaultProps} />);
-    expect(screen.getByText('District A')).toBeInTheDocument();
-    expect(screen.getByText('District B')).toBeInTheDocument();
+    // DefaultWindow (state level) uses AboutIndicator and renders sub-indicators.
+    expect(screen.getByText('Hazard')).toBeInTheDocument();
+    expect(screen.getByText('Exposure')).toBeInTheDocument();
   });
 
-  it('displays learn more link', () => {
+  it('displays user guide CTA and documentation CTA', () => {
     render(<DefaultWindow {...defaultProps} />);
-    expect(screen.getByText('LEARN MORE')).toBeInTheDocument();
+    expect(screen.getByText('Read the user guide')).toBeInTheDocument();
+    expect(screen.getByText('Read the documentation')).toBeInTheDocument();
   });
 });

@@ -72,7 +72,7 @@ const GithubRepoLink = `https://github.com/CivicDataLab/flood-data-ecosystem-Ass
 // Note: time-period is omitted to default to the latest available data (getDataTimePeriods[0].value)
 const AnalyticsURL = `/analytics/?indicator=risk-score&view=map`;
 const learnMoreLink = `https://drive.google.com/file/d/1TerjJtQrWxziKJ1E5BvfvRELtWJWRw2M/view?usp=drive_link`;
-
+const documentationLink = `https://ids-drr.readthedocs.io/en/latest/architecture/overview.html`;
 //home page
 const AboutText = 'About IDS-DRR';
 const AboutUsURL = '/about-us';
@@ -171,6 +171,7 @@ export {
   TheRockefellerFoundationTextOne,
   TheRockefellerFoundationTextTwo,
   learnMoreLink,
+  documentationLink,
   DatasetCatalogText,
   ResourcesSectionText,
   DataStoriesText,

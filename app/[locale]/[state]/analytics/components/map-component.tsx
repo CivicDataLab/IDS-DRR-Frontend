@@ -5,9 +5,10 @@ import { hp_rivers_features } from '@/geo_json/hp_rivers_geojson';
 import { useWindowSize } from '@/hooks/use-window-size';
 import * as d3 from 'd3-scale';
 import { interpolateBlues } from 'd3-scale-chromatic';
-import { Spinner, Text } from 'opub-ui';
+import { Button, Icon, Spinner, Text } from 'opub-ui';
 
 import { Factors, RiskText } from '@/config/consts';
+import Icons from '@/components/icons';
 import MapChart from '@/components/MapChart';
 import {
   formatNumberToIndianSystem,
@@ -25,6 +26,8 @@ export const MapComponent = ({
   setRegion,
   setRevenueRegion,
   currentSelectedState,
+  isOutputPaneOpen,
+  onToggleOutputPane,
 }: {
   indicator: string;
   mapDataloading: boolean;
@@ -41,6 +44,8 @@ export const MapComponent = ({
   setRegion: any;
   setRevenueRegion: any;
   currentSelectedState: any;
+  isOutputPaneOpen?: boolean;
+  onToggleOutputPane?: () => void;
 }) => {
   const [map, setMap] = React.useState<any>(null);
   const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
@@ -288,7 +293,18 @@ export const MapComponent = ({
       <div
         className={`relative w-full ${isMobile ? 'h-full pt-[8dvh] sm:pt-[7dvh] md:pt-[6dvh]' : 'h-[95vh]'} sm:h-[85vh] md:h-[72vh]`}
       >
-        {' '}
+        {/* Toggle button just below map layers – always available on desktop when pane is closed */}
+        {!isOutputPaneOpen && onToggleOutputPane && (
+          <div className="absolute right-6 top-20 z-[1000]">
+            <Button
+              kind="tertiary"
+              onClick={onToggleOutputPane}
+              className="border flex h-8 w-8 items-center justify-center border-borderSubdued bg-surfaceDefault shadow-basicSm"
+            >
+              <Icon source={Icons.layoutSidebarRightCollapse} />
+            </Button>
+          </div>
+        )}
         <MapChart
           features={mapFeatures || mapData.features}
           addlFeaturesArray={

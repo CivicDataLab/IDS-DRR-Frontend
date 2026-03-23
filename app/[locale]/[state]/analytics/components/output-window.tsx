@@ -10,13 +10,12 @@ import {
   Vulnerability,
 } from '@/public/FactorIcons';
 import { InfoSquare } from '@/public/InfoCircle';
+import { useQuery } from '@tanstack/react-query';
 import { useQueryState } from 'next-usequerystate';
 import { Button, Icon, Text, Tooltip } from 'opub-ui';
 
-import { Factors, RiskText } from '@/config/consts';
-import {
-  ANALYTICS_TIME_PERIODS,
-} from '@/config/graphql/analaytics-queries';
+import { documentationLink, Factors, RiskText } from '@/config/consts';
+import { ANALYTICS_TIME_PERIODS } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { cn, formatDateString } from '@/lib/utils';
 import Icons from '@/components/icons';
@@ -28,7 +27,6 @@ import {
 } from '../utils/utils';
 import { ScoreInfo } from './revenue-circle-accordion';
 import styles from './styles.module.scss';
-import { useQuery } from '@tanstack/react-query';
 
 export function OutputWindow({
   data,
@@ -36,6 +34,7 @@ export function OutputWindow({
   indicator,
   boundary,
   currentState,
+  onClose,
 }: any) {
   const searchParams = useSearchParams();
   let processedTime = getLatestDate(
@@ -67,6 +66,18 @@ export function OutputWindow({
   const view = searchParams.get('view') || '';
 
   const RevenueRegion = searchParams.get('revenue-code') || '';
+  const isRevenueCircle = Boolean(RevenueRegion && RevenueRegion.length > 0);
+  // Sub indicators under "Overall Flood Risk"
+  const parentIndicatorSlugs = [
+    'risk-score',
+    'flood-hazard',
+    'exposure',
+    'vulnerability',
+    'government-response',
+  ];
+  const isParentIndicator = Boolean(
+    indicator && parentIndicatorSlugs.includes(indicator)
+  );
 
   const [revenueCode, setDistrictCode] = useQueryState('district-code');
   const [districtCode, setRevenueCode] = useQueryState('revenue-code');
@@ -113,7 +124,6 @@ export function OutputWindow({
     setIsExpanded(!isExpanded); // Toggle expanded state
   };
 
-  console.log('DataBasedOnBoundary', DataBasedOnBoundary);
   return (
     <>
       <MediaRendering minWidth="1024" maxWidth={null}>
@@ -126,12 +136,12 @@ export function OutputWindow({
             'overflow-y-auto border-r-1 border-solid border-borderSubdued',
             styles.Overlay,
             region !== null &&
-            region.length > 0 &&
-            view === 'map' &&
-            styles.OverlayActive
+              region.length > 0 &&
+              view === 'map' &&
+              styles.OverlayActive
           )}
         >
-          <div className="flex flex-col gap-2">
+          <div className="mb-2 flex items-start justify-between gap-2">
             <Button
               className="self-start"
               onClick={() => {
@@ -142,25 +152,38 @@ export function OutputWindow({
             >
               <Icon source={Icons.back} />
             </Button>
-
-            {RevenueRegion && DataBasedOnBoundary && DataBasedOnBoundary.length > 0 && DataBasedOnBoundary[0] && (
-              <Text className="uppercase" variant="bodyLg">
-                {DataBasedOnBoundary[0]['district']}{' '}
-                District
-              </Text>
-            )}
-
-            {(data.length === 1 || districtData.length === 1) && (
-              <Text
-                className="uppercase"
-                variant="headingLg"
-                fontWeight="semibold"
-              >
-                {RegionName}{' '}
-                {RevenueRegion ? currentState.child_type : 'District'}
-              </Text>
-            )}
+            <Button
+              onClick={onClose}
+              kind="tertiary"
+              aria-label="Close details"
+            >
+              <Icon source={Icons.cross} />
+            </Button>
           </div>
+
+          {RevenueRegion &&
+            DataBasedOnBoundary &&
+            DataBasedOnBoundary.length > 0 &&
+            DataBasedOnBoundary[0] && (
+              <>
+                <Text className="uppercase" variant="bodyLg">
+                  {DataBasedOnBoundary[0]['district']} District
+                </Text>
+                <br />
+                <div className="h-2"></div>
+              </>
+            )}
+
+          {(data.length === 1 || districtData.length === 1) && (
+            <Text
+              className=" uppercase "
+              variant="headingLg"
+              fontWeight="semibold"
+            >
+              {RegionName}{' '}
+              {RevenueRegion ? currentState.child_type : 'District'}
+            </Text>
+          )}
           <div className="flex items-center justify-between self-stretch">
             <div className="mt-4 flex items-center gap-4">
               <Text variant="bodyMd" color="subdued" fontWeight="regular">
@@ -171,7 +194,6 @@ export function OutputWindow({
             </div>
           </div>
           {/* //--------  */}
-
           <section className="mt-4">
             {DataBasedOnBoundary.map((data: any, index: any) => (
               <div key={`boundary-${index}`} className="mb-4">
@@ -203,7 +225,7 @@ export function OutputWindow({
                     >
                       {Factors.includes(indicator) &&
                         RiskText[parseInt(data[indicator]['value'])][
-                        'indicatorText'
+                          'indicatorText'
                         ]}
                     </Text>
                     <Tooltip
@@ -241,6 +263,29 @@ export function OutputWindow({
                 )}
               </div>
             ))}
+            <div className="px-1 py-3">
+              {/* TODO: Add the source data link here dynamically from api */}
+              <a
+                href={documentationLink}
+                // onClick={(event: any) => handleRedirect(event, learnMoreLink)}
+                target="_blank"
+                className="rounded-lg flex h-12 w-full items-center justify-between gap-2 rounded-2 bg-[#F6F6F7] px-3 py-3"
+              >
+                <Text
+                  variant="bodyMd"
+                  fontWeight="semibold"
+                  className="text-[#3E7844]"
+                >
+                  {isParentIndicator
+                    ? 'Read the Documentation'
+                    : 'Explore Source Data'}
+                </Text>
+                <Icon
+                  source={Icons.IconArrowUpRight}
+                  className="text-[#3E7844]"
+                />
+              </a>
+            </div>
           </section>
         </aside>
       </MediaRendering>
@@ -259,8 +304,8 @@ export function OutputWindow({
                 'overflow-y-auto border-b-1 border-l-1 border-r-1 border-solid border-borderSubdued',
                 styles.mobileOverlay,
                 region !== null &&
-                region.length > 0 &&
-                styles.mobileOverlayActive,
+                  region.length > 0 &&
+                  styles.mobileOverlayActive,
                 region == null ? 'hidden' : '',
                 // region == null && 'hidden', // Use the 'hidden' class to hide the aside when it's not visible
                 isExpanded && styles.expandedOverlay
@@ -282,28 +327,41 @@ export function OutputWindow({
                 </Button>
               </div>
               {/* <div className="flex items-center gap-2"> */}
-              <div className=" mt-14 flex h-[4%] items-center gap-2">
-                <Button
-                  onClick={() => {
-                    setDistrictCode(null);
-                    setRevenueCode(null);
-                    isExpanded ? setIsExpanded(false) : '';
-                  }}
-                  kind="tertiary"
-                >
-                  <Icon source={Icons.back} />
-                </Button>
-                {(data.length === 1 || districtData.length === 1) && (
-                  <Text
-                    className="uppercase"
-                    variant="headingLg"
-                    fontWeight="semibold"
+              <div className=" mt-14 flex h-[4%] items-center justify-between">
+                <div className="flex h-[4%] items-center gap-4">
+                  <Button
+                    onClick={() => {
+                      setDistrictCode(null);
+                      setRevenueCode(null);
+                      isExpanded ? setIsExpanded(false) : '';
+                    }}
+                    kind="tertiary"
                   >
-                    {RegionName}{' '}
-                    {RevenueRegion ? currentState.child_type : 'District'}
-                  </Text>
+                    <Icon source={Icons.back} />
+                  </Button>
+
+                  {(data.length === 1 || districtData.length === 1) && (
+                    <Text
+                      className="uppercase"
+                      variant="headingLg"
+                      fontWeight="semibold"
+                    >
+                      {RegionName}{' '}
+                      {RevenueRegion ? currentState.child_type : 'District'}
+                    </Text>
+                  )}
+                </div>
+                {onClose && (
+                  <Button
+                    onClick={onClose}
+                    kind="tertiary"
+                    aria-label="Close details"
+                  >
+                    <Icon source={Icons.cross} />
+                  </Button>
                 )}
               </div>
+
               {/* </div> */}
               <div className="flex items-center justify-between self-stretch">
                 <div className="mt-4 flex items-center gap-4">
@@ -354,7 +412,7 @@ export function OutputWindow({
                           >
                             {Factors.includes(indicator) &&
                               RiskText[parseInt(data[indicator]['value'])][
-                              'indicatorText'
+                                'indicatorText'
                               ]}
                           </Text>
                           <Tooltip
@@ -478,4 +536,3 @@ export function OtherFactorScores({
     </div>
   ));
 }
-

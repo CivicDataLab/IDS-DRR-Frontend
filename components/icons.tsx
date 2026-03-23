@@ -4,6 +4,7 @@ import {
   IconArrowLeft,
   IconArrowRight,
   IconArrowsCross,
+  IconArrowUpRight,
   IconBarrierBlock,
   IconBellFilled,
   IconBrandFacebook,
@@ -31,6 +32,7 @@ import {
   IconInfoCircleFilled,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarLeftExpand,
+  IconLayoutSidebarRightCollapse,
   IconLink,
   IconListSearch,
   IconLoader,
@@ -44,6 +46,7 @@ import {
   IconShare,
   IconSquareRoundedArrowRight,
   IconSquareRoundedChevronLeftFilled,
+  IconSwimming,
   IconSwipeDown,
   IconSwipeUp,
   IconTableAlias,
@@ -72,6 +75,7 @@ export const Icons: {
   doubleRight: IconChevronsRight,
   leftFilled: IconSquareRoundedChevronLeftFilled,
   search: IconSearch,
+  IconSwimming: IconSwimming,
   notification: IconBellFilled,
   department: IconListSearch,
   scheme: IconReportSearch,
@@ -107,6 +111,8 @@ export const Icons: {
   IconSwipeUp: IconSwipeUp,
   IconSwipeDown: IconSwipeDown,
   loader: IconLoader,
+  layoutSidebarRightCollapse: IconLayoutSidebarRightCollapse,
+  IconArrowUpRight: IconArrowUpRight,
 };
 
 export default Icons;
