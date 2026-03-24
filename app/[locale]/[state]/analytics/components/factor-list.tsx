@@ -53,6 +53,7 @@ export function FactorList({ currentState }: any) {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator');
   const time_period = searchParams.get('time-period');
+  const view = searchParams.get('view') || 'map';
 
   const [, setIndicatorSelected] = useQueryState('indicator');
 
@@ -78,6 +79,44 @@ export function FactorList({ currentState }: any) {
   });
 
   const indicatorNodes = indicatorsQuery?.data?.indicatorsByCategory;
+
+  const filteredIndicatorNodes = React.useMemo(() => {
+    const filterRecursively = (nodes: TreeNode[]): TreeNode[] => {
+      return nodes?.map((node) => {
+        if (node.slug === 'government-response' && node.children) {
+          const isMapLike = view === 'map' || view === 'table';
+          const isChart = view === 'chart';
+
+          const filteredChildren =
+            isMapLike
+              ? node.children.filter((child) =>
+                  String(child.slug).includes('fy-cumsum')
+                )
+              : isChart
+                ? node.children.filter(
+                    (child) => !String(child.slug).includes('fy-cumsum')
+                  )
+                : node.children;
+
+          return {
+            ...node,
+            children: filteredChildren.map((child) => ({
+              ...child,
+              children: child.children
+                ? filterRecursively(child.children)
+                : child.children,
+            })),
+          };
+        }
+
+        return node.children
+          ? { ...node, children: filterRecursively(node.children) }
+          : node;
+      });
+    };
+
+    return indicatorNodes ? filterRecursively(indicatorNodes) : [];
+  }, [indicatorNodes, view]);
 
   useEffect(() => {
     setSelectedIndicator(indicator || '');
@@ -122,7 +161,9 @@ export function FactorList({ currentState }: any) {
             name="boundary-select"
             labelInline
             options={
-              indicatorsQuery.isFetched ? flattenIndicators(indicatorNodes) : []
+                  indicatorsQuery.isFetched
+                    ? flattenIndicators(filteredIndicatorNodes)
+                    : []
             }
           />
         )}
@@ -131,7 +172,10 @@ export function FactorList({ currentState }: any) {
         {/* DESKTOP  */}
         <div className={cn(styles.FactorList)}>
           {indicatorsQuery.isFetched && (
-            <NestedSidebar data={indicatorNodes} indicator={indicator} />
+            <NestedSidebar
+              data={filteredIndicatorNodes}
+              indicator={indicator}
+            />
           )}
 
           <hr className="m-6" />

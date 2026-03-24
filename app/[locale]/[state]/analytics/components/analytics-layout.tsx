@@ -11,6 +11,7 @@ import {
   ANALYTICS_DISTRICT_MAP_DATA,
   ANALYTICS_GEOGRAPHY_DATA,
   ANALYTICS_INDICATORS,
+  ANALYTICS_INDICATORS_BY_CATEGORY,
   ANALYTICS_REVENUE_MAP_DATA,
   ANALYTICS_REVENUE_TABLE_DATA,
   ANALYTICS_TABLE_DATA,
@@ -43,6 +44,7 @@ export function AnalyticsMainLayout() {
     'district-code',
     parseAsString.withDefault('')
   );
+  const [, setIndicatorParam] = useQueryState('indicator');
   const [revenueCode, setRevenueCode] = useQueryState('revenue-code');
   const [view, setView] = useQueryState('view');
   const [timePeriodParam, setTimePeriodParam] = useQueryState('time-period');
@@ -82,6 +84,92 @@ export function AnalyticsMainLayout() {
     : null;
   const hasExplicitTimePeriodParam =
     timePeriodParam !== null && timePeriodParam !== '';
+
+  const indicatorsByCategoryData = useQuery<any>({
+    queryKey: [`indicatorsByCategory_${currentSelectedState?.code}`],
+    queryFn: () =>
+      GraphQL(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+        ANALYTICS_INDICATORS_BY_CATEGORY,
+        {
+          stateCode: currentSelectedState?.code,
+        } as any
+      ),
+    enabled: Boolean(currentSelectedState?.code),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+  const monthlyGovtResponseIndicators = React.useMemo(() => {
+    const categories =
+      indicatorsByCategoryData?.data?.indicatorsByCategory || [];
+    const riskScoreRoot = categories.find(
+      (item: any) => item?.slug === 'risk-score'
+    );
+    const govtResponseNode = riskScoreRoot?.children?.find(
+      (item: any) => item?.slug === 'government-response'
+    );
+    const children = govtResponseNode?.children || [];
+    const monthly = children
+      .map((child: any) => String(child?.slug || ''))
+      .filter((slug: string) => slug && !slug.includes('fy-cumsum'));
+    return new Set(monthly);
+  }, [indicatorsByCategoryData?.data?.indicatorsByCategory]);
+
+  const cumsumGovtResponseIndicators = React.useMemo(() => {
+    const categories =
+      indicatorsByCategoryData?.data?.indicatorsByCategory || [];
+    const riskScoreRoot = categories.find(
+      (item: any) => item?.slug === 'risk-score'
+    );
+    const govtResponseNode = riskScoreRoot?.children?.find(
+      (item: any) => item?.slug === 'government-response'
+    );
+    const children = govtResponseNode?.children || [];
+    const cumulative = children
+      .map((child: any) => String(child?.slug || ''))
+      .filter((slug: string) => slug && slug.includes('fy-cumsum'));
+    return new Set(cumulative);
+  }, [indicatorsByCategoryData?.data?.indicatorsByCategory]);
+
+  // Keep govt-response subindicator compatible with selected view:
+  // - map/table view => cumulative (*-fy-cumsum)
+  // - chart view => monthly (without -fy-cumsum)
+  useEffect(() => {
+    if (view !== null && view !== 'map' && view !== 'chart' && view !== 'table')
+      return;
+    if (!indicator) return;
+
+    const effectiveView = view || 'map';
+    const isCumsumIndicator = indicator.endsWith('-fy-cumsum');
+    const cumsumCandidate = `${indicator}-fy-cumsum`;
+    const canConvertToCumsum =
+      monthlyGovtResponseIndicators.has(indicator) ||
+      cumsumGovtResponseIndicators.has(cumsumCandidate);
+
+    let nextIndicator = indicator;
+    if (effectiveView === 'map' || effectiveView === 'table') {
+      if (!isCumsumIndicator && canConvertToCumsum) {
+        nextIndicator = cumsumCandidate;
+      }
+    } else if (effectiveView === 'chart') {
+      // Always de-normalize cumsum in chart view.
+      if (isCumsumIndicator) {
+        nextIndicator = indicator.replace(/-fy-cumsum$/, '');
+      }
+    }
+
+    if (nextIndicator !== indicator) {
+      setIndicatorParam(nextIndicator, { shallow: false });
+    }
+  }, [
+    view,
+    indicator,
+    setIndicatorParam,
+    monthlyGovtResponseIndicators,
+    cumsumGovtResponseIndicators,
+  ]);
 
   const timePeriodSelected =
     normalizedUrlTimePeriod ||
@@ -407,7 +495,6 @@ export function AnalyticsMainLayout() {
       <MediaRendering minWidth="1024" maxWidth={null}>
         <React.Fragment>
           <Tabs
-            className="overflow-y-hidden"
             onValueChange={(value: string) =>
               setView(value, { shallow: false })
             }
