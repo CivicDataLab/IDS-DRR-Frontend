@@ -187,7 +187,8 @@ export function OutputWindow({
           <div className="flex items-center justify-between self-stretch">
             <div className="mt-4 flex items-center gap-4">
               <Text variant="bodyMd" color="subdued" fontWeight="regular">
-                {indicator === 'government-response'
+                {indicator === 'government-response' ||
+                indicator.includes('fy-cumsum')
                   ? `Cumulative for the financial year till ${formattedTimePeriod}`
                   : `Calculated for ${formattedTimePeriod}`}
               </Text>
