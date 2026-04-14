@@ -242,7 +242,7 @@ export const IndicatorDescription = ({
         <Text fontWeight="bold" variant="headingMd" className="pl-2">
           {title}
         </Text>
-        {slug !== 'risk-score' && (
+        {slug !== 'risk-score' && process.env.NEXT_PUBLIC_BACKEND_URL && (
           <NavLink
             className="ml-auto flex gap-2"
             href={`/datasets/?category=${title}`}
