@@ -18,6 +18,7 @@ export async function GraphQL<TResult, TVariables>(
     return data;
   } catch (error: any) {
     captureException(error);
+    throw error;
   }
 }
 
