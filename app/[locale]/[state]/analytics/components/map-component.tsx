@@ -261,7 +261,7 @@ export const MapComponent = ({
         }
       }, 100);
     } catch (error) {
-      console.log(error);
+      console.error('Error setting map view:', error);
     }
   }, [map, districtCode, currentSelectedState]);
 
