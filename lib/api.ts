@@ -55,15 +55,9 @@ export function useFetch(id: string, query: string) {
 }
 
 export const fetchDatasets = async (variables: any) => {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/search/dataset/${variables}`
-      // `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/search/dataset/${variables}`,
-      // { cache: 'no-store' }
-    );
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    captureException(error);
-  }
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/search/dataset/${variables}`
+  );
+  const data = await response.json();
+  return data;
 };
