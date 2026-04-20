@@ -1,19 +1,7 @@
-import {
-  About,
-  CollaboratingPartner,
-  Introduction,
-  SupportedBy,
-  TheTeam,
-} from './components';
+import { notFound } from 'next/navigation';
 
-export default function aboutUs() {
-  return (
-    <main className=" bg-baseGreenSolid5">
-      <About />
-      <Introduction />
-      <CollaboratingPartner />
-      <SupportedBy />
-      <TheTeam />
-    </main>
-  );
+export default async function Page() {
+  const { AboutPage } = await import('ids-drr-branding');
+  if (!AboutPage) notFound();
+  return <AboutPage />;
 }

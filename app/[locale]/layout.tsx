@@ -13,7 +13,6 @@ import { MediaRendering } from '@/components/media-rendering';
 import { MobileNav } from '@/components/mobile-nav';
 import Provider from '@/components/provider';
 import locales from '../../config/locales';
-import { Footer } from './components/footer';
 
 const fontSans = FontSans({ subsets: ['latin'], display: 'swap' });
 
@@ -70,6 +69,7 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   let locale = (await params).locale;
+  const { Footer } = await import('ids-drr-branding');
   let messages;
   try {
     messages = (await import(`../../locales/${locale}.json`)).default;
@@ -129,9 +129,11 @@ export default async function LocaleLayout({
 
             {children}
 
-            <MediaRendering minWidth="1024" maxWidth={null}>
-              <Footer />
-            </MediaRendering>
+            {Footer && (
+              <MediaRendering minWidth="1024" maxWidth={null}>
+                <Footer />
+              </MediaRendering>
+            )}
           </Provider>
         </NextIntlClientProvider>
       </body>

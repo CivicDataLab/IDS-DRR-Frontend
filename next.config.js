@@ -4,7 +4,7 @@
 const withNextIntl = require('next-intl/plugin')();
 
 const nextConfig = {
-  transpilePackages: ['opub-ui'],
+  transpilePackages: ['opub-ui', 'ids-drr-branding'],
   images: {
     remotePatterns: [
       {

@@ -5,9 +5,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useKeyDetect } from '@/hooks/use-key-detect';
 import { MainConfig } from '@/types';
+import { Credits, PartnerLogos } from 'ids-drr-branding';
 import { IconButton, Text } from 'opub-ui';
 
-import { handleRedirect } from '@/lib/utils';
 import { Icons } from '@/components/icons';
 
 export function MobileNav({ data }: { data: MainConfig }) {
@@ -83,56 +83,14 @@ export function MobileNav({ data }: { data: MainConfig }) {
               )}
             </div>
           </div>
-          <footer className="flex flex-col flex-wrap items-start gap-1 self-stretch bg-backgroundSolidDark px-5 py-4">
-            <div className="flex flex-col items-center justify-center gap-4 self-center">
-              <div>
-                <Text variant="headingSmSpaced" color="onBgDefault">
-                  <strong>
-                    made with{' '}
-                    <span className=" text-baseRedSolid11">&#10084; </span> in
-                    india️
-                  </strong>{' '}
-                </Text>
-                <Text
-                  variant="bodySm"
-                  color="onBgDefault"
-                  className="mt-2 block md:mt-3"
-                >
-                  A DataSpace product by{' '}
-                  <a
-                    // size="slim"
-                    className=" font text-baseIndigoSolid1 underline"
-                    // kind="tertiary"
-                    onClick={(event) =>
-                      handleRedirect(event, 'https://civicdatalab.in/')
-                    }
-                  >
-                    CivicDataLab
-                  </a>
-                </Text>
+          {(Credits || PartnerLogos) && (
+            <footer className="flex flex-col flex-wrap items-start gap-1 self-stretch bg-backgroundSolidDark px-5 py-4">
+              <div className="flex flex-col items-center justify-center gap-4 self-center">
+                {Credits && <Credits />}
+                {PartnerLogos && <PartnerLogos />}
               </div>
-              <div className="flex items-center">
-                <Image
-                  src="/logo/cdlofficiallogo.png"
-                  width={64}
-                  height={64}
-                  alt="CivicDataLab Logo"
-                  className="object-contain"
-                />
-                <Image
-                  src="/logo/ocp.png"
-                  width={164}
-                  height={50}
-                  alt="OCP Logo"
-                  className="object-contain"
-                  style={{
-                    width: '164',
-                    height: '50',
-                  }}
-                />
-              </div>
-            </div>
-          </footer>
+            </footer>
+          )}
         </div>
       )}
     </>

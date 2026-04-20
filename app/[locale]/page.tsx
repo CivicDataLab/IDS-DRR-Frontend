@@ -1,10 +1,10 @@
-import { About, HeroSection, QuickLinks } from './components';
-import DataStories from './components/data-stories';
+import { HeroSection, QuickLinks } from './components';
 import { DatasetCatalog } from './components/dataset-catalog';
-import Partners from './components/partners';
 import Resources from './components/resources';
 
-export default function Home() {
+export default async function Home() {
+  const { DataStories, HomeAbout, HomePartners } = await import('ids-drr-branding');
+
   return (
     <main className="bg-baseGreenSolid5 ">
       <div className="inline-flex w-full flex-col items-center ">
@@ -12,11 +12,9 @@ export default function Home() {
         <QuickLinks />
         {process.env.NEXT_PUBLIC_BACKEND_URL && <DatasetCatalog />}
         {process.env.NEXT_PUBLIC_BACKEND_URL && <Resources />}
-        <div className=" flex w-full justify-center bg-[#222136]">
-          <DataStories />
-        </div>
-        <About />
-        <Partners />
+        {DataStories && <DataStories />}
+        {HomeAbout && <HomeAbout />}
+        {HomePartners && <HomePartners />}
       </div>
     </main>
   );

@@ -1,3 +1,4 @@
+import { AboutPage } from 'ids-drr-branding';
 import { MainConfig, SiteConfig } from 'types';
 import { AboutUsURL, AnalyticsURL, DatasetsURL } from './consts';
 
@@ -82,10 +83,14 @@ export const mainConfig: MainConfig = {
     //   title: 'Resources',
     //   href: '/',
     // },
-    {
-      title: 'About us',
-      href: AboutUsURL,
-    },
+    ...(AboutPage
+      ? [
+          {
+            title: 'About us',
+            href: AboutUsURL,
+          },
+        ]
+      : []),
   ],
 
   sidebarNav: [

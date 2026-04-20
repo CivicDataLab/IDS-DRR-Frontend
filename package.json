@@ -32,6 +32,7 @@
     "graphql": "^16.6.0",
     "graphql-request": "5.1.0",
     "graphql-tag": "^2.12.6",
+    "ids-drr-branding": "file:./branding-stub",
     "leaflet": "^1.9.4",
     "next": "15.5.9",
     "next-intl": "^3.4.0",
