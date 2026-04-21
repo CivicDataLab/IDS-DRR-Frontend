@@ -1,3 +1,13 @@
+import { parseDate, type CalendarDate } from '@internationalized/date';
+
+export function safeParseDate(value: string): CalendarDate | undefined {
+  try {
+    return parseDate(value);
+  } catch {
+    return undefined;
+  }
+}
+
 export const constructRegionOptions = (
   boundary: string,
   geographiesData: any
@@ -100,12 +110,14 @@ export function formatNumberToIndianSystem(input: number): string | number {
 
 
 export const getLatestDate = (dateStrings: string[]) => {
-  if (!dateStrings || dateStrings.length === 0) {
+  const valid = (dateStrings || []).filter((dateStr) => /^\d{4}_\d{2}$/.test(dateStr));
+
+  if (valid.length === 0) {
     return process.env.NEXT_PUBLIC_TIME_PERIOD; // Handle empty array case
   }
 
   // Convert each 'yyyy_mm' string to a Date object
-  const dates = dateStrings.map((dateStr) => {
+  const dates = valid.map((dateStr) => {
     const [year, month] = dateStr.split('_'); // Split into year and month
     return new Date(parseInt(year), parseInt(month) - 1); // Create a Date object (month is 0-indexed in JavaScript)
   });
