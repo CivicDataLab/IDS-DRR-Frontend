@@ -7,8 +7,7 @@ import {
   RiskScore,
   Vulnerability,
 } from '@/components/FactorIcons';
-import { Button, Divider, Icon, ProgressBar, Text } from 'opub-ui';
-
+import { Button, Icon, ProgressBar, Text } from 'opub-ui';
 
 import { documentationLink, RiskColorMap } from '@/config/consts';
 import { cn } from '@/lib/utils';
