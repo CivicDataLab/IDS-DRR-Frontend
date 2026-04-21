@@ -6,7 +6,7 @@ import {
   GovtResponse,
   RiskScore,
   Vulnerability,
-} from '@/public/FactorIcons';
+} from '@/components/FactorIcons';
 import { Button, Divider, Icon, ProgressBar, Text } from 'opub-ui';
 
 import {
