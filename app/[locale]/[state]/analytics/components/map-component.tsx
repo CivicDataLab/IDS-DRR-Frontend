@@ -248,21 +248,12 @@ export const MapComponent = ({
   }, [districtCode, map, mapData?.features, revenueMapData?.features]);
 
   React.useEffect(() => {
-    try {
-      setTimeout(() => {
-        if (
-          map &&
-          map?.getContainer() &&
-          currentSelectedState.center &&
-          !districtCode &&
-          currentSelectedState.code !== '18'
-        ) {
-          map?.setView(currentSelectedState.center, 7.4);
-        }
-      }, 100);
-    } catch (error) {
-      console.log(error);
-    }
+    if (!map) return;
+    if (districtCode) return;
+    if (!currentSelectedState.center) return;
+    if (currentSelectedState.code === '18') return;
+
+    map.setView(currentSelectedState.center, 7.4);
   }, [map, districtCode, currentSelectedState]);
 
   if (mapDataloading || revenueMapDataLoading)
