@@ -191,7 +191,7 @@ export function FilterComp({
   );
 }
 
-export const RenderOptions = ({
+const RenderOptions = ({
   filterOptions,
   selectedOption,
   regionSelected,

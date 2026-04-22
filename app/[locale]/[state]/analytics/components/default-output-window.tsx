@@ -13,7 +13,6 @@ import { documentationLink, RiskColorMap } from '@/config/consts';
 import { cn } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
-import NavLink from '@/components/nav-link';
 import styles from './styles.module.scss';
 
 export function DefaultWindow({
@@ -182,80 +181,4 @@ export const AboutIndicator = ({
   );
 };
 
-export const DistrictBar = ({
-  district,
-  value,
-}: {
-  district: string;
-  value: string;
-}) => {
-  const score = parseInt(value);
-  return (
-    <div className="mb-1 flex items-center gap-2 pl-20">
-      <div className=" basis-1/4">
-        <Text variant="bodySm" fontWeight="medium">
-          {district}
-        </Text>
-      </div>
 
-      <div className=" basis-2/4">
-        <ProgressBar
-          size="small"
-          customColor={RiskColorMap[score]}
-          value={(score / 5) * 100}
-        />
-      </div>
-    </div>
-  );
-};
-
-export const IndicatorDescription = ({
-  title,
-  slug,
-  desc,
-}: {
-  title: string;
-  slug: string;
-  desc: string;
-}) => {
-  const IconMap: { [key: string]: React.ReactNode } = {
-    'risk-score': <RiskScore color={'#000000'} />,
-    vulnerability: <Vulnerability color={'#000000'} />,
-    'flood-hazard': <FloodHazard color={'#000000'} />,
-    exposure: <Exposure color={'#000000'} />,
-    'government-response': <GovtResponse color={'#000000'} />,
-  };
-
-  return (
-    <div className="flex flex-col">
-      <div className="mb-2 mt-3 flex items-center">
-        {IconMap[slug] || <Ellipse color="#000000" />}
-        <Text fontWeight="bold" variant="headingMd" className="pl-2">
-          {title}
-        </Text>
-        {slug !== 'risk-score' && process.env.NEXT_PUBLIC_BACKEND_URL && (
-          <NavLink
-            className="ml-auto flex gap-2"
-            href={`/datasets/?category=${title}`}
-          >
-            <Icon source={Icons.link} color="interactive" />
-            <Text color="interactive">Link to the datasets</Text>
-          </NavLink>
-        )}
-      </div>
-      <Text>{desc}</Text>
-      {slug === 'government-response' && (
-        <a
-          className="mt-2 flex gap-2"
-          target="_blank"
-          href={
-            'https://superset.civicdatalab.in/superset/dashboard/flood-tenders-assam/ '
-          }
-        >
-          <Text color="interactive">View procurement data dashboard</Text>
-          <Icon source={Icons.externalLink} color="interactive" />
-        </a>
-      )}
-    </div>
-  );
-};

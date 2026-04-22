@@ -2,7 +2,7 @@ import { AboutPage } from 'ids-drr-branding';
 import { AboutUsURL, AnalyticsURL, DatasetsURL } from './consts';
 import rawConfig from './site.generated.json';
 
-export type SiteConfig = {
+type SiteConfig = {
   name: string;
   description: string;
   url: string;
@@ -19,7 +19,7 @@ export type MainConfig = {
   mainNav: MainNavItem[];
 };
 
-export type State = {
+type State = {
   name: string;
   slug: string;
   icon: string;
@@ -29,7 +29,7 @@ export type State = {
   overlay_url?: string;
 };
 
-export type Resource = {
+type Resource = {
   title: string;
   source: string;
   last_updated: string;
@@ -57,8 +57,6 @@ export const siteConfig: SiteConfig = {
     ? 'http://localhost:3000'
     : process.env.SITE_URL || '',
 };
-
-export const locales = ['en', 'hi'];
 
 export const mainConfig: MainConfig = {
   homeUrl: '/',

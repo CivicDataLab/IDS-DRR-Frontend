@@ -96,20 +96,6 @@ export const ANALYTICS_TABLE_DATA = graphql(`
   }
 `);
 
-export const ANALYTICS_TIME_TRENDS = graphql(`
-  query getTimeTrends(
-    $indcFilter: IndicatorFilter!
-    $dataFilter: DataFilter!
-    $geoFilter: GeoFilter!
-  ) {
-    getTimeTrends(
-      indcFilter: $indcFilter
-      dataFilter: $dataFilter
-      geoFilter: $geoFilter
-    )
-  }
-`);
-
 export const PLATFORM_STATES_LIST = graphql(`
   query getStatesList {
     getStates

@@ -461,32 +461,7 @@ export function OutputWindow({
   );
 }
 
-export function OutputWindowHeader({ factorData, indicator }: any) {
-  const color = '#000';
-  const IconMap: { [key: string]: React.ReactNode } = {
-    'risk-score': <RiskScore color={color} />,
-    vulnerability: <Vulnerability color={color} />,
-    'flood-hazard': <FloodHazard color={color} />,
-    exposure: <Exposure color={color} />,
-    'government-response': <GovtResponse color={color} />,
-  };
-
-  return (
-    <div className="mb-5 mt-4 flex items-center justify-between">
-      <Text
-        variant="heading2xl"
-        fontWeight="regular"
-        className="flex items-center gap-2"
-      >
-        {IconMap[indicator || 'risk-score']}
-        {getFactorNameBySlug(factorData, indicator)}
-      </Text>
-      {/* <DownloadReport /> */}
-    </div>
-  );
-}
-
-export function OtherFactorScores({
+function OtherFactorScores({
   factorData,
   data,
   boundary,

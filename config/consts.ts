@@ -1,5 +1,3 @@
-const platformName = 'Intelligent Data Solution';
-
 //General
 const RiskColorMap: {
   [key: number]: {
@@ -60,13 +58,7 @@ const RiskText: {
 };
 
 // Datasets page
-const DatasetSource = 'Source';
-const LastUpdated = 'Last Updated';
-const UpdateFreq = 'Update Frequency';
-const datasetsPageHeader = 'Assam DRR : Datasets';
-const datasetsExplorerPageHeader = 'Assam DRR : Datasets';
 const DatasetsURL = `/datasets?size=5&page=1&sort=recent`;
-const GithubRepoLink = `https://github.com/CivicDataLab/flood-data-ecosystem-Assam/tree/main/Sources`;
 
 //analytics page
 // Note: time-period is omitted to default to the latest available data (getDataTimePeriods[0].value)
@@ -85,15 +77,7 @@ const DatasetCatalogText = 'Explore and use high-value datasets';
 
 const ResourcesSectionText = 'Browse through the featured datasets';
 
-const YouTubeLink = 'https://www.youtube.com/watch?v=gTqcyUQ7esg';
-
 export {
-  platformName,
-  DatasetSource,
-  LastUpdated,
-  UpdateFreq,
-  datasetsPageHeader,
-  datasetsExplorerPageHeader,
   AnalyticsURL,
   DatasetsURL,
   HeroSectionText,
@@ -102,8 +86,6 @@ export {
   Factors,
   AnalyticsQuickLinksText,
   AboutUsURL,
-  YouTubeLink,
-  GithubRepoLink,
   learnMoreLink,
   documentationLink,
   DatasetCatalogText,
