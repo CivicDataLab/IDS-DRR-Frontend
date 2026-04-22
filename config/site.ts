@@ -39,14 +39,23 @@ type Resource = {
   tags: string[];
 };
 
+type Language = {
+  label: string;
+  value: string;
+};
+
 const config = rawConfig as {
   states?: State[];
   resources?: Resource[];
+  languages?: Language[];
+  hero_image?: string;
   reports_enabled?: boolean;
 };
 
 export const states: State[] = config.states ?? [];
 export const resources: Resource[] = config.resources ?? [];
+export const languages: Language[] = config.languages ?? [];
+export const heroImage: string = config.hero_image ?? '';
 export const reportsEnabled: boolean = config.reports_enabled ?? false;
 
 export const siteConfig: SiteConfig = {

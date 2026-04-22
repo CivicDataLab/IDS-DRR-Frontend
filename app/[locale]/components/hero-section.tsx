@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { Text } from 'opub-ui';
 
 import { HeroSectionText } from '@/config/consts';
+import { heroImage } from '@/config/site';
 import { cn } from '@/lib/utils';
 import styles from './styles.module.scss';
 
@@ -9,6 +10,7 @@ export const HeroSection = () => {
   return (
     <section
       className={cn(styles.HeroSection)}
+      style={heroImage ? { backgroundImage: `url(${heroImage})` } : undefined}
       aria-label="Hero Section showcasing IDS-DRR"
     >
       <div className=" container flex h-full w-full flex-col items-center justify-end self-center py-14">

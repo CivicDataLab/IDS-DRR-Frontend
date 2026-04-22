@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { useKeyDetect } from '@/hooks/use-key-detect';
-import { MainConfig } from '@/config/site';
+import { languages, MainConfig } from '@/config/site';
 import { Icon, Text } from 'opub-ui';
 
 import Icons from '@/components/icons';
@@ -61,7 +61,9 @@ export function MainNav({
             </div>
           )}
 
-          <TranslateDropdown prefLangCookie={prefLangCookie} />
+          {languages.length > 0 && (
+            <TranslateDropdown prefLangCookie={prefLangCookie} />
+          )}
         </div>
       </div>
     </header>

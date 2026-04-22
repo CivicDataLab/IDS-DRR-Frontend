@@ -17,7 +17,7 @@ const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const tomlPath = resolve(projectRoot, process.env.CONFIG_PATH || 'config.toml');
 const outPath = resolve(projectRoot, 'config', 'site.generated.json');
 
-const ASSET_FIELDS = new Set(['logo', 'icon']);
+const ASSET_FIELDS = new Set(['logo', 'icon', 'hero_image']);
 
 function toAssetUrl(value) {
   if (typeof value !== 'string') return value;
