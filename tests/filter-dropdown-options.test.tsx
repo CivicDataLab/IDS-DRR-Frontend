@@ -360,6 +360,18 @@ describe('FilterDropdownOptions', () => {
       expect(screen.getByTestId('revenue-circle-select')).toBeInTheDocument();
     });
 
+    it('handles currentSelectedState with child_type: null (backend contract for states without grandchildren)', () => {
+      const propsWithNullChildType = {
+        ...defaultProps,
+        currentSelectedState: { child_type: null },
+      };
+
+      render(<FilterDropdownOptions {...propsWithNullChildType} />);
+
+      // toTitleCase(null) must not throw; fallback word is used in the label.
+      expect(screen.getByLabelText(/Select Region/)).toBeInTheDocument();
+    });
+
     it('handles timeLimits with invalid date format', () => {
       const propsWithInvalidDates = {
         ...defaultProps,

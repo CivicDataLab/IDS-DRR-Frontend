@@ -210,7 +210,8 @@ export function copyDefinedURL(url: any) {
   }
 }
 
-export function toTitleCase(str: string) {
+export function toTitleCase(str: string | null | undefined) {
+  if (!str) return '';
   return str.toLowerCase().replace(/\b\w/g, function (char: string) {
     return char.toUpperCase();
   });

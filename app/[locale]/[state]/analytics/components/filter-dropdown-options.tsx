@@ -97,7 +97,7 @@ export default function FilterDropdownOptions({
     {
       label: !districtCode
         ? 'Select a district to enable'
-        : `Select a ${toTitleCase(currentSelectedState.child_type)}`,
+        : `Select a ${toTitleCase(currentSelectedState.child_type) || 'region'}`,
       value: '',
     },
     ...(getRevenueCircleOptionsForDistrict(districtCode) || []),
@@ -151,7 +151,7 @@ export default function FilterDropdownOptions({
         />
 
         <Select
-          label={`Select ${toTitleCase(currentSelectedState.child_type)}`}
+          label={`Select ${toTitleCase(currentSelectedState.child_type) || 'Region'}`}
           value={revenueCode || ''}
           name="revenue-circle-select"
           className="flex-1"
