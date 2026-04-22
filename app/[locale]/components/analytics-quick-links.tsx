@@ -13,6 +13,7 @@ import {
 
 import { AnalyticsQuickLinksText, AnalyticsURL } from '@/config/consts';
 import { PLATFORM_STATES_LIST } from '@/config/graphql/analaytics-queries';
+import { states } from '@/config/site';
 import { GraphQL } from '@/lib/api';
 import styles from './analytics-quick-links.module.css';
 
@@ -30,49 +31,8 @@ export const QuickLinks = () => {
   });
 
   const analyticsWithResolvedLinks = useMemo(() => {
-    const Analytics = [
-      {
-        name: 'Assam',
-        slug: 'assam',
-        status: 'active',
-        icon: '/logo/states/Assam.svg',
-        link: `/assam${AnalyticsURL}`,
-        alt: 'assam state boundary image',
-      },
-      {
-        name: 'Himachal Pradesh',
-        slug: 'himachal-pradesh',
-        status: 'active',
-        icon: '/logo/states/Hp.svg',
-        link: `/himachal-pradesh${AnalyticsURL}`,
-        alt: 'HP state boundary image',
-      },
-      {
-        name: 'Odisha',
-        slug: 'odisha',
-        status: 'active',
-        icon: '/logo/states/Odisha.svg',
-        link: `/odisha${AnalyticsURL}`,
-        alt: 'Odisha state boundary image',
-      },
-      {
-        name: 'Bihar',
-        slug: 'bihar',
-        status: 'active',
-        icon: '/logo/states/Bihar.svg',
-        link: `/bihar${AnalyticsURL}`,
-        alt: 'Bihar state boundary image',
-      },
-      {
-        name: 'Uttar Pradesh',
-        slug: 'uttar-pradesh',
-        status: 'active',
-        icon: '/logo/states/Up.svg',
-        link: `/uttar-pradesh${AnalyticsURL}`,
-        alt: 'UP state boundary image',
-      },
-    ];
-    return Analytics.map((item) => {
+    return states.map((item) => {
+      const link = `/${item.slug}${AnalyticsURL}`;
       const stateFromApi = statesList.data?.getStates?.find(
         (state: any) => state.slug === item.slug
       );
@@ -84,8 +44,8 @@ export const QuickLinks = () => {
       return {
         ...item,
         link: resolvedTimePeriod
-          ? `${item.link}&time-period=${resolvedTimePeriod}`
-          : item.link,
+          ? `${link}&time-period=${resolvedTimePeriod}`
+          : link,
       };
     });
   }, [statesList.data]);

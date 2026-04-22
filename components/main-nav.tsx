@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { useKeyDetect } from '@/hooks/use-key-detect';
-import { MainConfig } from '@/types';
+import { MainConfig } from '@/config/site';
 import { Icon, Text } from 'opub-ui';
 
 import { Icons } from '@/components/icons';

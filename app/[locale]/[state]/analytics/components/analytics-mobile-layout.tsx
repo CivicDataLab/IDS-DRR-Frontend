@@ -6,6 +6,7 @@ import { useLockBody } from '@/hooks/use-lock-body';
 import { parseAsString, useQueryState } from 'next-usequerystate';
 import { Button, Icon, Menu, Text } from 'opub-ui';
 
+import { reportsEnabled } from '@/config/site';
 import { cn, copyCurrentURL, downloadStateReport } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { getLatestDate } from '../utils/utils';
@@ -355,21 +356,25 @@ export function AnalyticsMobileLayout({
                     copyCurrentURL();
                   },
                 },
-                {
-                  content: 'Download Report',
-                  icon: Icons.download,
-                  onAction: () => {
-                    const confirmation = window.confirm(
-                      `Do you want to download the report for "${currentSelectedState.name}". `
-                    );
-                    if (confirmation) {
-                      downloadStateReport(
-                        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentSelectedState.code}&time_period=${timePeriodSelected}`,
-                        `${currentSelectedState.name}-Report`
-                      );
-                    }
-                  },
-                },
+                ...(reportsEnabled
+                  ? [
+                      {
+                        content: 'Download Report',
+                        icon: Icons.download,
+                        onAction: () => {
+                          const confirmation = window.confirm(
+                            `Do you want to download the report for "${currentSelectedState.name}". `
+                          );
+                          if (confirmation) {
+                            downloadStateReport(
+                              `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentSelectedState.code}&time_period=${timePeriodSelected}`,
+                              `${currentSelectedState.name}-Report`
+                            );
+                          }
+                        },
+                      },
+                    ]
+                  : []),
               ]}
             />
           ) : (

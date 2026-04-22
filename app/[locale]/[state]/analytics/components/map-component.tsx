@@ -1,13 +1,13 @@
 'use client';
 
 import React from 'react';
-import { hp_rivers_features } from '@/geo_json/hp_rivers_geojson';
 import { useWindowSize } from '@/hooks/use-window-size';
 import * as d3 from 'd3-scale';
 import { interpolateBlues } from 'd3-scale-chromatic';
 import { Button, Icon, Spinner, Text } from 'opub-ui';
 
 import { Factors, RiskText } from '@/config/consts';
+import { states } from '@/config/site';
 import Icons from '@/components/icons';
 import MapChart from '@/components/MapChart';
 import {
@@ -49,6 +49,24 @@ export const MapComponent = ({
 }) => {
   const [map, setMap] = React.useState<any>(null);
   const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
+  const [overlayFeatures, setOverlayFeatures] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    const slug = currentSelectedState?.slug;
+    const overlayUrl = states.find((state) => state.slug === slug)?.overlay_url;
+    if (!overlayUrl) {
+      setOverlayFeatures(null);
+      return;
+    }
+    const controller = new AbortController();
+    fetch(overlayUrl, { signal: controller.signal })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => setOverlayFeatures(data))
+      .catch((err) => {
+        if (err.name !== 'AbortError') setOverlayFeatures(null);
+      });
+    return () => controller.abort();
+  }, [currentSelectedState?.slug]);
 
   const params = new URLSearchParams(window.location.search);
   const districtCode = params.get('district-code');
@@ -307,10 +325,7 @@ export const MapComponent = ({
         )}
         <MapChart
           features={mapFeatures || mapData.features}
-          addlFeaturesArray={
-            // Replace this logic soon with attribute returned from getStates call
-            currentSelectedState.code === '02' ? [hp_rivers_features] : []
-          }
+          addlFeaturesArray={overlayFeatures ? [overlayFeatures] : []}
           addlFeaturesStyleArray={addlFeaturesStyleArray}
           mapZoom={isMobile ? 8 : 7.4}
           mapProperty={indicator}

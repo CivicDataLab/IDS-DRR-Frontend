@@ -15,6 +15,7 @@ import {
 } from 'opub-ui';
 
 import { ResourcesSectionText } from '@/config/consts';
+import { resources } from '@/config/site';
 import { fetchDatasets } from '@/lib/api';
 import { formatReferenceDate } from '@/lib/utils';
 
@@ -88,63 +89,66 @@ const Resources = () => {
           {data.length > 0 ? (
             // <CarouselContent className="container flex w-full gap-4 px-4 lg:gap-4 ">
             <CarouselContent className="flex w-full justify-between gap-4  pl-4 pr-1 lg:container lg:gap-6">
-              <CarouselItem className="ml-2 overflow-hidden rounded-2 bg-surfaceDefault p-6 md:basis-1/2 lg:ml-0 lg:basis-1/3  lg:p-6 ">
-                <Link
-                  href={`https://supersetv2.civicdatalab.in/superset/dashboard/p/Od0XQzvMNmr/`}
-                  className="w-full no-underline"
+              {resources.map((card) => (
+                <CarouselItem
+                  key={card.url}
+                  className="ml-2 overflow-hidden rounded-2 bg-surfaceDefault p-6 md:basis-1/2 lg:ml-0 lg:basis-1/3  lg:p-6 "
                 >
-                  <div className="flex w-full flex-col items-baseline justify-between gap-4">
-                    <div className=" flex flex-col gap-1 ">
-                      <Text variant="bodyLg">
-                        <b> Assam Tenders Dashboard</b>
-                      </Text>
-                      <Text variant="bodySm">
-                        Source: Assam Government eProcurement System
-                      </Text>
-                    </div>
-                    <div className="flex flex-col items-start gap-1">
-                      <div className=" flex flex-col gap-1  lg:flex-row">
-                        <Text
-                          color="default"
-                          className="text-textSubdued"
-                          variant="bodySm"
-                          fontWeight="regular"
-                        >
-                          Last Updated: 2024-10-01
+                  <Link href={card.url} className="w-full no-underline">
+                    <div className="flex w-full flex-col items-baseline justify-between gap-4">
+                      <div className=" flex flex-col gap-1 ">
+                        <Text variant="bodyLg">
+                          <b> {card.title}</b>
                         </Text>
+                        <Text variant="bodySm">Source: {card.source}</Text>
+                      </div>
+                      <div className="flex flex-col items-start gap-1">
+                        <div className=" flex flex-col gap-1  lg:flex-row">
+                          <Text
+                            color="default"
+                            className="text-textSubdued"
+                            variant="bodySm"
+                            fontWeight="regular"
+                          >
+                            Last Updated: {card.last_updated}
+                          </Text>
+                          <Text
+                            color="default"
+                            className="hidden text-textSubdued  lg:block"
+                            variant="bodySm"
+                            fontWeight="regular"
+                          >
+                            |
+                          </Text>
+                          <Text
+                            color="default"
+                            className="text-textSubdued"
+                            variant="bodySm"
+                            fontWeight="regular"
+                          >
+                            Update Frequency: {card.update_frequency}
+                          </Text>
+                        </div>
                         <Text
                           color="default"
-                          className="hidden text-textSubdued  lg:block"
+                          className=" text-textSubdued "
                           variant="bodySm"
                           fontWeight="regular"
                         >
-                          |
-                        </Text>
-                        <Text
-                          color="default"
-                          className="text-textSubdued"
-                          variant="bodySm"
-                          fontWeight="regular"
-                        >
-                          Update Frequency: NA
+                          Reference Period: {card.reference_period}
                         </Text>
                       </div>
-                      <Text
-                        color="default"
-                        className=" text-textSubdued "
-                        variant="bodySm"
-                        fontWeight="regular"
-                      >
-                        Reference Period: January 2017 to August 2024
-                      </Text>
+                      <div className=" flex flex-wrap gap-2">
+                        {card.tags.map((tag) => (
+                          <Tag key={tag} background-color="#E1F0FF">
+                            {tag}
+                          </Tag>
+                        ))}
+                      </div>
                     </div>
-                    <div className=" flex flex-wrap gap-2">
-                      <Tag background-color="#E1F0FF">Financial Data</Tag>
-                      <Tag background-color="#E1F0FF">Government Response</Tag>
-                    </div>
-                  </div>
-                </Link>
-              </CarouselItem>
+                  </Link>
+                </CarouselItem>
+              ))}
               {data.map((item: any, index: any) => (
                 <CarouselItem
                   key={index}

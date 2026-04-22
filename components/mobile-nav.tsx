@@ -4,7 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useKeyDetect } from '@/hooks/use-key-detect';
-import { MainConfig } from '@/types';
+import { MainConfig } from '@/config/site';
 import { Credits, PartnerLogos } from 'ids-drr-branding';
 import { IconButton, Text } from 'opub-ui';
 

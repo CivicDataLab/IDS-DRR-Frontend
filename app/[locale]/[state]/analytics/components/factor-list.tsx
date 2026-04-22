@@ -12,6 +12,7 @@ import { useQueryState } from 'next-usequerystate';
 import { Button, Icon, Menu, Select, Text, Tooltip } from 'opub-ui';
 
 import { ANALYTICS_INDICATORS_BY_CATEGORY } from '@/config/graphql/analaytics-queries';
+import { reportsEnabled } from '@/config/site';
 import { GraphQL } from '@/lib/api';
 import { cn, copyCurrentURL, downloadStateReport } from '@/lib/utils';
 import Icons from '@/components/icons';
@@ -250,65 +251,66 @@ export function FactorList({ currentState }: any) {
                 },
               ]}
             />
-            {downloadReportLoading ? (
-              <Icon
-                source={Icons.loader}
-                data-testid="loader-icon"
-                className="animate-spin"
-              />
-            ) : (
-              <Button
-                className="self-start"
-                onClick={async () => {
-                  const confirmation = window.confirm(
-                    `Do you want to download the report for "${currentState.name}"?`
-                  );
-                  if (confirmation) {
-                    try {
-                      if (!time_period) {
-                        throw new Error('Time period is not defined');
-                      }
+            {reportsEnabled &&
+              (downloadReportLoading ? (
+                <Icon
+                  source={Icons.loader}
+                  data-testid="loader-icon"
+                  className="animate-spin"
+                />
+              ) : (
+                <Button
+                  className="self-start"
+                  onClick={async () => {
+                    const confirmation = window.confirm(
+                      `Do you want to download the report for "${currentState.name}"?`
+                    );
+                    if (confirmation) {
+                      try {
+                        if (!time_period) {
+                          throw new Error('Time period is not defined');
+                        }
 
-                      let time_period_array = time_period?.split(
-                        ','
-                      ) as string[];
+                        let time_period_array = time_period?.split(
+                          ','
+                        ) as string[];
 
-                      let time_period_latest;
+                        let time_period_latest;
 
-                      if (time_period_array?.length > 1) {
-                        let time_period_latest_date = new Date(
-                          getLatestDate(time_period_array) as string
+                        if (time_period_array?.length > 1) {
+                          let time_period_latest_date = new Date(
+                            getLatestDate(time_period_array) as string
+                          );
+                          time_period_latest =
+                            `${time_period_latest_date.getFullYear()}_${String(time_period_latest_date.getMonth() + 1).padStart(2, '0')}` as string;
+                        } else {
+                          time_period_latest = time_period;
+                        }
+
+                        setDownloadReportLoading(true);
+                        await downloadStateReport(
+                          `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentState.code}&time_period=${time_period_latest}`,
+                          `${currentState.name}-Report`
                         );
-                        time_period_latest =
-                          `${time_period_latest_date.getFullYear()}_${String(time_period_latest_date.getMonth() + 1).padStart(2, '0')}` as string;
-                      } else {
-                        time_period_latest = time_period;
+                      } catch (error) {
+                        alert(`Error Downloading Report. ${error}`);
+                      } finally {
+                        setDownloadReportLoading(false);
                       }
-
-                      setDownloadReportLoading(true);
-                      await downloadStateReport(
-                        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentState.code}&time_period=${time_period_latest}`,
-                        `${currentState.name}-Report`
-                      );
-                    } catch (error) {
-                      alert(`Error Downloading Report. ${error}`);
-                    } finally {
-                      setDownloadReportLoading(false);
                     }
-                  }
-                }}
-                monochrome={true}
-                kind="tertiary"
+                  }}
+                  monochrome={true}
+                  kind="tertiary"
 
-                // disabled={downloadReportLoading}
-              >
-                <div className="flex items-center gap-2">
-                  <Icon source={Icons.download} />
+                  // disabled={downloadReportLoading}
+                >
+                  <div className="flex items-center gap-2">
+                    <Icon source={Icons.download} />
 
-                  <Text variant="bodyMd">Download Report</Text>
-                </div>
-              </Button>
-            )}
+                    <Text variant="bodyMd">Download Report</Text>
+                  </div>
+                </Button>
+              ))}
           </div>
         </div>
       </MediaRendering>

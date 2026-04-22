@@ -43,25 +43,31 @@ jest.mock('@/config/consts', () => ({
   },
 }));
 
-// Mock geo_json
-jest.mock('@/geo_json/hp_rivers_geojson', () => ({
-  hp_rivers_features: [
-    {
-      type: 'Feature',
-      properties: {
-        name: 'River A',
-        'risk-score': 3,
-      },
-      geometry: {
-        type: 'LineString',
-        coordinates: [
-          [0, 0],
-          [1, 1],
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    ok: true,
+    json: () =>
+      Promise.resolve({
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            properties: {
+              name: 'River A',
+              'risk-score': 3,
+            },
+            geometry: {
+              type: 'LineString',
+              coordinates: [
+                [0, 0],
+                [1, 1],
+              ],
+            },
+          },
         ],
-      },
-    },
-  ],
-}));
+      }),
+  })
+) as jest.Mock;
 
 describe('MapComponent', () => {
   const mockIndicator = 'risk-score';
