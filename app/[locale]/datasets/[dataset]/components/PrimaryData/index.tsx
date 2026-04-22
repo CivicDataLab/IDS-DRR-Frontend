@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Button, Icon, Menu, Spinner, Text, Tray } from 'opub-ui';
 
 import { copyCurrentURL, handleRedirect } from '@/lib/utils';
-import { Icons } from '@/components/icons';
+import Icons from '@/components/icons';
 import Metadata from '../Metadata';
 
 interface PrimaryDataProps {

@@ -11,7 +11,7 @@ import {
 } from 'opub-ui';
 
 import { toTitleCase } from '@/lib/utils';
-import { Icons } from '@/components/icons';
+import Icons from '@/components/icons';
 
 interface FilterProps {
   setOpen?: (isOpen: boolean) => void;

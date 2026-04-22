@@ -6,7 +6,7 @@ import { useKeyDetect } from '@/hooks/use-key-detect';
 import { MainConfig } from '@/config/site';
 import { Icon, Text } from 'opub-ui';
 
-import { Icons } from '@/components/icons';
+import Icons from '@/components/icons';
 import { TranslateDropdown } from './langSelect/lang-select';
 import NavLink from './nav-link';
 

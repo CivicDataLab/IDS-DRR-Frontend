@@ -8,7 +8,7 @@ import { MainConfig } from '@/config/site';
 import { Credits, PartnerLogos } from 'ids-drr-branding';
 import { IconButton, Text } from 'opub-ui';
 
-import { Icons } from '@/components/icons';
+import Icons from '@/components/icons';
 
 export function MobileNav({ data }: { data: MainConfig }) {
   const [open, setOpen] = React.useState(false);

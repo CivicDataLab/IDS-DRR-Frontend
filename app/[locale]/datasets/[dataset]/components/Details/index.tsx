@@ -19,7 +19,7 @@ import {
 import { CHARTS_QUERY } from '@/config/graphql/dataset-queries';
 import { GraphQL } from '@/lib/api';
 import { copyDefinedURL } from '@/lib/utils';
-import { Icons } from '@/components/icons'; /*  */
+import Icons from '@/components/icons';
 
 // The CHARTS_QUERY DataSpace query returns the echarts option as `item.chart`.
 // This returns the first `type: 'map'` series, or undefined.

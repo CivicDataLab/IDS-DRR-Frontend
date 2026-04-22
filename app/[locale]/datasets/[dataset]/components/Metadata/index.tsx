@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Button, Icon, Tag, Text } from 'opub-ui';
 
 import { toTitleCase } from '@/lib/utils';
-import { Icons } from '@/components/icons';
+import Icons from '@/components/icons';
 
 interface MetadataProps {
   data: any;
