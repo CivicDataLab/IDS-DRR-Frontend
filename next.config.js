@@ -15,6 +15,21 @@ const nextConfig = {
     ],
   },
   reactStrictMode: false,
+  // https://github.com/CivicDataLab/opub-mono/pull/403
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.(js|mjs)$/,
+      enforce: 'pre',
+      include: /node_modules\/opub-ui/,
+      use: [
+        {
+          loader: 'source-map-loader',
+          options: { filterSourceMappingUrl: () => 'remove' },
+        },
+      ],
+    });
+    return config;
+  },
 };
 
 module.exports = withNextIntl(nextConfig);
