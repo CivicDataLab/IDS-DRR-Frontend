@@ -29,7 +29,7 @@ export type DataFilter = {
   period?: InputMaybe<Scalars['String']>;
 };
 
-/** Geography(id, name, code, type, parentId, geom, slug) */
+/** Geography(id, name, code, type, parentId, geom, simple_geom, slug) */
 export type GeoFilter = {
   AND?: InputMaybe<GeoFilter>;
   OR?: InputMaybe<GeoFilter>;
