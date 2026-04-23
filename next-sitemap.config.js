@@ -1,5 +1,7 @@
 /** @type {import('next-sitemap').IConfig} */
 
+const site = require('./config/site.generated.json');
+
 const dev = process.env.NODE_ENV !== 'production';
 
 module.exports = {
@@ -7,27 +9,19 @@ module.exports = {
 
   generateRobotsTxt: true,
   additionalPaths: async (config) => {
-    const result = [];
+    const activeStates = (site.states || []).filter(
+      (s) => s.status === 'active'
+    );
+    const views = ['map', 'table', 'chart'];
+    const lastmod = new Date().toISOString();
 
-    result.push({
-      loc: '/en/assam/analytics?indicator=risk-score&view=map',
-      changefreq: 'daily',
-      priority: 1,
-      lastmod: new Date().toISOString(),
-    });
-    result.push({
-      loc: '/en/assam/analytics?indicator=risk-score&view=table',
-      changefreq: 'daily',
-      priority: 1,
-      lastmod: new Date().toISOString(),
-    });
-    result.push({
-      loc: '/en/assam/analytics?indicator=risk-score&view=chart',
-      changefreq: 'daily',
-      priority: 1,
-      lastmod: new Date().toISOString(),
-    });
-
-    return result;
+    return activeStates.flatMap((state) =>
+      views.map((view) => ({
+        loc: `/en/${state.slug}/analytics?indicator=risk-score&view=${view}`,
+        changefreq: 'daily',
+        priority: 1,
+        lastmod,
+      }))
+    );
   },
 };

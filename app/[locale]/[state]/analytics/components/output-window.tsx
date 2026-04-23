@@ -21,7 +21,7 @@ import { cn, formatDateString } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import {
-  formatNumberToIndianSystem,
+  formatNumber,
   getFactorNameBySlug,
   getLatestDate,
 } from '../utils/utils';
@@ -211,7 +211,7 @@ export function OutputWindow({
                     {!Factors.includes(indicator) && (
                       <Text variant="bodyMd" fontWeight="bold">
                         {/* {data[indicator]['value']} */}
-                        {formatNumberToIndianSystem(data[indicator]['value'])}
+                        {formatNumber(data[indicator]['value'])}
                       </Text>
                     )}
                   </div>
@@ -395,9 +395,7 @@ export function OutputWindow({
                           </Text>
                           {!Factors.includes(indicator) && (
                             <Text variant="bodyMd" fontWeight="bold">
-                              {formatNumberToIndianSystem(
-                                data[indicator]['value']
-                              )}
+                              {formatNumber(data[indicator]['value'])}
                               {/* {data[indicator]['value']} */}
                             </Text>
                           )}

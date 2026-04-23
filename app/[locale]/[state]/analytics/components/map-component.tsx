@@ -11,7 +11,7 @@ import { states } from '@/config/site';
 import Icons from '@/components/icons';
 import MapChart from '@/components/MapChart';
 import {
-  formatNumberToIndianSystem,
+  formatNumber,
   getFactorNameBySlug,
   getUnitsBySlug,
 } from '../utils/utils';
@@ -105,8 +105,8 @@ export const MapComponent = ({
         }
         // return num > 1
         //   ? Math.round(num).toString()
-        //   : formatNumberToIndianSystem(Math.round(num));
-        return formatNumberToIndianSystem(Math.round(num));
+        //   : formatNumber(Math.round(num));
+        return formatNumber(Math.round(num));
       };
 
       const isDuplicate = customLegendData.some(
@@ -216,7 +216,7 @@ export const MapComponent = ({
       <span>${getFactorNameBySlug(indicatorsData, indicator)} : <span style="color: ${colorMap[riskValue]}; text-transform: ${Factors.includes(indicator) && 'uppercase'}; font-weight: bold;">${
         Factors.includes(indicator)
           ? riskText
-          : `${formatNumberToIndianSystem(riskValue)} ${getUnitsBySlug(
+          : `${formatNumber(riskValue)} ${getUnitsBySlug(
               indicatorsData,
               indicator
             )}`
@@ -356,7 +356,7 @@ export const MapComponent = ({
             const riskValue = layer.feature?.properties?.[indicator];
             const riskText = Factors.includes(indicator)
               ? RiskText[riskValue]?.indicatorText
-              : `${formatNumberToIndianSystem(riskValue)} ${getUnitsBySlug(
+              : `${formatNumber(riskValue)} ${getUnitsBySlug(
                   indicatorsData,
                   indicator
                 )}`;

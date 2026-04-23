@@ -50,6 +50,7 @@ const config = rawConfig as {
   languages?: Language[];
   hero_image?: string;
   reports_enabled?: boolean;
+  number_locale?: string;
 };
 
 export const states: State[] = config.states ?? [];
@@ -57,6 +58,9 @@ export const resources: Resource[] = config.resources ?? [];
 export const languages: Language[] = config.languages ?? [];
 export const heroImage: string = config.hero_image ?? '';
 export const reportsEnabled: boolean = config.reports_enabled ?? false;
+export const numberLocale: string = config.number_locale ?? '';
+
+const defaultState = states.find((s) => s.status === 'active');
 
 export const siteConfig: SiteConfig = {
   name: 'IDS-DRR',
@@ -74,10 +78,14 @@ export const mainConfig: MainConfig = {
       title: 'Home',
       href: '/',
     },
-    {
-      title: 'Analytics',
-      href: `/assam${AnalyticsURL}`,
-    },
+    ...(defaultState
+      ? [
+          {
+            title: 'Analytics',
+            href: `/${defaultState.slug}${AnalyticsURL}`,
+          },
+        ]
+      : []),
     ...(process.env.NEXT_PUBLIC_BACKEND_URL
       ? [
           {

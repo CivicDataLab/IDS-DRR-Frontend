@@ -26,7 +26,7 @@ jest.mock('@/components/MapChart', () => ({
 
 // Mock utils
 jest.mock('@/app/[locale]/[state]/analytics/utils/utils', () => ({
-  formatNumberToIndianSystem: jest.fn((value) => `formatted-${value}`),
+  formatNumber: jest.fn((value) => `formatted-${value}`),
   getFactorNameBySlug: jest.fn((factorData, slug) => `Factor ${slug}`),
   getUnitsBySlug: jest.fn((slug) => `units-${slug}`),
 }));

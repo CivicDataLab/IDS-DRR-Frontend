@@ -5,7 +5,7 @@ import { render, screen } from '@testing-library/react';
 jest.mock('opub-ui');
 
 jest.mock('@/app/[locale]/[state]/analytics/utils/utils', () => ({
-  formatNumberToIndianSystem: jest.fn((value) => `formatted-${value}`),
+  formatNumber: jest.fn((value) => `formatted-${value}`),
 }));
 
 jest.mock('@/config/consts', () => ({

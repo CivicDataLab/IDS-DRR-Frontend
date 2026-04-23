@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Spinner, Table, Text } from 'opub-ui';
 
 import { Factors, RiskText } from '@/config/consts';
-import { formatNumberToIndianSystem } from '../utils/utils';
+import { formatNumber } from '../utils/utils';
 
 type ColumnDefinition = {
   accessorKey: string;
@@ -56,7 +56,7 @@ export function TableComponent({ data, isLoading }: any) {
             ? RiskText[parseInt((value as { value: string }).value)]?.[
                 'indicatorText'
               ]
-            : formatNumberToIndianSystem(
+            : formatNumber(
                 (value as { value: any }).value
               ).toString();
         }

@@ -1,5 +1,7 @@
 import { parseDate, type CalendarDate } from '@internationalized/date';
 
+import { numberLocale } from '@/config/site';
+
 export function safeParseDate(value: string): CalendarDate | undefined {
   try {
     return parseDate(value);
@@ -22,42 +24,26 @@ export function getUnitsBySlug(factorData: any, slug: string) {
   return factorName[0]?.unit__name || '';
 }
 
-export function formatNumberToIndianSystem(input: number): string | number {
-  if (input === undefined || input === null) {
-    return ''; // Return an empty string or handle it as needed
-  }
-  // Extract the numeric part (including decimals)
-  const match = input.toString().match(/[\d.]+/);
-  if (!match) return input.toString(); // No number found, return original input
+// Locale-aware number formatter. Grouping follows the deployment's
+// number_locale (e.g. "en-IN" -> "1,00,000"; "en-US" -> "100,000").
+// Accepts numbers, numeric strings, or strings with a trailing unit
+// ("12.5 mm"); in the last case the unit is preserved.
+const numberFormatter = new Intl.NumberFormat(numberLocale || undefined, {
+  maximumFractionDigits: 2,
+});
 
-  let number = parseFloat(match[0]);
+export function formatNumber(input: number | string): string {
+  if (input === undefined || input === null) return '';
 
-  // Handle NaN cases
-  if (isNaN(number)) {
-    return input.toString();
-  }
+  const str = input.toString();
+  const match = str.match(/[\d.]+/);
+  if (!match) return str;
 
-  // Ensure 0.00 formatting
-  if (number === 0) {
-    return `0.00${input.toString().replace(match[0], '')}`;
-  }
+  const number = parseFloat(match[0]);
+  if (isNaN(number)) return str;
 
-  const [integerPart, decimalPart] = number.toString().split('.');
-
-  const lastThreeDigits = integerPart.slice(-3);
-  const otherDigits = integerPart.slice(0, -3);
-
-  const formattedNumber =
-    otherDigits.replace(/\B(?=(\d{2})+(?!\d))/g, ',') +
-    (otherDigits ? ',' : '') +
-    lastThreeDigits;
-
-  const formatted = decimalPart
-    ? `${formattedNumber}.${decimalPart}`
-    : `${formattedNumber}.0`;
-
-  // Append unit back if present
-  const unit = input.toString().replace(match[0], '').trim();
+  const formatted = numberFormatter.format(number);
+  const unit = str.replace(match[0], '').trim();
   return unit ? `${formatted} ${unit}` : formatted;
 }
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { ProgressBar } from 'opub-ui';
 
 import { RiskColorMap } from '@/config/consts';
-import { formatNumberToIndianSystem } from '../utils/utils';
+import { formatNumber } from '../utils/utils';
 
 interface ScoreProps {
   label: string;
@@ -23,7 +23,7 @@ export function ScoreInfo({ label, value, indicator }: ScoreProps) {
         <span>{label}</span>
       )}{' '}
       {indicator !== 'risk-score' && (
-        <strong className="pl-2">{formatNumberToIndianSystem(value)}</strong>
+        <strong className="pl-2">{formatNumber(value)}</strong>
       )}
     </div>
   );

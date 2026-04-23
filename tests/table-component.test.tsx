@@ -7,7 +7,7 @@ jest.mock('opub-ui');
 
 // Mock utils
 jest.mock('@/app/[locale]/[state]/analytics/utils/utils', () => ({
-  formatNumberToIndianSystem: jest.fn((value) => `formatted-${value}`),
+  formatNumber: jest.fn((value) => `formatted-${value}`),
 }));
 
 // Mock config
