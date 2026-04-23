@@ -266,20 +266,11 @@ export const MapComponent = ({
   }, [districtCode, map, mapData?.features, revenueMapData?.features]);
 
   React.useEffect(() => {
-    try {
-      setTimeout(() => {
-        if (
-          map &&
-          map?.getContainer() &&
-          currentSelectedState.center &&
-          !districtCode
-        ) {
-          map?.setView(currentSelectedState.center, 7.4);
-        }
-      }, 100);
-    } catch (error) {
-      console.error('Error setting map view:', error);
-    }
+    if (!map) return;
+    if (districtCode) return;
+    if (!currentSelectedState?.center) return;
+
+    map.setView(currentSelectedState.center, 7.4);
   }, [map, districtCode, currentSelectedState]);
 
   if (mapDataloading || revenueMapDataLoading)
