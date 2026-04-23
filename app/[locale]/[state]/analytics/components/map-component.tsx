@@ -272,8 +272,7 @@ export const MapComponent = ({
           map &&
           map?.getContainer() &&
           currentSelectedState.center &&
-          !districtCode &&
-          currentSelectedState.code !== '18'
+          !districtCode
         ) {
           map?.setView(currentSelectedState.center, 7.4);
         }
