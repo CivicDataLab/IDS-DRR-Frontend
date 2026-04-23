@@ -14,14 +14,14 @@ export function getFactorNameBySlug(factorData: any, slug: string) {
   const factorName = factorData?.filter(
     (factor: { slug: string }) => factor.slug === slug
   );
-  return factorName[0]?.name;
+  return factorName?.[0]?.name ?? slug;
 }
 
 export function getUnitsBySlug(factorData: any, slug: string) {
   const factorName = factorData?.filter(
     (factor: { slug: string }) => factor.slug === slug
   );
-  return factorName[0]?.unit__name || '';
+  return factorName?.[0]?.unit__name || '';
 }
 
 // Locale-aware number formatter. Grouping follows the deployment's

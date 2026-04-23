@@ -312,16 +312,17 @@ export function AnalyticsMainLayout() {
   ]);
   // Data used for map legends and factor labels (must match currently selected `indicator`)
   const mapIndicatorsData = useQuery<any>({
-    queryKey: [`indicators_${indicator}`],
+    queryKey: [`indicators_${indicator}_${currentSelectedState?.code}`],
     queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_INDICATORS,
         {
           indcFilter: { slug: indicator },
+          stateCode: currentSelectedState?.code,
         } as any
       ),
-    enabled: Boolean(isMapView),
+    enabled: Boolean(isMapView && currentSelectedState?.code),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
@@ -329,17 +330,20 @@ export function AnalyticsMainLayout() {
 
   // Data used for the state-level "About indicator" pane (always root list)
   const aboutIndicatorsData = useQuery<any>({
-    queryKey: ['indicators_risk-score'],
+    queryKey: [`indicators_risk-score_${currentSelectedState?.code}`],
     queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_INDICATORS,
         {
           indcFilter: { slug: 'risk-score' },
+          stateCode: currentSelectedState?.code,
         } as any
       ),
     // Avoid a duplicate request when the selected indicator is already risk-score.
-    enabled: Boolean(isMapView && indicator !== 'risk-score'),
+    enabled: Boolean(
+      isMapView && indicator !== 'risk-score' && currentSelectedState?.code
+    ),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
@@ -679,15 +683,17 @@ export function OutputWindowComponent({
   });
 
   const indicatorDescriptions: any = useQuery({
-    queryKey: [`indicators_${indicator}`],
+    queryKey: [`indicators_${indicator}_${currentState?.code}`],
     queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_INDICATORS,
         {
           indcFilter: { slug: indicator },
+          stateCode: currentState?.code,
         }
       ),
+    enabled: Boolean(currentState?.code),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
