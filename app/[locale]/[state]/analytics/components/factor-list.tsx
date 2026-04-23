@@ -33,7 +33,7 @@ interface NestedSidebarProps {
   indicator: string | null;
 }
 
-export function getIcon(slug: string) {
+function getIcon(slug: string) {
   switch (slug) {
     case 'risk-score':
       return <RiskScore color="#000000" />;

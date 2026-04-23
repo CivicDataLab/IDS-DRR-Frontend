@@ -25,7 +25,7 @@ import {
   getFactorNameBySlug,
   getLatestDate,
 } from '../utils/utils';
-import { ScoreInfo } from './revenue-circle-accordion';
+import { ScoreInfo } from './score-info';
 import styles from './styles.module.scss';
 
 export function OutputWindow({

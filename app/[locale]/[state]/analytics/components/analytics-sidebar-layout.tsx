@@ -55,7 +55,7 @@ export function AnalyticsSideBarLayout({
   );
 }
 
-export function IndicatorListWrapper({ statesList, currentState }: any) {
+function IndicatorListWrapper({ statesList, currentState }: any) {
   const router = useRouter();
 
   return (

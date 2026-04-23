@@ -1,15 +1,5 @@
 import React from 'react';
-import {
-  FactorList,
-  getIcon,
-} from '@/app/[locale]/[state]/analytics/components/factor-list';
-import {
-  Exposure,
-  FloodHazard,
-  GovtResponse,
-  RiskScore,
-  Vulnerability,
-} from '@/components/FactorIcons';
+import { FactorList } from '@/app/[locale]/[state]/analytics/components/factor-list';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 // Mock next/navigation
@@ -369,34 +359,3 @@ describe('FactorList', () => {
   });
 });
 
-describe('getIcon', () => {
-  it('returns correct icon for risk-score', () => {
-    const icon = getIcon('risk-score');
-    expect(icon.type).toBe(RiskScore);
-  });
-
-  it('returns correct icon for vulnerability', () => {
-    const icon = getIcon('vulnerability');
-    expect(icon.type).toBe(Vulnerability);
-  });
-
-  it('returns correct icon for flood-hazard', () => {
-    const icon = getIcon('flood-hazard');
-    expect(icon.type).toBe(FloodHazard);
-  });
-
-  it('returns correct icon for exposure', () => {
-    const icon = getIcon('exposure');
-    expect(icon.type).toBe(Exposure);
-  });
-
-  it('returns correct icon for government-response', () => {
-    const icon = getIcon('government-response');
-    expect(icon.type).toBe(GovtResponse);
-  });
-
-  it('returns default icon for unknown slug', () => {
-    const icon = getIcon('unknown-slug');
-    expect(icon.type).toBe(RiskScore); // default case
-  });
-});
