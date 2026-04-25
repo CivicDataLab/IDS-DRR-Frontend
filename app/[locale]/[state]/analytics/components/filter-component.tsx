@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { parseDate } from '@internationalized/date';
 import { parseAsString, useQueryState } from 'next-usequerystate';
+import { useTranslations } from 'next-intl';
 import { Button, Icon, RadioGroup, RadioItem, YearCalendar } from 'opub-ui';
 
 import { formatDate } from '@/lib/utils';
@@ -28,6 +29,8 @@ export function FilterComp({
   currentSelectedState: any;
   // getDistrictOptions: any;
 }) {
+  const t = useTranslations('analytics.filters');
+  const tCommon = useTranslations('common');
   interface Option {
     disabled?: boolean;
     value: string;
@@ -122,7 +125,7 @@ export function FilterComp({
     //   type: 'radio-button',
     // },
     {
-      title: 'District',
+      title: t('division.title'),
       value: 'district',
       // options: getDistrictOptions(),
       options:
@@ -135,7 +138,7 @@ export function FilterComp({
       type: 'radio-button',
     },
     {
-      title: 'Revenue-circle',
+      title: t('subdivision.title'),
       value: 'revenue-circle',
       // options: getRevenueOptions(),
       options:
@@ -148,7 +151,7 @@ export function FilterComp({
       type: 'radio-button',
     },
     {
-      title: 'Month',
+      title: t('month.title'),
       value: 'month',
       type: 'month-picker',
     },
@@ -160,7 +163,7 @@ export function FilterComp({
         className="m-0 ml-auto border-1 border-solid border-[#8C9196]"
         kind="tertiary"
         onClick={toggleDrawer}
-        aria-label="filter"
+        aria-label={tCommon('filters.trigger')}
       >
         <Icon source={Icons.filter} />
       </Button>
@@ -202,6 +205,7 @@ const RenderOptions = ({
   timePeriodSelected,
   setTimePeriodSelected,
 }: any) => {
+  const t = useTranslations('analytics.filters');
   const [selectedState, setSelectedState] = useState('');
   const router = useRouter();
 
@@ -272,7 +276,7 @@ const RenderOptions = ({
           }
         >
           {value === 'revenue-circle' && !regionSelected ? (
-            <div>Please select a district</div>
+            <div>{t('subdivision.emptyPrompt')}</div>
           ) : (
             options.map((item: any, idx: any) =>
               item.type === 'group' ? (

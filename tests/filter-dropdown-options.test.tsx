@@ -96,7 +96,7 @@ describe('FilterDropdownOptions', () => {
     it('renders with correct labels', () => {
       render(<FilterDropdownOptions {...defaultProps} />);
 
-      expect(screen.getByLabelText('Select District')).toBeInTheDocument();
+      expect(screen.getByLabelText('Select Division')).toBeInTheDocument();
       expect(
         screen.getByLabelText('Select Revenue-Circle')
       ).toBeInTheDocument();
@@ -122,7 +122,7 @@ describe('FilterDropdownOptions', () => {
       const options = districtSelect.querySelectorAll('option');
 
       expect(options).toHaveLength(3); // Including "Select a district" option
-      expect(options[0]).toHaveTextContent('Select a district');
+      expect(options[0]).toHaveTextContent('Select a division');
       expect(options[1]).toHaveTextContent('District 1');
       expect(options[2]).toHaveTextContent('District 2');
     });
@@ -166,7 +166,7 @@ describe('FilterDropdownOptions', () => {
       const revenueSelect = screen.getByTestId('revenue-circle-select');
       const options = revenueSelect.querySelectorAll('option');
 
-      expect(options[0]).toHaveTextContent('Select a district to enable');
+      expect(options[0]).toHaveTextContent('Select a division to enable');
     });
 
     it('filters revenue circles based on selected district', async () => {
@@ -446,7 +446,7 @@ describe('FilterDropdownOptions', () => {
     it('has proper ARIA labels', () => {
       render(<FilterDropdownOptions {...defaultProps} />);
 
-      expect(screen.getByLabelText('Select District')).toBeInTheDocument();
+      expect(screen.getByLabelText('Select Division')).toBeInTheDocument();
       expect(
         screen.getByLabelText('Select Revenue-Circle')
       ).toBeInTheDocument();

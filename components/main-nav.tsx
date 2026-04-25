@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { useKeyDetect } from '@/hooks/use-key-detect';
 import { languages, MainConfig } from '@/config/site';
+import { useTranslations } from 'next-intl';
 import { Icon, Text } from 'opub-ui';
 
 import Icons from '@/components/icons';
@@ -17,6 +18,8 @@ export function MainNav({
   data: MainConfig;
   prefLangCookie: string;
 }) {
+  const t = useTranslations('nav');
+  const tSite = useTranslations('site');
   const { key, metaKey } = useKeyDetect();
   const searchRef = React.useRef<HTMLInputElement>(null);
 
@@ -36,7 +39,7 @@ export function MainNav({
                 src="/logo/IDS-Platform-Logo.png"
                 width={245}
                 height={24}
-                alt="IDS-DRR Logo"
+                alt={t('homeAlt', { name: tSite('name') })}
                 priority
               />
               <div className="flex flex-col gap-1"></div>
@@ -48,14 +51,10 @@ export function MainNav({
             <div className="flex shrink-0 flex-wrap items-center gap-3 sm:gap-5">
               {data.mainNav.map((link) => (
                 <ExploreLink
-                  key={link.title}
-                  href={
-                    link.title === 'Analytics'
-                      ? `${link.href}`
-                      : link.href || ''
-                  }
+                  key={link.titleKey}
+                  href={link.href || ''}
                   icon={link.icon || ''}
-                  text={link.title || ''}
+                  text={t(link.titleKey)}
                 />
               ))}
             </div>

@@ -13,13 +13,6 @@ jest.mock('@/app/[locale]/[state]/analytics/utils/utils', () => ({
 // Mock config
 jest.mock('@/config/consts', () => ({
   Factors: ['risk-score', 'exposure', 'vulnerability'],
-  RiskText: {
-    1: { indicatorText: 'Very Low Risk' },
-    2: { indicatorText: 'Low Risk' },
-    3: { indicatorText: 'Medium Risk' },
-    4: { indicatorText: 'High Risk' },
-    5: { indicatorText: 'Very High Risk' },
-  },
 }));
 
 describe('TableComponent', () => {

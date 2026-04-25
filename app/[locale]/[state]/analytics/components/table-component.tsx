@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { Spinner, Table, Text } from 'opub-ui';
 
-import { Factors, RiskText } from '@/config/consts';
+import { Factors } from '@/config/consts';
 import { formatNumber } from '../utils/utils';
 
 type ColumnDefinition = {
@@ -11,17 +12,20 @@ type ColumnDefinition = {
 };
 
 export function TableComponent({ data, isLoading }: any) {
+  const t = useTranslations('analytics.table');
+  const tCommon = useTranslations('common');
+  const tRisk = useTranslations('analytics.risk');
   function transformColumnData(data: ColumnDefinition[]) {
     const transformed: { accessorKey: string; header: any; id?: string }[] = [];
     // Add district column
     transformed.push(
       {
         accessorKey: 'region-name',
-        header: 'Region Name',
+        header: t('regionName'),
       },
       {
         accessorKey: 'region-type',
-        header: 'Region Boundary',
+        header: t('regionBoundary'),
       }
     );
 
@@ -53,12 +57,8 @@ export function TableComponent({ data, isLoading }: any) {
         const value = item[key];
         if (value !== null && typeof value === 'object' && 'value' in value) {
           row[key] = Factors.includes(key)
-            ? RiskText[parseInt((value as { value: string }).value)]?.[
-                'indicatorText'
-              ]
-            : formatNumber(
-                (value as { value: any }).value
-              ).toString();
+            ? tRisk(String(parseInt((value as { value: string }).value)))
+            : formatNumber((value as { value: any }).value).toString();
         }
       });
       return row;
@@ -78,7 +78,7 @@ export function TableComponent({ data, isLoading }: any) {
     return (
       <div className="flex h-[100vh] flex-col place-content-center items-center">
         <Spinner color="highlight" />
-        <Text>Loading...</Text>
+        <Text>{tCommon('loading')}</Text>
       </div>
     );
   }
@@ -86,7 +86,7 @@ export function TableComponent({ data, isLoading }: any) {
   if (!data || rows.length === 0 || columns.length === 0) {
     return (
       <div className="flex h-full flex-col place-content-center items-center">
-        <Text>No data available.</Text>
+        <Text>{t('empty')}</Text>
       </div>
     );
   }

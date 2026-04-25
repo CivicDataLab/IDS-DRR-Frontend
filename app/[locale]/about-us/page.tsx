@@ -1,7 +1,7 @@
+import { AboutPage } from 'ids-drr-branding';
 import { notFound } from 'next/navigation';
 
-export default async function Page() {
-  const { AboutPage } = await import('ids-drr-branding');
+export default function Page() {
   if (!AboutPage) notFound();
   return <AboutPage />;
 }

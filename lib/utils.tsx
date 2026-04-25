@@ -82,66 +82,26 @@ export function handleRedirect(event: any, link: any) {
   }
 }
 
-export function copyCurrentURL() {
-  const currentURL = window.location.href;
-
+export async function copyToClipboard(url: string): Promise<boolean> {
   if (navigator.clipboard) {
-    navigator.clipboard
-      .writeText(currentURL)
-      .then(() => {
-        alert('URL copied to clipboard!');
-      })
-      .catch(() => {
-        alert('Failed to copy URL.');
-      });
-  } else {
-    // For browsers not supporting clipboard API
-    const textArea = document.createElement('textarea');
-    textArea.value = currentURL;
-    textArea.style.position = 'fixed';
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-
     try {
-      const success = document.execCommand('copy');
-      alert(success ? 'URL copied to clipboard!' : 'Failed to copy URL.');
+      await navigator.clipboard.writeText(url);
+      return true;
     } catch {
-      alert('Failed to copy URL.');
+      return false;
     }
-
-    document.body.removeChild(textArea);
   }
-}
-
-export function copyDefinedURL(url: any) {
-  const currentURL = url;
-
-  if (navigator.clipboard) {
-    navigator.clipboard
-      .writeText(currentURL)
-      .then(() => {
-        alert('URL copied to clipboard!');
-      })
-      .catch(() => {
-        alert('Failed to copy URL.');
-      });
-  } else {
-    // For browsers not supporting clipboard API
-    const textArea = document.createElement('textarea');
-    textArea.value = currentURL;
-    textArea.style.position = 'fixed';
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-
-    try {
-      const success = document.execCommand('copy');
-      alert(success ? 'URL copied to clipboard!' : 'Failed to copy URL.');
-    } catch {
-      alert('Failed to copy URL.');
-    }
-
+  const textArea = document.createElement('textarea');
+  textArea.value = url;
+  textArea.style.position = 'fixed';
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  try {
+    return document.execCommand('copy');
+  } catch {
+    return false;
+  } finally {
     document.body.removeChild(textArea);
   }
 }

@@ -1,5 +1,6 @@
 import { parseDate, type CalendarDate } from '@internationalized/date';
 import { parseAsString, useQueryState } from 'next-usequerystate';
+import { useTranslations } from 'next-intl';
 import { MonthPicker, MultiMonthPicker, Select } from 'opub-ui';
 
 import { toTitleCase } from '@/lib/utils';
@@ -25,6 +26,7 @@ export default function FilterDropdownOptions({
   monthMulti?: boolean;
   timeLimits: string[];
 }) {
+  const t = useTranslations('analytics.filters');
   // console.log('timeLimits', timeLimits);
   const [districtCode, setDistrictCode] = useQueryState(
     'district-code',
@@ -89,15 +91,17 @@ export default function FilterDropdownOptions({
     : [];
 
   const districtOptions = sanitizeOptions([
-    { label: 'Select a district', value: '' },
+    { label: t('division.placeholder'), value: '' },
     ...DistrictDropDownOption,
   ]);
 
+  const childTypeLabel =
+    toTitleCase(currentSelectedState.child_type) || t('subdivision.defaultType');
   const revenueOptions = sanitizeOptions([
     {
       label: !districtCode
-        ? 'Select a district to enable'
-        : `Select a ${toTitleCase(currentSelectedState.child_type) || 'region'}`,
+        ? t('division.disabledHint')
+        : t('subdivision.placeholder', { type: childTypeLabel }),
       value: '',
     },
     ...(getRevenueCircleOptionsForDistrict(districtCode) || []),
@@ -139,7 +143,7 @@ export default function FilterDropdownOptions({
     <div>
       <div className="mb-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
         <Select
-          label="Select District"
+          label={t('division.label')}
           value={districtCode || ''}
           name="district-select"
           className="flex-1"
@@ -151,7 +155,7 @@ export default function FilterDropdownOptions({
         />
 
         <Select
-          label={`Select ${toTitleCase(currentSelectedState.child_type) || 'Region'}`}
+          label={t('subdivision.label', { type: childTypeLabel })}
           value={revenueCode || ''}
           name="revenue-circle-select"
           className="flex-1"
@@ -175,7 +179,7 @@ export default function FilterDropdownOptions({
                 })
                 .filter((d): d is CalendarDate => d !== undefined)}
               // defaultValues={getDefaultDate(timePeriod || '')}
-              label="Select Months"
+              label={t('month.labelMulti')}
               minValue={minValue}
               maxValue={maxValue}
               onChange={(dates: any) => {
@@ -200,7 +204,7 @@ export default function FilterDropdownOptions({
             <MonthPicker
               name="time-period-select"
               value={monthPickerValue}
-              label="Select Month"
+              label={t('month.label')}
               minValue={minValue}
               maxValue={maxValue}
               onChange={(date: any) => {

@@ -12,9 +12,10 @@ import {
 import { InfoSquare } from '@/components/InfoCircle';
 import { useQuery } from '@tanstack/react-query';
 import { useQueryState } from 'next-usequerystate';
+import { useTranslations } from 'next-intl';
 import { Button, Icon, Text, Tooltip } from 'opub-ui';
 
-import { documentationLink, Factors, RiskText } from '@/config/consts';
+import { documentationLink, Factors } from '@/config/consts';
 import { ANALYTICS_TIME_PERIODS } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { cn, formatDateString } from '@/lib/utils';
@@ -36,6 +37,10 @@ export function OutputWindow({
   currentState,
   onClose,
 }: any) {
+  const t = useTranslations('analytics.detail');
+  const tCommon = useTranslations('common');
+  const tRisk = useTranslations('analytics.risk');
+  const tAnalytics = useTranslations('analytics');
   const searchParams = useSearchParams();
   let processedTime = getLatestDate(
     searchParams.get('time-period')?.split(',') || []
@@ -98,7 +103,7 @@ export function OutputWindow({
     const descriptionObject = indicatorDescriptions.find(
       (desc: { slug: string }) => desc.slug === indicatorSlug
     );
-    return descriptionObject ? descriptionObject.long_description : 'NA';
+    return descriptionObject ? descriptionObject.long_description : tCommon('na');
   }
 
   const IconMap: { [key: string]: React.ReactNode } = {
@@ -154,7 +159,7 @@ export function OutputWindow({
             <Button
               onClick={onClose}
               kind="tertiary"
-              aria-label="Close details"
+              aria-label={t('close')}
             >
               <Icon source={Icons.cross} />
             </Button>
@@ -166,7 +171,9 @@ export function OutputWindow({
             DataBasedOnBoundary[0] && (
               <>
                 <Text className="uppercase" variant="bodyLg">
-                  {DataBasedOnBoundary[0]['district']} District
+                  {tAnalytics('divisionHeading', {
+                    name: DataBasedOnBoundary[0]['district'],
+                  })}
                 </Text>
                 <br />
                 <div className="h-2"></div>
@@ -179,8 +186,12 @@ export function OutputWindow({
               variant="headingLg"
               fontWeight="semibold"
             >
-              {RegionName}{' '}
-              {RevenueRegion ? currentState.child_type : 'District'}
+              {RevenueRegion
+                ? tAnalytics('subdivisionHeading', {
+                    name: RegionName,
+                    type: currentState.child_type,
+                  })
+                : tAnalytics('divisionHeading', { name: RegionName })}
             </Text>
           )}
           <div className="flex items-center justify-between self-stretch">
@@ -188,8 +199,8 @@ export function OutputWindow({
               <Text variant="bodyMd" color="subdued" fontWeight="regular">
                 {indicator === 'government-response' ||
                 indicator.includes('fy-cumsum')
-                  ? `Cumulative for the financial year till ${formattedTimePeriod}`
-                  : `Calculated for ${formattedTimePeriod}`}
+                  ? t('cumulativeFiscalYearUntil', { date: formattedTimePeriod })
+                  : t('calculatedFor', { date: formattedTimePeriod })}
               </Text>
             </div>
           </div>
@@ -224,9 +235,7 @@ export function OutputWindow({
                       fontWeight="semibold"
                     >
                       {Factors.includes(indicator) &&
-                        RiskText[parseInt(data[indicator]['value'])][
-                          'indicatorText'
-                        ]}
+                        tRisk(String(parseInt(data[indicator]['value'])))}
                     </Text>
                     <Tooltip
                       content={
@@ -246,9 +255,12 @@ export function OutputWindow({
                 {Factors.includes(indicator) && (
                   <div className="mt-5 flex flex-col gap-2">
                     <Text className="text-baseGraySlateSolid11">
-                      Some of the indicators contributing to{' '}
-                      {getFactorNameBySlug(indicatorDescriptions, indicator)}{' '}
-                      are
+                      {t('contributingIndicators', {
+                        name: getFactorNameBySlug(
+                          indicatorDescriptions,
+                          indicator
+                        ),
+                      })}
                     </Text>
                     <OtherFactorScores
                       factorData={indicatorDescriptions}
@@ -277,8 +289,8 @@ export function OutputWindow({
                   className="text-[#3E7844]"
                 >
                   {isParentIndicator
-                    ? 'Read the Documentation'
-                    : 'Explore Source Data'}
+                    ? t('docsLink')
+                    : t('sourceLink')}
                 </Text>
                 <Icon
                   source={Icons.IconArrowUpRight}
@@ -346,8 +358,12 @@ export function OutputWindow({
                       variant="headingLg"
                       fontWeight="semibold"
                     >
-                      {RegionName}{' '}
-                      {RevenueRegion ? currentState.child_type : 'District'}
+                      {RevenueRegion
+                        ? tAnalytics('subdivisionHeading', {
+                            name: RegionName,
+                            type: currentState.child_type,
+                          })
+                        : tAnalytics('divisionHeading', { name: RegionName })}
                     </Text>
                   )}
                 </div>
@@ -355,7 +371,7 @@ export function OutputWindow({
                   <Button
                     onClick={onClose}
                     kind="tertiary"
-                    aria-label="Close details"
+                    aria-label={t('close')}
                   >
                     <Icon source={Icons.cross} />
                   </Button>
@@ -367,7 +383,7 @@ export function OutputWindow({
                 <div className="mt-4 flex items-center gap-4">
                   {(districtCode !== null || revenueCode !== null) && (
                     <Text variant="bodyMd" color="subdued" fontWeight="regular">
-                      Cumulative till {formattedTimePeriod}
+                      {t('cumulativeUntil', { date: formattedTimePeriod })}
                     </Text>
                   )}
                 </div>
@@ -409,9 +425,7 @@ export function OutputWindow({
                             fontWeight="semibold"
                           >
                             {Factors.includes(indicator) &&
-                              RiskText[parseInt(data[indicator]['value'])][
-                                'indicatorText'
-                              ]}
+                              tRisk(String(parseInt(data[indicator]['value'])))}
                           </Text>
                           <Tooltip
                             content={
@@ -431,12 +445,12 @@ export function OutputWindow({
                       {Factors.includes(indicator) && (
                         <div className="mt-5 flex flex-col gap-2">
                           <Text className="text-baseGraySlateSolid11">
-                            Some of the indicators contributing to{' '}
-                            {getFactorNameBySlug(
-                              indicatorDescriptions,
-                              indicator
-                            )}{' '}
-                            are
+                            {t('contributingIndicators', {
+                              name: getFactorNameBySlug(
+                                indicatorDescriptions,
+                                indicator
+                              ),
+                            })}
                           </Text>
                           <OtherFactorScores
                             factorData={indicatorDescriptions}

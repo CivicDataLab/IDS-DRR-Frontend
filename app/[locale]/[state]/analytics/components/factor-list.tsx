@@ -9,12 +9,14 @@ import {
 } from '@/components/FactorIcons';
 import { useQuery } from '@tanstack/react-query';
 import { useQueryState } from 'next-usequerystate';
+import { useTranslations } from 'next-intl';
 import { Button, Icon, Menu, Select, Text, Tooltip } from 'opub-ui';
 
 import { ANALYTICS_INDICATORS_BY_CATEGORY } from '@/config/graphql/analaytics-queries';
 import { reportsEnabled } from '@/config/site';
 import { GraphQL } from '@/lib/api';
-import { cn, copyCurrentURL, downloadStateReport } from '@/lib/utils';
+import { cn, downloadStateReport } from '@/lib/utils';
+import { useCopyURL } from '@/hooks/use-copy-url';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import { getLatestDate } from '../utils/utils';
@@ -51,6 +53,9 @@ function getIcon(slug: string) {
 }
 
 export function FactorList({ currentState }: any) {
+  const t = useTranslations('analytics');
+  const tCommon = useTranslations('common');
+  const copyURL = useCopyURL();
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator');
   const time_period = searchParams.get('time-period');
@@ -182,7 +187,7 @@ export function FactorList({ currentState }: any) {
           <hr className="m-6" />
           <div className="flex flex-col gap-4 px-6">
             <Text className="text-textSubdued" fontWeight="bold">
-              ACTIONS
+              {t('sidebar.actions')}
             </Text>{' '}
             <Menu
               trigger={
@@ -193,61 +198,46 @@ export function FactorList({ currentState }: any) {
                 >
                   <div className="flex items-center gap-2">
                     <Icon source={Icons.share} />
-                    <Text variant="bodyMd">Share</Text>
+                    <Text variant="bodyMd">{t('actions.share.label')}</Text>
                   </div>
                 </Button>
               }
               items={[
                 {
-                  content: 'Facebook',
+                  content: tCommon('social.facebook'),
                   icon: Icons.IconBrandFacebook,
 
                   onAction: () => {
-                    const confirmation = window.confirm(
-                      `You are being redirected to "${`https://www.facebook.com/sharer/sharer.php?u=${currentURL}/`}". `
-                    );
-                    if (confirmation) {
-                      window.open(
-                        `https://www.facebook.com/sharer/sharer.php?u=${currentURL}/`,
-                        '_blank'
-                      );
+                    const url = `https://www.facebook.com/sharer/sharer.php?u=${currentURL}/`;
+                    if (window.confirm(t('actions.share.confirm', { url }))) {
+                      window.open(url, '_blank');
                     }
                   },
                 },
                 {
-                  content: 'LinkedIn',
+                  content: tCommon('social.linkedin'),
                   icon: Icons.IconBrandLinkedin,
                   onAction: () => {
-                    const confirmation = window.confirm(
-                      `You are being redirected to "${`https://www.linkedin.com/feed/?shareActive=true&text=${currentURL}`}`
-                    );
-                    if (confirmation) {
-                      window.open(
-                        `https://www.linkedin.com/feed/?shareActive=true&text=${currentURL}`,
-                        '_blank'
-                      );
+                    const url = `https://www.linkedin.com/feed/?shareActive=true&text=${currentURL}`;
+                    if (window.confirm(t('actions.share.confirm', { url }))) {
+                      window.open(url, '_blank');
                     }
                   },
                 },
                 {
-                  content: 'Twitter',
+                  content: tCommon('social.twitter'),
                   icon: Icons.IconBrandX,
                   onAction: () => {
-                    const confirmation = window.confirm(
-                      `You are being redirected to "${`https://twitter.com/intent/tweet?url=${currentURL}/`}". `
-                    );
-                    if (confirmation) {
-                      window.open(
-                        `https://twitter.com/intent/tweet?url=${currentURL}/`,
-                        '_blank'
-                      );
+                    const url = `https://twitter.com/intent/tweet?url=${currentURL}/`;
+                    if (window.confirm(t('actions.share.confirm', { url }))) {
+                      window.open(url, '_blank');
                     }
                   },
                 },
                 {
-                  content: 'Copy Link',
+                  content: tCommon('copy.trigger'),
                   icon: Icons.link,
-                  onAction: () => copyCurrentURL(),
+                  onAction: () => copyURL(),
                 },
               ]}
             />
@@ -263,7 +253,7 @@ export function FactorList({ currentState }: any) {
                   className="self-start"
                   onClick={async () => {
                     const confirmation = window.confirm(
-                      `Do you want to download the report for "${currentState.name}"?`
+                      t('actions.download.confirm', { name: currentState.name })
                     );
                     if (confirmation) {
                       try {
@@ -293,7 +283,7 @@ export function FactorList({ currentState }: any) {
                           `${currentState.name}-Report`
                         );
                       } catch (error) {
-                        alert(`Error Downloading Report. ${error}`);
+                        alert(t('actions.download.error', { error: String(error) }));
                       } finally {
                         setDownloadReportLoading(false);
                       }
@@ -307,7 +297,7 @@ export function FactorList({ currentState }: any) {
                   <div className="flex items-center gap-2">
                     <Icon source={Icons.download} />
 
-                    <Text variant="bodyMd">Download Report</Text>
+                    <Text variant="bodyMd">{t('actions.download.label')}</Text>
                   </div>
                 </Button>
               ))}

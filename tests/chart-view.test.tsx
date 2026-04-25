@@ -177,6 +177,9 @@ describe('ChartView', () => {
   });
 
   it('shows error state', async () => {
+    // The component logs the failure via console.error; silence that in
+    // this test since we're exercising the failure path deliberately.
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     jest
       .requireMock('next-usequerystate')
       .useQueryState.mockImplementation(
@@ -201,6 +204,7 @@ describe('ChartView', () => {
     expect(
       await screen.findByText(/Error: Failed to fetch/i)
     ).toBeInTheDocument();
+    errorSpy.mockRestore();
   });
 
   it('sends correct payload in fetch', async () => {

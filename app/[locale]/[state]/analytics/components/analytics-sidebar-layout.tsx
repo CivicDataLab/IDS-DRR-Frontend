@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Select, Spinner, Text } from 'opub-ui';
 
 import { cn } from '@/lib/utils';
@@ -20,6 +21,7 @@ export function AnalyticsSideBarLayout({
   currentState,
   statesList,
 }: DashboardLayoutProps) {
+  const tCommon = useTranslations('common');
   const [isClient, setIsClient] = React.useState(false);
 
   // To prevent a hydration mismatch fix:https://nextjs.org/docs/messages/react-hydration-error.
@@ -32,7 +34,7 @@ export function AnalyticsSideBarLayout({
       fallback={
         <div className="flex h-[100vh] flex-col  place-content-center items-center">
           <Spinner color="highlight" />
-          <Text>Loading...</Text>
+          <Text>{tCommon('loading')}</Text>
         </div>
       }
     >
@@ -48,7 +50,7 @@ export function AnalyticsSideBarLayout({
       ) : (
         <div className="flex h-[100vh] flex-col  place-content-center items-center">
           <Spinner color="highlight" />
-          <Text>Loading...</Text>
+          <Text>{tCommon('loading')}</Text>
         </div>
       )}
     </React.Suspense>
@@ -56,6 +58,7 @@ export function AnalyticsSideBarLayout({
 }
 
 function IndicatorListWrapper({ statesList, currentState }: any) {
+  const t = useTranslations('analytics.sidebar');
   const router = useRouter();
 
   return (
@@ -81,7 +84,7 @@ function IndicatorListWrapper({ statesList, currentState }: any) {
             <div>
               <div className="mb-5 pl-4">
                 <Text className="text-textSubdued" fontWeight="bold">
-                  ANALYTICS DASHBOARD
+                  {t('heading')}
                 </Text>
               </div>
 
@@ -106,7 +109,7 @@ function IndicatorListWrapper({ statesList, currentState }: any) {
 
               <div className="mb-5 pl-4">
                 <Text className="text-textSubdued" fontWeight="bold">
-                  INDICATORS
+                  {t('indicators')}
                 </Text>
               </div>
 

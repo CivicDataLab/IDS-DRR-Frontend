@@ -27,6 +27,8 @@ const config: Config = {
   collectCoverageFrom: [
     '{app,components,config,hooks,i18n,lib}/**/*.{ts,tsx}',
   ],
+  // next-intl ships ESM; Jest needs to transform it rather than ignore it.
+  transformIgnorePatterns: ['/node_modules/(?!next-intl)/'],
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

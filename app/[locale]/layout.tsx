@@ -1,12 +1,15 @@
 import React from 'react';
 import { Inter as FontSans } from 'next/font/google';
-import { notFound } from 'next/navigation';
 import Script from 'next/script';
-import { captureException } from '@sentry/nextjs';
+import { Footer } from 'ids-drr-branding';
 import { NextIntlClientProvider } from 'next-intl';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import {
+  getMessages,
+  getTranslations,
+  unstable_setRequestLocale,
+} from 'next-intl/server';
 
-import { mainConfig, siteConfig } from '@/config/site';
+import { mainConfig, siteUrl } from '@/config/site';
 import { getPrefLangCookie } from '@/lib/serverUtils';
 import { MainNav } from '@/components/main-nav';
 import { MediaRendering } from '@/components/media-rendering';
@@ -20,44 +23,54 @@ export function generateStaticParams() {
   return locales.all.map((locale) => ({ locale }));
 }
 
-export async function generateMetadata() {
+// Map next-intl locale codes to Open Graph locale tags.
+const ogLocales: Record<string, string> = {
+  en: 'en_US',
+};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'site' });
+  const name = t('name');
+  const description = t('description');
+  const creator = t('creator');
+  const creatorUrl = t('creatorUrl');
   return {
-    metadataBase: new URL(siteConfig.url),
+    metadataBase: new URL(siteUrl),
     title: {
-      default: siteConfig.name,
-      template: `%s | ${siteConfig.name}`,
+      default: name,
+      template: `%s | ${name}`,
     },
-    description: siteConfig.description,
-    keywords: ['Climate Actions', 'Assam', 'DRR', 'Disaster', 'Risk Score'],
-    authors: [
-      {
-        name: 'CivicDataLab',
-        url: 'https://civicdatalab.in/',
-      },
-    ],
-    creator: 'CivicDataLab',
+    description,
+    keywords: t('keywords').split(',').map((k) => k.trim()),
+    authors: [{ name: creator, url: creatorUrl }],
+    creator,
     openGraph: {
       type: 'website',
-      locale: 'en_US',
-      url: siteConfig.url,
-      title: siteConfig.name,
-      description: siteConfig.description,
-      siteName: siteConfig.name,
-      images: [`${siteConfig.url}/og.png`],
+      locale: ogLocales[locale] ?? ogLocales.en,
+      url: siteUrl,
+      title: name,
+      description,
+      siteName: name,
+      images: [`${siteUrl}/og.png`],
     },
     twitter: {
       card: 'summary_large_image',
-      title: siteConfig.name,
-      description: siteConfig.description,
-      images: [`${siteConfig.url}/og.png`],
-      creator: 'CivicDataLab',
+      title: name,
+      description,
+      images: [`${siteUrl}/og.png`],
+      creator,
     },
     icons: {
       icon: '/favicon.ico',
       shortcut: '/favicon-16x16.png',
-      apple: `${siteConfig.url}/apple-touch-icon.png`,
+      apple: `${siteUrl}/apple-touch-icon.png`,
     },
-    manifest: `${siteConfig.url}/site.webmanifest`,
+    manifest: `${siteUrl}/site.webmanifest`,
   };
 }
 
@@ -68,16 +81,9 @@ export default async function LocaleLayout({
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
-  let locale = (await params).locale;
-  const { Footer } = await import('ids-drr-branding');
-  let messages;
-  try {
-    messages = (await import(`../../locales/${locale}.json`)).default;
-  } catch (error) {
-    captureException(error);
-    notFound();
-  }
+  const locale = (await params).locale;
   unstable_setRequestLocale(locale);
+  const messages = await getMessages();
 
   // Get the language preference from cookies
   const prefLangCookie = await getPrefLangCookie();

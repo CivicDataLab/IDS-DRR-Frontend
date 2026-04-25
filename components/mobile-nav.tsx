@@ -6,11 +6,14 @@ import Link from 'next/link';
 import { useKeyDetect } from '@/hooks/use-key-detect';
 import { MainConfig } from '@/config/site';
 import { Credits, PartnerLogos } from 'ids-drr-branding';
+import { useTranslations } from 'next-intl';
 import { IconButton, Text } from 'opub-ui';
 
 import Icons from '@/components/icons';
 
 export function MobileNav({ data }: { data: MainConfig }) {
+  const t = useTranslations('nav');
+  const tSite = useTranslations('site');
   const [open, setOpen] = React.useState(false);
   const toggleMenu = () => {
     setOpen((prevState) => !prevState);
@@ -47,7 +50,7 @@ export function MobileNav({ data }: { data: MainConfig }) {
                 src="/logo/IDS-Platform-Logo.png"
                 width={245}
                 height={24}
-                alt="IDS-DRR Logo"
+                alt={t('homeAlt', { name: tSite('name') })}
               />
               <div className="flex flex-col gap-1"></div>
             </div>
@@ -58,7 +61,7 @@ export function MobileNav({ data }: { data: MainConfig }) {
             onClick={() => setOpen((e) => !e)}
             color="onBgDefault"
           >
-            Menu
+            {t('menu')}
           </IconButton>
         </div>
       </header>
@@ -73,9 +76,9 @@ export function MobileNav({ data }: { data: MainConfig }) {
                 <div>
                   {data.mainNav.map((link) => (
                     <ExploreLink
-                      key={link.title}
+                      key={link.titleKey}
                       href={link.href || ''}
-                      text={link.title || ''}
+                      text={t(link.titleKey)}
                       onClick={toggleMenu}
                     />
                   ))}

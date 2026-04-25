@@ -9,4 +9,5 @@ declare module 'ids-drr-branding' {
   export const HomeAbout: ComponentType | undefined;
   export const HomePartners: ComponentType | undefined;
   export const PartnerLogos: ComponentType | undefined;
+  export const messagesEn: Record<string, unknown>;
 }

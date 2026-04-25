@@ -23,7 +23,7 @@ module.exports = {
     // ids-drr-branding is an npm `file:` dep symlinked to ./branding-stub/,
     // which in deployments is bind-mounted to the real branding package.
     // Scan it so branding-only Tailwind classes make it into the compiled CSS.
-    './branding-stub/**/*.{js,ts,jsx,tsx}',
+    './branding-stub/src/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     colors,

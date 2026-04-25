@@ -4,9 +4,10 @@ import React from 'react';
 import { useWindowSize } from '@/hooks/use-window-size';
 import * as d3 from 'd3-scale';
 import { interpolateBlues } from 'd3-scale-chromatic';
+import { useTranslations } from 'next-intl';
 import { Button, Icon, Spinner, Text } from 'opub-ui';
 
-import { Factors, RiskText } from '@/config/consts';
+import { Factors } from '@/config/consts';
 import { states } from '@/config/site';
 import Icons from '@/components/icons';
 import MapChart from '@/components/MapChart';
@@ -47,6 +48,7 @@ export const MapComponent = ({
   isOutputPaneOpen?: boolean;
   onToggleOutputPane?: () => void;
 }) => {
+  const tRisk = useTranslations('analytics.risk');
   const [map, setMap] = React.useState<any>(null);
   const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
   const [overlayFeatures, setOverlayFeatures] = React.useState<any>(null);
@@ -345,7 +347,7 @@ export const MapComponent = ({
             const regionName = layer.feature?.properties.name;
             const riskValue = layer.feature?.properties?.[indicator];
             const riskText = Factors.includes(indicator)
-              ? RiskText[riskValue]?.indicatorText
+              ? tRisk(String(riskValue))
               : `${formatNumber(riskValue)} ${getUnitsBySlug(
                   indicatorsData,
                   indicator

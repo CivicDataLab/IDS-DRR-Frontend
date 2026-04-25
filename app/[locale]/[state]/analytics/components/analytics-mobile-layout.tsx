@@ -4,10 +4,12 @@ import React, { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useLockBody } from '@/hooks/use-lock-body';
 import { parseAsString, useQueryState } from 'next-usequerystate';
+import { useTranslations } from 'next-intl';
 import { Button, Icon, Menu, Text } from 'opub-ui';
 
 import { reportsEnabled } from '@/config/site';
-import { cn, copyCurrentURL, downloadStateReport } from '@/lib/utils';
+import { cn, downloadStateReport } from '@/lib/utils';
+import { useCopyURL } from '@/hooks/use-copy-url';
 import Icons from '@/components/icons';
 import { getLatestDate } from '../utils/utils';
 import { OutputWindowComponent } from './analytics-layout';
@@ -52,6 +54,9 @@ export function AnalyticsMobileLayout({
   currentSelectedState: any;
   statesList: Array<any>;
 }) {
+  const t = useTranslations('analytics');
+  const tCommon = useTranslations('common');
+  const copyURL = useCopyURL();
   //Remove default page scroll to make only the content scrollable
   useLockBody();
 
@@ -68,7 +73,7 @@ export function AnalyticsMobileLayout({
   const buttons = [
     {
       icon: Icons.IconMap,
-      title: 'Map',
+      title: t('views.map'),
       value: 'map',
       disabled: false,
     },
@@ -76,7 +81,7 @@ export function AnalyticsMobileLayout({
       ? [
           {
             icon: Icons.IconChartBar,
-            title: 'Chart',
+            title: t('views.chart'),
             value: 'chart',
             disabled: false,
           },
@@ -84,13 +89,13 @@ export function AnalyticsMobileLayout({
       : []),
     {
       icon: Icons.IconTableAlias,
-      title: 'Table',
+      title: t('views.table'),
       value: 'table',
       disabled: false,
     },
     {
       icon: Icons.IconDots,
-      title: 'More',
+      title: t('views.more'),
       value: 'more',
       disabled: false,
     },
@@ -183,7 +188,7 @@ export function AnalyticsMobileLayout({
     return Array.from(uniqueBySlug.values()).map((item: any) => ({
       title: item?.name,
       slug: item?.slug,
-      description: item?.short_description || item?.long_description || 'NA',
+      description: item?.short_description || item?.long_description || tCommon('na'),
     }));
   }, [aboutIndicatorsData?.data?.indicators]);
 
@@ -263,10 +268,10 @@ export function AnalyticsMobileLayout({
         </div>
 
         {mapData.isLoading ? (
-          <div className="p-4 text-center">Loading map data...</div>
+          <div className="p-4 text-center">{t('map.loading')}</div>
         ) : mapData.isError || revenueMapData.isError ? (
           <div className="text-red-500 p-4 text-center">
-            Error loading map data.
+            {t('map.error')}
           </div>
         ) : (
           <RenderView selectedView={view} />
@@ -280,7 +285,7 @@ export function AnalyticsMobileLayout({
             kind="tertiary"
             onClick={() => setIsOutputPaneOpen(true)}
             className="border flex h-8 w-8 items-center justify-center border-borderSubdued bg-surfaceDefault shadow-basicSm"
-            aria-label="Open details"
+            aria-label={t('detail.open')}
           >
             <Icon source={Icons.layoutSidebarRightCollapse} />
           </Button>
@@ -301,7 +306,7 @@ export function AnalyticsMobileLayout({
               <Button
                 onClick={() => setIsOutputPaneOpen(false)}
                 kind="tertiary"
-                aria-label="Close details"
+                aria-label={t('detail.close')}
               >
                 <Icon source={Icons.cross} />
               </Button>
@@ -349,21 +354,21 @@ export function AnalyticsMobileLayout({
               }
               items={[
                 {
-                  content: 'Share',
+                  content: t('actions.share.label'),
                   icon: Icons.share,
                   // onAction: toggleShareOptions,
-                  onAction: () => {
-                    copyCurrentURL();
-                  },
+                  onAction: () => copyURL(),
                 },
                 ...(reportsEnabled
                   ? [
                       {
-                        content: 'Download Report',
+                        content: t('actions.download.label'),
                         icon: Icons.download,
                         onAction: () => {
                           const confirmation = window.confirm(
-                            `Do you want to download the report for "${currentSelectedState.name}". `
+                            t('actions.download.confirm', {
+                              name: currentSelectedState.name,
+                            })
                           );
                           if (confirmation) {
                             downloadStateReport(

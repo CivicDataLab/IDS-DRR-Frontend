@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { parseAsString, useQueryState } from 'next-usequerystate';
+import { useTranslations } from 'next-intl';
 import { Spinner, Tab, TabList, TabPanel, Tabs, Text } from 'opub-ui';
 
 import {
@@ -36,6 +37,7 @@ interface Option {
 }
 
 export function AnalyticsMainLayout() {
+  const t = useTranslations('analytics');
   const searchParams = useSearchParams();
   // Default to overall flood risk when URL doesn't specify an indicator.
   const indicator = searchParams.get('indicator') || 'risk-score';
@@ -473,7 +475,7 @@ export function AnalyticsMainLayout() {
     return (
       <div className="flex h-[calc(100dvh_-_140px)] flex-col place-content-center items-center">
         <Spinner color="highlight" />
-        <Text>Loading state data...</Text>
+        <Text>{t('loading')}</Text>
       </div>
     );
   }
@@ -506,21 +508,21 @@ export function AnalyticsMainLayout() {
           >
             <TabList fitted className="p-2 pb-0">
               <Tab theme="climate" value="map">
-                Map View
+                {t('views.long.map')}
               </Tab>
               <div
                 className={`h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'map' || view === 'chart' ? 'hidden' : ''}`}
               />
               {process.env.NEXT_PUBLIC_BACKEND_URL && (
                 <Tab theme="climate" value="chart">
-                  Chart View
+                  {t('views.long.chart')}
                 </Tab>
               )}
               <div
                 className={`h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'chart' || view === 'table' ? 'hidden' : ''}`}
               />
               <Tab theme="climate" value="table">
-                Table View
+                {t('views.long.table')}
               </Tab>
             </TabList>
             <TabPanel value="map">

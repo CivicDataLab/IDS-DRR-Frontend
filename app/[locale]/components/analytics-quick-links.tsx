@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
 import {
   Carousel,
   CarouselContent,
@@ -11,13 +12,14 @@ import {
   Text,
 } from 'opub-ui';
 
-import { AnalyticsQuickLinksText, AnalyticsURL } from '@/config/consts';
+import { AnalyticsURL } from '@/config/consts';
 import { PLATFORM_STATES_LIST } from '@/config/graphql/analaytics-queries';
 import { states } from '@/config/site';
 import { GraphQL } from '@/lib/api';
 import styles from './analytics-quick-links.module.css';
 
 export const QuickLinks = () => {
+  const t = useTranslations('home.analytics');
   const statesList = useQuery({
     queryKey: [`states_list`],
     queryFn: () =>
@@ -52,14 +54,20 @@ export const QuickLinks = () => {
   return (
     <section
       className=" flex h-full w-full flex-col gap-9 px-5 py-6 lg:px-6 lg:py-20"
-      aria-label="Quick links to deep dive into different states"
+      aria-labelledby="home-analytics-heading"
     >
       <div className="container flex flex-col gap-4 ">
-        <Text variant="heading3xl" fontWeight="bold" color="default" as="h2">
-          Analytics Dashboard
+        <Text
+          id="home-analytics-heading"
+          variant="heading3xl"
+          fontWeight="bold"
+          color="default"
+          as="h2"
+        >
+          {t('heading')}
         </Text>
         <Text variant="bodyLg" fontWeight="regular" color="default">
-          {AnalyticsQuickLinksText}
+          {t('description')}
         </Text>
       </div>
       <div>
@@ -87,7 +95,7 @@ export const QuickLinks = () => {
                         width={200}
                         height={160}
                         src={item.icon}
-                        alt={item.alt}
+                        alt=""
                         className={`h-32 w-32 object-contain px-3 ${styles.stateIcon}`}
                       />
                       <Text
@@ -108,7 +116,7 @@ export const QuickLinks = () => {
                       width={200}
                       height={160}
                       src={item.icon}
-                      alt="blog Logo"
+                      alt=""
                       className={`h-32 w-32  object-contain px-3 opacity-25 ${styles.inactiveStateIcon}`}
                     />
                     <Text variant="headingLg" className=" whitespace-nowrap">
@@ -118,7 +126,7 @@ export const QuickLinks = () => {
                       variant="headingMd"
                       className="absolute right-0 top-0 m-2 w-fit whitespace-nowrap rounded-2 bg-basePureBlack px-3 py-1 text-surfaceDefault"
                     >
-                      Coming Soon
+                      {t('comingSoon')}
                     </Text>
                   </div>
                 )}

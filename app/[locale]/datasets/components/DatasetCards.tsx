@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Button, Tag, Text, Tooltip } from 'opub-ui';
 
 import { formatReferenceDate } from '@/lib/utils';
@@ -27,6 +28,8 @@ interface Dataset {
 }
 
 const Cards = ({ data }: { data: Dataset }) => {
+  const t = useTranslations('datasets');
+  const tCommon = useTranslations('common');
   function getMetadataValue(data: Dataset, label: string): string | null {
     const metadataEntry = data.metadata.find(
       (entry) => entry.metadata_item.label === label
@@ -76,7 +79,7 @@ const Cards = ({ data }: { data: Dataset }) => {
                   variant="headingSm"
                   fontWeight="medium"
                 >
-                  Source: {getMetadataValue(data, 'Source') || 'NA'}
+                  {t('labels.source')}{getMetadataValue(data, 'Source') || tCommon('na')}
                 </Text>
                 <span className="flex flex-col items-start gap-1">
                   <div className=" flex flex-col gap-2  lg:flex-row">
@@ -86,8 +89,7 @@ const Cards = ({ data }: { data: Dataset }) => {
                       variant="bodySm"
                       fontWeight="regular"
                     >
-                      Last Updated:{' '}
-                      {getMetadataValue(data, 'Last Updated') || 'NA'}
+                      {t('labels.lastUpdated')}{getMetadataValue(data, 'Last Updated') || tCommon('na')}
                     </Text>
                     <Text
                       color="default"
@@ -103,8 +105,7 @@ const Cards = ({ data }: { data: Dataset }) => {
                       variant="bodySm"
                       fontWeight="regular"
                     >
-                      Update Frequency:{' '}
-                      {getMetadataValue(data, 'Update Frequency') || 'NA'}
+                      {t('labels.updateFrequency')}{getMetadataValue(data, 'Update Frequency') || tCommon('na')}
                     </Text>
                   </div>
                   <Text
@@ -113,13 +114,16 @@ const Cards = ({ data }: { data: Dataset }) => {
                     variant="bodySm"
                     fontWeight="regular"
                   >
-                    Reference Period:{' '}
-                    {formatReferenceDate(
-                      getMetadataValue(data, 'Period From')
-                    ) || 'NA'}{' '}
-                    to{' '}
-                    {formatReferenceDate(getMetadataValue(data, 'Period To')) ||
-                      'NA'}
+                    {t('labels.referencePeriod')}{t('periodRange', {
+                      from:
+                        formatReferenceDate(
+                          getMetadataValue(data, 'Period From')
+                        ) || tCommon('na'),
+                      to:
+                        formatReferenceDate(
+                          getMetadataValue(data, 'Period To')
+                        ) || tCommon('na'),
+                    })}
                   </Text>
                 </span>
               </div>
@@ -151,7 +155,7 @@ const Cards = ({ data }: { data: Dataset }) => {
                         size="slim"
                         kind="tertiary"
                       >
-                        {showMore ? 'Show less' : 'Show more'}
+                        {showMore ? t('showLess') : t('showMore')}
                       </Button>
                     </div>
                   )}

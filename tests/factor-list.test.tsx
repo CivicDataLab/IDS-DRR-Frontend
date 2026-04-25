@@ -63,8 +63,17 @@ jest.mock('@/lib/api', () => ({
 // Mock @/lib/utils
 jest.mock('@/lib/utils', () => ({
   cn: (...classes: any[]) => classes.filter(Boolean).join(' '),
-  copyCurrentURL: jest.fn(),
   downloadStateReport: jest.fn(),
+}));
+
+jest.mock('@/hooks/use-copy-url', () => ({
+  useCopyURL: () => jest.fn(),
+}));
+
+// The download button is gated on reportsEnabled; turn it on so the test
+// tree includes it.
+jest.mock('@/config/site', () => ({
+  reportsEnabled: true,
 }));
 
 // Mock @/components/icons

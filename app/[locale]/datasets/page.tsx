@@ -3,6 +3,7 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { captureException } from '@sentry/nextjs';
+import { useTranslations } from 'next-intl';
 import {
   Button,
   Pill,
@@ -173,6 +174,9 @@ const useUrlParams = (
 };
 
 const DatasetsListing = () => {
+  const t = useTranslations('datasets');
+  const tNav = useTranslations('nav');
+  const tCommon = useTranslations('common');
   const [facets, setFacets] = useState<{
     results: any[];
     total: number;
@@ -240,8 +244,8 @@ const DatasetsListing = () => {
     <main className="bg-surfaceDefault">
       <BreadCrumbs
         data={[
-          { href: '/', label: 'Home' },
-          { href: '#', label: 'Datasets' },
+          { href: '/', label: tNav('home') },
+          { href: '#', label: tNav('datasets') },
         ]}
       />
       {datasetDetails.length < 0 ? (
@@ -254,15 +258,15 @@ const DatasetsListing = () => {
             <div className=" flex flex-wrap items-center gap-4 whitespace-nowrap align-middle lg:flex-nowrap">
               <div>
                 <Text>
-                  Showing {datasetDetails?.length} of {count} Datasets
+                  {t('count', { count: datasetDetails?.length, total: count })}
                 </Text>
               </div>
               <div className=" w-full max-w-[550px] md:block">
                 <SearchInput
-                  label="Search"
+                  label={t('search.label')}
                   name="Search"
                   className={cn(Styles.Search)}
-                  placeholder="Search datasets"
+                  placeholder={t('search.placeholder')}
                   onSubmit={(value) => handleSearch(value)}
                   onClear={(value) => handleSearch(value)}
                   withButton={true}
@@ -271,7 +275,7 @@ const DatasetsListing = () => {
             </div>
             <div className="flex items-center gap-2">
               <Text variant="bodyLg" className="font-bold">
-                Sort by:
+                {t('sort.label')}
               </Text>
               <Select
                 label=""
@@ -280,11 +284,11 @@ const DatasetsListing = () => {
                 onChange={handleSortChange}
                 options={[
                   {
-                    label: 'Recent',
+                    label: t('sort.order.recent'),
                     value: 'recent',
                   },
                   {
-                    label: 'Alphabetical',
+                    label: t('sort.order.alphabetical'),
                     value: 'alphabetical',
                   },
                 ]}
@@ -300,7 +304,7 @@ const DatasetsListing = () => {
                   className="lg:hidden"
                   onClick={() => setOpen(true)}
                 >
-                  Filter
+                  {tCommon('filters.trigger')}
                 </Button>
               }
             >

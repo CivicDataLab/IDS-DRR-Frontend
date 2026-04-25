@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { captureException } from '@sentry/nextjs';
+import { useTranslations } from 'next-intl';
 import {
   Carousel,
   CarouselContent,
@@ -14,7 +15,6 @@ import {
   Text,
 } from 'opub-ui';
 
-import { ResourcesSectionText } from '@/config/consts';
 import { resources } from '@/config/site';
 import { fetchDatasets } from '@/lib/api';
 import { formatReferenceDate } from '@/lib/utils';
@@ -42,6 +42,9 @@ interface Dataset {
 }
 
 const Resources = () => {
+  const t = useTranslations('home.resources');
+  const tDatasets = useTranslations('datasets');
+  const tCommon = useTranslations('common');
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -65,19 +68,20 @@ const Resources = () => {
     <section
       className="flex h-full w-full flex-col gap-10 px-5 py-6 lg:px-6 lg:py-14"
       style={{ backgroundColor: '#222136' }}
-      aria-label="Various resources for data exploration"
+      aria-labelledby="resources-heading"
     >
       <div className="container flex flex-col gap-4 ">
         <Text
+          id="resources-heading"
           variant="heading3xl"
           fontWeight="bold"
           color="onBgDefault"
           as="h2"
         >
-          Resources{' '}
+          {t('heading')}
         </Text>
         <Text variant="bodyLg" fontWeight="regular" color="onBgDefault">
-          {ResourcesSectionText}
+          {t('description')}
         </Text>
       </div>
       <div>
@@ -100,7 +104,9 @@ const Resources = () => {
                         <Text variant="bodyLg">
                           <b> {card.title}</b>
                         </Text>
-                        <Text variant="bodySm">Source: {card.source}</Text>
+                        <Text variant="bodySm">
+                          {tDatasets('labels.source')}{card.source}
+                        </Text>
                       </div>
                       <div className="flex flex-col items-start gap-1">
                         <div className=" flex flex-col gap-1  lg:flex-row">
@@ -110,7 +116,7 @@ const Resources = () => {
                             variant="bodySm"
                             fontWeight="regular"
                           >
-                            Last Updated: {card.last_updated}
+                            {tDatasets('labels.lastUpdated')}{card.last_updated}
                           </Text>
                           <Text
                             color="default"
@@ -126,7 +132,7 @@ const Resources = () => {
                             variant="bodySm"
                             fontWeight="regular"
                           >
-                            Update Frequency: {card.update_frequency}
+                            {tDatasets('labels.updateFrequency')}{card.update_frequency}
                           </Text>
                         </div>
                         <Text
@@ -135,7 +141,7 @@ const Resources = () => {
                           variant="bodySm"
                           fontWeight="regular"
                         >
-                          Reference Period: {card.reference_period}
+                          {tDatasets('labels.referencePeriod')}{card.reference_period}
                         </Text>
                       </div>
                       <div className=" flex flex-wrap gap-2">
@@ -164,7 +170,7 @@ const Resources = () => {
                           <b>{item.title}</b>
                         </Text>
                         <Text variant="bodySm">
-                          Source: {getMetadataValue(item, 'Source') || 'NA'}
+                          {tDatasets('labels.source')}{getMetadataValue(item, 'Source') || tCommon('na')}
                         </Text>
                       </div>
                       <div className="flex flex-col items-start gap-1">
@@ -175,8 +181,7 @@ const Resources = () => {
                             variant="bodySm"
                             fontWeight="regular"
                           >
-                            Last Updated:{' '}
-                            {getMetadataValue(item, 'Last Updated') || 'NA'}
+                            {tDatasets('labels.lastUpdated')}{getMetadataValue(item, 'Last Updated') || tCommon('na')}
                           </Text>
                           <Text
                             color="default"
@@ -192,8 +197,7 @@ const Resources = () => {
                             variant="bodySm"
                             fontWeight="regular"
                           >
-                            Update Frequency:
-                            {getMetadataValue(item, 'Last Updated') || 'NA'}
+                            {tDatasets('labels.updateFrequency')}{getMetadataValue(item, 'Last Updated') || tCommon('na')}
                           </Text>
                         </div>
                         <Text
@@ -202,14 +206,16 @@ const Resources = () => {
                           variant="bodySm"
                           fontWeight="regular"
                         >
-                          Reference Period:{' '}
-                          {formatReferenceDate(
-                            getMetadataValue(item, 'Period From')
-                          ) || 'NA'}{' '}
-                          to{' '}
-                          {formatReferenceDate(
-                            getMetadataValue(item, 'Period To')
-                          ) || 'NA'}
+                          {tDatasets('labels.referencePeriod')}{tDatasets('periodRange', {
+                            from:
+                              formatReferenceDate(
+                                getMetadataValue(item, 'Period From')
+                              ) || tCommon('na'),
+                            to:
+                              formatReferenceDate(
+                                getMetadataValue(item, 'Period To')
+                              ) || tCommon('na'),
+                          })}
                         </Text>
                       </div>
                       {item?.formats?.length > 0 && (

@@ -147,7 +147,7 @@ describe('DefaultWindow', () => {
 
   it('displays the correct indicator title', () => {
     render(<DefaultWindow {...defaultProps} />);
-    expect(screen.getByText('Overall Flood Risk')).toBeInTheDocument();
+    expect(screen.getByText('Overall Risk')).toBeInTheDocument();
   });
 
   it('shows district data when available', () => {
