@@ -7,7 +7,7 @@ import { parseAsString, useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, Menu, Text } from 'opub-ui';
 
-import { reportsEnabled } from '@/config/site';
+import { features, reportsEnabled } from '@/config/site';
 import { cn, downloadStateReport } from '@/lib/utils';
 import { useCopyURL } from '@/hooks/use-copy-url';
 import Icons from '@/components/icons';
@@ -77,7 +77,7 @@ export function AnalyticsMobileLayout({
       value: 'map',
       disabled: false,
     },
-    ...(process.env.NEXT_PUBLIC_BACKEND_URL
+    ...(features.chart
       ? [
           {
             icon: Icons.IconChartBar,

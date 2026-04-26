@@ -1,17 +1,36 @@
-import { AboutPage } from 'ids-drr-branding';
-import { AnalyticsURL } from './consts';
 import rawConfig from './site.generated.json';
 
-export type MainNavItem = {
-  // Message key under `nav.*` in locales/<locale>.json.
-  titleKey: string;
-  href: string;
-  icon?: string;
+import {
+  AboutPage,
+  Credits,
+  DataStories,
+  Footer,
+  HomeAbout,
+  HomePartners,
+  PartnerLogos,
+  config,
+} from 'ids-drr-branding';
+
+import { routes } from '@/lib/routes';
+
+// Re-export branding-provided components and values so the rest of the app
+// imports all deployment-specific things from one place.
+export {
+  AboutPage,
+  Credits,
+  DataStories,
+  Footer,
+  HomeAbout,
+  HomePartners,
+  PartnerLogos,
 };
 
-export type MainConfig = {
-  homeUrl: string;
-  mainNav: MainNavItem[];
+// Feature flags.
+const backendAvailable = Boolean(process.env.NEXT_PUBLIC_BACKEND_URL);
+export const features = {
+  chart: backendAvailable,
+  datasets: backendAvailable,
+  aboutUs: Boolean(AboutPage),
 };
 
 type State = {
@@ -54,6 +73,7 @@ export const heroImage: string = config.hero_image ?? '';
 export const reportsEnabled: boolean = config.reports_enabled ?? false;
 export const numberLocale: string = config.number_locale ?? '';
 
+// Navigation.
 const defaultState = states.find((s) => s.status === 'active');
 
 export const siteUrl =
@@ -61,36 +81,15 @@ export const siteUrl =
     ? 'http://localhost:3000'
     : process.env.SITE_URL || '';
 
-export const mainConfig: MainConfig = {
-  homeUrl: '/',
-  mainNav: [
-    {
-      titleKey: 'home',
-      href: '/',
-    },
-    ...(defaultState
-      ? [
-          {
-            titleKey: 'analytics',
-            href: `/${defaultState.slug}${AnalyticsURL}`,
-          },
-        ]
-      : []),
-    ...(process.env.NEXT_PUBLIC_BACKEND_URL
-      ? [
-          {
-            titleKey: 'datasets',
-            href: `/datasets?size=5&page=1&sort=recent`,
-          },
-        ]
-      : []),
-    ...(AboutPage
-      ? [
-          {
-            titleKey: 'aboutUs',
-            href: '/about-us',
-          },
-        ]
-      : []),
-  ],
-};
+export const mainNav = [
+  { titleKey: 'home', href: routes.home },
+  ...(defaultState
+    ? [{ titleKey: 'analytics', href: routes.analytics(defaultState.slug) }]
+    : []),
+  ...(features.datasets
+    ? [{ titleKey: 'datasets', href: routes.datasets() }]
+    : []),
+  ...(features.aboutUs
+    ? [{ titleKey: 'aboutUs', href: routes.aboutUs }]
+    : []),
+];

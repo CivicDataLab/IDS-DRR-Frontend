@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, Tag, Text } from 'opub-ui';
 
+import { routes } from '@/lib/routes';
 import { toTitleCase } from '@/lib/utils';
 import Icons from '@/components/icons';
 
@@ -66,7 +67,7 @@ const MetadataComponent: React.FC<MetadataProps> = ({ data, setOpen }) => {
             <div className="flex flex-wrap gap-2">
               {data?.categories.map((item: any, index: any) => (
                 <Link
-                  href={`/datasets?categories=${item.name}`}
+                  href={routes.datasets({ category: item.name })}
                   target="_blank"
                   className="flex justify-center"
                   key={index}
@@ -88,7 +89,7 @@ const MetadataComponent: React.FC<MetadataProps> = ({ data, setOpen }) => {
             <div className="flex flex-wrap gap-2">
               {data?.tags.map((item: any, index: any) => (
                 <Link
-                  href={`/datasets?tags=${item.value}`}
+                  href={routes.datasets({ tag: item.value })}
                   target="_blank"
                   className="flex justify-center"
                   key={index}

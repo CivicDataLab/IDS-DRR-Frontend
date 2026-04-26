@@ -18,6 +18,7 @@ import {
   ANALYTICS_TABLE_DATA,
   PLATFORM_STATES_LIST,
 } from '@/config/graphql/analaytics-queries';
+import { features } from '@/config/site';
 import { GraphQL } from '@/lib/api';
 import { MediaRendering } from '@/components/media-rendering';
 import { getLatestDate } from '../utils/utils';
@@ -513,7 +514,7 @@ export function AnalyticsMainLayout() {
               <div
                 className={`h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'map' || view === 'chart' ? 'hidden' : ''}`}
               />
-              {process.env.NEXT_PUBLIC_BACKEND_URL && (
+              {features.chart && (
                 <Tab theme="climate" value="chart">
                   {t('views.long.chart')}
                 </Tab>
@@ -623,7 +624,7 @@ export function AnalyticsMainLayout() {
                 )}
               </div>
             </TabPanel>
-            {process.env.NEXT_PUBLIC_BACKEND_URL && (
+            {features.chart && (
               <TabPanel value="chart">
                 {/* <div className=" mt-2 h-[calc(100dvh_-_140px)]"> */}
                 <div className="mt-2 h-full overflow-hidden">

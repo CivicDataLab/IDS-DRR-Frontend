@@ -37,7 +37,6 @@ jest.mock('next/link', () => ({
 jest.mock('@/config/consts', () => ({
   AnalyticsQuickLinksText:
     'Explore flood-risk profiles at the district and sub-district level across states in India, developed using the IDS-DRR data model',
-  AnalyticsURL: '/analytics/?indicator=risk-score&view=map',
 }));
 
 const mockedStates = [

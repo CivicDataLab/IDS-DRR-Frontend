@@ -17,6 +17,7 @@ import {
 
 import { resources } from '@/config/site';
 import { fetchDatasets } from '@/lib/api';
+import { routes } from '@/lib/routes';
 import { formatReferenceDate } from '@/lib/utils';
 
 interface MetadataItem {
@@ -161,7 +162,7 @@ const Resources = () => {
                   className="ml-2  overflow-hidden rounded-2 bg-surfaceDefault p-3 md:basis-1/2 lg:ml-0 lg:basis-1/3  lg:p-6 "
                 >
                   <Link
-                    href={`/datasets/${item.id}`}
+                    href={routes.datasetDetail(item.id)}
                     className="w-full no-underline"
                   >
                     <div className="flex w-full flex-col items-baseline justify-between gap-5">

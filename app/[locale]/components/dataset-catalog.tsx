@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { Text } from 'opub-ui';
 
+import { routes } from '@/lib/routes';
+
 export const DatasetCatalog = async () => {
   const t = await getTranslations('home.datasets');
   const tFactors = await getTranslations('factors');
@@ -10,22 +12,22 @@ export const DatasetCatalog = async () => {
     {
       key: 'hazard',
       icon: '/logo/Hazard.svg',
-      link: '/datasets?categories=Hazard',
+      category: 'Hazard',
     },
     {
       key: 'exposure',
       icon: '/logo/Exposure.svg',
-      link: '/datasets?categories=Exposure',
+      category: 'Exposure',
     },
     {
       key: 'vulnerability',
       icon: '/logo/Vulnerability.svg',
-      link: '/datasets?categories=Vulnerability',
+      category: 'Vulnerability',
     },
     {
       key: 'governmentResponse',
       icon: '/logo/Government_Response.svg',
-      link: '/datasets?categories=Government+Response',
+      category: 'Government Response',
     },
   ];
   return (
@@ -54,7 +56,7 @@ export const DatasetCatalog = async () => {
             className="flex h-full min-h-[150px] rounded-2 bg-surfaceDefault p-6 shadow-elementCard"
           >
             <Link
-              href={item.link}
+              href={routes.datasets({ category: item.category })}
               className=" flex items-center gap-4 no-underline"
             >
               <Image src={item.icon} alt="" width={66} height={66} />

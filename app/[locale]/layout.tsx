@@ -1,7 +1,6 @@
 import React from 'react';
 import { Inter as FontSans } from 'next/font/google';
 import Script from 'next/script';
-import { Footer } from 'ids-drr-branding';
 import { NextIntlClientProvider } from 'next-intl';
 import {
   getMessages,
@@ -9,7 +8,7 @@ import {
   unstable_setRequestLocale,
 } from 'next-intl/server';
 
-import { mainConfig, siteUrl } from '@/config/site';
+import { Footer, siteUrl } from '@/config/site';
 import { getPrefLangCookie } from '@/lib/serverUtils';
 import { MainNav } from '@/components/main-nav';
 import { MediaRendering } from '@/components/media-rendering';
@@ -127,10 +126,10 @@ export default async function LocaleLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Provider>
             <MediaRendering minWidth={null} maxWidth="1023">
-              <MobileNav data={mainConfig} />
+              <MobileNav />
             </MediaRendering>
             <MediaRendering minWidth="1024" maxWidth={null}>
-              <MainNav data={mainConfig} prefLangCookie={prefLangCookie} />
+              <MainNav prefLangCookie={prefLangCookie} />
             </MediaRendering>
 
             {children}

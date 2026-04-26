@@ -7,6 +7,7 @@ import { parseAsString, useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, RadioGroup, RadioItem, YearCalendar } from 'opub-ui';
 
+import { routes, type AnalyticsView } from '@/lib/routes';
 import { formatDate } from '@/lib/utils';
 import Icons from '@/components/icons';
 import {
@@ -233,7 +234,10 @@ const RenderOptions = ({
         normalizedTimePeriods[0] ||
         `${new Date().getFullYear()}_${new Date().getMonth() + 1}`;
       router.push(
-        `/${selectedValue}/analytics/?indicator=risk-score&time-period=${latestTimePeriod}&view=${view}`
+        routes.analytics(selectedValue, {
+          view: view as AnalyticsView,
+          timePeriod: latestTimePeriod,
+        })
       );
       // console.log('---Selected State ---', selectedState);
     } else if (value === 'district') {

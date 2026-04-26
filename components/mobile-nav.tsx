@@ -4,14 +4,14 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useKeyDetect } from '@/hooks/use-key-detect';
-import { MainConfig } from '@/config/site';
-import { Credits, PartnerLogos } from 'ids-drr-branding';
+import { Credits, mainNav, PartnerLogos } from '@/config/site';
 import { useTranslations } from 'next-intl';
 import { IconButton, Text } from 'opub-ui';
 
+import { routes } from '@/lib/routes';
 import Icons from '@/components/icons';
 
-export function MobileNav({ data }: { data: MainConfig }) {
+export function MobileNav() {
   const t = useTranslations('nav');
   const tSite = useTranslations('site');
   const [open, setOpen] = React.useState(false);
@@ -44,7 +44,7 @@ export function MobileNav({ data }: { data: MainConfig }) {
     <>
       <header className="sticky top-0 z-2">
         <div className=" flex items-center justify-between bg-backgroundSolidDark px-5 py-3 text-textOnBGDefault ">
-          <Link href={data.homeUrl}>
+          <Link href={routes.home}>
             <div className="flex items-center gap-2">
               <Image
                 src="/logo/IDS-Platform-Logo.png"
@@ -72,9 +72,9 @@ export function MobileNav({ data }: { data: MainConfig }) {
         >
           <div className="">
             <div className="flex w-full items-center gap-3 p-3 pr-5">
-              {data.mainNav.length > 0 && (
+              {mainNav.length > 0 && (
                 <div>
-                  {data.mainNav.map((link) => (
+                  {mainNav.map((link) => (
                     <ExploreLink
                       key={link.titleKey}
                       href={link.href || ''}

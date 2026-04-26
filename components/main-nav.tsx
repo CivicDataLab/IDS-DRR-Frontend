@@ -3,21 +3,15 @@
 import React from 'react';
 import Image from 'next/image';
 import { useKeyDetect } from '@/hooks/use-key-detect';
-import { languages, MainConfig } from '@/config/site';
+import { languages, mainNav } from '@/config/site';
 import { useTranslations } from 'next-intl';
-import { Icon, Text } from 'opub-ui';
+import { Text } from 'opub-ui';
 
-import Icons from '@/components/icons';
+import { routes } from '@/lib/routes';
 import { TranslateDropdown } from './langSelect/lang-select';
 import NavLink from './nav-link';
 
-export function MainNav({
-  data,
-  prefLangCookie,
-}: {
-  data: MainConfig;
-  prefLangCookie: string;
-}) {
+export function MainNav({ prefLangCookie }: { prefLangCookie: string }) {
   const t = useTranslations('nav');
   const tSite = useTranslations('site');
   const { key, metaKey } = useKeyDetect();
@@ -33,7 +27,7 @@ export function MainNav({
     <header className="shadow-top-bar z-2 bg-backgroundSolidDark px-6 py-3 shadow-elementTopNav sm:py-3">
       <div className="flex flex-wrap items-center justify-center gap-1 sm:justify-between">
         <div className="flex items-center gap-1">
-          <NavLink href={data.homeUrl}>
+          <NavLink href={routes.home}>
             <div className="flex items-center gap-2">
               <Image
                 src="/logo/IDS-Platform-Logo.png"
@@ -47,13 +41,12 @@ export function MainNav({
           </NavLink>
         </div>
         <div className="flex">
-          {data.mainNav.length > 0 && (
+          {mainNav.length > 0 && (
             <div className="flex shrink-0 flex-wrap items-center gap-3 sm:gap-5">
-              {data.mainNav.map((link) => (
+              {mainNav.map((link) => (
                 <ExploreLink
                   key={link.titleKey}
                   href={link.href || ''}
-                  icon={link.icon || ''}
                   text={t(link.titleKey)}
                 />
               ))}
@@ -69,19 +62,10 @@ export function MainNav({
   );
 }
 
-const ExploreLink = ({
-  href,
-  icon,
-  text,
-}: {
-  href: string;
-  icon: string;
-  text: string;
-}) => {
+const ExploreLink = ({ href, text }: { href: string; text: string }) => {
   return (
     <NavLink href={href} className="no-underline">
       <div className="hover:bg-surfaceHovered flex gap-1 rounded-1 px-2 py-2 sm:px-3">
-        {Icons[icon] && <Icon color="default" source={Icons[icon]} />}
         <Text
           variant="bodyMd"
           fontWeight="medium"

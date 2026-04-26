@@ -1,11 +1,13 @@
 import { notFound } from 'next/navigation';
 
+import { features } from '@/config/site';
+
 export default function DatasetsLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  if (!process.env.NEXT_PUBLIC_BACKEND_URL) {
+  if (!features.datasets) {
     notFound();
   }
 

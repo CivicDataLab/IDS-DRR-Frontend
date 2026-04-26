@@ -12,10 +12,10 @@ import {
   Text,
 } from 'opub-ui';
 
-import { AnalyticsURL } from '@/config/consts';
 import { PLATFORM_STATES_LIST } from '@/config/graphql/analaytics-queries';
 import { states } from '@/config/site';
 import { GraphQL } from '@/lib/api';
+import { routes } from '@/lib/routes';
 import styles from './analytics-quick-links.module.css';
 
 export const QuickLinks = () => {
@@ -34,7 +34,6 @@ export const QuickLinks = () => {
 
   const analyticsWithResolvedLinks = useMemo(() => {
     return states.map((item) => {
-      const link = `/${item.slug}${AnalyticsURL}`;
       const stateFromApi = statesList.data?.getStates?.find(
         (state: any) => state.slug === item.slug
       );
@@ -45,9 +44,7 @@ export const QuickLinks = () => {
 
       return {
         ...item,
-        link: resolvedTimePeriod
-          ? `${link}&time-period=${resolvedTimePeriod}`
-          : link,
+        link: routes.analytics(item.slug, { timePeriod: resolvedTimePeriod }),
       };
     });
   }, [statesList.data]);

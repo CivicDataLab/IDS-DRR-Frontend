@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Select, Spinner, Text } from 'opub-ui';
 
+import { routes } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
 import { FactorList } from './factor-list';
@@ -99,10 +100,8 @@ function IndicatorListWrapper({ statesList, currentState }: any) {
                       value: state.slug,
                     };
                   })}
-                  onChange={(e) => {
-                    router.push(
-                      `/${e}/analytics/?indicator=risk-score&view=map`
-                    );
+                  onChange={(slug) => {
+                    router.push(routes.analytics(slug));
                   }}
                 />
               </div>
