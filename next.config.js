@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import('next').NextConfig} */
 
+const { withSentryConfig } = require('@sentry/nextjs');
 const withNextIntl = require('next-intl/plugin')();
 
 const nextConfig = {
@@ -32,11 +33,7 @@ const nextConfig = {
   },
 };
 
-module.exports = withNextIntl(nextConfig);
-
-const { withSentryConfig } = require('@sentry/nextjs');
-
-module.exports = withSentryConfig(module.exports, {
+module.exports = withSentryConfig(withNextIntl(nextConfig), {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
 
