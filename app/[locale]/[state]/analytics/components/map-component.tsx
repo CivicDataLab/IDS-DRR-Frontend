@@ -55,19 +55,22 @@ export const MapComponent = ({
 
   React.useEffect(() => {
     const slug = currentSelectedState?.slug;
-    const overlayUrl = states.find((state) => state.slug === slug)?.overlay_url;
-    if (!overlayUrl) {
+    const overlay = states.find((state) => state.slug === slug)?.overlay;
+    if (!overlay) {
       setOverlayFeatures(null);
       return;
     }
-    const controller = new AbortController();
-    fetch(overlayUrl, { signal: controller.signal })
-      .then((response) => (response.ok ? response.json() : null))
-      .then((data) => setOverlayFeatures(data))
-      .catch((err) => {
-        if (err.name !== 'AbortError') setOverlayFeatures(null);
+    let cancelled = false;
+    overlay()
+      .then((mod) => {
+        if (!cancelled) setOverlayFeatures(mod.default);
+      })
+      .catch(() => {
+        if (!cancelled) setOverlayFeatures(null);
       });
-    return () => controller.abort();
+    return () => {
+      cancelled = true;
+    };
   }, [currentSelectedState?.slug]);
 
   const params = new URLSearchParams(window.location.search);

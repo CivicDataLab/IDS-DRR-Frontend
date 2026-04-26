@@ -117,7 +117,7 @@ const Resources = () => {
                             variant="bodySm"
                             fontWeight="regular"
                           >
-                            {tDatasets('labels.lastUpdated')}{card.last_updated}
+                            {tDatasets('labels.lastUpdated')}{card.lastUpdated}
                           </Text>
                           <Text
                             color="default"
@@ -133,7 +133,7 @@ const Resources = () => {
                             variant="bodySm"
                             fontWeight="regular"
                           >
-                            {tDatasets('labels.updateFrequency')}{card.update_frequency}
+                            {tDatasets('labels.updateFrequency')}{card.updateFrequency}
                           </Text>
                         </div>
                         <Text
@@ -142,7 +142,7 @@ const Resources = () => {
                           variant="bodySm"
                           fontWeight="regular"
                         >
-                          {tDatasets('labels.referencePeriod')}{card.reference_period}
+                          {tDatasets('labels.referencePeriod')}{card.referencePeriod}
                         </Text>
                       </div>
                       <div className=" flex flex-wrap gap-2">

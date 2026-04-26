@@ -25,7 +25,7 @@ export function getUnitsBySlug(factorData: any, slug: string) {
 }
 
 // Locale-aware number formatter. Grouping follows the deployment's
-// number_locale (e.g. "en-IN" -> "1,00,000"; "en-US" -> "100,000").
+// numberLocale (e.g. "en-IN" -> "1,00,000"; "en-US" -> "100,000").
 // Accepts numbers, numeric strings, or strings with a trailing unit
 // ("12.5 mm"); in the last case the unit is preserved.
 const numberFormatter = new Intl.NumberFormat(numberLocale || undefined, {

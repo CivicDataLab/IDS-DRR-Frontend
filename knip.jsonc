@@ -6,9 +6,6 @@
     // Consumed by `graphql-codegen --config ./config/codegen.ts` in the
     // `generate`/`build` npm scripts.
     "config/codegen.ts",
-    // Consumed by `next-sitemap --config ./next-sitemap.config.js` in
-    // the `postbuild` npm script.
-    "next-sitemap.config.js",
     // @import'd by styles/globals.css (knip doesn't follow CSS imports).
     "styles/tokens/_variables.css"
   ],

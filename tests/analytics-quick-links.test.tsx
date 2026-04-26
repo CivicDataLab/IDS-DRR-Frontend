@@ -47,6 +47,17 @@ const mockedStates = [
   { slug: 'uttar-pradesh', latest_time_period: '2025_01' },
 ];
 
+jest.mock('@/config/site', () => ({
+  ...jest.requireActual('@/config/site'),
+  states: [
+    { name: 'Assam', slug: 'assam', icon: '/assets/logo/states/Assam.svg', status: 'active' },
+    { name: 'Himachal Pradesh', slug: 'himachal-pradesh', icon: '/assets/logo/states/Hp.svg', status: 'active' },
+    { name: 'Odisha', slug: 'odisha', icon: '/assets/logo/states/Odisha.svg', status: 'active' },
+    { name: 'Bihar', slug: 'bihar', icon: '/assets/logo/states/Bihar.svg', status: 'active' },
+    { name: 'Uttar Pradesh', slug: 'uttar-pradesh', icon: '/assets/logo/states/Up.svg', status: 'active' },
+  ],
+}));
+
 jest.mock('@tanstack/react-query', () => ({
   useQuery: jest.fn(() => ({
     data: {
