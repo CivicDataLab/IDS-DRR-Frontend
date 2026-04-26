@@ -85,16 +85,7 @@ const defaultProps = {
     { label: 'District 2', value: 'D002' },
   ],
   monthMulti: false,
-  timeLimits: {
-    data: {
-      getDataTimePeriods: [
-        { value: '2023_01' },
-        { value: '2023_02' },
-        { value: '2023_03' },
-        { value: '2023_12' },
-      ],
-    },
-  },
+  timeLimits: ['2023_01', '2023_02', '2023_03', '2023_12'],
 };
 
 describe('FilterDropdownOptions', () => {
@@ -284,7 +275,7 @@ describe('FilterDropdownOptions', () => {
     it('handles timeLimits without data', () => {
       const propsWithoutTimeLimits = {
         ...defaultProps,
-        timeLimits: {},
+        timeLimits: [],
       };
 
       render(<FilterDropdownOptions {...propsWithoutTimeLimits} />);
@@ -381,14 +372,7 @@ describe('FilterDropdownOptions', () => {
     it('handles timeLimits with invalid date format', () => {
       const propsWithInvalidDates = {
         ...defaultProps,
-        timeLimits: {
-          data: {
-            getDataTimePeriods: [
-              { value: 'invalid_date' },
-              { value: '2023_01' },
-            ],
-          },
-        },
+        timeLimits: ['invalid_date', '2023_01'],
       };
 
       // Should render without throwing error due to our mock handling invalid dates

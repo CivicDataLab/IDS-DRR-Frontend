@@ -105,16 +105,7 @@ jest.mock('@internationalized/date', () => ({
 
 const defaultProps = {
   timePeriod: '2023_08',
-  timePeriods: {
-    data: {
-      getDataTimePeriods: [
-        { value: '2023_01' },
-        { value: '2023_02' },
-        { value: '2023_03' },
-        { value: '2023_12' },
-      ],
-    },
-  },
+  timePeriods: ['2023_01', '2023_02', '2023_03', '2023_12'],
   currentSelectedState: {
     child_type: 'revenue-circle',
   },
@@ -474,11 +465,7 @@ describe('FilterComp', () => {
     it('handles empty time periods data', () => {
       const propsWithEmptyTimePeriods = {
         ...defaultProps,
-        timePeriods: {
-          data: {
-            getDataTimePeriods: [],
-          },
-        },
+        timePeriods: [],
       };
 
       render(<FilterComp {...propsWithEmptyTimePeriods} />);
