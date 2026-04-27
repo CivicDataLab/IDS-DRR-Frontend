@@ -10,7 +10,8 @@ import {
 import { useTranslations } from 'next-intl';
 import { Button, Icon, ProgressBar, Text } from 'opub-ui';
 
-import { documentationLink, RiskColorMap } from '@/config/consts';
+import { documentationLink, learnMoreLink } from '@/config/consts';
+import { RiskColorMap } from '@/lib/analytics';
 import { cn } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';

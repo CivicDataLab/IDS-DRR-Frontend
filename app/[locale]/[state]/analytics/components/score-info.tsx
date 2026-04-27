@@ -1,8 +1,8 @@
 import React from 'react';
 import { ProgressBar } from 'opub-ui';
 
-import { RiskColorMap } from '@/config/consts';
 import { useFormatNumber } from '@/hooks/use-format-number';
+import { RiskColorMap } from '@/lib/analytics';
 
 interface ScoreProps {
   label: string;

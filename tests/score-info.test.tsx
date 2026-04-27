@@ -8,7 +8,7 @@ jest.mock('@/hooks/use-format-number', () => ({
   useFormatNumber: () => (value: number | string) => `formatted-${value}`,
 }));
 
-jest.mock('@/config/consts', () => ({
+jest.mock('@/lib/analytics', () => ({
   RiskColorMap: {
     1: '#00ff00',
     2: '#ffff00',
