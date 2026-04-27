@@ -244,8 +244,8 @@ const DatasetsListing = () => {
     <main className="bg-surfaceDefault">
       <BreadCrumbs
         data={[
-          { href: '/', label: tNav('home') },
-          { href: '#', label: tNav('datasets') },
+          { href: '/', label: tNav('links.home') },
+          { href: '#', label: tNav('links.datasets') },
         ]}
       />
       {datasetDetails.length < 0 ? (

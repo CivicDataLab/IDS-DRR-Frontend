@@ -29,7 +29,7 @@ export const DatasetCatalog = async () => {
       icon: '/logo/Government_Response.svg',
       category: 'Government Response',
     },
-  ];
+  ] as const;
   return (
     <section
       className="flex w-full flex-col gap-9 px-5 py-6 lg:px-6 lg:py-20"

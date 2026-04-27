@@ -1,7 +1,5 @@
 import { parseDate, type CalendarDate } from '@internationalized/date';
 
-import { numberLocale } from '@/config/site';
-
 export function safeParseDate(value: string): CalendarDate | undefined {
   try {
     return parseDate(value);
@@ -23,30 +21,6 @@ export function getUnitsBySlug(factorData: any, slug: string) {
   );
   return factorName?.[0]?.unit__name || '';
 }
-
-// Locale-aware number formatter. Grouping follows the deployment's
-// numberLocale (e.g. "en-IN" -> "1,00,000"; "en-US" -> "100,000").
-// Accepts numbers, numeric strings, or strings with a trailing unit
-// ("12.5 mm"); in the last case the unit is preserved.
-const numberFormatter = new Intl.NumberFormat(numberLocale || undefined, {
-  maximumFractionDigits: 2,
-});
-
-export function formatNumber(input: number | string): string {
-  if (input === undefined || input === null) return '';
-
-  const str = input.toString();
-  const match = str.match(/[\d.]+/);
-  if (!match) return str;
-
-  const number = parseFloat(match[0]);
-  if (isNaN(number)) return str;
-
-  const formatted = numberFormatter.format(number);
-  const unit = str.replace(match[0], '').trim();
-  return unit ? `${formatted} ${unit}` : formatted;
-}
-
 
 export const getLatestDate = (dateStrings: string[]) => {
   const valid = (dateStrings || []).filter((dateStr) => /^\d{4}_\d{2}$/.test(dateStr));

@@ -45,9 +45,9 @@ export function MainNav({ prefLangCookie }: { prefLangCookie: string }) {
             <div className="flex shrink-0 flex-wrap items-center gap-3 sm:gap-5">
               {mainNav.map((link) => (
                 <ExploreLink
-                  key={link.titleKey}
+                  key={link.key}
                   href={link.href || ''}
-                  text={t(link.titleKey)}
+                  text={t(`links.${link.key}`)}
                 />
               ))}
             </div>

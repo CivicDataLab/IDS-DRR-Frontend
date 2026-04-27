@@ -76,9 +76,9 @@ export function MobileNav() {
                 <div>
                   {mainNav.map((link) => (
                     <ExploreLink
-                      key={link.titleKey}
+                      key={link.key}
                       href={link.href || ''}
-                      text={t(link.titleKey)}
+                      text={t(`links.${link.key}`)}
                       onClick={toggleMenu}
                     />
                   ))}

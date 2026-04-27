@@ -1,9 +1,8 @@
 import { notFound } from 'next/navigation';
 import { captureException } from '@sentry/nextjs';
-import { messagesEn } from 'ids-drr-branding';
 import { getRequestConfig } from 'next-intl/server';
 
-import locales from '../config/locales';
+import { FALLBACK_LOCALE, locales, messages } from '../config/site';
 
 // Recursive merge: values from `overrides` replace keys in `base` at any depth.
 // Plain objects are merged; everything else (strings, arrays, primitives) overrides.
@@ -30,34 +29,34 @@ function deepMerge(
   return out;
 }
 
-const brandingMessagesByLocale: Record<string, Record<string, unknown>> = {
-  en: messagesEn,
-};
-
 // Messages for the fallback locale, resolved once at module load.
 // A partially translated locale inherits any missing keys from these.
-const fallback = locales.default;
 const fallbackMessages = deepMerge(
-  (await import(`../locales/${fallback}.json`)).default,
-  brandingMessagesByLocale[fallback] ?? {}
+  (await import(`../locales/${FALLBACK_LOCALE}.json`)).default,
+  messages[FALLBACK_LOCALE] ?? {}
 );
 
 export default getRequestConfig(async ({ requestLocale }) => {
   const locale = await requestLocale;
 
-  if (!locale || !locales.all.includes(locale as any)) {
+  if (!locale || !locales.includes(locale as any)) {
     captureException(new Error(`Invalid locale: ${locale}`));
     notFound();
   }
 
-  // Precedence (highest wins): branding override > repo default >
-  // fallback-locale branding > fallback-locale repo default.
-  let messages = fallbackMessages;
-  if (locale !== fallback) {
-    const defaults = (await import(`../locales/${locale}.json`)).default;
-    const branding = brandingMessagesByLocale[locale as string] ?? {};
-    messages = deepMerge(deepMerge(messages, defaults), branding);
+  // The frontend ships English defaults only. Non-English translations
+  // come from the branding package, deep-merged on top of the English
+  // fallback, so that missing keys at least resolve to English text.
+  //
+  // Precedence:
+  // - Non-"en" messages from branding package
+  // - "en" messages from branding package
+  // - Fallback "en" messages from repo
+  let merged = fallbackMessages;
+  if (locale !== FALLBACK_LOCALE) {
+    const branding = messages[locale as string] ?? {};
+    merged = deepMerge(merged, branding);
   }
 
-  return { locale, messages };
+  return { locale, messages: merged };
 });

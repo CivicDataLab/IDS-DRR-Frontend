@@ -1,7 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-import { features, siteUrl, states } from '@/config/site';
-import locales from '@/config/locales';
+import { features, locales, siteUrl, states } from '@/config/site';
 import { ANALYTICS_VIEWS, routes } from '@/lib/routes';
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -9,7 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const activeStates = states.filter((s) => s.status === 'active');
   const entries: MetadataRoute.Sitemap = [];
 
-  for (const locale of locales.all) {
+  for (const locale of locales) {
     entries.push({
       url: `${siteUrl}/${locale}${routes.home}`,
       lastModified,

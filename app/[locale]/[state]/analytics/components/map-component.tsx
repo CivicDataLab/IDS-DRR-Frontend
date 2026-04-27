@@ -9,13 +9,10 @@ import { Button, Icon, Spinner, Text } from 'opub-ui';
 
 import { Factors } from '@/config/consts';
 import { states } from '@/config/site';
+import { useFormatNumber } from '@/hooks/use-format-number';
 import Icons from '@/components/icons';
 import MapChart from '@/components/MapChart';
-import {
-  formatNumber,
-  getFactorNameBySlug,
-  getUnitsBySlug,
-} from '../utils/utils';
+import { getFactorNameBySlug, getUnitsBySlug } from '../utils/utils';
 
 export const MapComponent = ({
   indicator,
@@ -49,6 +46,7 @@ export const MapComponent = ({
   onToggleOutputPane?: () => void;
 }) => {
   const tRisk = useTranslations('analytics.risk');
+  const formatNumber = useFormatNumber();
   const [map, setMap] = React.useState<any>(null);
   const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
   const [overlayFeatures, setOverlayFeatures] = React.useState<any>(null);
@@ -350,7 +348,7 @@ export const MapComponent = ({
             const regionName = layer.feature?.properties.name;
             const riskValue = layer.feature?.properties?.[indicator];
             const riskText = Factors.includes(indicator)
-              ? tRisk(String(riskValue))
+              ? tRisk(String(riskValue) as RiskLevel)
               : `${formatNumber(riskValue)} ${getUnitsBySlug(
                   indicatorsData,
                   indicator

@@ -8,24 +8,18 @@ import {
   unstable_setRequestLocale,
 } from 'next-intl/server';
 
-import { Footer, siteUrl } from '@/config/site';
+import { Footer, locales, siteUrl } from '@/config/site';
 import { getPrefLangCookie } from '@/lib/serverUtils';
 import { MainNav } from '@/components/main-nav';
 import { MediaRendering } from '@/components/media-rendering';
 import { MobileNav } from '@/components/mobile-nav';
 import Provider from '@/components/provider';
-import locales from '../../config/locales';
 
 const fontSans = FontSans({ subsets: ['latin'], display: 'swap' });
 
 export function generateStaticParams() {
-  return locales.all.map((locale) => ({ locale }));
+  return locales.map((locale) => ({ locale }));
 }
-
-// Map next-intl locale codes to Open Graph locale tags.
-const ogLocales: Record<string, string> = {
-  en: 'en_US',
-};
 
 export async function generateMetadata({
   params,
@@ -50,7 +44,7 @@ export async function generateMetadata({
     creator,
     openGraph: {
       type: 'website',
-      locale: ogLocales[locale] ?? ogLocales.en,
+      locale: t('ogLocale'),
       url: siteUrl,
       title: name,
       description,

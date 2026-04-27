@@ -10,8 +10,5 @@ export const Footer: ComponentType | undefined = undefined;
 export const Credits: ComponentType | undefined = undefined;
 export const PartnerLogos: ComponentType | undefined = undefined;
 
-// next-intl message overrides.
-export const messagesEn: Record<string, unknown> = {};
-
 // Empty default deployment config. See branding-types/src/index.ts.
 export const config: DeploymentConfig = {};

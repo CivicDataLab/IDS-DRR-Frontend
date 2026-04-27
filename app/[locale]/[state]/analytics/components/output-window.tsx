@@ -18,14 +18,11 @@ import { Button, Icon, Text, Tooltip } from 'opub-ui';
 import { documentationLink, Factors } from '@/config/consts';
 import { ANALYTICS_TIME_PERIODS } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
+import { useFormatNumber } from '@/hooks/use-format-number';
 import { cn, formatDateString } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
-import {
-  formatNumber,
-  getFactorNameBySlug,
-  getLatestDate,
-} from '../utils/utils';
+import { getFactorNameBySlug, getLatestDate } from '../utils/utils';
 import { ScoreInfo } from './score-info';
 import styles from './styles.module.scss';
 
@@ -41,6 +38,7 @@ export function OutputWindow({
   const tCommon = useTranslations('common');
   const tRisk = useTranslations('analytics.risk');
   const tAnalytics = useTranslations('analytics');
+  const formatNumber = useFormatNumber();
   const searchParams = useSearchParams();
   let processedTime = getLatestDate(
     searchParams.get('time-period')?.split(',') || []
@@ -235,7 +233,7 @@ export function OutputWindow({
                       fontWeight="semibold"
                     >
                       {Factors.includes(indicator) &&
-                        tRisk(String(parseInt(data[indicator]['value'])))}
+                        tRisk(String(parseInt(data[indicator]['value'])) as RiskLevel)}
                     </Text>
                     <Tooltip
                       content={
@@ -425,7 +423,7 @@ export function OutputWindow({
                             fontWeight="semibold"
                           >
                             {Factors.includes(indicator) &&
-                              tRisk(String(parseInt(data[indicator]['value'])))}
+                              tRisk(String(parseInt(data[indicator]['value'])) as RiskLevel)}
                           </Text>
                           <Tooltip
                             content={

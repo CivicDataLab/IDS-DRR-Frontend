@@ -26,9 +26,12 @@ jest.mock('@/components/MapChart', () => ({
 
 // Mock utils
 jest.mock('@/app/[locale]/[state]/analytics/utils/utils', () => ({
-  formatNumber: jest.fn((value) => `formatted-${value}`),
   getFactorNameBySlug: jest.fn((factorData, slug) => `Factor ${slug}`),
   getUnitsBySlug: jest.fn((slug) => `units-${slug}`),
+}));
+
+jest.mock('@/hooks/use-format-number', () => ({
+  useFormatNumber: () => (value: number | string) => `formatted-${value}`,
 }));
 
 // Mock config

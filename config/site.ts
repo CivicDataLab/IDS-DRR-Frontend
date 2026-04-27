@@ -27,8 +27,15 @@ export const heroImage: string = config.heroImage ?? '';
 export const states: State[] = config.states ?? [];
 export const resources: Resource[] = config.resources ?? [];
 export const languages: Language[] = config.languages ?? [];
-export const numberLocale: string = config.numberLocale ?? '';
 export const reportsEnabled: boolean = config.reportsEnabled ?? false;
+
+// English is always loaded internally as the missing-key fallback,
+// but a deployment can omit it from `locales` to disable /en/ URLs.
+export const FALLBACK_LOCALE = 'en';
+export const locales: string[] = config.locales ?? [FALLBACK_LOCALE];
+export const defaultLocale: string = config.defaultLocale ?? locales[0];
+export const messages: Record<string, Record<string, unknown>> =
+  config.messages ?? {};
 
 // Feature flags.
 const backendAvailable = Boolean(process.env.NEXT_PUBLIC_BACKEND_URL);
@@ -46,15 +53,15 @@ export const siteUrl =
     ? 'http://localhost:3000'
     : process.env.SITE_URL || '';
 
-export const mainNav = [
-  { titleKey: 'home', href: routes.home },
+export const mainNav: { key: NavLinkKey; href: string }[] = [
+  { key: 'home', href: routes.home },
   ...(defaultState
-    ? [{ titleKey: 'analytics', href: routes.analytics(defaultState.slug) }]
+    ? [{ key: 'analytics' as const, href: routes.analytics(defaultState.slug) }]
     : []),
   ...(features.datasets
-    ? [{ titleKey: 'datasets', href: routes.datasets() }]
+    ? [{ key: 'datasets' as const, href: routes.datasets() }]
     : []),
   ...(features.aboutUs
-    ? [{ titleKey: 'aboutUs', href: routes.aboutUs }]
+    ? [{ key: 'aboutUs' as const, href: routes.aboutUs }]
     : []),
 ];
