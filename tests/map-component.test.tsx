@@ -34,8 +34,7 @@ jest.mock('@/hooks/use-format-number', () => ({
   useFormatNumber: () => (value: number | string) => `formatted-${value}`,
 }));
 
-// Mock config
-jest.mock('@/config/consts', () => ({
+jest.mock('@/lib/analytics', () => ({
   Factors: ['risk-score', 'exposure', 'vulnerability'],
 }));
 

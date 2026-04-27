@@ -15,10 +15,11 @@ import { useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, Text, Tooltip } from 'opub-ui';
 
-import { documentationLink, Factors } from '@/config/consts';
+import { documentationLink } from '@/config/consts';
 import { ANALYTICS_TIME_PERIODS } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
 import { useFormatNumber } from '@/hooks/use-format-number';
+import { Factors } from '@/lib/analytics';
 import { cn, formatDateString } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';

@@ -6,8 +6,8 @@ import { parseAsString, useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
 import { Spinner, Text } from 'opub-ui';
 
-import { Factors } from '@/config/consts';
 import { ANALYTICS_INDICATORS_BY_CATEGORY } from '@/config/graphql/analaytics-queries';
+import { Factors } from '@/lib/analytics';
 import { GraphQL } from '@/lib/api';
 import { toTitleCase } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';

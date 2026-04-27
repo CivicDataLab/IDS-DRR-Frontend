@@ -2,8 +2,8 @@ import React, { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Spinner, Table, Text } from 'opub-ui';
 
-import { Factors } from '@/config/consts';
 import { useFormatNumber } from '@/hooks/use-format-number';
+import { Factors } from '@/lib/analytics';
 
 type ColumnDefinition = {
   accessorKey: string;

@@ -79,7 +79,7 @@ jest.mock('@/lib/utils', () => ({
   toTitleCase: jest.fn((str) => str.charAt(0).toUpperCase() + str.slice(1)),
 }));
 
-jest.mock('@/config/consts', () => ({
+jest.mock('@/lib/analytics', () => ({
   Factors: ['risk-score', 'exposure', 'vulnerability'],
 }));
 

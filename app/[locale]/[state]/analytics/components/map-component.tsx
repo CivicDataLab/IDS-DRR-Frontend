@@ -7,9 +7,9 @@ import { interpolateBlues } from 'd3-scale-chromatic';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, Spinner, Text } from 'opub-ui';
 
-import { Factors } from '@/config/consts';
 import { states } from '@/config/site';
 import { useFormatNumber } from '@/hooks/use-format-number';
+import { Factors } from '@/lib/analytics';
 import Icons from '@/components/icons';
 import MapChart from '@/components/MapChart';
 import { getFactorNameBySlug, getUnitsBySlug } from '../utils/utils';
