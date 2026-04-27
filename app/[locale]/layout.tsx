@@ -63,7 +63,6 @@ export async function generateMetadata({
       shortcut: '/favicon-16x16.png',
       apple: `${siteUrl}/apple-touch-icon.png`,
     },
-    manifest: `${siteUrl}/site.webmanifest`,
   };
 }
 
