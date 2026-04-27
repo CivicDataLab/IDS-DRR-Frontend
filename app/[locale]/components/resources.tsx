@@ -198,7 +198,7 @@ const Resources = () => {
                             variant="bodySm"
                             fontWeight="regular"
                           >
-                            {tDatasets('labels.updateFrequency')}{getMetadataValue(item, 'Last Updated') || tCommon('na')}
+                            {tDatasets('labels.updateFrequency')}{getMetadataValue(item, 'Update Frequency') || tCommon('na')}
                           </Text>
                         </div>
                         <Text
