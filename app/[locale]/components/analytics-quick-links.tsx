@@ -29,50 +29,49 @@ export const QuickLinks = () => {
     refetchOnReconnect: false,
   });
 
-  const Analytics = [
-    {
-      name: 'Assam',
-      slug: 'assam',
-      status: 'active',
-      icon: '/logo/states/Assam.svg',
-      link: `/assam${AnalyticsURL}`,
-      alt: 'assam state boundary image',
-    },
-    {
-      name: 'Himachal Pradesh',
-      slug: 'himachal-pradesh',
-      status: 'active',
-      icon: '/logo/states/Hp.svg',
-      link: `/himachal-pradesh${AnalyticsURL}`,
-      alt: 'HP state boundary image',
-    },
-    {
-      name: 'Odisha',
-      slug: 'odisha',
-      status: 'active',
-      icon: '/logo/states/Odisha.svg',
-      link: `/odisha${AnalyticsURL}`,
-      alt: 'Odisha state boundary image',
-    },
-    {
-      name: 'Bihar',
-      slug: 'bihar',
-      status: 'active',
-      icon: '/logo/states/Bihar.svg',
-      link: `/bihar${AnalyticsURL}`,
-      alt: 'Bihar state boundary image',
-    },
-    {
-      name: 'Uttar Pradesh',
-      slug: 'uttar-pradesh',
-      status: 'active',
-      icon: '/logo/states/Up.svg',
-      link: `/uttar-pradesh${AnalyticsURL}`,
-      alt: 'UP state boundary image',
-    },
-  ];
-
   const analyticsWithResolvedLinks = useMemo(() => {
+    const Analytics = [
+      {
+        name: 'Assam',
+        slug: 'assam',
+        status: 'active',
+        icon: '/logo/states/Assam.svg',
+        link: `/assam${AnalyticsURL}`,
+        alt: 'assam state boundary image',
+      },
+      {
+        name: 'Himachal Pradesh',
+        slug: 'himachal-pradesh',
+        status: 'active',
+        icon: '/logo/states/Hp.svg',
+        link: `/himachal-pradesh${AnalyticsURL}`,
+        alt: 'HP state boundary image',
+      },
+      {
+        name: 'Odisha',
+        slug: 'odisha',
+        status: 'active',
+        icon: '/logo/states/Odisha.svg',
+        link: `/odisha${AnalyticsURL}`,
+        alt: 'Odisha state boundary image',
+      },
+      {
+        name: 'Bihar',
+        slug: 'bihar',
+        status: 'active',
+        icon: '/logo/states/Bihar.svg',
+        link: `/bihar${AnalyticsURL}`,
+        alt: 'Bihar state boundary image',
+      },
+      {
+        name: 'Uttar Pradesh',
+        slug: 'uttar-pradesh',
+        status: 'active',
+        icon: '/logo/states/Up.svg',
+        link: `/uttar-pradesh${AnalyticsURL}`,
+        alt: 'UP state boundary image',
+      },
+    ];
     return Analytics.map((item) => {
       const stateFromApi = statesList.data?.getStates?.find(
         (state: any) => state.slug === item.slug
@@ -89,7 +88,7 @@ export const QuickLinks = () => {
           : item.link,
       };
     });
-  }, [Analytics, statesList.data]);
+  }, [statesList.data]);
   return (
     <section
       className=" flex h-full w-full flex-col gap-9 px-5 py-6 lg:px-6 lg:py-20"
