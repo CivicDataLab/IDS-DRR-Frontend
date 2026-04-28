@@ -222,16 +222,7 @@ describe('AnalyticsMobileLayout', () => {
     { name: 'Revenue Circle 1', code: 'RC001', districtCode: 'DIST001' },
     { name: 'Revenue Circle 2', code: 'RC002', districtCode: 'DIST001' },
   ];
-  const mockTimePeriods = {
-    data: {
-      getDataTimePeriods: [
-        { value: '2023_01' },
-        { value: '2023_02' },
-        { value: '2023_03' },
-        { value: '2023_08' },
-      ],
-    },
-  };
+  const mockTimePeriods = ['2023_01', '2023_02', '2023_03', '2023_08'];
   const mockIndicatorsData = {
     data: {
       indicators: [
@@ -279,7 +270,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -299,7 +291,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -341,7 +334,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -379,7 +373,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -417,7 +412,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -438,7 +434,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -462,7 +459,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -485,7 +483,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -519,7 +518,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={[]}
         revenueGeographiesData={[]}
         timePeriods={mockTimePeriods}
-        indicatorsData={{ data: { indicators: [] } }}
+        mapIndicatorsData={{ data: { indicators: [] } }}
+        aboutIndicatorsData={{ data: { indicators: [] } }}
         tableData={{ data: { tableData: [] }, isLoading: false }}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -539,7 +539,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -565,7 +566,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={differentState}
         statesList={mockStatesList}
@@ -594,7 +596,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -632,7 +635,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
