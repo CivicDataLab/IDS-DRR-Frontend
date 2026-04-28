@@ -13,8 +13,8 @@
     "generate": "graphql-codegen --require dotenv/config --config ./config/codegen.ts --watch",
     "clean": "rm -rf node_modules package-lock.json",
     "test": "jest",
-    "test:watch": "jest - watch",
-    "test:coverage": "jest - coverage"
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@graphql-typed-document-node/core": "^3.2.0",
