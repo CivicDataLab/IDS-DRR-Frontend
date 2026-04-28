@@ -80,6 +80,13 @@ export default function FilterDropdownOptions({
       parse: (value) => value.split(','),
     }
   );
+  // Defensive coercion: useQueryState shares state across hook instances
+  // by URL key, and the `time-period` param is also read elsewhere as a
+  // plain string. On URL transitions the parsed-array hook can briefly
+  // see a string. Always normalize to an array before consumption.
+  const periods: string[] = Array.isArray(selectedTimePeriod)
+    ? selectedTimePeriod.filter(Boolean)
+    : [];
 
   const districtOptions = sanitizeOptions([
     { label: 'Select a district', value: '' },
@@ -122,12 +129,8 @@ export default function FilterDropdownOptions({
   // do not fall back to the latest date – leave the picker empty so the label acts as a placeholder.
   const hasExplicitEmptyTimePeriod = timePeriod === '';
   const monthPickerValue =
-    selectedTimePeriod &&
-    Array.isArray(selectedTimePeriod) &&
-    selectedTimePeriod.filter(Boolean).length > 0
-      ? safeParseDate(
-          getLatestDate(selectedTimePeriod.filter(Boolean)) || '2023-08-01'
-        )
+    periods.length > 0
+      ? safeParseDate(getLatestDate(periods) || '2023-08-01')
       : hasExplicitEmptyTimePeriod
         ? undefined
         : getDefaultDate(timePeriod);
@@ -165,15 +168,12 @@ export default function FilterDropdownOptions({
               // TODO: add support for name, className, minValue and maxValue in opub-ui
               // name="time-period-select"
               // className="flex-1"
-              selectedValues={
-                selectedTimePeriod
-                  ?.filter(Boolean)
-                  ?.map((timePeriod: string) => {
-                    const [year, month] = timePeriod.split('_');
-                    return safeParseDate(`${year}-${month?.padStart(2, '0')}-01`);
-                  })
-                  ?.filter((d): d is CalendarDate => d !== undefined) || []
-              }
+              selectedValues={periods
+                .map((timePeriod: string) => {
+                  const [year, month] = timePeriod.split('_');
+                  return safeParseDate(`${year}-${month?.padStart(2, '0')}-01`);
+                })
+                .filter((d): d is CalendarDate => d !== undefined)}
               // defaultValues={getDefaultDate(timePeriod || '')}
               label="Select Months"
               minValue={minValue}
