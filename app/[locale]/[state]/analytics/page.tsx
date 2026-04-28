@@ -31,7 +31,7 @@ export default async function Home({
       queryKey: [`states_list`],
       queryFn: () =>
         GraphQL(
-          `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
+          `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
           PLATFORM_STATES_LIST
         ),
     });
