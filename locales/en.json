@@ -3,6 +3,7 @@
     "loading": "Loading...",
     "na": "NA",
     "numberLocale": "",
+    "redirectConfirm": "You are being redirected to \"{url}\".",
     "filters": {
       "heading": "Filters",
       "trigger": "Filter",
@@ -178,8 +179,7 @@
     },
     "actions": {
       "share": {
-        "label": "Share",
-        "confirm": "You are being redirected to \"{url}\"."
+        "label": "Share"
       },
       "download": {
         "label": "Download Report",

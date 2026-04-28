@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, Menu, Spinner, Text, Tray } from 'opub-ui';
 
-import { handleRedirect } from '@/lib/utils';
 import { useCopyURL } from '@/hooks/use-copy-url';
 import Icons from '@/components/icons';
 import Metadata from '../Metadata';
@@ -86,7 +85,13 @@ const PrimaryData: React.FC<PrimaryDataProps> = ({ data, isLoading }) => {
           <div>
             <Link
               href={sourceLink.value}
-              onClick={(event) => handleRedirect(event, sourceLink.value)}
+              onClick={(event) => {
+                event.preventDefault();
+                const url = sourceLink.value;
+                if (window.confirm(tCommon('redirectConfirm', { url }))) {
+                  window.open(url, '_blank');
+                }
+              }}
               className="flex gap-1 text-textInteractive underline"
             >
               <Text color="interactive">{t('detail.metadata.sourceLink')}</Text>
@@ -98,7 +103,13 @@ const PrimaryData: React.FC<PrimaryDataProps> = ({ data, isLoading }) => {
           <div>
             <Link
               href={githubLink.value}
-              onClick={(event) => handleRedirect(event, githubLink.value)}
+              onClick={(event) => {
+                event.preventDefault();
+                const url = githubLink.value;
+                if (window.confirm(tCommon('redirectConfirm', { url }))) {
+                  window.open(url, '_blank');
+                }
+              }}
               className="flex gap-1 text-textInteractive underline"
             >
               <Text color="interactive">{t('detail.metadata.githubLink')}</Text>

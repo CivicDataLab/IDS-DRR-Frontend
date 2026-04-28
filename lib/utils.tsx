@@ -72,16 +72,6 @@ export function formatDateString(
   return formattedDate;
 }
 
-export function handleRedirect(event: any, link: any) {
-  event.preventDefault();
-  const confirmation = window.confirm(
-    `You are being redirected to "${link}". `
-  );
-  if (confirmation) {
-    window.open(link, '_blank');
-  }
-}
-
 export async function copyToClipboard(url: string): Promise<boolean> {
   if (navigator.clipboard) {
     try {

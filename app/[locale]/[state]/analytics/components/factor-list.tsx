@@ -209,7 +209,7 @@ export function FactorList({ currentState }: any) {
 
                   onAction: () => {
                     const url = `https://www.facebook.com/sharer/sharer.php?u=${currentURL}/`;
-                    if (window.confirm(t('actions.share.confirm', { url }))) {
+                    if (window.confirm(tCommon('redirectConfirm', { url }))) {
                       window.open(url, '_blank');
                     }
                   },
@@ -219,7 +219,7 @@ export function FactorList({ currentState }: any) {
                   icon: Icons.IconBrandLinkedin,
                   onAction: () => {
                     const url = `https://www.linkedin.com/feed/?shareActive=true&text=${currentURL}`;
-                    if (window.confirm(t('actions.share.confirm', { url }))) {
+                    if (window.confirm(tCommon('redirectConfirm', { url }))) {
                       window.open(url, '_blank');
                     }
                   },
@@ -229,7 +229,7 @@ export function FactorList({ currentState }: any) {
                   icon: Icons.IconBrandX,
                   onAction: () => {
                     const url = `https://twitter.com/intent/tweet?url=${currentURL}/`;
-                    if (window.confirm(t('actions.share.confirm', { url }))) {
+                    if (window.confirm(tCommon('redirectConfirm', { url }))) {
                       window.open(url, '_blank');
                     }
                   },
