@@ -20,7 +20,7 @@ The following dependencies must be available globally on your system:
 
 3. Install the dependencies.
 
-`npm install --legacy-peer-deps`
+`npm install --force`
 
 4. Create your local environment configuration from the sample file:
 
