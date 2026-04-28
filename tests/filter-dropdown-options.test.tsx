@@ -54,15 +54,6 @@ jest.mock('@/lib/utils', () => ({
   }),
 }));
 
-jest.mock('@/app/[locale]/[state]/analytics/utils/utils', () => ({
-  getLatestDate: jest.fn((dates: string[]) => {
-    if (!dates || dates.length === 0) return '2023-08-01';
-    const latest = dates.sort().pop();
-    const [year, month] = latest!.split('_');
-    return `${year}-${month.padStart(2, '0')}-01`;
-  }),
-}));
-
 // Mock @internationalized/date
 jest.mock('@internationalized/date', () => ({
   parseDate: jest.fn((dateString: string) => {

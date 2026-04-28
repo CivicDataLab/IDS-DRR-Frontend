@@ -1,9 +1,9 @@
-import { parseDate } from '@internationalized/date';
+import { parseDate, type CalendarDate } from '@internationalized/date';
 import { parseAsString, useQueryState } from 'next-usequerystate';
 import { MonthPicker, MultiMonthPicker, Select } from 'opub-ui';
 
 import { toTitleCase } from '@/lib/utils';
-import { getLatestDate } from '../utils/utils';
+import { getLatestDate, safeParseDate } from '../utils/utils';
 
 export interface Option {
   disabled?: boolean;
@@ -125,7 +125,7 @@ export default function FilterDropdownOptions({
     selectedTimePeriod &&
     Array.isArray(selectedTimePeriod) &&
     selectedTimePeriod.filter(Boolean).length > 0
-      ? parseDate(
+      ? safeParseDate(
           getLatestDate(selectedTimePeriod.filter(Boolean)) || '2023-08-01'
         )
       : hasExplicitEmptyTimePeriod
@@ -170,8 +170,9 @@ export default function FilterDropdownOptions({
                   ?.filter(Boolean)
                   ?.map((timePeriod: string) => {
                     const [year, month] = timePeriod.split('_');
-                    return parseDate(`${year}-${month.padStart(2, '0')}-01`);
-                  }) || []
+                    return safeParseDate(`${year}-${month?.padStart(2, '0')}-01`);
+                  })
+                  ?.filter((d): d is CalendarDate => d !== undefined) || []
               }
               // defaultValues={getDefaultDate(timePeriod || '')}
               label="Select Months"
