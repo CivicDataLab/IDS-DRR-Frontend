@@ -27,10 +27,9 @@ export function About() {
             src="/logo/climateAction.png"
             width={520}
             height={500}
-            objectFit="contain"
             className={styles.about__img}
             alt="An image representing global climate action"
-            style={{ width: '400px', height: '469px' }}
+            style={{ width: '400px', height: '469px', objectFit: 'contain' }}
           />
         </MediaRendering>
         <MediaRendering minWidth={null} maxWidth="1023">
@@ -39,7 +38,7 @@ export function About() {
             src="/logo/climateAction.png"
             width={250}
             height={297}
-            objectFit="contain"
+            style={{ objectFit: 'contain' }}
             className=" mx-auto pt-10"
             alt="An image representing global climate action"
           />
