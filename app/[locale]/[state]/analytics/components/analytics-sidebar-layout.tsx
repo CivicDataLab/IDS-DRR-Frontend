@@ -2,11 +2,8 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
 import { Select, Spinner, Text } from 'opub-ui';
 
-import { ANALYTICS_TIME_PERIODS } from '@/config/graphql/analaytics-queries';
-import { GraphQL } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
 import { FactorList } from './factor-list';
@@ -60,23 +57,6 @@ export function AnalyticsSideBarLayout({
 
 export function IndicatorListWrapper({ statesList, currentState }: any) {
   const router = useRouter();
-
-  const timePeriods = useQuery({
-    queryKey: [`timePeriods`],
-    queryFn: () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_TIME_PERIODS
-      ),
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
-
-  // Get the latest time period (first item in the array, which is the most recent)
-  const latestTimePeriod =
-    timePeriods.data?.getDataTimePeriods[0]?.value ||
-    `${new Date().getFullYear()}_${new Date().getMonth() + 1}`;
 
   return (
     <React.Fragment>

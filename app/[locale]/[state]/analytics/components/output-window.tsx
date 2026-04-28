@@ -66,7 +66,6 @@ export function OutputWindow({
   const view = searchParams.get('view') || '';
 
   const RevenueRegion = searchParams.get('revenue-code') || '';
-  const isRevenueCircle = Boolean(RevenueRegion && RevenueRegion.length > 0);
   // Sub indicators under "Overall Flood Risk"
   const parentIndicatorSlugs = [
     'risk-score',

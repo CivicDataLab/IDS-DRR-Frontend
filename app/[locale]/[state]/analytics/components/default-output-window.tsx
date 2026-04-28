@@ -9,22 +9,16 @@ import {
 } from '@/components/FactorIcons';
 import { Button, Divider, Icon, ProgressBar, Text } from 'opub-ui';
 
-import {
-  documentationLink,
-  learnMoreLink,
-  RiskColorMap,
-} from '@/config/consts';
-import { cn, handleRedirect } from '@/lib/utils';
+
+import { documentationLink, RiskColorMap } from '@/config/consts';
+import { cn } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import NavLink from '@/components/nav-link';
 import styles from './styles.module.scss';
 
 export function DefaultWindow({
-  chartData,
   indicatorDescriptions,
-  indicator,
-  boundary,
   onClose,
 }: any) {
   const list: { title: string; slug: string; description: string }[] = [];
@@ -72,7 +66,7 @@ export function DefaultWindow({
           </div>
 
           {/* <Divider className="mt-2" /> */}
-          <AboutIndicator IndicatorData={list} onClose={onClose} />
+          <AboutIndicator IndicatorData={list} />
         </aside>
       </MediaRendering>
       <MediaRendering minWidth={null} maxWidth="1023">
@@ -86,10 +80,8 @@ export function DefaultWindow({
 
 export const AboutIndicator = ({
   IndicatorData,
-  onClose,
 }: {
   IndicatorData: any;
-  onClose?: () => void;
 }) => {
   const IconMap: { [key: string]: React.ReactNode } = {
     'risk-score': <RiskScore color={'#000000'} />,
