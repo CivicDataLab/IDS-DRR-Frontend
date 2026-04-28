@@ -38,6 +38,9 @@ export const heroBackground: string = config.heroBackground ?? '';
 export const favicon: string = config.favicon ?? '';
 export const appleIcon: string = config.appleIcon ?? '';
 export const openGraphImage: string = config.openGraphImage ?? '';
+// Links
+export const userGuideLink: string = config.userGuideLink ?? '';
+export const docsLink: string = config.docsLink ?? '';
 // Feature flags
 export const reportsEnabled: boolean = config.reportsEnabled ?? false;
 

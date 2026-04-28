@@ -8,10 +8,9 @@ import {
   Vulnerability,
 } from '@/components/FactorIcons';
 import { useTranslations } from 'next-intl';
-import { Button, Icon, ProgressBar, Text } from 'opub-ui';
+import { Button, Icon, Text } from 'opub-ui';
 
-import { documentationLink, learnMoreLink } from '@/config/consts';
-import { RiskColorMap } from '@/lib/analytics';
+import { docsLink, userGuideLink } from '@/config/site';
 import { cn } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
@@ -147,37 +146,38 @@ export const AboutIndicator = ({
 
       {/* Read the user guide CTA */}
       <div className="mt-4 flex w-full flex-col justify-end gap-4">
-        {/* TODO: Add the user guide link here */}
-        <a
-          // href={'#'}
-          // onClick={(event: any) => handleRedirect(event, learnMoreLink)}
-          // target="_blank"
-          className="rounded-lg flex h-12 w-full items-center justify-between gap-2 rounded-2 bg-[#F6F6F7] px-3 py-3"
-        >
-          <Text
-            variant="bodyMd"
-            fontWeight="semibold"
-            className="text-[#3E7844]"
+        {userGuideLink && (
+          <a
+            href={userGuideLink}
+            target="_blank"
+            className="rounded-lg flex h-12 w-full items-center justify-between gap-2 rounded-2 bg-[#F6F6F7] px-3 py-3"
           >
-            {t('userGuideLink')}
-          </Text>
-          <Icon source={Icons.IconArrowUpRight} className="text-[#3E7844]" />
-        </a>
-        <a
-          href={documentationLink}
-          // onClick={(event: any) => handleRedirect(event, learnMoreLink)}
-          target="_blank"
-          className="rounded-lg flex h-12 w-full items-center justify-between gap-2 rounded-2 bg-[#F6F6F7] px-3 py-3"
-        >
-          <Text
-            variant="bodyMd"
-            fontWeight="semibold"
-            className="text-[#3E7844]"
+            <Text
+              variant="bodyMd"
+              fontWeight="semibold"
+              className="text-[#3E7844]"
+            >
+              {t('userGuideLink')}
+            </Text>
+            <Icon source={Icons.IconArrowUpRight} className="text-[#3E7844]" />
+          </a>
+        )}
+        {docsLink && (
+          <a
+            href={docsLink}
+            target="_blank"
+            className="rounded-lg flex h-12 w-full items-center justify-between gap-2 rounded-2 bg-[#F6F6F7] px-3 py-3"
           >
-            {t('docsLink')}
-          </Text>
-          <Icon source={Icons.IconArrowUpRight} className="text-[#3E7844]" />
-        </a>
+            <Text
+              variant="bodyMd"
+              fontWeight="semibold"
+              className="text-[#3E7844]"
+            >
+              {t('docsLink')}
+            </Text>
+            <Icon source={Icons.IconArrowUpRight} className="text-[#3E7844]" />
+          </a>
+        )}
       </div>
     </div>
   );

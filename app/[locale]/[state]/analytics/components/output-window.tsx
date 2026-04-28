@@ -15,9 +15,9 @@ import { useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, Text, Tooltip } from 'opub-ui';
 
-import { documentationLink } from '@/config/consts';
 import { ANALYTICS_TIME_PERIODS } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
+import { docsLink } from '@/config/site';
 import { useFormatNumber } from '@/hooks/use-format-number';
 import { Factors } from '@/lib/analytics';
 import { cn, formatDateString } from '@/lib/utils';
@@ -274,29 +274,30 @@ export function OutputWindow({
                 )}
               </div>
             ))}
-            <div className="px-1 py-3">
-              {/* TODO: Add the source data link here dynamically from api */}
-              <a
-                href={documentationLink}
-                // onClick={(event: any) => handleRedirect(event, learnMoreLink)}
-                target="_blank"
-                className="rounded-lg flex h-12 w-full items-center justify-between gap-2 rounded-2 bg-[#F6F6F7] px-3 py-3"
-              >
-                <Text
-                  variant="bodyMd"
-                  fontWeight="semibold"
-                  className="text-[#3E7844]"
+            {docsLink && (
+              <div className="px-1 py-3">
+                {/* TODO: Add the source data link here dynamically from api */}
+                <a
+                  href={docsLink}
+                  target="_blank"
+                  className="rounded-lg flex h-12 w-full items-center justify-between gap-2 rounded-2 bg-[#F6F6F7] px-3 py-3"
                 >
-                  {isParentIndicator
-                    ? t('docsLink')
-                    : t('sourceLink')}
-                </Text>
-                <Icon
-                  source={Icons.IconArrowUpRight}
-                  className="text-[#3E7844]"
-                />
-              </a>
-            </div>
+                  <Text
+                    variant="bodyMd"
+                    fontWeight="semibold"
+                    className="text-[#3E7844]"
+                  >
+                    {isParentIndicator
+                      ? t('docsLink')
+                      : t('sourceLink')}
+                  </Text>
+                  <Icon
+                    source={Icons.IconArrowUpRight}
+                    className="text-[#3E7844]"
+                  />
+                </a>
+              </div>
+            )}
           </section>
         </aside>
       </MediaRendering>
