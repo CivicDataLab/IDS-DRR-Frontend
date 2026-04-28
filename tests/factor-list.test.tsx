@@ -9,7 +9,7 @@ import {
   GovtResponse,
   RiskScore,
   Vulnerability,
-} from '@/public/FactorIcons';
+} from '@/components/FactorIcons';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 // Mock next/navigation
@@ -104,8 +104,8 @@ jest.mock('@/components/media-rendering', () => ({
   },
 }));
 
-// Mock @/public/FactorIcons
-jest.mock('@/public/FactorIcons', () => ({
+// Mock @/components/FactorIcons
+jest.mock('@/components/FactorIcons', () => ({
   RiskScore: ({ color }: any) => (
     <div data-testid="risk-score-icon" data-color={color} />
   ),
