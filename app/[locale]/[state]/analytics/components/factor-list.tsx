@@ -6,7 +6,7 @@ import {
   GovtResponse,
   RiskScore,
   Vulnerability,
-} from '@/public/FactorIcons';
+} from '@/components/FactorIcons';
 import { useQuery } from '@tanstack/react-query';
 import { useQueryState } from 'next-usequerystate';
 import { Button, Icon, Menu, Select, Text, Tooltip } from 'opub-ui';

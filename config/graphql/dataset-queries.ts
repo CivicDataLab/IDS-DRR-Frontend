@@ -1,4 +1,3 @@
-import { graphql } from '@/gql/generated/datasets';
 import { gql } from 'graphql-request';
 
 export const DATASET_QUERY: any = gql`

@@ -57,10 +57,8 @@ export async function generateMetadata() {
       icon: '/favicon.ico',
       shortcut: '/favicon-16x16.png',
       apple: `${siteConfig.url}/apple-touch-icon.png`,
-      // apple: '/apple-touch-icon.png',
     },
     manifest: `${siteConfig.url}/site.webmanifest`,
-    // manifest: '/site.webmanifest',
   };
 }
 
@@ -87,31 +85,37 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <head>
-        <Script id="hotjar" strategy="afterInteractive">
-          {`
-            (function(h,o,t,j,a,r){
-              h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-              h._hjSettings={hjid:5035949,hjsv:6};
-              a=o.getElementsByTagName('head')[0];
-              r=o.createElement('script');r.async=1;
-              r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-              a.appendChild(r);
-            })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-          `}
-        </Script>
-        <Script id="googleAnalytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_APP_ID}');
-          `}
-        </Script>
-        <Script
-          id="googleAnalyticsTag"
-          strategy="afterInteractive"
-          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_APP_ID}`}
-        />
+        {process.env.NEXT_PUBLIC_HOTJAR_ID && (
+          <Script id="hotjar" strategy="afterInteractive">
+            {`
+              (function(h,o,t,j,a,r){
+                h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+                h._hjSettings={hjid:${process.env.NEXT_PUBLIC_HOTJAR_ID},hjsv:6};
+                a=o.getElementsByTagName('head')[0];
+                r=o.createElement('script');r.async=1;
+                r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+                a.appendChild(r);
+              })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+            `}
+          </Script>
+        )}
+        {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_APP_ID && (
+          <>
+            <Script id="googleAnalytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_APP_ID}');
+              `}
+            </Script>
+            <Script
+              id="googleAnalyticsTag"
+              strategy="afterInteractive"
+              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_APP_ID}`}
+            />
+          </>
+        )}
       </head>
       <body className={fontSans.className}>
         <NextIntlClientProvider locale={locale} messages={messages}>

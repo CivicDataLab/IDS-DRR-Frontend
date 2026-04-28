@@ -6,8 +6,9 @@ import {
   GovtResponse,
   RiskScore,
   Vulnerability,
-} from '@/public/FactorIcons';
-import { Button, Icon, ProgressBar, Text } from 'opub-ui';
+} from '@/components/FactorIcons';
+import { Button, Divider, Icon, ProgressBar, Text } from 'opub-ui';
+
 
 import { documentationLink, RiskColorMap } from '@/config/consts';
 import { cn } from '@/lib/utils';
@@ -233,7 +234,7 @@ export const IndicatorDescription = ({
         <Text fontWeight="bold" variant="headingMd" className="pl-2">
           {title}
         </Text>
-        {slug !== 'risk-score' && (
+        {slug !== 'risk-score' && process.env.NEXT_PUBLIC_BACKEND_URL && (
           <NavLink
             className="ml-auto flex gap-2"
             href={`/datasets/?category=${title}`}

@@ -102,9 +102,7 @@ describe('ChartView', () => {
   const mockDistrictDropDownOption = [
     { label: 'District 1', value: 'DIST001' },
   ];
-  const mockTimeLimits = {
-    data: { getDataTimePeriods: [{ value: '2023_08' }] },
-  };
+  const mockTimeLimits = ['2023_08'];
 
   beforeEach(() => {
     jest.clearAllMocks();

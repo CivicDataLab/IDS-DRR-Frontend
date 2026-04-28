@@ -18,6 +18,7 @@ export async function GraphQL<TResult, TVariables>(
     return data;
   } catch (error: any) {
     captureException(error);
+    throw error;
   }
 }
 
@@ -54,28 +55,10 @@ export function useFetch(id: string, query: string) {
   });
 }
 
-export async function getData(query: string) {
-  try {
-    const res = await fetch(query, {
-      cache: 'no-cache',
-    });
-    return res.json();
-  } catch (err) {
-    captureException(err);
-    console.log('error ', err);
-  }
-}
-
 export const fetchDatasets = async (variables: any) => {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/search/dataset/${variables}`
-      // `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/search/dataset/${variables}`,
-      // { cache: 'no-store' }
-    );
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    captureException(error);
-  }
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/search/dataset/${variables}`
+  );
+  const data = await response.json();
+  return data;
 };

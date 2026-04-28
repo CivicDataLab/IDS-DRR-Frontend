@@ -71,12 +71,16 @@ export function AnalyticsMobileLayout({
       value: 'map',
       disabled: false,
     },
-    {
-      icon: Icons.IconChartBar,
-      title: 'Chart',
-      value: 'chart',
-      disabled: false,
-    },
+    ...(process.env.NEXT_PUBLIC_BACKEND_URL
+      ? [
+          {
+            icon: Icons.IconChartBar,
+            title: 'Chart',
+            value: 'chart',
+            disabled: false,
+          },
+        ]
+      : []),
     {
       icon: Icons.IconTableAlias,
       title: 'Table',

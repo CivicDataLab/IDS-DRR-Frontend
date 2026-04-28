@@ -10,7 +10,5 @@ const geojsonMapping: { [key: string]: any } = {
 
 // Function to render the appropriate GeoJSON based on chartType
 export const renderGeoJSON = (chartType: string): any  => {
-    console.log(chartType);
-    
     return geojsonMapping[chartType.toLowerCase()] ;
 };

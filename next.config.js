@@ -15,6 +15,21 @@ const nextConfig = {
     ],
   },
   reactStrictMode: false,
+  // https://github.com/CivicDataLab/opub-mono/pull/403
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.(js|mjs)$/,
+      enforce: 'pre',
+      include: /node_modules\/opub-ui/,
+      use: [
+        {
+          loader: 'source-map-loader',
+          options: { filterSourceMappingUrl: () => 'remove' },
+        },
+      ],
+    });
+    return config;
+  },
 };
 
 module.exports = withNextIntl(nextConfig);
@@ -47,15 +62,16 @@ module.exports = withSentryConfig(module.exports, {
   // Hides source maps from generated client bundles
   hideSourceMaps: true,
 
-  // Automatically tree-shake Sentry logger statements to reduce bundle size
-  disableLogger: true,
+  webpack: {
+    // Automatically tree-shake Sentry logger statements to reduce bundle size
+    treeshake: {
+      removeDebugLogging: true,
+    },
 
-  // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
-  // See the following for more information:
-  // https://docs.sentry.io/product/crons/
-  // https://vercel.com/docs/cron-jobs
-  automaticVercelMonitors: true,
-  sourcemaps: {
-    deleteSourcemapsAfterUpload: true, //delete sourcemaps after upload
+    // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
+    // See the following for more information:
+    // https://docs.sentry.io/product/crons/
+    // https://vercel.com/docs/cron-jobs
+    automaticVercelMonitors: true,
   },
 });
