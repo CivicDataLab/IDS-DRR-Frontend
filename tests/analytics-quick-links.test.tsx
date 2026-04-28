@@ -33,12 +33,6 @@ jest.mock('next/link', () => ({
   ),
 }));
 
-// Mock the constants
-jest.mock('@/config/consts', () => ({
-  AnalyticsQuickLinksText:
-    'Explore flood-risk profiles at the district and sub-district level across states in India, developed using the IDS-DRR data model',
-}));
-
 const mockedStates = [
   { slug: 'assam', latest_time_period: '2025_03' },
   { slug: 'himachal-pradesh', latest_time_period: '2025_06' },
