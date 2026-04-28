@@ -5,21 +5,15 @@ import { Spinner, Table, Text } from 'opub-ui';
 import { useFormatNumber } from '@/hooks/use-format-number';
 import { Factors } from '@/lib/analytics';
 
-type ColumnDefinition = {
-  accessorKey: string;
-  header: string;
-  id?: string;
-};
-
 export function TableComponent({ data, isLoading }: any) {
   const t = useTranslations('analytics.table');
   const tCommon = useTranslations('common');
   const tRisk = useTranslations('analytics.risk');
   const formatNumber = useFormatNumber();
-  function transformColumnData(data: ColumnDefinition[]) {
-    const transformed: { accessorKey: string; header: any; id?: string }[] = [];
+  const columns = useMemo(() => {
+    if (!data?.length) return [];
     // Add district column
-    transformed.push(
+    const transformed: { accessorKey: string; header: any; id?: string }[] = [
       {
         accessorKey: 'region-name',
         header: t('regionName'),
@@ -28,10 +22,9 @@ export function TableComponent({ data, isLoading }: any) {
         accessorKey: 'region-type',
         header: t('regionBoundary'),
       }
-    );
-
+    ];
     // Dynamically transform other properties
-    Object.entries(data).forEach(([key, item]) => {
+    Object.entries(data[0]).forEach(([key, item]) => {
       if (
         typeof item === 'object' &&
         item !== null &&
@@ -47,10 +40,11 @@ export function TableComponent({ data, isLoading }: any) {
     });
 
     return transformed;
-  }
+  }, [data, t]);
 
-  function transformRowData(data: Record<string, any>[]) {
-    const rows = data?.map((item) => {
+  const rows = useMemo(() => {
+    if (!data?.length) return [];
+    return data.map((item: Record<string, any>) => {
       const row: Record<string, any> = {};
       row['region-name'] = item['region-name'] as string;
       row['region-type'] = item.type;
@@ -64,16 +58,7 @@ export function TableComponent({ data, isLoading }: any) {
       });
       return row;
     });
-    return rows;
-  }
-
-  const columns = useMemo(() => {
-    return data?.length ? transformColumnData(data[0]) : [];
-  }, [data]);
-
-  const rows = useMemo(() => {
-    return data?.length ? transformRowData(data) : [];
-  }, [data, formatNumber]);
+  }, [data, formatNumber, tRisk]);
 
   if (isLoading) {
     return (
