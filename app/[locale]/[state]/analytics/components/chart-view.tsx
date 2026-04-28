@@ -174,7 +174,7 @@ export const ChartView = ({
       .catch((error) => {
         setLoading(false);
         setChartData(null);
-        console.log(error);
+        console.error('Failed to load chart data:', error);
       });
   }, [
     districtCode,

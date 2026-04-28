@@ -153,11 +153,9 @@ export function copyCurrentURL() {
     navigator.clipboard
       .writeText(currentURL)
       .then(() => {
-        console.log('URL copied to clipboard:', currentURL);
         alert('URL copied to clipboard!');
       })
-      .catch((err) => {
-        console.error('Failed to copy URL:', err);
+      .catch(() => {
         alert('Failed to copy URL.');
       });
   } else {
@@ -171,15 +169,8 @@ export function copyCurrentURL() {
 
     try {
       const success = document.execCommand('copy');
-      if (success) {
-        console.log('URL copied to clipboard:', currentURL);
-        alert('URL copied to clipboard!');
-      } else {
-        console.error('Failed to copy URL.');
-        alert('Failed to copy URL.');
-      }
-    } catch (err) {
-      console.error('Failed to copy URL:', err);
+      alert(success ? 'URL copied to clipboard!' : 'Failed to copy URL.');
+    } catch {
       alert('Failed to copy URL.');
     }
 
@@ -194,11 +185,9 @@ export function copyDefinedURL(url: any) {
     navigator.clipboard
       .writeText(currentURL)
       .then(() => {
-        console.log('URL copied to clipboard:', currentURL);
         alert('URL copied to clipboard!');
       })
-      .catch((err) => {
-        console.error('Failed to copy URL:', err);
+      .catch(() => {
         alert('Failed to copy URL.');
       });
   } else {
@@ -212,15 +201,8 @@ export function copyDefinedURL(url: any) {
 
     try {
       const success = document.execCommand('copy');
-      if (success) {
-        console.log('URL copied to clipboard:', currentURL);
-        alert('URL copied to clipboard!');
-      } else {
-        console.error('Failed to copy URL.');
-        alert('Failed to copy URL.');
-      }
-    } catch (err) {
-      console.error('Failed to copy URL:', err);
+      alert(success ? 'URL copied to clipboard!' : 'Failed to copy URL.');
+    } catch {
       alert('Failed to copy URL.');
     }
 
