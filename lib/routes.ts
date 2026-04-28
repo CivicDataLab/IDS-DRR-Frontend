@@ -8,12 +8,9 @@ type AnalyticsOptions = {
   timePeriod?: string;
 };
 
-// The options are mutually exclusive.
 type DatasetsOptions = {
   // Filter the list to one category.
   category?: string;
-  // Filter the list to one tag.
-  tag?: string;
 };
 
 const qs = (params: Record<string, string>) =>
@@ -32,7 +29,6 @@ export const routes = {
   // Omit options for the default landing page (which sets size, page, sort).
   datasets: (opts: DatasetsOptions = {}) => {
     if (opts.category) return `/datasets?${qs({ categories: opts.category })}`;
-    if (opts.tag) return `/datasets?${qs({ tags: opts.tag })}`;
     return `/datasets?${qs({ size: '5', page: '1', sort: 'recent' })}`;
   },
 

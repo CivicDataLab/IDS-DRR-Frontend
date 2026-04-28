@@ -81,27 +81,6 @@ const MetadataComponent: React.FC<MetadataProps> = ({ data, setOpen }) => {
           </div>
         )}
 
-        {/* {data?.tags.length > 0 && (
-          <div className="flex items-baseline gap-2  pb-2">
-            <Text className="text-base font-medium min-w-[120px] basis-1/4">
-              Tags:
-            </Text>
-            <div className="flex flex-wrap gap-2">
-              {data?.tags.map((item: any, index: any) => (
-                <Link
-                  href={routes.datasets({ tag: item.value })}
-                  target="_blank"
-                  className="flex justify-center"
-                  key={index}
-                >
-                  <Text className=" underline" color="interactive">
-                    {item.value}
-                  </Text>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )} */}
       </div>
     </div>
   );
