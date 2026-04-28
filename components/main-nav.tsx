@@ -40,6 +40,7 @@ export function MainNav({
                 width={245}
                 height={24}
                 alt="IDS-DRR Logo"
+                priority
               />
               <div className="flex flex-col gap-1"></div>
             </div>
