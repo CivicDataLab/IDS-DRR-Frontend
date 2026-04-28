@@ -8,7 +8,12 @@ import {
   PartnerLogos,
   config,
 } from 'ids-drr-branding';
-import type { Language, Resource, State } from 'ids-drr-branding-types';
+import type {
+  Language,
+  Resource,
+  StaticImageAsset,
+  State,
+} from 'ids-drr-branding-types';
 
 import { routes } from '@/lib/routes';
 
@@ -23,13 +28,17 @@ export {
   HomePartners,
   PartnerLogos,
 };
-export const heroImage: string = config.heroImage ?? '';
-export const openGraphImage: string = config.openGraphImage ?? '';
-export const favicon: string = config.favicon ?? '';
-export const appleIcon: string = config.appleIcon ?? '';
 export const states: State[] = config.states ?? [];
 export const resources: Resource[] = config.resources ?? [];
 export const languages: Language[] = config.languages ?? [];
+// Images
+export const logo: StaticImageAsset | undefined = config.logo;
+export const heroForeground: StaticImageAsset | undefined = config.heroForeground;
+export const heroBackground: string = config.heroBackground ?? '';
+export const favicon: string = config.favicon ?? '';
+export const appleIcon: string = config.appleIcon ?? '';
+export const openGraphImage: string = config.openGraphImage ?? '';
+// Feature flags
 export const reportsEnabled: boolean = config.reportsEnabled ?? false;
 
 // English is always loaded internally as the missing-key fallback,

@@ -4,7 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useKeyDetect } from '@/hooks/use-key-detect';
-import { Credits, mainNav, PartnerLogos } from '@/config/site';
+import { Credits, logo, mainNav, PartnerLogos } from '@/config/site';
 import { useTranslations } from 'next-intl';
 import { IconButton, Text } from 'opub-ui';
 
@@ -46,12 +46,12 @@ export function MobileNav() {
         <div className=" flex items-center justify-between bg-backgroundSolidDark px-5 py-3 text-textOnBGDefault ">
           <Link href={routes.home}>
             <div className="flex items-center gap-2">
-              <Image
-                src="/logo/IDS-Platform-Logo.png"
-                width={245}
-                height={24}
-                alt={t('homeAlt', { name: tSite('name') })}
-              />
+              {logo && (
+                <Image
+                  src={logo}
+                  alt={t('homeAlt', { name: tSite('name') })}
+                />
+              )}
               <div className="flex flex-col gap-1"></div>
             </div>
           </Link>

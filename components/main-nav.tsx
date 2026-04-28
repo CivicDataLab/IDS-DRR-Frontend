@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { useKeyDetect } from '@/hooks/use-key-detect';
-import { languages, mainNav } from '@/config/site';
+import { languages, logo, mainNav } from '@/config/site';
 import { useTranslations } from 'next-intl';
 import { Text } from 'opub-ui';
 
@@ -29,13 +29,13 @@ export function MainNav({ prefLangCookie }: { prefLangCookie: string }) {
         <div className="flex items-center gap-1">
           <NavLink href={routes.home}>
             <div className="flex items-center gap-2">
-              <Image
-                src="/logo/IDS-Platform-Logo.png"
-                width={245}
-                height={24}
-                alt={t('homeAlt', { name: tSite('name') })}
-                priority
-              />
+              {logo && (
+                <Image
+                  src={logo}
+                  alt={t('homeAlt', { name: tSite('name') })}
+                  priority
+                />
+              )}
               <div className="flex flex-col gap-1"></div>
             </div>
           </NavLink>

@@ -89,8 +89,6 @@ export const QuickLinks = () => {
                     {/* Ensure items take up flexible width */}
                     <div className="flex h-48 w-56 flex-col items-center justify-between rounded-2 bg-surfaceDefault p-4 text-center shadow-elementCard">
                       <Image
-                        width={200}
-                        height={160}
                         src={item.icon}
                         alt=""
                         className={`h-32 w-32 object-contain px-3 ${styles.stateIcon}`}
@@ -110,8 +108,6 @@ export const QuickLinks = () => {
                     style={{ background: '#F9F9FB' }}
                   >
                     <Image
-                      width={200}
-                      height={160}
                       src={item.icon}
                       alt=""
                       className={`h-32 w-32  object-contain px-3 opacity-25 ${styles.inactiveStateIcon}`}
