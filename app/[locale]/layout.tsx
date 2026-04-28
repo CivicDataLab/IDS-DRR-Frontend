@@ -57,10 +57,8 @@ export async function generateMetadata() {
       icon: '/favicon.ico',
       shortcut: '/favicon-16x16.png',
       apple: `${siteConfig.url}/apple-touch-icon.png`,
-      // apple: '/apple-touch-icon.png',
     },
     manifest: `${siteConfig.url}/site.webmanifest`,
-    // manifest: '/site.webmanifest',
   };
 }
 
