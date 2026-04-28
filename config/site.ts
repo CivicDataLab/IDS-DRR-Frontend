@@ -68,10 +68,14 @@ export const mainConfig: MainConfig = {
       title: 'Analytics',
       href: `/assam${AnalyticsURL}`,
     },
-    {
-      title: 'Datasets',
-      href: DatasetsURL,
-    },
+    ...(process.env.NEXT_PUBLIC_BACKEND_URL
+      ? [
+          {
+            title: 'Datasets',
+            href: DatasetsURL,
+          },
+        ]
+      : []),
     // {
     //   title: 'Resources',
     //   href: '/',
