@@ -24,6 +24,9 @@ export {
   PartnerLogos,
 };
 export const heroImage: string = config.heroImage ?? '';
+export const openGraphImage: string = config.openGraphImage ?? '';
+export const favicon: string = config.favicon ?? '';
+export const appleIcon: string = config.appleIcon ?? '';
 export const states: State[] = config.states ?? [];
 export const resources: Resource[] = config.resources ?? [];
 export const languages: Language[] = config.languages ?? [];

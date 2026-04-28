@@ -8,7 +8,14 @@ import {
   unstable_setRequestLocale,
 } from 'next-intl/server';
 
-import { Footer, locales, siteUrl } from '@/config/site';
+import {
+  appleIcon,
+  favicon,
+  Footer,
+  locales,
+  openGraphImage,
+  siteUrl,
+} from '@/config/site';
 import { getPrefLangCookie } from '@/lib/serverUtils';
 import { MainNav } from '@/components/main-nav';
 import { MediaRendering } from '@/components/media-rendering';
@@ -49,19 +56,18 @@ export async function generateMetadata({
       title: name,
       description,
       siteName: name,
-      images: [`${siteUrl}/og.png`],
+      ...(openGraphImage && { images: [openGraphImage] }),
     },
     twitter: {
       card: 'summary_large_image',
       title: name,
       description,
-      images: [`${siteUrl}/og.png`],
+      ...(openGraphImage && { images: [openGraphImage] }),
       creator,
     },
     icons: {
-      icon: '/favicon.ico',
-      shortcut: '/favicon-16x16.png',
-      apple: `${siteUrl}/apple-touch-icon.png`,
+      ...(favicon && { icon: favicon }),
+      ...(appleIcon && { apple: appleIcon }),
     },
   };
 }
