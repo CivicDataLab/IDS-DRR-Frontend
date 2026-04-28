@@ -187,6 +187,7 @@ export const ChartView = ({
     currentSelectedState.resource_id,
     riskscoreFields,
     value_mapping_list,
+    t,
   ]);
 
   const findNameBySlug = (data: any, slug: string): string | undefined => {

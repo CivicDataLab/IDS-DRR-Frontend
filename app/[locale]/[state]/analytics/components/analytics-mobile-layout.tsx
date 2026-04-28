@@ -190,7 +190,7 @@ export function AnalyticsMobileLayout({
       slug: item?.slug,
       description: item?.short_description || item?.long_description || tCommon('na'),
     }));
-  }, [aboutIndicatorsData?.data?.indicators]);
+  }, [aboutIndicatorsData?.data?.indicators, tCommon]);
 
   // Re-open mobile output pane when selection/filters change in map view
   React.useEffect(() => {
