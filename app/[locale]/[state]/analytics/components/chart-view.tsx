@@ -25,6 +25,7 @@ export const ChartView = ({
   timeLimits: string[];
 }) => {
   const t = useTranslations('analytics');
+  const tCommon = useTranslations('common');
   const tFactors = useTranslations('factors');
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -254,7 +255,7 @@ export const ChartView = ({
           {loading ? (
             <div className="flex h-[calc(100dvh_-_400px)] flex-col place-content-center items-center">
               <Spinner color="highlight" />
-              <Text>Loading...</Text>
+              <Text>{tCommon('loading')}</Text>
             </div>
           ) : districtCode || revenueCode ? (
             chartData == null || chartData['error'] ? (

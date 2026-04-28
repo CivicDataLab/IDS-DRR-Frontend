@@ -39,6 +39,7 @@ interface Option {
 
 export function AnalyticsMainLayout() {
   const t = useTranslations('analytics');
+  const tCommon = useTranslations('common');
   const searchParams = useSearchParams();
   // Default to overall flood risk when URL doesn't specify an indicator.
   const indicator = searchParams.get('indicator') || 'risk-score';
@@ -542,7 +543,7 @@ export function AnalyticsMainLayout() {
                 statesListData?.isFetching ? (
                   <div className="flex h-full flex-col place-content-center items-center">
                     <Spinner color="highlight" />
-                    <Text>Loading...</Text>
+                    <Text>{tCommon('loading')}</Text>
                   </div>
                 ) : !timePeriodSelected && hasExplicitTimePeriodParam ? (
                   <div className="flex h-[calc(100dvh_-_400px)] flex-col place-content-center items-center">
@@ -555,7 +556,7 @@ export function AnalyticsMainLayout() {
                       (mapData?.isFetching && revenueMapData?.isFetching)) && (
                       <div className="flex h-full flex-col place-content-center items-center">
                         <Spinner color="highlight" />
-                        <Text>Loading...</Text>
+                        <Text>{tCommon('loading')}</Text>
                       </div>
                     )}
 

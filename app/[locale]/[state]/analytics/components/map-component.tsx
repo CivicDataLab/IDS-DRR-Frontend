@@ -46,6 +46,7 @@ export const MapComponent = ({
   onToggleOutputPane?: () => void;
 }) => {
   const tRisk = useTranslations('analytics.risk');
+  const tCommon = useTranslations('common');
   const formatNumber = useFormatNumber();
   const [map, setMap] = React.useState<any>(null);
   const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
@@ -280,7 +281,7 @@ export const MapComponent = ({
     return (
       <div className="flex h-full flex-col place-content-center items-center">
         <Spinner color="highlight" />
-        <Text>Loading...</Text>
+        <Text>{tCommon('loading')}</Text>
       </div>
     );
 
