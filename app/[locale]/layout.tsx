@@ -40,7 +40,6 @@ export async function generateMetadata({
   const creator = t('creator');
   const creatorUrl = t('creatorUrl');
   return {
-    metadataBase: new URL(siteUrl),
     title: {
       default: name,
       template: `%s | ${name}`,
@@ -49,22 +48,25 @@ export async function generateMetadata({
     keywords: t('keywords').split(',').map((k) => k.trim()),
     authors: [{ name: creator, url: creatorUrl }],
     creator,
-    openGraph: {
-      type: 'website',
-      locale: t('ogLocale'),
-      url: siteUrl,
-      title: name,
-      description,
-      siteName: name,
-      ...(openGraphImage && { images: [openGraphImage] }),
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: name,
-      description,
-      ...(openGraphImage && { images: [openGraphImage] }),
-      creator,
-    },
+    ...(siteUrl && {
+      metadataBase: new URL(siteUrl),
+      openGraph: {
+        type: 'website',
+        locale: t('ogLocale'),
+        url: siteUrl,
+        title: name,
+        description,
+        siteName: name,
+        ...(openGraphImage && { images: [openGraphImage] }),
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: name,
+        description,
+        creator,
+        ...(openGraphImage && { images: [openGraphImage] }),
+      },
+    }),
     icons: {
       ...(favicon && { icon: favicon }),
       ...(appleIcon && { apple: appleIcon }),
