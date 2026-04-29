@@ -1,10 +1,10 @@
 import {
+  About,
   AboutPage,
   Credits,
   DataStories,
   Footer,
-  HomeAbout,
-  HomePartners,
+  Partners,
   PartnerLogos,
   config,
 } from 'ids-drr-branding';
@@ -20,12 +20,12 @@ import { routes } from '@/lib/routes';
 // Re-export branding-provided components and values so the rest of the app
 // imports all deployment-specific things from one place.
 export {
+  About,
   AboutPage,
   Credits,
   DataStories,
   Footer,
-  HomeAbout,
-  HomePartners,
+  Partners,
   PartnerLogos,
 };
 export const states: State[] = config.states ?? [];

@@ -1,8 +1,8 @@
 import {
+  About,
   DataStories,
   features,
-  HomeAbout,
-  HomePartners,
+  Partners,
   states,
 } from '@/config/site';
 import { HeroSection, QuickLinks } from './components';
@@ -18,8 +18,8 @@ export default function Home() {
         {features.datasets && <DatasetCatalog />}
         {features.datasets && <Resources />}
         {DataStories && <DataStories />}
-        {HomeAbout && <HomeAbout />}
-        {HomePartners && <HomePartners />}
+        {About && <About />}
+        {Partners && <Partners />}
       </div>
     </main>
   );
