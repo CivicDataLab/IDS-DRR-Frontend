@@ -32,6 +32,3 @@ npm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# Ignore graphql generated files
-gql/generated/*
