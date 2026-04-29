@@ -1,14 +1,13 @@
-import type { ComponentType } from 'react';
-import type { DeploymentConfig } from 'ids-drr-branding-types';
+import type { Exports } from 'ids-drr-branding-types';
 
 // Optional React components that the frontend renders if provided.
-export const AboutPage: ComponentType | undefined = undefined;
-export const About: ComponentType | undefined = undefined;
-export const Partners: ComponentType | undefined = undefined;
-export const DataStories: ComponentType | undefined = undefined;
-export const Footer: ComponentType | undefined = undefined;
-export const Credits: ComponentType | undefined = undefined;
-export const PartnerLogos: ComponentType | undefined = undefined;
+export const AboutPage: Exports['AboutPage'] = undefined;
+export const About: Exports['About'] = undefined;
+export const Partners: Exports['Partners'] = undefined;
+export const DataStories: Exports['DataStories'] = undefined;
+export const Footer: Exports['Footer'] = undefined;
+export const Credits: Exports['Credits'] = undefined;
+export const PartnerLogos: Exports['PartnerLogos'] = undefined;
 
 // Empty default deployment config. See branding-types/src/index.ts.
-export const config: DeploymentConfig = {};
+export const config: Exports['config'] = {};

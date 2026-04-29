@@ -1,6 +1,6 @@
-import type { ComponentType } from 'react';
 import * as branding from 'ids-drr-branding';
 import type {
+  Exports,
   Language,
   Resource,
   StaticImageAsset,
@@ -9,21 +9,21 @@ import type {
 
 import { routes } from '@/lib/routes';
 
-const { config } = branding;
+// Catch missing or wrong-typed exports at compile-time, not runtime.
+const validated: Exports = branding;
+
+const { config } = validated;
 
 // Re-export branding-provided components and values so the rest of the app
 // imports all deployment-specific things from one place.
-//
-// The types are set to `ComponentType | undefined` so that TypeScript won't
-// flag any {Component && <Component />} guards as unnecessary in production,
-// in the case where branding has provided the component.
-export const About: ComponentType | undefined = branding.About;
-export const AboutPage: ComponentType | undefined = branding.AboutPage;
-export const Credits: ComponentType | undefined = branding.Credits;
-export const DataStories: ComponentType | undefined = branding.DataStories;
-export const Footer: ComponentType | undefined = branding.Footer;
-export const Partners: ComponentType | undefined = branding.Partners;
-export const PartnerLogos: ComponentType | undefined = branding.PartnerLogos;
+export const About = validated.About;
+export const AboutPage = validated.AboutPage;
+export const Credits = validated.Credits;
+export const DataStories = validated.DataStories;
+export const Footer = validated.Footer;
+export const Partners = validated.Partners;
+export const PartnerLogos = validated.PartnerLogos;
+// Arrays
 export const states: State[] = config.states ?? [];
 export const resources: Resource[] = config.resources ?? [];
 export const languages: Language[] = config.languages ?? [];
