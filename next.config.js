@@ -6,6 +6,11 @@ const withNextIntl = require('next-intl/plugin')();
 
 const nextConfig = {
   transpilePackages: ['opub-ui', 'ids-drr-branding'],
+  serverExternalPackages: [
+    // Dependencies of @sentry/node.
+    '@prisma/instrumentation',
+    '@fastify/otel',
+  ],
   images: {
     remotePatterns: [
       {
