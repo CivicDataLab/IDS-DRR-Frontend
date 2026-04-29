@@ -27,7 +27,7 @@ export const HeroSection = () => {
           width={360}
           height={56}
           alt="IDS-DRR expanded logo"
-          layout="responsive"
+          style={{ width: '100%', height: 'auto' }}
           className=" block lg:hidden"
         />
 

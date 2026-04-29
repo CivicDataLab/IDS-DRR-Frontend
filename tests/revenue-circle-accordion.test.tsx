@@ -45,7 +45,7 @@ jest.mock('@/config/consts', () => ({
 }));
 
 // Mock public components
-jest.mock('@/public/InfoCircle', () => ({
+jest.mock('@/components/InfoCircle', () => ({
   InfoSquare: () => <div data-testid="info-square">Info</div>,
 }));
 

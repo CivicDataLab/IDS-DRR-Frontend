@@ -507,9 +507,11 @@ export function AnalyticsMainLayout() {
               <div
                 className={`h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'map' || view === 'chart' ? 'hidden' : ''}`}
               />
-              <Tab theme="climate" value="chart">
-                Chart View
-              </Tab>
+              {process.env.NEXT_PUBLIC_BACKEND_URL && (
+                <Tab theme="climate" value="chart">
+                  Chart View
+                </Tab>
+              )}
               <div
                 className={`h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'chart' || view === 'table' ? 'hidden' : ''}`}
               />
@@ -615,17 +617,19 @@ export function AnalyticsMainLayout() {
                 )}
               </div>
             </TabPanel>
-            <TabPanel value="chart">
-              {/* <div className=" mt-2 h-[calc(100dvh_-_140px)]"> */}
-              <div className="mt-2 h-full overflow-hidden">
-                <ChartView
-                  currentSelectedState={currentSelectedState}
-                  RevCircleDropdownOptions={RevCircleDropdownOptions}
-                  DistrictDropDownOption={DistrictDropDownOption}
-                  timeLimits={timeLimitsForPicker}
-                />
-              </div>
-            </TabPanel>
+            {process.env.NEXT_PUBLIC_BACKEND_URL && (
+              <TabPanel value="chart">
+                {/* <div className=" mt-2 h-[calc(100dvh_-_140px)]"> */}
+                <div className="mt-2 h-full overflow-hidden">
+                  <ChartView
+                    currentSelectedState={currentSelectedState}
+                    RevCircleDropdownOptions={RevCircleDropdownOptions}
+                    DistrictDropDownOption={DistrictDropDownOption}
+                    timeLimits={timeLimitsForPicker}
+                  />
+                </div>
+              </TabPanel>
+            )}
           </Tabs>
         </React.Fragment>
       </MediaRendering>

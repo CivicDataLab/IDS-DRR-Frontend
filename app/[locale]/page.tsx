@@ -10,8 +10,8 @@ export default function Home() {
       <div className="inline-flex w-full flex-col items-center ">
         <HeroSection />
         <QuickLinks />
-        <DatasetCatalog />
-        <Resources />
+        {process.env.NEXT_PUBLIC_BACKEND_URL && <DatasetCatalog />}
+        {process.env.NEXT_PUBLIC_BACKEND_URL && <Resources />}
         <div className=" flex w-full justify-center bg-[#222136]">
           <DataStories />
         </div>

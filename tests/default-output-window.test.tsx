@@ -52,7 +52,7 @@ jest.mock('@tanstack/react-query', () => ({
 }));
 
 // Mock icons
-jest.mock('@/public/FactorIcons', () => ({
+jest.mock('@/components/FactorIcons', () => ({
   Ellipse: () => <div data-testid="ellipse-icon" />,
   Exposure: () => <div data-testid="exposure-icon" />,
   FloodHazard: () => <div data-testid="flood-hazard-icon" />,

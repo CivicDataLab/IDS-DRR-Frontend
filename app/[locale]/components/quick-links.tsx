@@ -13,12 +13,16 @@ const content = [
     scheme: 'Explore data model insight for all districts and revenue circles',
     link: AnalyticsURL,
   },
-  {
-    district: 'Dataset Explorer',
-    scheme:
-      'Explore datasets on meteorological and demographic factors, and DRR tenders',
-    link: DatasetsURL,
-  },
+  ...(process.env.NEXT_PUBLIC_BACKEND_URL
+    ? [
+        {
+          district: 'Dataset Explorer',
+          scheme:
+            'Explore datasets on meteorological and demographic factors, and DRR tenders',
+          link: DatasetsURL,
+        },
+      ]
+    : []),
   {
     district: 'Tender Data Dashboard',
     scheme: 'Go to our dashboard for Assam DRR tenders data',

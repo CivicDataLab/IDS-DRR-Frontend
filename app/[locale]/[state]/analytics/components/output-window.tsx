@@ -8,8 +8,8 @@ import {
   GovtResponse,
   RiskScore,
   Vulnerability,
-} from '@/public/FactorIcons';
-import { InfoSquare } from '@/public/InfoCircle';
+} from '@/components/FactorIcons';
+import { InfoSquare } from '@/components/InfoCircle';
 import { useQuery } from '@tanstack/react-query';
 import { useQueryState } from 'next-usequerystate';
 import { Button, Icon, Text, Tooltip } from 'opub-ui';
@@ -66,7 +66,6 @@ export function OutputWindow({
   const view = searchParams.get('view') || '';
 
   const RevenueRegion = searchParams.get('revenue-code') || '';
-  const isRevenueCircle = Boolean(RevenueRegion && RevenueRegion.length > 0);
   // Sub indicators under "Overall Flood Risk"
   const parentIndicatorSlugs = [
     'risk-score',
