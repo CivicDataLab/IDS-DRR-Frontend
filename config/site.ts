@@ -1,13 +1,5 @@
-import {
-  About,
-  AboutPage,
-  Credits,
-  DataStories,
-  Footer,
-  Partners,
-  PartnerLogos,
-  config,
-} from 'ids-drr-branding';
+import type { ComponentType } from 'react';
+import * as branding from 'ids-drr-branding';
 import type {
   Language,
   Resource,
@@ -17,17 +9,21 @@ import type {
 
 import { routes } from '@/lib/routes';
 
+const { config } = branding;
+
 // Re-export branding-provided components and values so the rest of the app
 // imports all deployment-specific things from one place.
-export {
-  About,
-  AboutPage,
-  Credits,
-  DataStories,
-  Footer,
-  Partners,
-  PartnerLogos,
-};
+//
+// The types are set to `ComponentType | undefined` so that TypeScript won't
+// flag any {Component && <Component />} guards as unnecessary in production,
+// in the case where branding has provided the component.
+export const About: ComponentType | undefined = branding.About;
+export const AboutPage: ComponentType | undefined = branding.AboutPage;
+export const Credits: ComponentType | undefined = branding.Credits;
+export const DataStories: ComponentType | undefined = branding.DataStories;
+export const Footer: ComponentType | undefined = branding.Footer;
+export const Partners: ComponentType | undefined = branding.Partners;
+export const PartnerLogos: ComponentType | undefined = branding.PartnerLogos;
 export const states: State[] = config.states ?? [];
 export const resources: Resource[] = config.resources ?? [];
 export const languages: Language[] = config.languages ?? [];
