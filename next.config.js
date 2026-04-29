@@ -5,6 +5,7 @@ const { withSentryConfig } = require('@sentry/nextjs');
 const withNextIntl = require('next-intl/plugin')();
 
 const nextConfig = {
+  output: 'standalone',
   transpilePackages: ['opub-ui', 'ids-drr-branding'],
   serverExternalPackages: [
     // Dependencies of @sentry/node.
