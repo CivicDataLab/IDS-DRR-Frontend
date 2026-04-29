@@ -33,6 +33,7 @@ jobs:
       - if: steps.npm_ci.outcome == 'failure'
         run: npm install --force
       - run: npm run lint
+      - run: npm run type-check
       - run: npm run test
       - run: npm run build
       - if: steps.npm_ci.outcome == 'failure'
