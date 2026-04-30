@@ -9,12 +9,13 @@ jest.mock('@/hooks/use-format-number', () => ({
 }));
 
 jest.mock('@/lib/analytics', () => ({
+  isRiskLevel: (value: string) => ['1', '2', '3', '4', '5'].includes(value),
   RiskColorMap: {
-    1: '#00ff00',
-    2: '#ffff00',
-    3: '#ffa500',
-    4: '#ff0000',
-    5: '#800000',
+    '1': '#00ff00',
+    '2': '#ffff00',
+    '3': '#ffa500',
+    '4': '#ff0000',
+    '5': '#800000',
   },
 }));
 

@@ -9,7 +9,7 @@ import { Button, Icon, Spinner, Text } from 'opub-ui';
 
 import { states } from '@/config/site';
 import { useFormatNumber } from '@/hooks/use-format-number';
-import { Factors } from '@/lib/analytics';
+import { Factors, isRiskLevel } from '@/lib/analytics';
 import Icons from '@/components/icons';
 import MapChart from '@/components/MapChart';
 import { getFactorNameBySlug, getUnitsBySlug } from '../utils/utils';
@@ -348,8 +348,11 @@ export const MapComponent = ({
           mouseover={(layer) => {
             const regionName = layer.feature?.properties.name;
             const riskValue = layer.feature?.properties?.[indicator];
+            const riskKey = String(riskValue);
             const riskText = Factors.includes(indicator)
-              ? tRisk(String(riskValue) as RiskLevel)
+              ? isRiskLevel(riskKey)
+                ? tRisk(riskKey)
+                : tCommon('na')
               : `${formatNumber(riskValue)} ${getUnitsBySlug(
                   indicatorsData,
                   indicator

@@ -2,11 +2,11 @@ import React from 'react';
 import { ProgressBar } from 'opub-ui';
 
 import { useFormatNumber } from '@/hooks/use-format-number';
-import { RiskColorMap } from '@/lib/analytics';
+import { isRiskLevel, RiskColorMap } from '@/lib/analytics';
 
 interface ScoreProps {
   label: string;
-  value: any;
+  value: string;
   indicator: string;
 }
 
@@ -17,8 +17,8 @@ export function ScoreInfo({ label, value, indicator }: ScoreProps) {
       {indicator === 'risk-score' ? (
         <ProgressBar
           size="small"
-          customColor={RiskColorMap[parseInt(value)]}
-          value={(parseInt(value) / 5) * 100}
+          customColor={isRiskLevel(value) ? RiskColorMap[value] : undefined}
+          value={(Number(value) / 5) * 100}
         />
       ) : (
         <span>{label}</span>
