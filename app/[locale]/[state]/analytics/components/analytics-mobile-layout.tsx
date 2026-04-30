@@ -7,7 +7,8 @@ import { parseAsString, useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, Menu, Text } from 'opub-ui';
 
-import { features, reportsEnabled } from '@/config/site';
+import { features } from '@/config/site';
+import { routes } from '@/lib/routes';
 import { cn, downloadStateReport } from '@/lib/utils';
 import { useCopyURL } from '@/hooks/use-copy-url';
 import Icons from '@/components/icons';
@@ -359,7 +360,7 @@ export function AnalyticsMobileLayout({
                   // onAction: toggleShareOptions,
                   onAction: () => copyURL(),
                 },
-                ...(reportsEnabled
+                ...(features.reports
                   ? [
                       {
                         content: t('actions.download.label'),
@@ -372,7 +373,7 @@ export function AnalyticsMobileLayout({
                           );
                           if (confirmation) {
                             downloadStateReport(
-                              `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentSelectedState.code}&time_period=${timePeriodSelected}`,
+                              routes.report(currentSelectedState.code, timePeriodSelected),
                               `${currentSelectedState.name}-Report`
                             );
                           }

@@ -35,4 +35,10 @@ export const routes = {
   datasetDetail: (datasetId: string) => `/datasets/${datasetId}`,
 
   aboutUs: '/about-us',
+
+  report: (geoCode: string, timePeriod: string) =>
+    `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?${qs({
+      geo_code: geoCode,
+      time_period: timePeriod,
+    })}`,
 };

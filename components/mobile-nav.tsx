@@ -4,7 +4,8 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useKeyDetect } from '@/hooks/use-key-detect';
-import { Credits, logo, mainNav, PartnerLogos } from '@/config/site';
+import { Credits, PartnerLogos } from '@/config/branding';
+import { logo, mainNav } from '@/config/site';
 import { useTranslations } from 'next-intl';
 import { IconButton, Text } from 'opub-ui';
 

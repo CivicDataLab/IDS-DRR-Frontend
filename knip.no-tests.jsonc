@@ -17,7 +17,6 @@
   "jest": false,
   "ignore": [
     // See knip.jsonc
-    "branding-stub/**",
     "config/codegen.ts",
     "gql/generated/**",
     "styles/tokens/_variables.css",

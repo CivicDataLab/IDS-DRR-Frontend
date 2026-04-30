@@ -8,10 +8,10 @@ import {
   unstable_setRequestLocale,
 } from 'next-intl/server';
 
+import { Footer } from '@/config/branding';
 import {
   appleIcon,
   favicon,
-  Footer,
   locales,
   openGraphImage,
   siteUrl,

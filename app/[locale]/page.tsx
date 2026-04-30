@@ -1,10 +1,5 @@
-import {
-  About,
-  DataStories,
-  features,
-  Partners,
-  states,
-} from '@/config/site';
+import { About, DataStories, Partners } from '@/config/branding';
+import { features, states } from '@/config/site';
 import { HeroSection, QuickLinks } from './components';
 import { DatasetCatalog } from './components/dataset-catalog';
 import Resources from './components/resources';

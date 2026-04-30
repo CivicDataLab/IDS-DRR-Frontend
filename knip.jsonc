@@ -3,8 +3,6 @@
   // Files knip can't see as "used" because they're referenced by
   // non-TS mechanisms (package.json scripts, CSS @imports, etc.).
   "ignore": [
-    // Package boundary: exports are a public API consumed by config/site.ts.
-    "branding-stub/**",
     // Consumed by `graphql-codegen --config ./config/codegen.ts` in the
     // `generate`/`build` npm scripts.
     "config/codegen.ts",

@@ -70,10 +70,10 @@ jest.mock('@/hooks/use-copy-url', () => ({
   useCopyURL: () => jest.fn(),
 }));
 
-// The download button is gated on reportsEnabled; turn it on so the test
+// The download button is gated on features.reports; turn it on so the test
 // tree includes it.
 jest.mock('@/config/site', () => ({
-  reportsEnabled: true,
+  features: { reports: true },
 }));
 
 // Mock @/components/icons

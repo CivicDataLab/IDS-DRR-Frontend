@@ -15,8 +15,9 @@ import { useTranslations } from 'next-intl';
 import { Button, Icon, Menu, Select, Text, Tooltip } from 'opub-ui';
 
 import { ANALYTICS_INDICATORS_BY_CATEGORY } from '@/config/graphql/analaytics-queries';
-import { reportsEnabled } from '@/config/site';
+import { features } from '@/config/site';
 import { GraphQL } from '@/lib/api';
+import { routes } from '@/lib/routes';
 import { cn, downloadStateReport } from '@/lib/utils';
 import { useCopyURL } from '@/hooks/use-copy-url';
 import Icons from '@/components/icons';
@@ -243,7 +244,7 @@ export function FactorList({ currentState }: any) {
                 },
               ]}
             />
-            {reportsEnabled &&
+            {features.reports &&
               (downloadReportLoading ? (
                 <Icon
                   source={Icons.loader}
@@ -281,7 +282,7 @@ export function FactorList({ currentState }: any) {
 
                         setDownloadReportLoading(true);
                         await downloadStateReport(
-                          `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentState.code}&time_period=${time_period_latest}`,
+                          routes.report(currentState.code, time_period_latest),
                           `${currentState.name}-Report`
                         );
                       } catch (error) {
