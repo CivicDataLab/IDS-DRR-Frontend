@@ -142,7 +142,10 @@ const Resources = () => {
                           variant="bodySm"
                           fontWeight="regular"
                         >
-                          {tDatasets('labels.referencePeriod')}{card.referencePeriod}
+                          {tDatasets('labels.referencePeriod')}{tDatasets('periodRange', {
+                            from: formatReferenceDate(card.referencePeriodFrom) || tCommon('na'),
+                            to: formatReferenceDate(card.referencePeriodTo) || tCommon('na'),
+                          })}
                         </Text>
                       </div>
                       <div className=" flex flex-wrap gap-2">
