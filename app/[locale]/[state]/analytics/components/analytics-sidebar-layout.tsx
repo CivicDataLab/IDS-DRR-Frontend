@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Select, Spinner, Text } from 'opub-ui';
 
+import { useStateName } from '@/hooks/use-state-name';
 import { routes } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
@@ -61,6 +62,7 @@ export function AnalyticsSideBarLayout({
 function IndicatorListWrapper({ statesList, currentState }: any) {
   const t = useTranslations('analytics.sidebar');
   const router = useRouter();
+  const stateName = useStateName();
 
   return (
     <React.Fragment>
@@ -96,7 +98,7 @@ function IndicatorListWrapper({ statesList, currentState }: any) {
                   value={currentState?.slug}
                   options={statesList.map((state: any) => {
                     return {
-                      label: state.name,
+                      label: stateName(state.slug, state.name),
                       value: state.slug,
                     };
                   })}

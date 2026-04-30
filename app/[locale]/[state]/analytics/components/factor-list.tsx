@@ -20,6 +20,7 @@ import { GraphQL } from '@/lib/api';
 import { routes } from '@/lib/routes';
 import { cn, downloadStateReport } from '@/lib/utils';
 import { useCopyURL } from '@/hooks/use-copy-url';
+import { useStateName } from '@/hooks/use-state-name';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import { getLatestDate } from '../utils/utils';
@@ -58,6 +59,7 @@ function getIcon(slug: string) {
 export function FactorList({ currentState }: any) {
   const t = useTranslations('analytics');
   const tCommon = useTranslations('common');
+  const stateName = useStateName();
   const copyURL = useCopyURL();
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator');
@@ -256,7 +258,7 @@ export function FactorList({ currentState }: any) {
                   className="self-start"
                   onClick={async () => {
                     const confirmation = window.confirm(
-                      t('actions.download.confirm', { name: currentState.name })
+                      t('actions.download.confirm', { name: stateName(currentState.slug, currentState.name) })
                     );
                     if (confirmation) {
                       try {

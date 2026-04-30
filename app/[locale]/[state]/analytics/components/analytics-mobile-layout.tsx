@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useLockBody } from '@/hooks/use-lock-body';
+import { useStateName } from '@/hooks/use-state-name';
 import { parseAsString, useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, Menu, Text } from 'opub-ui';
@@ -57,6 +58,7 @@ export function AnalyticsMobileLayout({
 }) {
   const t = useTranslations('analytics');
   const tCommon = useTranslations('common');
+  const stateName = useStateName();
   const copyURL = useCopyURL();
   //Remove default page scroll to make only the content scrollable
   useLockBody();
@@ -368,7 +370,7 @@ export function AnalyticsMobileLayout({
                         onAction: () => {
                           const confirmation = window.confirm(
                             t('actions.download.confirm', {
-                              name: currentSelectedState.name,
+                              name: stateName(currentSelectedState.slug, currentSelectedState.name),
                             })
                           );
                           if (confirmation) {
