@@ -3,6 +3,7 @@ import { captureException } from '@sentry/nextjs';
 import { getRequestConfig } from 'next-intl/server';
 
 import { FALLBACK_LOCALE, locales, messages } from '../config/site';
+import defaultMessages from '../locales/en.json';
 
 // Recursive merge: values from `overrides` replace keys in `base` at any depth.
 // Plain objects are merged; everything else (strings, arrays, primitives) overrides.
@@ -31,10 +32,7 @@ function deepMerge(
 
 // Messages for the fallback locale, resolved once at module load.
 // A partially translated locale inherits any missing keys from these.
-const fallbackMessages = deepMerge(
-  (await import(`../locales/${FALLBACK_LOCALE}.json`)).default,
-  messages[FALLBACK_LOCALE] ?? {}
-);
+const fallbackMessages = deepMerge(defaultMessages, messages[FALLBACK_LOCALE] ?? {});
 
 export default getRequestConfig(async ({ requestLocale }) => {
   const locale = await requestLocale;
