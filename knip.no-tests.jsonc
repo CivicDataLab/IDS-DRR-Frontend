@@ -17,8 +17,9 @@
   "jest": false,
   "ignore": [
     // See knip.jsonc
+    "branding-stub/**",
     "config/codegen.ts",
-    "next-sitemap.config.js",
+    "gql/generated/**",
     "styles/tokens/_variables.css",
     // Exclude tests
     "tests/**",
