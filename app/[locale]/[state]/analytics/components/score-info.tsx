@@ -12,13 +12,16 @@ interface ScoreProps {
 
 export function ScoreInfo({ label, value, indicator }: ScoreProps) {
   const formatNumber = useFormatNumber();
+  // Backend serializes values like "5.0 score" (numeric + unit), so use
+  // parseInt (lenient on the trailing unit) rather than Number (strict).
+  const level = String(parseInt(value, 10));
   return (
     <div className="flex-1">
       {indicator === 'risk-score' ? (
         <ProgressBar
           size="small"
-          customColor={isRiskLevel(value) ? RiskColorMap[value] : undefined}
-          value={(Number(value) / 5) * 100}
+          customColor={isRiskLevel(level) ? RiskColorMap[level] : undefined}
+          value={(parseInt(value, 10) / 5) * 100}
         />
       ) : (
         <span>{label}</span>
