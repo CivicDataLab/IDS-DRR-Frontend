@@ -4,6 +4,7 @@ import type {
   Resource,
   StaticImageAsset,
   State,
+  Story,
 } from 'ids-drr-branding-types';
 
 import { routes } from '@/lib/routes';
@@ -11,6 +12,7 @@ import { routes } from '@/lib/routes';
 // Arrays
 export const states: State[] = config.states ?? [];
 export const resources: Resource[] = config.resources ?? [];
+export const stories: Story[] = config.stories ?? [];
 export const languages: Language[] = config.languages ?? [];
 
 // Images
@@ -38,8 +40,8 @@ const dataSpaceEnabled = Boolean(process.env.NEXT_PUBLIC_BACKEND_URL);
 export const features = {
   chart: dataSpaceEnabled,
   datasets: dataSpaceEnabled,
-  aboutUs: config.aboutUsEnabled ?? false,
-  reports: config.reportsEnabled ?? false,
+  aboutUs: config.features?.aboutUs ?? false,
+  reports: config.features?.reports ?? false,
 };
 
 // Navigation

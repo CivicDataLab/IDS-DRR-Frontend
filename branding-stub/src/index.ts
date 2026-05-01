@@ -2,9 +2,8 @@ import type { Exports } from 'ids-drr-branding-types';
 
 // Optional React components that the frontend renders if provided.
 export const AboutPage: Exports['AboutPage'] = undefined;
-export const About: Exports['About'] = undefined;
-export const Partners: Exports['Partners'] = undefined;
-export const DataStories: Exports['DataStories'] = undefined;
+export const IntroSection: Exports['IntroSection'] = undefined;
+export const OutroSection: Exports['OutroSection'] = undefined;
 export const Footer: Exports['Footer'] = undefined;
 export const Credits: Exports['Credits'] = undefined;
 export const PartnerLogos: Exports['PartnerLogos'] = undefined;

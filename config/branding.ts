@@ -1,33 +1,16 @@
-import {
-  About,
-  AboutPage,
-  config,
-  Credits,
-  DataStories,
-  Footer,
-  PartnerLogos,
-  Partners,
-} from 'ids-drr-branding';
+import * as namespace from 'ids-drr-branding';
 import type { Exports } from 'ids-drr-branding-types';
 
-// Catch missing or wrong-typed exports at compile-time, not runtime.
-({
-  About,
-  AboutPage,
-  config,
-  Credits,
-  DataStories,
-  Footer,
-  PartnerLogos,
-  Partners,
-}) satisfies Exports;
+// Widen each component slot to `ComponentType | undefined` so we can
+// do e.g. `{Credits && <Credits />}` without TS warning that the value
+// is always defined. Also serves as the contract conformance check. 
+const branding: Exports = namespace;
 
-export {
-  About,
+export const {
   AboutPage,
   Credits,
-  DataStories,
   Footer,
+  IntroSection,
+  OutroSection,
   PartnerLogos,
-  Partners,
-};
+} = branding;

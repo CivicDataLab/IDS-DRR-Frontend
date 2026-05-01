@@ -88,6 +88,10 @@
     "resources": {
       "heading": "Resources",
       "description": "Browse through the featured datasets"
+    },
+    "stories": {
+      "heading": "Stories",
+      "description": "Read about the impact, methods and successes"
     }
   },
   "analytics": {
