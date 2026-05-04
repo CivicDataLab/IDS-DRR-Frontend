@@ -120,18 +120,20 @@ export default async function LocaleLayout({
       <body className={fontSans.className}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Provider>
-            <MediaRendering minWidth={null} maxWidth="1023">
-              <MobileNav data={mainConfig} />
-            </MediaRendering>
-            <MediaRendering minWidth="1024" maxWidth={null}>
-              <MainNav data={mainConfig} prefLangCookie={prefLangCookie} />
-            </MediaRendering>
+            <div className="min-h-screen flex flex-col">
+              <MediaRendering minWidth={null} maxWidth="1023">
+                <MobileNav data={mainConfig} />
+              </MediaRendering>
+              <MediaRendering minWidth="1024" maxWidth={null}>
+                <MainNav data={mainConfig} prefLangCookie={prefLangCookie} />
+              </MediaRendering>
 
-            {children}
+              <main className="flex-1">{children}</main>
 
-            <MediaRendering minWidth="1024" maxWidth={null}>
-              <Footer />
-            </MediaRendering>
+              <MediaRendering minWidth="1024" maxWidth={null}>
+                <Footer />
+              </MediaRendering>
+            </div>
           </Provider>
         </NextIntlClientProvider>
       </body>

@@ -86,6 +86,10 @@ export const mainConfig: MainConfig = {
       title: 'About us',
       href: AboutUsURL,
     },
+    {
+      title: 'Glossary',
+      href: '/glossary',
+    },
   ],
 
   sidebarNav: [
