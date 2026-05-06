@@ -34,6 +34,8 @@ export const routes = {
 
   datasetDetail: (datasetId: string) => `/datasets/${datasetId}`,
 
+  glossary: '/glossary',
+
   aboutUs: '/about-us',
 
   report: (geoCode: string, timePeriod: string) =>
