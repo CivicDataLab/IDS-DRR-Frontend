@@ -1,7 +1,10 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
 import {
   Carousel,
   CarouselContent,
@@ -11,12 +14,14 @@ import {
   Text,
 } from 'opub-ui';
 
-import { AnalyticsQuickLinksText, AnalyticsURL } from '@/config/consts';
 import { PLATFORM_STATES_LIST } from '@/config/graphql/analaytics-queries';
+import { states } from '@/config/site';
 import { GraphQL } from '@/lib/api';
+import { routes } from '@/lib/routes';
 import styles from './analytics-quick-links.module.css';
 
 export const QuickLinks = () => {
+  const t = useTranslations('home.analytics');
   const statesList = useQuery({
     queryKey: [`states_list`],
     queryFn: () =>
@@ -30,49 +35,7 @@ export const QuickLinks = () => {
   });
 
   const analyticsWithResolvedLinks = useMemo(() => {
-    const Analytics = [
-      {
-        name: 'Assam',
-        slug: 'assam',
-        status: 'active',
-        icon: '/logo/states/Assam.svg',
-        link: `/assam${AnalyticsURL}`,
-        alt: 'assam state boundary image',
-      },
-      {
-        name: 'Himachal Pradesh',
-        slug: 'himachal-pradesh',
-        status: 'active',
-        icon: '/logo/states/Hp.svg',
-        link: `/himachal-pradesh${AnalyticsURL}`,
-        alt: 'HP state boundary image',
-      },
-      {
-        name: 'Odisha',
-        slug: 'odisha',
-        status: 'active',
-        icon: '/logo/states/Odisha.svg',
-        link: `/odisha${AnalyticsURL}`,
-        alt: 'Odisha state boundary image',
-      },
-      {
-        name: 'Bihar',
-        slug: 'bihar',
-        status: 'active',
-        icon: '/logo/states/Bihar.svg',
-        link: `/bihar${AnalyticsURL}`,
-        alt: 'Bihar state boundary image',
-      },
-      {
-        name: 'Uttar Pradesh',
-        slug: 'uttar-pradesh',
-        status: 'active',
-        icon: '/logo/states/Up.svg',
-        link: `/uttar-pradesh${AnalyticsURL}`,
-        alt: 'UP state boundary image',
-      },
-    ];
-    return Analytics.map((item) => {
+    return states.map((item) => {
       const stateFromApi = statesList.data?.getStates?.find(
         (state: any) => state.slug === item.slug
       );
@@ -83,23 +46,27 @@ export const QuickLinks = () => {
 
       return {
         ...item,
-        link: resolvedTimePeriod
-          ? `${item.link}&time-period=${resolvedTimePeriod}`
-          : item.link,
+        link: routes.analytics(item.slug, { timePeriod: resolvedTimePeriod }),
       };
     });
   }, [statesList.data]);
   return (
     <section
       className=" flex h-full w-full flex-col gap-9 px-5 py-6 lg:px-6 lg:py-20"
-      aria-label="Quick links to deep dive into different states"
+      aria-labelledby="home-analytics-heading"
     >
       <div className="container flex flex-col gap-4 ">
-        <Text variant="heading3xl" fontWeight="bold" color="default" as="h2">
-          Analytics Dashboard
+        <Text
+          id="home-analytics-heading"
+          variant="heading3xl"
+          fontWeight="bold"
+          color="default"
+          as="h2"
+        >
+          {t('heading')}
         </Text>
         <Text variant="bodyLg" fontWeight="regular" color="default">
-          {AnalyticsQuickLinksText}
+          {t('description')}
         </Text>
       </div>
       <div>
@@ -124,10 +91,8 @@ export const QuickLinks = () => {
                     {/* Ensure items take up flexible width */}
                     <div className="flex h-48 w-56 flex-col items-center justify-between rounded-2 bg-surfaceDefault p-4 text-center shadow-elementCard">
                       <Image
-                        width={200}
-                        height={160}
                         src={item.icon}
-                        alt={item.alt}
+                        alt=""
                         className={`h-32 w-32 object-contain px-3 ${styles.stateIcon}`}
                       />
                       <Text
@@ -145,10 +110,8 @@ export const QuickLinks = () => {
                     style={{ background: '#F9F9FB' }}
                   >
                     <Image
-                      width={200}
-                      height={160}
                       src={item.icon}
-                      alt="blog Logo"
+                      alt=""
                       className={`h-32 w-32  object-contain px-3 opacity-25 ${styles.inactiveStateIcon}`}
                     />
                     <Text variant="headingLg" className=" whitespace-nowrap">
@@ -158,7 +121,7 @@ export const QuickLinks = () => {
                       variant="headingMd"
                       className="absolute right-0 top-0 m-2 w-fit whitespace-nowrap rounded-2 bg-basePureBlack px-3 py-1 text-surfaceDefault"
                     >
-                      Coming Soon
+                      {t('comingSoon')}
                     </Text>
                   </div>
                 )}

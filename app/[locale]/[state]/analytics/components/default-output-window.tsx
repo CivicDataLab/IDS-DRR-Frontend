@@ -7,20 +7,21 @@ import {
   RiskScore,
   Vulnerability,
 } from '@/components/FactorIcons';
-import { Button, Divider, Icon, ProgressBar, Text } from 'opub-ui';
+import { useTranslations } from 'next-intl';
+import { Button, Icon, Text } from 'opub-ui';
 
-
-import { documentationLink, RiskColorMap } from '@/config/consts';
+import { docsLink, userGuideLink } from '@/config/site';
 import { cn } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
-import NavLink from '@/components/nav-link';
 import styles from './styles.module.scss';
 
 export function DefaultWindow({
   indicatorDescriptions,
   onClose,
 }: any) {
+  const t = useTranslations('analytics.detail');
+  const tCommon = useTranslations('common');
   const list: { title: string; slug: string; description: string }[] = [];
 
   if (indicatorDescriptions) {
@@ -35,7 +36,7 @@ export function DefaultWindow({
           title: item?.name,
           slug: item?.slug,
           description:
-            item?.short_description || item?.long_description || 'NA',
+            item?.short_description || item?.long_description || tCommon('na'),
         });
       }
     );
@@ -59,7 +60,7 @@ export function DefaultWindow({
             <Button
               onClick={onClose}
               kind="tertiary"
-              aria-label="Close details"
+              aria-label={t('close')}
             >
               <Icon source={Icons.cross} />
             </Button>
@@ -83,6 +84,7 @@ export const AboutIndicator = ({
 }: {
   IndicatorData: any;
 }) => {
+  const t = useTranslations('analytics.about');
   const IconMap: { [key: string]: React.ReactNode } = {
     'risk-score': <RiskScore color={'#000000'} />,
     vulnerability: <Vulnerability color={'#000000'} />,
@@ -93,17 +95,14 @@ export const AboutIndicator = ({
   return (
     <div className="mx-1 mb-5 flex flex-col">
       <Text variant="headingMd" fontWeight="bold" className="mb-5 uppercase">
-        Know your risk indicators
+        {t('heading')}
       </Text>
       <div className="flex flex-row items-start gap-2">
         <div className="flex flex-col">
           <Text variant="headingMd" fontWeight="semibold">
-            Overall Flood Risk
+            {t('overallRisk')}
           </Text>
-          <Text color="subdued">
-            Risk of disasters is a function of - hazard vulnerability, exposure
-            & coping capacity
-          </Text>
+          <Text color="subdued">{t('description')}</Text>
         </div>
         <div className="flex h-full items-start justify-start">
           <Icon
@@ -116,7 +115,7 @@ export const AboutIndicator = ({
         </div>
       </div>
       <Text className="my-4" variant="bodyLg">
-        Overall Flood Risk is calculated using:
+        {t('calculation')}
       </Text>
 
       <div className="flex flex-col items-start gap-4 p-3">
@@ -147,116 +146,41 @@ export const AboutIndicator = ({
 
       {/* Read the user guide CTA */}
       <div className="mt-4 flex w-full flex-col justify-end gap-4">
-        {/* TODO: Add the user guide link here */}
-        <a
-          // href={'#'}
-          // onClick={(event: any) => handleRedirect(event, learnMoreLink)}
-          // target="_blank"
-          className="rounded-lg flex h-12 w-full items-center justify-between gap-2 rounded-2 bg-[#F6F6F7] px-3 py-3"
-        >
-          <Text
-            variant="bodyMd"
-            fontWeight="semibold"
-            className="text-[#3E7844]"
+        {userGuideLink && (
+          <a
+            href={userGuideLink}
+            target="_blank"
+            className="rounded-lg flex h-12 w-full items-center justify-between gap-2 rounded-2 bg-[#F6F6F7] px-3 py-3"
           >
-            Read the user guide
-          </Text>
-          <Icon source={Icons.IconArrowUpRight} className="text-[#3E7844]" />
-        </a>
-        <a
-          href={documentationLink}
-          // onClick={(event: any) => handleRedirect(event, learnMoreLink)}
-          target="_blank"
-          className="rounded-lg flex h-12 w-full items-center justify-between gap-2 rounded-2 bg-[#F6F6F7] px-3 py-3"
-        >
-          <Text
-            variant="bodyMd"
-            fontWeight="semibold"
-            className="text-[#3E7844]"
+            <Text
+              variant="bodyMd"
+              fontWeight="semibold"
+              className="text-[#3E7844]"
+            >
+              {t('userGuideLink')}
+            </Text>
+            <Icon source={Icons.IconArrowUpRight} className="text-[#3E7844]" />
+          </a>
+        )}
+        {docsLink && (
+          <a
+            href={docsLink}
+            target="_blank"
+            className="rounded-lg flex h-12 w-full items-center justify-between gap-2 rounded-2 bg-[#F6F6F7] px-3 py-3"
           >
-            Read the documentation
-          </Text>
-          <Icon source={Icons.IconArrowUpRight} className="text-[#3E7844]" />
-        </a>
-      </div>
-    </div>
-  );
-};
-
-export const DistrictBar = ({
-  district,
-  value,
-}: {
-  district: string;
-  value: string;
-}) => {
-  const score = parseInt(value);
-  return (
-    <div className="mb-1 flex items-center gap-2 pl-20">
-      <div className=" basis-1/4">
-        <Text variant="bodySm" fontWeight="medium">
-          {district}
-        </Text>
-      </div>
-
-      <div className=" basis-2/4">
-        <ProgressBar
-          size="small"
-          customColor={RiskColorMap[score]}
-          value={(score / 5) * 100}
-        />
-      </div>
-    </div>
-  );
-};
-
-export const IndicatorDescription = ({
-  title,
-  slug,
-  desc,
-}: {
-  title: string;
-  slug: string;
-  desc: string;
-}) => {
-  const IconMap: { [key: string]: React.ReactNode } = {
-    'risk-score': <RiskScore color={'#000000'} />,
-    vulnerability: <Vulnerability color={'#000000'} />,
-    'flood-hazard': <FloodHazard color={'#000000'} />,
-    exposure: <Exposure color={'#000000'} />,
-    'government-response': <GovtResponse color={'#000000'} />,
-  };
-
-  return (
-    <div className="flex flex-col">
-      <div className="mb-2 mt-3 flex items-center">
-        {IconMap[slug] || <Ellipse color="#000000" />}
-        <Text fontWeight="bold" variant="headingMd" className="pl-2">
-          {title}
-        </Text>
-        {slug !== 'risk-score' && process.env.NEXT_PUBLIC_BACKEND_URL && (
-          <NavLink
-            className="ml-auto flex gap-2"
-            href={`/datasets/?category=${title}`}
-          >
-            <Icon source={Icons.link} color="interactive" />
-            <Text color="interactive">Link to the datasets</Text>
-          </NavLink>
+            <Text
+              variant="bodyMd"
+              fontWeight="semibold"
+              className="text-[#3E7844]"
+            >
+              {t('docsLink')}
+            </Text>
+            <Icon source={Icons.IconArrowUpRight} className="text-[#3E7844]" />
+          </a>
         )}
       </div>
-      <Text>{desc}</Text>
-      {slug === 'government-response' && (
-        <a
-          className="mt-2 flex gap-2"
-          target="_blank"
-          href={
-            'https://superset.civicdatalab.in/superset/dashboard/flood-tenders-assam/ '
-          }
-        >
-          <Text color="interactive">View procurement data dashboard</Text>
-          <Icon source={Icons.externalLink} color="interactive" />
-        </a>
-      )}
     </div>
   );
 };
+
+

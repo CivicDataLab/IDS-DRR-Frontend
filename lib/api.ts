@@ -1,7 +1,7 @@
 import React from 'react';
 import { type TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { captureException } from '@sentry/nextjs';
-import { QueryClient, useQuery } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { request } from 'graphql-request';
 
 // create a wrapper function for graphql-request
@@ -35,25 +35,6 @@ export const getQueryClient = React.cache(
       },
     })
 );
-
-export function useFetch(id: string, query: string) {
-  return useQuery({
-    queryKey: [id],
-
-    queryFn: async () => {
-      try {
-        const data = await fetch(query).then((res) => res.json());
-        // const data = await fetch(query, { cache: 'no-store' }).then((res) =>
-        //   res.json()
-        // );
-        return data;
-      } catch (error: any) {
-        captureException(error);
-        throw new Error(error);
-      }
-    },
-  });
-}
 
 export const fetchDatasets = async (variables: any) => {
   const response = await fetch(

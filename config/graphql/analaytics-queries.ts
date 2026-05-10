@@ -29,8 +29,8 @@ export const ANALYTICS_DISTRICT_DATA = graphql(`
 `);
 
 export const ANALYTICS_INDICATORS = graphql(`
-  query indicators($indcFilter: IndicatorFilter) {
-    indicators(indcFilter: $indcFilter)
+  query indicators($indcFilter: IndicatorFilter, $stateCode: String) {
+    indicators(indcFilter: $indcFilter, stateCode: $stateCode)
   }
 `);
 
@@ -89,20 +89,6 @@ export const ANALYTICS_TABLE_DATA = graphql(`
     $geoFilter: GeoFilter
   ) {
     tableData(
-      indcFilter: $indcFilter
-      dataFilter: $dataFilter
-      geoFilter: $geoFilter
-    )
-  }
-`);
-
-export const ANALYTICS_TIME_TRENDS = graphql(`
-  query getTimeTrends(
-    $indcFilter: IndicatorFilter!
-    $dataFilter: DataFilter!
-    $geoFilter: GeoFilter!
-  ) {
-    getTimeTrends(
       indcFilter: $indcFilter
       dataFilter: $dataFilter
       geoFilter: $geoFilter

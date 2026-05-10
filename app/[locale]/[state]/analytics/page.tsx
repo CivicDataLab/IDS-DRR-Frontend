@@ -9,39 +9,46 @@ import { getQueryClient, GraphQL } from '@/lib/api';
 import { AnalyticsMainLayout } from './components/analytics-layout';
 
 export default async function Home({
+  params,
   searchParams,
 }: {
+  params: Promise<{ state: string }>;
   searchParams: Promise<{ [key: string]: string }>;
 }) {
-  const searchParamsHome = await searchParams;
+  const { state: stateSlug } = await params;
+  const { indicator } = await searchParams;
   const queryClient = getQueryClient();
+  const graphqlUrl = `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`;
 
   try {
-    await queryClient.prefetchQuery({
-      queryKey: [`indicators_${searchParamsHome?.['indicator']}`],
-      queryFn: () =>
-        GraphQL(
-          `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
-          ANALYTICS_INDICATORS,
-          { indcFilter: { slug: searchParamsHome?.['indicator'] } }
-        ),
+    const statesData = await queryClient.fetchQuery<any>({
+      queryKey: [`states_list`],
+      queryFn: () => GraphQL(graphqlUrl, PLATFORM_STATES_LIST),
     });
 
-    await queryClient.prefetchQuery({
-      queryKey: [`states_list`],
-      queryFn: () =>
-        GraphQL(
-          `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`,
-          PLATFORM_STATES_LIST
-        ),
-    });
+    const stateCode = statesData?.getStates?.find(
+      (s: any) => s.slug === stateSlug
+    )?.code;
+
+    if (stateCode) {
+      await Promise.all(
+        [indicator, indicator !== 'risk-score' ? 'risk-score' : null]
+          .filter((slug): slug is string => Boolean(slug))
+          .map((slug) =>
+            queryClient.prefetchQuery({
+              queryKey: [`indicators_${slug}_${stateCode}`],
+              queryFn: () =>
+                GraphQL(graphqlUrl, ANALYTICS_INDICATORS, {
+                  indcFilter: { slug },
+                  stateCode,
+                }),
+            })
+          )
+      );
+    }
   } catch (error) {
     captureException(error);
   }
-
-  // if (Object.keys(searchParams).length === 0) {
-  //   redirect(AnalyticsURL);
-  // }
 
   const dehydratedState = dehydrate(queryClient);
 

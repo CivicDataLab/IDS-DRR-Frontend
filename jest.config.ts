@@ -27,6 +27,7 @@ const config: Config = {
   collectCoverageFrom: [
     '{app,components,config,hooks,i18n,lib}/**/*.{ts,tsx}',
   ],
+  modulePathIgnorePatterns: ['<rootDir>/.next/standalone/'],
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

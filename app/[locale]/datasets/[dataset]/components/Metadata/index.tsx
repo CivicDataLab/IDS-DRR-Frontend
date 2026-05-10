@@ -1,9 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Button, Icon, Tag, Text } from 'opub-ui';
 
+import { routes } from '@/lib/routes';
 import { toTitleCase } from '@/lib/utils';
-import { Icons } from '@/components/icons';
+import Icons from '@/components/icons';
 
 interface MetadataProps {
   data: any;
@@ -11,6 +13,7 @@ interface MetadataProps {
 }
 
 const MetadataComponent: React.FC<MetadataProps> = ({ data, setOpen }) => {
+  const t = useTranslations('datasets');
   const filteredMetadataArray = data.metadata.filter(
     (item: any) =>
       item.metadataItem.label !== 'Source Website' &&
@@ -23,7 +26,7 @@ const MetadataComponent: React.FC<MetadataProps> = ({ data, setOpen }) => {
     <div className="rounded-md shadow-md flex flex-col gap-6 bg-surfaceDefault  px-6 py-4 lg:px-8 lg:py-6">
       <div className="flex items-center justify-between">
         <Text variant="headingMd" fontWeight="semibold">
-          Metadata
+          {t('detail.metadata.heading')}
         </Text>
         {setOpen && (
           <Button onClick={() => setOpen(false)} kind="tertiary">
@@ -47,7 +50,7 @@ const MetadataComponent: React.FC<MetadataProps> = ({ data, setOpen }) => {
         {data?.formats.length > 0 && (
           <div className="flex items-baseline gap-2 border-b-2 border-solid border-baseGraySlateSolid6  pb-2">
             <Text className="text-base font-medium min-w-[120px] basis-1/4">
-              Formats:
+              {t('labels.formats')}
             </Text>
             <div className="flex flex-wrap gap-2">
               {data?.formats.map((item: any, index: any) => (
@@ -59,12 +62,12 @@ const MetadataComponent: React.FC<MetadataProps> = ({ data, setOpen }) => {
         {data?.categories.length > 0 && (
           <div className="flex items-baseline gap-2 pb-2">
             <Text className="text-base font-medium min-w-[120px] basis-1/4">
-              Category:
+              {t('labels.category')}
             </Text>
             <div className="flex flex-wrap gap-2">
               {data?.categories.map((item: any, index: any) => (
                 <Link
-                  href={`/datasets?categories=${item.name}`}
+                  href={routes.datasets({ category: item.name })}
                   target="_blank"
                   className="flex justify-center"
                   key={index}
@@ -78,27 +81,6 @@ const MetadataComponent: React.FC<MetadataProps> = ({ data, setOpen }) => {
           </div>
         )}
 
-        {/* {data?.tags.length > 0 && (
-          <div className="flex items-baseline gap-2  pb-2">
-            <Text className="text-base font-medium min-w-[120px] basis-1/4">
-              Tags:
-            </Text>
-            <div className="flex flex-wrap gap-2">
-              {data?.tags.map((item: any, index: any) => (
-                <Link
-                  href={`/datasets?tags=${item.value}`}
-                  target="_blank"
-                  className="flex justify-center"
-                  key={index}
-                >
-                  <Text className=" underline" color="interactive">
-                    {item.value}
-                  </Text>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )} */}
       </div>
     </div>
   );

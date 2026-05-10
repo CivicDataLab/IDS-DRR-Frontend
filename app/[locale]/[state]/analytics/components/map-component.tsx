@@ -1,20 +1,18 @@
 'use client';
 
 import React from 'react';
-import { hp_rivers_features } from '@/geo_json/hp_rivers_geojson';
 import { useWindowSize } from '@/hooks/use-window-size';
 import * as d3 from 'd3-scale';
 import { interpolateBlues } from 'd3-scale-chromatic';
+import { useTranslations } from 'next-intl';
 import { Button, Icon, Spinner, Text } from 'opub-ui';
 
-import { Factors, RiskText } from '@/config/consts';
+import { states } from '@/config/site';
+import { useFormatNumber } from '@/hooks/use-format-number';
+import { Factors, isRiskLevel } from '@/lib/analytics';
 import Icons from '@/components/icons';
 import MapChart from '@/components/MapChart';
-import {
-  formatNumberToIndianSystem,
-  getFactorNameBySlug,
-  getUnitsBySlug,
-} from '../utils/utils';
+import { getFactorNameBySlug, getUnitsBySlug } from '../utils/utils';
 
 export const MapComponent = ({
   indicator,
@@ -47,8 +45,32 @@ export const MapComponent = ({
   isOutputPaneOpen?: boolean;
   onToggleOutputPane?: () => void;
 }) => {
+  const tRisk = useTranslations('analytics.risk');
+  const tCommon = useTranslations('common');
+  const formatNumber = useFormatNumber();
   const [map, setMap] = React.useState<any>(null);
   const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
+  const [overlayFeatures, setOverlayFeatures] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    const slug = currentSelectedState?.slug;
+    const overlay = states.find((state) => state.slug === slug)?.overlay;
+    if (!overlay) {
+      setOverlayFeatures(null);
+      return;
+    }
+    let cancelled = false;
+    overlay()
+      .then((mod) => {
+        if (!cancelled) setOverlayFeatures(mod.default);
+      })
+      .catch(() => {
+        if (!cancelled) setOverlayFeatures(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [currentSelectedState?.slug]);
 
   const params = new URLSearchParams(window.location.search);
   const districtCode = params.get('district-code');
@@ -87,8 +109,8 @@ export const MapComponent = ({
         }
         // return num > 1
         //   ? Math.round(num).toString()
-        //   : formatNumberToIndianSystem(Math.round(num));
-        return formatNumberToIndianSystem(Math.round(num));
+        //   : formatNumber(Math.round(num));
+        return formatNumber(Math.round(num));
       };
 
       const isDuplicate = customLegendData.some(
@@ -198,7 +220,7 @@ export const MapComponent = ({
       <span>${getFactorNameBySlug(indicatorsData, indicator)} : <span style="color: ${colorMap[riskValue]}; text-transform: ${Factors.includes(indicator) && 'uppercase'}; font-weight: bold;">${
         Factors.includes(indicator)
           ? riskText
-          : `${formatNumberToIndianSystem(riskValue)} ${getUnitsBySlug(
+          : `${formatNumber(riskValue)} ${getUnitsBySlug(
               indicatorsData,
               indicator
             )}`
@@ -248,28 +270,18 @@ export const MapComponent = ({
   }, [districtCode, map, mapData?.features, revenueMapData?.features]);
 
   React.useEffect(() => {
-    try {
-      setTimeout(() => {
-        if (
-          map &&
-          map?.getContainer() &&
-          currentSelectedState.center &&
-          !districtCode &&
-          currentSelectedState.code !== '18'
-        ) {
-          map?.setView(currentSelectedState.center, 7.4);
-        }
-      }, 100);
-    } catch (error) {
-      console.error('Error setting map view:', error);
-    }
+    if (!map) return;
+    if (districtCode) return;
+    if (!currentSelectedState?.center) return;
+
+    map.setView(currentSelectedState.center, 7.4);
   }, [map, districtCode, currentSelectedState]);
 
   if (mapDataloading || revenueMapDataLoading)
     return (
       <div className="flex h-full flex-col place-content-center items-center">
         <Spinner color="highlight" />
-        <Text>Loading...</Text>
+        <Text>{tCommon('loading')}</Text>
       </div>
     );
 
@@ -307,10 +319,7 @@ export const MapComponent = ({
         )}
         <MapChart
           features={mapFeatures || mapData.features}
-          addlFeaturesArray={
-            // Replace this logic soon with attribute returned from getStates call
-            currentSelectedState.code === '02' ? [hp_rivers_features] : []
-          }
+          addlFeaturesArray={overlayFeatures ? [overlayFeatures] : []}
           addlFeaturesStyleArray={addlFeaturesStyleArray}
           mapZoom={isMobile ? 8 : 7.4}
           mapProperty={indicator}
@@ -339,9 +348,12 @@ export const MapComponent = ({
           mouseover={(layer) => {
             const regionName = layer.feature?.properties.name;
             const riskValue = layer.feature?.properties?.[indicator];
+            const riskKey = String(riskValue);
             const riskText = Factors.includes(indicator)
-              ? RiskText[riskValue]?.indicatorText
-              : `${formatNumberToIndianSystem(riskValue)} ${getUnitsBySlug(
+              ? isRiskLevel(riskKey)
+                ? tRisk(riskKey)
+                : tCommon('na')
+              : `${formatNumber(riskValue)} ${getUnitsBySlug(
                   indicatorsData,
                   indicator
                 )}`;

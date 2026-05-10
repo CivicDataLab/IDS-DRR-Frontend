@@ -1,22 +1,27 @@
-import { About, HeroSection, QuickLinks } from './components';
-import DataStories from './components/data-stories';
+import { IntroSection, OutroSection } from '@/config/branding';
+import {
+  features,
+  heroBackground,
+  heroForeground,
+  states,
+  stories,
+} from '@/config/site';
+import { HeroSection, QuickLinks, Stories } from './components';
 import { DatasetCatalog } from './components/dataset-catalog';
-import Partners from './components/partners';
 import Resources from './components/resources';
 
 export default function Home() {
   return (
     <main className="bg-baseGreenSolid5 ">
       <div className="inline-flex w-full flex-col items-center ">
-        <HeroSection />
-        <QuickLinks />
-        {process.env.NEXT_PUBLIC_BACKEND_URL && <DatasetCatalog />}
-        {process.env.NEXT_PUBLIC_BACKEND_URL && <Resources />}
-        <div className=" flex w-full justify-center bg-[#222136]">
-          <DataStories />
-        </div>
-        <About />
-        <Partners />
+        {IntroSection
+          ? <IntroSection />
+          : (heroBackground || heroForeground) && <HeroSection />}
+        {states.length > 0 && <QuickLinks />}
+        {features.datasets && <DatasetCatalog />}
+        {features.datasets && <Resources />}
+        {stories.length > 0 && <Stories />}
+        {OutroSection && <OutroSection />}
       </div>
     </main>
   );

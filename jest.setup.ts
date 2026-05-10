@@ -3,6 +3,27 @@
 // expect(element).toHaveTextContent(/react/i)
 import '@testing-library/jest-dom';
 
+// Wrap every test render in NextIntlClientProvider so components calling
+// useTranslations find a context.
+jest.mock('@testing-library/react', () => {
+  const actual = jest.requireActual('@testing-library/react');
+  const React = require('react');
+  const { NextIntlClientProvider } = require('next-intl');
+  const messages = require('./locales/en.json');
+  return {
+    ...actual,
+    render: (ui: any, options?: any) =>
+      actual.render(
+        React.createElement(
+          NextIntlClientProvider,
+          { locale: 'en', messages },
+          ui
+        ),
+        options
+      ),
+  };
+});
+
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,

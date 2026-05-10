@@ -1,9 +1,11 @@
-import { useRef } from 'react';
+'use client';
+
+import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { renderGeoJSON } from '@/geo_json/render_geojson';
 import { useQuery } from '@tanstack/react-query';
 import ReactECharts from 'echarts-for-react';
 import * as echarts from 'echarts/core';
+import { useTranslations } from 'next-intl';
 import {
   Button,
   Carousel,
@@ -19,10 +21,70 @@ import {
 
 import { CHARTS_QUERY } from '@/config/graphql/dataset-queries';
 import { GraphQL } from '@/lib/api';
-import { copyDefinedURL } from '@/lib/utils';
-import { Icons } from '@/components/icons'; /*  */
+import { useCopyURL } from '@/hooks/use-copy-url';
+import Icons from '@/components/icons';
+
+// The CHARTS_QUERY DataSpace query returns the echarts option as `item.chart`.
+// This returns the first `type: 'map'` series, or undefined.
+const findMapSeries = (item: any) =>
+  Array.isArray(item?.chart?.series)
+    ? item.chart.series.find((s: any) => s?.type === 'map')
+    : undefined;
+
+const MapError = () => {
+  const t = useTranslations('datasets.detail');
+  return (
+    <div className="flex h-[450px] items-center justify-center">
+      <Text>{t('visualizations.mapError')}</Text>
+    </div>
+  );
+};
+
+const MapChart = ({
+  item,
+  mapName,
+}: {
+  item: any;
+  mapName: string;
+}) => {
+  const chartType = item.chartType;
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['chart-type', chartType],
+    queryFn: async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/chart-types/${chartType}`
+      );
+      if (!res.ok) {
+        throw new Error(`Failed to load GeoJSON for ${chartType}`);
+      }
+      return res.json();
+    },
+    retry: false,
+    staleTime: Infinity,
+  });
+
+  useEffect(() => {
+    if (data) echarts.registerMap(mapName, data);
+  }, [mapName, data]);
+
+  if (isError) {
+    return <MapError />;
+  }
+  if (isLoading) {
+    return (
+      <div className="flex h-[450px] items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
+  return <ReactECharts option={item.chart} style={{ height: '450px' }} />;
+};
 
 const Details = () => {
+  const t = useTranslations('datasets.detail');
+  const tCommon = useTranslations('common');
+  const copyURL = useCopyURL();
   const params = useParams();
 
   const { data, isLoading }: { data: any; isLoading: boolean } = useQuery({
@@ -37,27 +99,15 @@ const Details = () => {
       ),
   });
 
-  const chartRef = useRef<ReactECharts>(null);
-
   const renderChart = (item: any) => {
-    if (
-      item?.chartType === 'ASSAM_DISTRICT' ||
-      item?.chartType === 'ASSAM_RC'
-    ) {
-      // Register the map
-      echarts.registerMap(
-        item?.chartType.toLowerCase(),
-        renderGeoJSON(item.chartType.toLowerCase())
-      );
+    const mapSeries = findMapSeries(item);
+    if (mapSeries?.map) {
+      return <MapChart item={item} mapName={mapSeries.map} />;
     }
-
-    return (
-      <ReactECharts
-        option={item.chart}
-        ref={chartRef}
-        style={{ height: '450px' }}
-      />
-    );
+    if (mapSeries) {
+      return <MapError />;
+    }
+    return <ReactECharts option={item.chart} style={{ height: '450px' }} />;
   };
 
   return (
@@ -69,7 +119,7 @@ const Details = () => {
       ) : data?.chartsDetails?.length > 0 ? (
         <>
           <Text variant="headingLg" className="mx-6 lg:mx-0">
-            Visualizations
+            {t('visualizations.heading')}
           </Text>
           <div className="relative w-full ">
             <Carousel className="w-full">
@@ -84,8 +134,7 @@ const Details = () => {
                             <Text className="font-semi-bold">{item.name}</Text>
                             <Text>{item.description}</Text>
                           </div>
-                          {item.chartType === 'ASSAM_DISTRICT' ||
-                          item.chartType === 'ASSAM_RC' ? (
+                          {findMapSeries(item) ? (
                             <div className="flex gap-2">
                               {' '}
                               <Button
@@ -130,7 +179,7 @@ const Details = () => {
                                 }
                                 items={[
                                   {
-                                    content: 'Facebook',
+                                    content: tCommon('social.facebook'),
                                     icon: Icons.IconBrandFacebook,
                                     onAction: () =>
                                       window.open(
@@ -138,7 +187,7 @@ const Details = () => {
                                       ),
                                   },
                                   {
-                                    content: 'LinkedIn',
+                                    content: tCommon('social.linkedin'),
                                     icon: Icons.IconBrandLinkedin,
                                     onAction: () =>
                                       window.open(
@@ -146,7 +195,7 @@ const Details = () => {
                                       ),
                                   },
                                   {
-                                    content: 'Twitter',
+                                    content: tCommon('social.twitter'),
                                     icon: Icons.IconBrandX,
                                     onAction: () =>
                                       window.open(
@@ -154,10 +203,10 @@ const Details = () => {
                                       ),
                                   },
                                   {
-                                    content: 'Copy Link',
+                                    content: tCommon('copy.trigger'),
                                     icon: Icons.link,
                                     onAction: () =>
-                                      copyDefinedURL(
+                                      copyURL(
                                         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/download/chart/${item.id}`
                                       ),
                                   },

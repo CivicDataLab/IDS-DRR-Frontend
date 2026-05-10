@@ -22,9 +22,7 @@ The following dependencies must be available globally on your system:
 
 `npm install --force`
 
-4. Create your local environment configuration from the sample file:
-
-`cp env.sample .env.local`
+4. Create your local environment configuration in `.env.local`
 
 ## Usage
 

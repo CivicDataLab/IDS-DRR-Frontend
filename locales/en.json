@@ -1,7 +1,250 @@
 {
+  "common": {
+    "loading": "Loading...",
+    "na": "NA",
+    "numberLocale": "",
+    "redirectConfirm": "You are being redirected to \"{url}\".",
+    "filters": {
+      "heading": "Filters",
+      "trigger": "Filter",
+      "apply": "Apply",
+      "reset": "Reset",
+      "clearAll": "Clear All",
+      "close": "Close"
+    },
+    "copy": {
+      "trigger": "Copy Link",
+      "success": "URL copied to clipboard!",
+      "error": "Failed to copy URL."
+    },
+    "social": {
+      "facebook": "Facebook",
+      "linkedin": "LinkedIn",
+      "twitter": "Twitter"
+    }
+  },
+  "errors": {
+    "generic": {
+      "heading": "Something went wrong!",
+      "retry": "Try again"
+    },
+    "notFound": {
+      "heading": "Page not found",
+      "home": "Return Home"
+    }
+  },
+  "site": {
+    "name": "IDS-DRR",
+    "description": "An open-source platform that helps Disaster Management Authorities make timely data-driven decisions, prioritise expenditure of public funds, and conduct public procurement in a manner that strengthens long-term disaster risk reduction and protects the most vulnerable people from the adverse effects of extreme weather events and climate change.",
+    "creator": "IDS-DRR",
+    "creatorUrl": "",
+    "keywords": "Disaster Risk Reduction, DRR, Climate Actions",
+    "ogLocale": "en_US"
+  },
+  "nav": {
+    "menu": "Menu",
+    "homeAlt": "{name} home",
+    "links": {
+      "home": "Home",
+      "analytics": "Analytics",
+      "datasets": "Datasets",
+      "glossary": "Glossary",
+      "aboutUs": "About us"
+    }
+  },
+  "factors": {
+    "riskScore": {
+      "name": "Risk Score"
+    },
+    "hazard": {
+      "name": "Hazard",
+      "description": "Hazards or Potential of a physical event that may cause loss of life or property"
+    },
+    "exposure": {
+      "name": "Exposure",
+      "description": "The situation of people, infrastructure, housing, production capacities, and other tangible human assets located in hazard-prone areas"
+    },
+    "vulnerability": {
+      "name": "Vulnerability",
+      "description": "Physical, Social, Economic, and Environmental vulnerabilities which increase susceptibility of an area or a community to impact of hazards"
+    },
+    "governmentResponse": {
+      "name": "Government Response",
+      "description": "Government Response with respect to capacities or resources that can reduce the level of risk, or the effects of disasters"
+    }
+  },
   "home": {
-    "title": "Welcome to Open Publishing",
-    "subtitle": "Open Publishing is a platform for publishing and sharing data and stories.",
-    "cta": "Go to Dashboard"
+    "hero": {
+      "tagline": "Discover insights, assess risks and build resilience"
+    },
+    "analytics": {
+      "heading": "Analytics Dashboard",
+      "description": "Explore risk profiles across regions, developed using the underlying data model",
+      "comingSoon": "Coming Soon"
+    },
+    "datasets": {
+      "heading": "Dataset Catalog",
+      "description": "Explore and use high-value datasets"
+    },
+    "resources": {
+      "heading": "Resources",
+      "description": "Browse through the featured datasets"
+    },
+    "stories": {
+      "heading": "Stories",
+      "description": "Read about the impact, methods and successes"
+    }
+  },
+  "analytics": {
+    "sidebar": {
+      "heading": "ANALYTICS DASHBOARD",
+      "indicators": "INDICATORS",
+      "actions": "ACTIONS"
+    },
+    "views": {
+      "map": "Map",
+      "chart": "Chart",
+      "table": "Table",
+      "more": "More",
+      "long": {
+        "map": "Map View",
+        "chart": "Chart View",
+        "table": "Table View"
+      }
+    },
+    "filters": {
+      "division": {
+        "title": "Division",
+        "label": "Select Division",
+        "placeholder": "Select a division",
+        "disabledHint": "Select a division to enable"
+      },
+      "subdivision": {
+        "title": "Subdivision",
+        "label": "Select {type}",
+        "placeholder": "Select a {type}",
+        "defaultType": "Region",
+        "emptyPrompt": "Please select a division"
+      },
+      "month": {
+        "title": "Month",
+        "label": "Select Month",
+        "labelMulti": "Select Months"
+      }
+    },
+    "loading": "Loading data...",
+    "map": {
+      "loading": "Loading map data...",
+      "error": "Error loading map data."
+    },
+    "chart": {
+      "axes": {
+        "timePeriod": "Time Period",
+        "score": "Score",
+        "units": "Units"
+      },
+      "emptyPrompt": {
+        "timePeriod": "Please select a time period",
+        "region": "Please select a region"
+      },
+      "error": "Error: {message}",
+      "fetchError": "Failed to fetch the data"
+    },
+    "table": {
+      "regionName": "Region Name",
+      "regionBoundary": "Region Boundary",
+      "empty": "No data available."
+    },
+    "divisionHeading": "{name} Division",
+    "subdivisionHeading": "{name} {type}",
+    "risk": {
+      "1": "Very Low Risk",
+      "2": "Low Risk",
+      "3": "Medium Risk",
+      "4": "High Risk",
+      "5": "Very High Risk"
+    },
+    "detail": {
+      "cumulativeFiscalYearUntil": "Cumulative for the financial year until {date}",
+      "calculatedFor": "Calculated for {date}",
+      "cumulativeUntil": "Cumulative until {date}",
+      "contributingIndicators": "Some of the indicators contributing to {name} are",
+      "docsLink": "Read the Documentation",
+      "sourceLink": "Explore Source Data",
+      "close": "Close details",
+      "open": "Open details"
+    },
+    "about": {
+      "heading": "Know your risk indicators",
+      "overallRisk": "Overall Risk",
+      "description": "Risk of disasters is a function of - hazard vulnerability, exposure & coping capacity",
+      "calculation": "Overall Risk is calculated using:",
+      "userGuideLink": "Read the user guide",
+      "docsLink": "Read the documentation"
+    },
+    "actions": {
+      "share": {
+        "label": "Share"
+      },
+      "download": {
+        "label": "Download Report",
+        "confirm": "Do you want to download the report for \"{name}\"?",
+        "error": "Error downloading report: {error}"
+      }
+    }
+  },
+  "datasets": {
+    "search": {
+      "label": "Search",
+      "placeholder": "Search datasets"
+    },
+    "sort": {
+      "label": "Sort by:",
+      "order": {
+        "recent": "Recent",
+        "alphabetical": "Alphabetical"
+      }
+    },
+    "count": "Showing {count} of {total} Datasets",
+    "pagination": {
+      "rows": "Rows: ",
+      "page": "Page {current} of {total}",
+      "first": "First Page",
+      "previous": "Previous Page",
+      "next": "Next Page",
+      "last": "Last Page"
+    },
+    "labels": {
+      "source": "Source: ",
+      "lastUpdated": "Last Updated: ",
+      "updateFrequency": "Update Frequency: ",
+      "referencePeriod": "Reference Period: ",
+      "updated": "Updated: ",
+      "category": "Category: ",
+      "formats": "Formats: ",
+      "tags": "Tags: "
+    },
+    "periodRange": "{from} to {to}",
+    "showLess": "Show less",
+    "showMore": "Show more",
+    "detail": {
+      "about": {
+        "heading": "About the Dataset"
+      },
+      "metadata": {
+        "heading": "Metadata",
+        "sourceLink": "Visit Source Website",
+        "githubLink": "Go to Github Repo"
+      },
+      "resources": {
+        "heading": "Downloadable Resources",
+        "download": "Download"
+      },
+      "visualizations": {
+        "heading": "Visualizations",
+        "mapError": "Unable to load map."
+      },
+      "share": "Share dataset"
+    }
   }
 }

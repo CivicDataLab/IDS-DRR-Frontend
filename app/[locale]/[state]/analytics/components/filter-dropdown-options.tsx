@@ -1,5 +1,6 @@
 import { parseDate, type CalendarDate } from '@internationalized/date';
 import { parseAsString, useQueryState } from 'next-usequerystate';
+import { useTranslations } from 'next-intl';
 import { MonthPicker, MultiMonthPicker, Select } from 'opub-ui';
 
 import { toTitleCase } from '@/lib/utils';
@@ -25,6 +26,7 @@ export default function FilterDropdownOptions({
   monthMulti?: boolean;
   timeLimits: string[];
 }) {
+  const t = useTranslations('analytics.filters');
   // console.log('timeLimits', timeLimits);
   const [districtCode, setDistrictCode] = useQueryState(
     'district-code',
@@ -80,17 +82,26 @@ export default function FilterDropdownOptions({
       parse: (value) => value.split(','),
     }
   );
+  // Defensive coercion: useQueryState shares state across hook instances
+  // by URL key, and the `time-period` param is also read elsewhere as a
+  // plain string. On URL transitions the parsed-array hook can briefly
+  // see a string. Always normalize to an array before consumption.
+  const periods: string[] = Array.isArray(selectedTimePeriod)
+    ? selectedTimePeriod.filter(Boolean)
+    : [];
 
   const districtOptions = sanitizeOptions([
-    { label: 'Select a district', value: '' },
+    { label: t('division.placeholder'), value: '' },
     ...DistrictDropDownOption,
   ]);
 
+  const childTypeLabel =
+    toTitleCase(currentSelectedState.child_type) || t('subdivision.defaultType');
   const revenueOptions = sanitizeOptions([
     {
       label: !districtCode
-        ? 'Select a district to enable'
-        : `Select a ${toTitleCase(currentSelectedState.child_type)}`,
+        ? t('division.disabledHint')
+        : t('subdivision.placeholder', { type: childTypeLabel }),
       value: '',
     },
     ...(getRevenueCircleOptionsForDistrict(districtCode) || []),
@@ -122,12 +133,8 @@ export default function FilterDropdownOptions({
   // do not fall back to the latest date – leave the picker empty so the label acts as a placeholder.
   const hasExplicitEmptyTimePeriod = timePeriod === '';
   const monthPickerValue =
-    selectedTimePeriod &&
-    Array.isArray(selectedTimePeriod) &&
-    selectedTimePeriod.filter(Boolean).length > 0
-      ? safeParseDate(
-          getLatestDate(selectedTimePeriod.filter(Boolean)) || '2023-08-01'
-        )
+    periods.length > 0
+      ? safeParseDate(getLatestDate(periods) || '2023-08-01')
       : hasExplicitEmptyTimePeriod
         ? undefined
         : getDefaultDate(timePeriod);
@@ -136,7 +143,7 @@ export default function FilterDropdownOptions({
     <div>
       <div className="mb-2 flex items-start justify-evenly gap-3 p-4 pb-0 pt-0">
         <Select
-          label="Select District"
+          label={t('division.label')}
           value={districtCode || ''}
           name="district-select"
           className="flex-1"
@@ -148,7 +155,7 @@ export default function FilterDropdownOptions({
         />
 
         <Select
-          label={`Select ${toTitleCase(currentSelectedState.child_type)}`}
+          label={t('subdivision.label', { type: childTypeLabel })}
           value={revenueCode || ''}
           name="revenue-circle-select"
           className="flex-1"
@@ -165,17 +172,14 @@ export default function FilterDropdownOptions({
               // TODO: add support for name, className, minValue and maxValue in opub-ui
               // name="time-period-select"
               // className="flex-1"
-              selectedValues={
-                selectedTimePeriod
-                  ?.filter(Boolean)
-                  ?.map((timePeriod: string) => {
-                    const [year, month] = timePeriod.split('_');
-                    return safeParseDate(`${year}-${month?.padStart(2, '0')}-01`);
-                  })
-                  ?.filter((d): d is CalendarDate => d !== undefined) || []
-              }
+              selectedValues={periods
+                .map((timePeriod: string) => {
+                  const [year, month] = timePeriod.split('_');
+                  return safeParseDate(`${year}-${month?.padStart(2, '0')}-01`);
+                })
+                .filter((d): d is CalendarDate => d !== undefined)}
               // defaultValues={getDefaultDate(timePeriod || '')}
-              label="Select Months"
+              label={t('month.labelMulti')}
               minValue={minValue}
               maxValue={maxValue}
               onChange={(dates: any) => {
@@ -200,7 +204,7 @@ export default function FilterDropdownOptions({
             <MonthPicker
               name="time-period-select"
               value={monthPickerValue}
-              label="Select Month"
+              label={t('month.label')}
               minValue={minValue}
               maxValue={maxValue}
               onChange={(date: any) => {

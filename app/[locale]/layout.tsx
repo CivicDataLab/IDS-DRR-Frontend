@@ -1,62 +1,75 @@
 import React from 'react';
 import { Inter as FontSans } from 'next/font/google';
-import { notFound } from 'next/navigation';
 import Script from 'next/script';
-import { captureException } from '@sentry/nextjs';
 import { NextIntlClientProvider } from 'next-intl';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import {
+  getMessages,
+  getTranslations,
+  unstable_setRequestLocale,
+} from 'next-intl/server';
 
-import { mainConfig, siteConfig } from '@/config/site';
+import { Footer } from '@/config/branding';
+import {
+  appleIcon,
+  favicon,
+  locales,
+  openGraphImage,
+  siteUrl,
+} from '@/config/site';
 import { getPrefLangCookie } from '@/lib/serverUtils';
 import { MainNav } from '@/components/main-nav';
 import { MediaRendering } from '@/components/media-rendering';
 import { MobileNav } from '@/components/mobile-nav';
 import Provider from '@/components/provider';
-import locales from '../../config/locales';
-import { Footer } from './components/footer';
 
 const fontSans = FontSans({ subsets: ['latin'], display: 'swap' });
 
 export function generateStaticParams() {
-  return locales.all.map((locale) => ({ locale }));
+  return locales.map((locale) => ({ locale }));
 }
 
-export async function generateMetadata() {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'site' });
+  const name = t('name');
+  const description = t('description');
+  const creator = t('creator');
+  const creatorUrl = t('creatorUrl');
   return {
-    metadataBase: new URL(siteConfig.url),
     title: {
-      default: siteConfig.name,
-      template: `%s | ${siteConfig.name}`,
+      default: name,
+      template: `%s | ${name}`,
     },
-    description: siteConfig.description,
-    keywords: ['Climate Actions', 'Assam', 'DRR', 'Disaster', 'Risk Score'],
-    authors: [
-      {
-        name: 'CivicDataLab',
-        url: 'https://civicdatalab.in/',
+    description,
+    keywords: t('keywords').split(',').map((k) => k.trim()),
+    authors: [{ name: creator, url: creatorUrl }],
+    creator,
+    ...(siteUrl && {
+      metadataBase: new URL(siteUrl),
+      openGraph: {
+        type: 'website',
+        locale: t('ogLocale'),
+        url: siteUrl,
+        title: name,
+        description,
+        siteName: name,
+        ...(openGraphImage && { images: [openGraphImage] }),
       },
-    ],
-    creator: 'CivicDataLab',
-    openGraph: {
-      type: 'website',
-      locale: 'en_US',
-      url: siteConfig.url,
-      title: siteConfig.name,
-      description: siteConfig.description,
-      siteName: siteConfig.name,
-      images: [`${siteConfig.url}/og.png`],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: siteConfig.name,
-      description: siteConfig.description,
-      images: [`${siteConfig.url}/og.png`],
-      creator: 'CivicDataLab',
-    },
+      twitter: {
+        card: 'summary_large_image',
+        title: name,
+        description,
+        creator,
+        ...(openGraphImage && { images: [openGraphImage] }),
+      },
+    }),
     icons: {
-      icon: '/favicon.ico',
-      shortcut: '/favicon-16x16.png',
-      apple: `${siteConfig.url}/apple-touch-icon.png`,
+      ...(favicon && { icon: favicon }),
+      ...(appleIcon && { apple: appleIcon }),
     },
   };
 }
@@ -68,15 +81,9 @@ export default async function LocaleLayout({
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
-  let locale = (await params).locale;
-  let messages;
-  try {
-    messages = (await import(`../../locales/${locale}.json`)).default;
-  } catch (error) {
-    captureException(error);
-    notFound();
-  }
+  const locale = (await params).locale;
   unstable_setRequestLocale(locale);
+  const messages = await getMessages();
 
   // Get the language preference from cookies
   const prefLangCookie = await getPrefLangCookie();
@@ -120,17 +127,19 @@ export default async function LocaleLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Provider>
             <MediaRendering minWidth={null} maxWidth="1023">
-              <MobileNav data={mainConfig} />
+              <MobileNav />
             </MediaRendering>
             <MediaRendering minWidth="1024" maxWidth={null}>
-              <MainNav data={mainConfig} prefLangCookie={prefLangCookie} />
+              <MainNav prefLangCookie={prefLangCookie} />
             </MediaRendering>
 
             {children}
 
-            <MediaRendering minWidth="1024" maxWidth={null}>
-              <Footer />
-            </MediaRendering>
+            {Footer && (
+              <MediaRendering minWidth="1024" maxWidth={null}>
+                <Footer />
+              </MediaRendering>
+            )}
           </Provider>
         </NextIntlClientProvider>
       </body>

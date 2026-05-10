@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Button,
   Drawer,
@@ -38,6 +39,7 @@ export const MobileFilterBox = ({
   handleClearFilters: () => void;
   toggleDrawerCallback: () => void;
 }) => {
+  const t = useTranslations('common.filters');
   const toggleDrawer = () => {
     toggleDrawerCallback();
   };
@@ -47,13 +49,13 @@ export const MobileFilterBox = ({
       <DrawerContent>
         <DrawerHeader className=" h-[56px] border-b-1 border-solid border-[#C9CCCF]">
           <DrawerTitle className="flex justify-between ">
-            <Text variant="headingMd">Filters</Text>
+            <Text variant="headingMd">{t('heading')}</Text>
             <IconButton
               icon={Icons.cross}
               onClick={toggleDrawer}
               color="default"
             >
-              Close
+              {t('close')}
             </IconButton>
           </DrawerTitle>
         </DrawerHeader>
@@ -91,7 +93,7 @@ export const MobileFilterBox = ({
             size="large"
           >
             <Text variant="bodyLg" fontWeight="bold" color="default">
-              Clear All
+              {t('clearAll')}
             </Text>
           </Button>
           <DrawerClose onClick={toggleDrawer} asChild>
@@ -101,7 +103,7 @@ export const MobileFilterBox = ({
               size="large"
             >
               <Text variant="bodyLg" fontWeight="bold" color="default">
-                Apply
+                {t('apply')}
               </Text>
             </Button>
           </DrawerClose>

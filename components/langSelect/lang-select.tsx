@@ -3,14 +3,8 @@ import Script from 'next/script';
 import { IconWorld } from '@tabler/icons-react';
 import { Select } from 'opub-ui';
 
+import { languages } from '@/config/site';
 import styles from './styles.module.scss';
-
-// Languages dropdown list of languages and codes for Google Translate
-const languages = [
-  { label: 'English', value: 'en' },
-  { label: 'हिन्दी', value: 'hi' },
-  { label: 'অসমীয়া', value: 'as' },
-];
 
 export function TranslateDropdown({
   prefLangCookie,

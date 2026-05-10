@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { parseAsString, useQueryState } from 'next-usequerystate';
+import { useTranslations } from 'next-intl';
 import { Spinner, Tab, TabList, TabPanel, Tabs, Text } from 'opub-ui';
 
 import {
@@ -17,6 +18,7 @@ import {
   ANALYTICS_TABLE_DATA,
   PLATFORM_STATES_LIST,
 } from '@/config/graphql/analaytics-queries';
+import { features } from '@/config/site';
 import { GraphQL } from '@/lib/api';
 import { MediaRendering } from '@/components/media-rendering';
 import { getLatestDate } from '../utils/utils';
@@ -36,6 +38,8 @@ interface Option {
 }
 
 export function AnalyticsMainLayout() {
+  const t = useTranslations('analytics');
+  const tCommon = useTranslations('common');
   const searchParams = useSearchParams();
   // Default to overall flood risk when URL doesn't specify an indicator.
   const indicator = searchParams.get('indicator') || 'risk-score';
@@ -312,16 +316,17 @@ export function AnalyticsMainLayout() {
   ]);
   // Data used for map legends and factor labels (must match currently selected `indicator`)
   const mapIndicatorsData = useQuery<any>({
-    queryKey: [`indicators_${indicator}`],
+    queryKey: [`indicators_${indicator}_${currentSelectedState?.code}`],
     queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_INDICATORS,
         {
           indcFilter: { slug: indicator },
+          stateCode: currentSelectedState?.code,
         } as any
       ),
-    enabled: Boolean(isMapView),
+    enabled: Boolean(isMapView && currentSelectedState?.code),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
@@ -329,17 +334,20 @@ export function AnalyticsMainLayout() {
 
   // Data used for the state-level "About indicator" pane (always root list)
   const aboutIndicatorsData = useQuery<any>({
-    queryKey: ['indicators_risk-score'],
+    queryKey: [`indicators_risk-score_${currentSelectedState?.code}`],
     queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_INDICATORS,
         {
           indcFilter: { slug: 'risk-score' },
+          stateCode: currentSelectedState?.code,
         } as any
       ),
     // Avoid a duplicate request when the selected indicator is already risk-score.
-    enabled: Boolean(isMapView && indicator !== 'risk-score'),
+    enabled: Boolean(
+      isMapView && indicator !== 'risk-score' && currentSelectedState?.code
+    ),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
@@ -469,7 +477,7 @@ export function AnalyticsMainLayout() {
     return (
       <div className="flex h-[calc(100dvh_-_140px)] flex-col place-content-center items-center">
         <Spinner color="highlight" />
-        <Text>Loading state data...</Text>
+        <Text>{t('loading')}</Text>
       </div>
     );
   }
@@ -502,21 +510,21 @@ export function AnalyticsMainLayout() {
           >
             <TabList fitted className="p-2 pb-0">
               <Tab theme="climate" value="map">
-                Map View
+                {t('views.long.map')}
               </Tab>
               <div
                 className={`h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'map' || view === 'chart' ? 'hidden' : ''}`}
               />
-              {process.env.NEXT_PUBLIC_BACKEND_URL && (
+              {features.chart && (
                 <Tab theme="climate" value="chart">
-                  Chart View
+                  {t('views.long.chart')}
                 </Tab>
               )}
               <div
                 className={`h-14 border-l-1 border-solid border-baseGraySlateSolid8 ${view === 'chart' || view === 'table' ? 'hidden' : ''}`}
               />
               <Tab theme="climate" value="table">
-                Table View
+                {t('views.long.table')}
               </Tab>
             </TabList>
             <TabPanel value="map">
@@ -535,7 +543,7 @@ export function AnalyticsMainLayout() {
                 statesListData?.isFetching ? (
                   <div className="flex h-full flex-col place-content-center items-center">
                     <Spinner color="highlight" />
-                    <Text>Loading...</Text>
+                    <Text>{tCommon('loading')}</Text>
                   </div>
                 ) : !timePeriodSelected && hasExplicitTimePeriodParam ? (
                   <div className="flex h-[calc(100dvh_-_400px)] flex-col place-content-center items-center">
@@ -548,7 +556,7 @@ export function AnalyticsMainLayout() {
                       (mapData?.isFetching && revenueMapData?.isFetching)) && (
                       <div className="flex h-full flex-col place-content-center items-center">
                         <Spinner color="highlight" />
-                        <Text>Loading...</Text>
+                        <Text>{tCommon('loading')}</Text>
                       </div>
                     )}
 
@@ -617,7 +625,7 @@ export function AnalyticsMainLayout() {
                 )}
               </div>
             </TabPanel>
-            {process.env.NEXT_PUBLIC_BACKEND_URL && (
+            {features.chart && (
               <TabPanel value="chart">
                 {/* <div className=" mt-2 h-[calc(100dvh_-_140px)]"> */}
                 <div className="mt-2 h-full overflow-hidden">
@@ -679,15 +687,17 @@ export function OutputWindowComponent({
   });
 
   const indicatorDescriptions: any = useQuery({
-    queryKey: [`indicators_${indicator}`],
+    queryKey: [`indicators_${indicator}_${currentState?.code}`],
     queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_INDICATORS,
         {
           indcFilter: { slug: indicator },
+          stateCode: currentState?.code,
         }
       ),
+    enabled: Boolean(currentState?.code),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,

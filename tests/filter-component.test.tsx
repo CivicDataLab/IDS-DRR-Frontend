@@ -229,7 +229,7 @@ describe('FilterComp', () => {
       const selectRevenueButton = screen.getByText('Select Revenue');
       await user.click(selectRevenueButton);
 
-      expect(screen.getByText('Please select a district')).toBeInTheDocument();
+      expect(screen.getByText('Please select a division')).toBeInTheDocument();
     });
 
     it('renders month filter options when drawer is open', async () => {
@@ -305,7 +305,7 @@ describe('FilterComp', () => {
       await user.click(selectRevenueButton);
 
       // Verify that revenue circle filter is accessible
-      expect(screen.getByText('Please select a district')).toBeInTheDocument();
+      expect(screen.getByText('Please select a division')).toBeInTheDocument();
 
       // The revenue options should be available after district selection
       // This tests the basic functionality without requiring specific revenue items

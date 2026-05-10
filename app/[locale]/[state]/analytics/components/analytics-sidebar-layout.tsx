@@ -2,8 +2,10 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Select, Spinner, Text } from 'opub-ui';
 
+import { routes } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
 import { FactorList } from './factor-list';
@@ -20,6 +22,7 @@ export function AnalyticsSideBarLayout({
   currentState,
   statesList,
 }: DashboardLayoutProps) {
+  const tCommon = useTranslations('common');
   const [isClient, setIsClient] = React.useState(false);
 
   // To prevent a hydration mismatch fix:https://nextjs.org/docs/messages/react-hydration-error.
@@ -32,7 +35,7 @@ export function AnalyticsSideBarLayout({
       fallback={
         <div className="flex h-[100vh] flex-col  place-content-center items-center">
           <Spinner color="highlight" />
-          <Text>Loading...</Text>
+          <Text>{tCommon('loading')}</Text>
         </div>
       }
     >
@@ -48,14 +51,15 @@ export function AnalyticsSideBarLayout({
       ) : (
         <div className="flex h-[100vh] flex-col  place-content-center items-center">
           <Spinner color="highlight" />
-          <Text>Loading...</Text>
+          <Text>{tCommon('loading')}</Text>
         </div>
       )}
     </React.Suspense>
   );
 }
 
-export function IndicatorListWrapper({ statesList, currentState }: any) {
+function IndicatorListWrapper({ statesList, currentState }: any) {
+  const t = useTranslations('analytics.sidebar');
   const router = useRouter();
 
   return (
@@ -81,7 +85,7 @@ export function IndicatorListWrapper({ statesList, currentState }: any) {
             <div>
               <div className="mb-5 pl-4">
                 <Text className="text-textSubdued" fontWeight="bold">
-                  ANALYTICS DASHBOARD
+                  {t('heading')}
                 </Text>
               </div>
 
@@ -96,17 +100,15 @@ export function IndicatorListWrapper({ statesList, currentState }: any) {
                       value: state.slug,
                     };
                   })}
-                  onChange={(e) => {
-                    router.push(
-                      `/${e}/analytics/?indicator=risk-score&view=map`
-                    );
+                  onChange={(slug) => {
+                    router.push(routes.analytics(slug));
                   }}
                 />
               </div>
 
               <div className="mb-5 pl-4">
                 <Text className="text-textSubdued" fontWeight="bold">
-                  INDICATORS
+                  {t('indicators')}
                 </Text>
               </div>
 

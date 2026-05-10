@@ -1,0 +1,28 @@
+// Periodic audit config. Run with:
+//   npx knip --config knip.no-tests.jsonc
+//
+// By default, knip treats test files as entry points. So, an export
+// consumed only by its own test still counts as "used". This config
+// excludes tests (and the Jest plugin) from the dependency graph.
+// Anything surfaced here is genuinely dead in shipped code.
+//
+// Fix findings by either deleting the export (and its test), or
+// un-exporting it if the export is used locally within its own file.
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  // These issue categories are false positives once tests are excluded:
+  // any test-only binary/dep shows up as unused.
+  "exclude": ["binaries", "dependencies", "devDependencies", "unlisted"],
+  // Disable the auto-detected Jest plugin so tests don't re-enter.
+  "jest": false,
+  "ignore": [
+    // See knip.jsonc
+    "config/codegen.ts",
+    "gql/generated/**",
+    "styles/tokens/_variables.css",
+    // Exclude tests
+    "tests/**",
+    "jest.config.ts",
+    "jest.setup.ts"
+  ]
+}
