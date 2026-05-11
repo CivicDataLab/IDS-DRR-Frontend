@@ -25,6 +25,7 @@ export const openGraphImage: string = config.openGraphImage ?? '';
 
 // Links
 export const userGuideLink: string = config.userGuideLink ?? '';
+export const userManualLink: string = config.userManualLink ?? '';
 export const docsLink: string = config.docsLink ?? '';
 
 // English is always loaded internally as the missing-key fallback,
@@ -42,6 +43,7 @@ export const features = {
   datasets: dataSpaceEnabled,
   aboutUs: config.features?.aboutUs ?? false,
   reports: config.features?.reports ?? false,
+  glossary: config.features?.glossary ?? false,
 };
 
 // Navigation

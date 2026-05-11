@@ -10,6 +10,7 @@
       "apply": "Apply",
       "reset": "Reset",
       "clearAll": "Clear All",
+      "all": "All",
       "close": "Close"
     },
     "copy": {
@@ -192,6 +193,40 @@
         "error": "Error downloading report: {error}"
       }
     }
+  },
+  "glossary": {
+    "heading": "Glossary",
+    "description": "Understand key terms used across the IDS-DRR platform",
+    "userManualLink": "User Manual",
+    "docsLink": "Full Documentation",
+    "search": {
+      "label": "Search",
+      "placeholder": "Search"
+    },
+    "detail": {
+      "headings": {
+        "definition": "Definition",
+        "methodology": "IDS-DRR Context",
+        "disasterMethodology": "How this differs across disaster contexts",
+        "usage": "Where You See It",
+        "significance": "Why It Matters",
+        "interpretation": "Contextual interpretation",
+        "misinterpretation": "Common misinterpretation",
+        "related": "Related terms"
+      },
+      "tabs": {
+        "policy": {
+          "title": "In Policy",
+          "heading": "Policy"
+        },
+        "model": {
+          "title": "In Model",
+          "heading": "Model"
+        }
+      },
+      "error": "Couldn’t load details for this term."
+    },
+    "empty": "No results found"
   },
   "datasets": {
     "search": {

@@ -1,12 +1,17 @@
-import { getGlossaryIndex } from '@/glossary/index';
+import { notFound } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import { Text } from 'opub-ui';
 
+import { features } from '@/config/site';
+import { getGlossaryIndex } from '@/glossary/index';
 import GlossaryClient from '@/components/glossary/glossary-client';
 import GlossaryHeaderNav from '@/components/glossary/glossary-header-nav';
 
 export const dynamic = 'force-static';
 
 export default async function GlossaryPage() {
+  if (!features.glossary) notFound();
+  const t = await getTranslations('glossary');
   const index = getGlossaryIndex();
 
   return (
@@ -14,14 +19,14 @@ export default async function GlossaryPage() {
       <div className="bg-[#222136]">
         <div className=" mx-auto mb-6 flex h-[300px] w-full max-w-6xl flex-col items-start justify-center  space-y-4 p-4 lg:p-0">
           <Text variant="heading4xl" className="text-[#FFC152]">
-            Glossary
+            {t('heading')}
           </Text>
           <Text
             variant="headingLg"
             fontWeight="regular"
             className="text-[#fff]"
           >
-            Understand key terms used across the IDS-DRR platform
+            {t('description')}
           </Text>
           <GlossaryHeaderNav />
         </div>

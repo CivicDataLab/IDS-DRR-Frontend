@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useTranslations } from 'next-intl';
 import type { GlossaryIndexItem } from '@/glossary/index';
 import { glossaryTags, slugsByTag, termsBySlug } from '@/glossary/index';
 import {
@@ -39,6 +40,8 @@ function groupByLetter(items: GlossaryIndexItem[]) {
 }
 
 export default function GlossaryClient({ index }: Props) {
+  const t = useTranslations('glossary');
+  const tFilters = useTranslations('common.filters');
   const [selectedTag, setSelectedTag] = React.useState<string | null>(null);
   const [query, setQuery] = React.useState<string>('');
   const deferredQuery = React.useDeferredValue(query);
@@ -80,8 +83,8 @@ export default function GlossaryClient({ index }: Props) {
   return (
     <div className="mx-auto w-full max-w-6xl space-y-4">
       <SearchInput
-        placeholder="Search"
-        label="Search"
+        placeholder={t('search.placeholder')}
+        label={t('search.label')}
         name="search"
         className="w-full pt-10"
         defaultValue={query}
@@ -101,7 +104,7 @@ export default function GlossaryClient({ index }: Props) {
             fillColor={selectedTag ? '#f6f6f7' : '#96d1ba'}
             color="standard"
           >
-            All
+            {tFilters('all')}
           </Tag>
         </div>
         {glossaryTags.map((filter) => {
@@ -177,7 +180,7 @@ export default function GlossaryClient({ index }: Props) {
                       <div className="rounded-2 bg-baseSurfaceSubdued px-8">
                         {isError && (
                           <Text color="critical" variant="bodySm">
-                            Couldn’t load details for this term.
+                            {t('detail.error')}
                           </Text>
                         )}
 
@@ -185,7 +188,7 @@ export default function GlossaryClient({ index }: Props) {
                           <div className="mt-3 flex flex-col gap-8 py-3">
                             <div className="border bg-backgroundSolid flex flex-col gap-2 rounded-2 ">
                               <Text variant="headingMd" color="default">
-                                Definition
+                                {t('detail.headings.definition')}
                               </Text>
 
                               <Text variant="bodyMd" color="default">
@@ -195,15 +198,15 @@ export default function GlossaryClient({ index }: Props) {
 
                             <div className="grid gap-3 rounded-2 bg-[#fff] md:grid-cols-3">
                               <DetailsCard
-                                title="IDS-DRR Context"
+                                title={t('detail.headings.methodology')}
                                 body={full.details?.ids_drr}
                               />
                               <DetailsCard
-                                title="Where You See It"
+                                title={t('detail.headings.usage')}
                                 body={full.details?.where_seen}
                               />
                               <DetailsCard
-                                title="Why It Matters"
+                                title={t('detail.headings.significance')}
                                 body={full.details?.why_it_matters}
                               />
                             </div>
@@ -217,7 +220,7 @@ export default function GlossaryClient({ index }: Props) {
                               full.disaster_differences.length > 0 && (
                                 <div className="border flex flex-col gap-2 rounded-2 bg-baseSurfacePressed p-4">
                                   <Text variant="headingMd" color="default">
-                                    How this differs across disaster contexts
+                                    {t('detail.headings.disasterMethodology')}
                                   </Text>
                                   <div className="mt-3 grid gap-3 md:grid-cols-3">
                                     {full.disaster_differences.map(
@@ -247,14 +250,14 @@ export default function GlossaryClient({ index }: Props) {
                               )}
 
                             <InfoCard
-                              title="Related terms"
+                              title={t('detail.headings.related')}
                               body={full?.related_terms?.join(', ')}
                             />
 
                             {full.common_misinterpretation && (
                               <div className="border flex flex-col gap-2 rounded-2 bg-baseAlertSubued p-4">
                                 <Text variant="headingMd" color="default">
-                                  Common misinterpretation
+                                  {t('detail.headings.misinterpretation')}
                                 </Text>
 
                                 <Text variant="bodyMd" color="default">
@@ -275,7 +278,7 @@ export default function GlossaryClient({ index }: Props) {
       ) : (
         <div className="flex h-20 flex-col items-center justify-center">
           <Text variant="headingLg" color="default">
-            No results found
+            {t('empty')}
           </Text>
         </div>
       )}
@@ -316,23 +319,24 @@ function DetailsCard({ title, body }: { title: string; body: string }) {
 }
 
 function ContextTabs({ policy, model }: { policy?: string; model?: string }) {
+  const t = useTranslations('glossary.detail');
   if (!policy && !model) return null;
   return (
     <div className="border flex flex-col gap-4 rounded-2 bg-baseSurfacePressed p-4">
       <Text variant="headingMd" color="default">
-        Contextual interpretation
+        {t('headings.interpretation')}
       </Text>
 
       <Tabs defaultValue="policy">
         <TabList>
-          {policy && <Tab value="policy">In Policy</Tab>}
-          {model && <Tab value="model">In Model</Tab>}
+          {policy && <Tab value="policy">{t('tabs.policy.title')}</Tab>}
+          {model && <Tab value="model">{t('tabs.model.title')}</Tab>}
         </TabList>
         {policy && (
           <TabPanel value="policy" className="rounded-2 bg-[#fff]">
             <div className="flex flex-col gap-2 p-4">
               <Text variant="headingMd" color="default">
-                Policy
+                {t('tabs.policy.heading')}
               </Text>
               <Text variant="bodyMd" color="default">
                 {policy}
@@ -344,7 +348,7 @@ function ContextTabs({ policy, model }: { policy?: string; model?: string }) {
           <TabPanel value="model" className="rounded-2 bg-[#fff]">
             <div className="flex flex-col gap-2 p-4">
               <Text variant="headingMd" color="default">
-                Model
+                {t('tabs.model.heading')}
               </Text>
               <Text variant="bodyMd" color="default">
                 {model}
