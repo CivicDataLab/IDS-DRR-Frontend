@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+<<<<<<< HEAD
 import { getGlossaryIndex } from '@/glossary/index';
 import {
   getTranslations,
@@ -7,11 +8,19 @@ import {
 import { Text } from 'opub-ui';
 
 import { features } from '@/config/site';
+=======
+import { getTranslations } from 'next-intl/server';
+import { Text } from 'opub-ui';
+
+import { features } from '@/config/site';
+import { getGlossaryIndex } from '@/glossary/index';
+>>>>>>> edaa4d9 (i18n: Extract text into messages)
 import GlossaryClient from '@/components/glossary/glossary-client';
 import GlossaryHeaderNav from '@/components/glossary/glossary-header-nav';
 
 export const dynamic = 'force-static';
 
+<<<<<<< HEAD
 export default async function GlossaryPage({
   params,
 }: {
@@ -23,6 +32,11 @@ export default async function GlossaryPage({
   if (!features.glossary) notFound();
 
   const t = await getTranslations({ locale, namespace: 'glossary' });
+=======
+export default async function GlossaryPage() {
+  if (!features.glossary) notFound();
+  const t = await getTranslations('glossary');
+>>>>>>> edaa4d9 (i18n: Extract text into messages)
   const index = getGlossaryIndex();
 
   return (
