@@ -12,20 +12,19 @@ import {
 import { InfoSquare } from '@/components/InfoCircle';
 import { useQuery } from '@tanstack/react-query';
 import { useQueryState } from 'next-usequerystate';
+import { useTranslations } from 'next-intl';
 import { Button, Icon, Text, Tooltip } from 'opub-ui';
 
-import { documentationLink, Factors, RiskText } from '@/config/consts';
 import { ANALYTICS_TIME_PERIODS } from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
+import { docsLink } from '@/config/site';
+import { useFormatNumber } from '@/hooks/use-format-number';
+import { Factors } from '@/lib/analytics';
 import { cn, formatDateString } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
-import {
-  formatNumberToIndianSystem,
-  getFactorNameBySlug,
-  getLatestDate,
-} from '../utils/utils';
-import { ScoreInfo } from './revenue-circle-accordion';
+import { getFactorNameBySlug, getLatestDate } from '../utils/utils';
+import { ScoreInfo } from './score-info';
 import styles from './styles.module.scss';
 
 export function OutputWindow({
@@ -36,6 +35,11 @@ export function OutputWindow({
   currentState,
   onClose,
 }: any) {
+  const t = useTranslations('analytics.detail');
+  const tCommon = useTranslations('common');
+  const tRisk = useTranslations('analytics.risk');
+  const tAnalytics = useTranslations('analytics');
+  const formatNumber = useFormatNumber();
   const searchParams = useSearchParams();
   let processedTime = getLatestDate(
     searchParams.get('time-period')?.split(',') || []
@@ -98,7 +102,7 @@ export function OutputWindow({
     const descriptionObject = indicatorDescriptions.find(
       (desc: { slug: string }) => desc.slug === indicatorSlug
     );
-    return descriptionObject ? descriptionObject.long_description : 'NA';
+    return descriptionObject ? descriptionObject.long_description : tCommon('na');
   }
 
   const IconMap: { [key: string]: React.ReactNode } = {
@@ -154,7 +158,7 @@ export function OutputWindow({
             <Button
               onClick={onClose}
               kind="tertiary"
-              aria-label="Close details"
+              aria-label={t('close')}
             >
               <Icon source={Icons.cross} />
             </Button>
@@ -166,7 +170,9 @@ export function OutputWindow({
             DataBasedOnBoundary[0] && (
               <>
                 <Text className="uppercase" variant="bodyLg">
-                  {DataBasedOnBoundary[0]['district']} District
+                  {tAnalytics('divisionHeading', {
+                    name: DataBasedOnBoundary[0]['district'],
+                  })}
                 </Text>
                 <br />
                 <div className="h-2"></div>
@@ -179,8 +185,12 @@ export function OutputWindow({
               variant="headingLg"
               fontWeight="semibold"
             >
-              {RegionName}{' '}
-              {RevenueRegion ? currentState.child_type : 'District'}
+              {RevenueRegion
+                ? tAnalytics('subdivisionHeading', {
+                    name: RegionName,
+                    type: currentState.child_type,
+                  })
+                : tAnalytics('divisionHeading', { name: RegionName })}
             </Text>
           )}
           <div className="flex items-center justify-between self-stretch">
@@ -188,8 +198,8 @@ export function OutputWindow({
               <Text variant="bodyMd" color="subdued" fontWeight="regular">
                 {indicator === 'government-response' ||
                 indicator.includes('fy-cumsum')
-                  ? `Cumulative for the financial year till ${formattedTimePeriod}`
-                  : `Calculated for ${formattedTimePeriod}`}
+                  ? t('cumulativeFiscalYearUntil', { date: formattedTimePeriod })
+                  : t('calculatedFor', { date: formattedTimePeriod })}
               </Text>
             </div>
           </div>
@@ -211,7 +221,7 @@ export function OutputWindow({
                     {!Factors.includes(indicator) && (
                       <Text variant="bodyMd" fontWeight="bold">
                         {/* {data[indicator]['value']} */}
-                        {formatNumberToIndianSystem(data[indicator]['value'])}
+                        {formatNumber(data[indicator]['value'])}
                       </Text>
                     )}
                   </div>
@@ -224,9 +234,7 @@ export function OutputWindow({
                       fontWeight="semibold"
                     >
                       {Factors.includes(indicator) &&
-                        RiskText[parseInt(data[indicator]['value'])][
-                          'indicatorText'
-                        ]}
+                        tRisk(String(parseInt(data[indicator]['value'])) as RiskLevel)}
                     </Text>
                     <Tooltip
                       content={
@@ -246,9 +254,12 @@ export function OutputWindow({
                 {Factors.includes(indicator) && (
                   <div className="mt-5 flex flex-col gap-2">
                     <Text className="text-baseGraySlateSolid11">
-                      Some of the indicators contributing to{' '}
-                      {getFactorNameBySlug(indicatorDescriptions, indicator)}{' '}
-                      are
+                      {t('contributingIndicators', {
+                        name: getFactorNameBySlug(
+                          indicatorDescriptions,
+                          indicator
+                        ),
+                      })}
                     </Text>
                     <OtherFactorScores
                       factorData={indicatorDescriptions}
@@ -263,29 +274,30 @@ export function OutputWindow({
                 )}
               </div>
             ))}
-            <div className="px-1 py-3">
-              {/* TODO: Add the source data link here dynamically from api */}
-              <a
-                href={documentationLink}
-                // onClick={(event: any) => handleRedirect(event, learnMoreLink)}
-                target="_blank"
-                className="rounded-lg flex h-12 w-full items-center justify-between gap-2 rounded-2 bg-[#F6F6F7] px-3 py-3"
-              >
-                <Text
-                  variant="bodyMd"
-                  fontWeight="semibold"
-                  className="text-[#3E7844]"
+            {docsLink && (
+              <div className="px-1 py-3">
+                {/* TODO: Add the source data link here dynamically from api */}
+                <a
+                  href={docsLink}
+                  target="_blank"
+                  className="rounded-lg flex h-12 w-full items-center justify-between gap-2 rounded-2 bg-[#F6F6F7] px-3 py-3"
                 >
-                  {isParentIndicator
-                    ? 'Read the Documentation'
-                    : 'Explore Source Data'}
-                </Text>
-                <Icon
-                  source={Icons.IconArrowUpRight}
-                  className="text-[#3E7844]"
-                />
-              </a>
-            </div>
+                  <Text
+                    variant="bodyMd"
+                    fontWeight="semibold"
+                    className="text-[#3E7844]"
+                  >
+                    {isParentIndicator
+                      ? t('docsLink')
+                      : t('sourceLink')}
+                  </Text>
+                  <Icon
+                    source={Icons.IconArrowUpRight}
+                    className="text-[#3E7844]"
+                  />
+                </a>
+              </div>
+            )}
           </section>
         </aside>
       </MediaRendering>
@@ -346,8 +358,12 @@ export function OutputWindow({
                       variant="headingLg"
                       fontWeight="semibold"
                     >
-                      {RegionName}{' '}
-                      {RevenueRegion ? currentState.child_type : 'District'}
+                      {RevenueRegion
+                        ? tAnalytics('subdivisionHeading', {
+                            name: RegionName,
+                            type: currentState.child_type,
+                          })
+                        : tAnalytics('divisionHeading', { name: RegionName })}
                     </Text>
                   )}
                 </div>
@@ -355,7 +371,7 @@ export function OutputWindow({
                   <Button
                     onClick={onClose}
                     kind="tertiary"
-                    aria-label="Close details"
+                    aria-label={t('close')}
                   >
                     <Icon source={Icons.cross} />
                   </Button>
@@ -367,7 +383,7 @@ export function OutputWindow({
                 <div className="mt-4 flex items-center gap-4">
                   {(districtCode !== null || revenueCode !== null) && (
                     <Text variant="bodyMd" color="subdued" fontWeight="regular">
-                      Cumulative till {formattedTimePeriod}
+                      {t('cumulativeUntil', { date: formattedTimePeriod })}
                     </Text>
                   )}
                 </div>
@@ -395,9 +411,7 @@ export function OutputWindow({
                           </Text>
                           {!Factors.includes(indicator) && (
                             <Text variant="bodyMd" fontWeight="bold">
-                              {formatNumberToIndianSystem(
-                                data[indicator]['value']
-                              )}
+                              {formatNumber(data[indicator]['value'])}
                               {/* {data[indicator]['value']} */}
                             </Text>
                           )}
@@ -411,9 +425,7 @@ export function OutputWindow({
                             fontWeight="semibold"
                           >
                             {Factors.includes(indicator) &&
-                              RiskText[parseInt(data[indicator]['value'])][
-                                'indicatorText'
-                              ]}
+                              tRisk(String(parseInt(data[indicator]['value'])) as RiskLevel)}
                           </Text>
                           <Tooltip
                             content={
@@ -433,12 +445,12 @@ export function OutputWindow({
                       {Factors.includes(indicator) && (
                         <div className="mt-5 flex flex-col gap-2">
                           <Text className="text-baseGraySlateSolid11">
-                            Some of the indicators contributing to{' '}
-                            {getFactorNameBySlug(
-                              indicatorDescriptions,
-                              indicator
-                            )}{' '}
-                            are
+                            {t('contributingIndicators', {
+                              name: getFactorNameBySlug(
+                                indicatorDescriptions,
+                                indicator
+                              ),
+                            })}
                           </Text>
                           <OtherFactorScores
                             factorData={indicatorDescriptions}
@@ -461,32 +473,7 @@ export function OutputWindow({
   );
 }
 
-export function OutputWindowHeader({ factorData, indicator }: any) {
-  const color = '#000';
-  const IconMap: { [key: string]: React.ReactNode } = {
-    'risk-score': <RiskScore color={color} />,
-    vulnerability: <Vulnerability color={color} />,
-    'flood-hazard': <FloodHazard color={color} />,
-    exposure: <Exposure color={color} />,
-    'government-response': <GovtResponse color={color} />,
-  };
-
-  return (
-    <div className="mb-5 mt-4 flex items-center justify-between">
-      <Text
-        variant="heading2xl"
-        fontWeight="regular"
-        className="flex items-center gap-2"
-      >
-        {IconMap[indicator || 'risk-score']}
-        {getFactorNameBySlug(factorData, indicator)}
-      </Text>
-      {/* <DownloadReport /> */}
-    </div>
-  );
-}
-
-export function OtherFactorScores({
+function OtherFactorScores({
   factorData,
   data,
   boundary,

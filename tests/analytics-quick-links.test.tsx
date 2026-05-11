@@ -33,13 +33,6 @@ jest.mock('next/link', () => ({
   ),
 }));
 
-// Mock the constants
-jest.mock('@/config/consts', () => ({
-  AnalyticsQuickLinksText:
-    'Explore flood-risk profiles at the district and sub-district level across states in India, developed using the IDS-DRR data model',
-  AnalyticsURL: '/analytics/?indicator=risk-score&view=map',
-}));
-
 const mockedStates = [
   { slug: 'assam', latest_time_period: '2025_03' },
   { slug: 'himachal-pradesh', latest_time_period: '2025_06' },
@@ -47,6 +40,17 @@ const mockedStates = [
   { slug: 'bihar', latest_time_period: '2024_12' },
   { slug: 'uttar-pradesh', latest_time_period: '2025_01' },
 ];
+
+jest.mock('@/config/site', () => ({
+  ...jest.requireActual('@/config/site'),
+  states: [
+    { name: 'Assam', slug: 'assam', icon: '/assets/logo/states/Assam.svg', status: 'active' },
+    { name: 'Himachal Pradesh', slug: 'himachal-pradesh', icon: '/assets/logo/states/Hp.svg', status: 'active' },
+    { name: 'Odisha', slug: 'odisha', icon: '/assets/logo/states/Odisha.svg', status: 'active' },
+    { name: 'Bihar', slug: 'bihar', icon: '/assets/logo/states/Bihar.svg', status: 'active' },
+    { name: 'Uttar Pradesh', slug: 'uttar-pradesh', icon: '/assets/logo/states/Up.svg', status: 'active' },
+  ],
+}));
 
 jest.mock('@tanstack/react-query', () => ({
   useQuery: jest.fn(() => ({
@@ -66,12 +70,11 @@ describe('QuickLinks Component', () => {
   //   delete process.env.TIME_PERIOD;
   // });
 
-  it('renders the main section with correct aria-label', () => {
+  it('renders the main section labelled by its heading', () => {
     render(<QuickLinks />);
 
-    const section = screen.getByRole('region', {
-      name: 'Quick links to deep dive into different states',
-    });
+    // aria-labelledby points at the visible heading's id, so the accessible name matches the heading text.
+    const section = screen.getByRole('region', { name: 'Analytics Dashboard' });
     expect(section).toBeInTheDocument();
   });
 
@@ -83,7 +86,7 @@ describe('QuickLinks Component', () => {
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        'Explore flood-risk profiles at the district and sub-district level across states in India, developed using the IDS-DRR data model'
+        'Explore risk profiles across regions, developed using the underlying data model'
       )
     ).toBeInTheDocument();
   });
@@ -107,21 +110,14 @@ describe('QuickLinks Component', () => {
     expect(screen.getByText('Uttar Pradesh')).toBeInTheDocument();
   });
 
-  it('renders state cards with correct images and alt text', () => {
+  it('renders state card icons as decorative', () => {
     render(<QuickLinks />);
 
-    // Check for state images with correct alt text
-    expect(
-      screen.getByAltText('assam state boundary image')
-    ).toBeInTheDocument();
-    expect(screen.getByAltText('HP state boundary image')).toBeInTheDocument();
-    expect(
-      screen.getByAltText('Odisha state boundary image')
-    ).toBeInTheDocument();
-    expect(
-      screen.getByAltText('Bihar state boundary image')
-    ).toBeInTheDocument();
-    expect(screen.getByAltText('UP state boundary image')).toBeInTheDocument();
+    // State icons are decorative (alt=""). The accessible name comes from the adjacent state-name heading,
+    // so screen readers don't announce the icon twice.
+    const images = screen.getAllByRole('presentation');
+    expect(images.length).toBeGreaterThan(0);
+    images.forEach((img) => expect(img).toHaveAttribute('alt', ''));
   });
 
   it('renders state cards with correct navigation links', () => {
@@ -240,12 +236,10 @@ describe('QuickLinks Component', () => {
   it('maintains accessibility with proper ARIA labels', () => {
     render(<QuickLinks />);
 
-    // Main section should have descriptive aria-label
+    // Section uses aria-labelledby pointing at the heading id so the
+    // accessible name stays in sync with the heading automatically.
     const section = screen.getByRole('region');
-    expect(section).toHaveAttribute(
-      'aria-label',
-      'Quick links to deep dive into different states'
-    );
+    expect(section).toHaveAttribute('aria-labelledby', 'home-analytics-heading');
 
     // Navigation buttons should be accessible
     expect(screen.getByTestId('carousel-previous')).toBeInTheDocument();

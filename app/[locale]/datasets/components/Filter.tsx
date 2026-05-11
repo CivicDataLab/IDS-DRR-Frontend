@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Accordion,
   AccordionContent,
@@ -11,7 +12,7 @@ import {
 } from 'opub-ui';
 
 import { toTitleCase } from '@/lib/utils';
-import { Icons } from '@/components/icons';
+import Icons from '@/components/icons';
 
 interface FilterProps {
   setOpen?: (isOpen: boolean) => void;
@@ -26,6 +27,7 @@ const Filter: React.FC<FilterProps> = ({
   setSelectedOptions,
   selectedOptions,
 }) => {
+  const t = useTranslations('common.filters');
   const handleReset = () => {
     Object.keys(options).forEach((category) => {
       setSelectedOptions(category, []); // Reset selected options for each category
@@ -37,11 +39,11 @@ const Filter: React.FC<FilterProps> = ({
       <div className="mb-5 flex justify-between">
         <div className="flex w-full justify-between">
           <div>
-            <Text variant="headingMd">Filters</Text>
+            <Text variant="headingMd">{t('heading')}</Text>
           </div>
           <div>
             <Button kind="tertiary" onClick={handleReset}>
-              Reset
+              {t('reset')}
             </Button>
           </div>
         </div>

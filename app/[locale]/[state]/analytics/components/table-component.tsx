@@ -1,32 +1,30 @@
 import React, { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { Spinner, Table, Text } from 'opub-ui';
 
-import { Factors, RiskText } from '@/config/consts';
-import { formatNumberToIndianSystem } from '../utils/utils';
-
-type ColumnDefinition = {
-  accessorKey: string;
-  header: string;
-  id?: string;
-};
+import { useFormatNumber } from '@/hooks/use-format-number';
+import { Factors } from '@/lib/analytics';
 
 export function TableComponent({ data, isLoading }: any) {
-  function transformColumnData(data: ColumnDefinition[]) {
-    const transformed: { accessorKey: string; header: any; id?: string }[] = [];
+  const t = useTranslations('analytics.table');
+  const tCommon = useTranslations('common');
+  const tRisk = useTranslations('analytics.risk');
+  const formatNumber = useFormatNumber();
+  const columns = useMemo(() => {
+    if (!data?.length) return [];
     // Add district column
-    transformed.push(
+    const transformed: { accessorKey: string; header: any; id?: string }[] = [
       {
         accessorKey: 'region-name',
-        header: 'Region Name',
+        header: t('regionName'),
       },
       {
         accessorKey: 'region-type',
-        header: 'Region Boundary',
+        header: t('regionBoundary'),
       }
-    );
-
+    ];
     // Dynamically transform other properties
-    Object.entries(data).forEach(([key, item]) => {
+    Object.entries(data[0]).forEach(([key, item]) => {
       if (
         typeof item === 'object' &&
         item !== null &&
@@ -42,10 +40,11 @@ export function TableComponent({ data, isLoading }: any) {
     });
 
     return transformed;
-  }
+  }, [data, t]);
 
-  function transformRowData(data: Record<string, any>[]) {
-    const rows = data?.map((item) => {
+  const rows = useMemo(() => {
+    if (!data?.length) return [];
+    return data.map((item: Record<string, any>) => {
       const row: Record<string, any> = {};
       row['region-name'] = item['region-name'] as string;
       row['region-type'] = item.type;
@@ -53,32 +52,19 @@ export function TableComponent({ data, isLoading }: any) {
         const value = item[key];
         if (value !== null && typeof value === 'object' && 'value' in value) {
           row[key] = Factors.includes(key)
-            ? RiskText[parseInt((value as { value: string }).value)]?.[
-                'indicatorText'
-              ]
-            : formatNumberToIndianSystem(
-                (value as { value: any }).value
-              ).toString();
+            ? tRisk(String(parseInt((value as { value: string }).value)) as RiskLevel)
+            : formatNumber((value as { value: any }).value).toString();
         }
       });
       return row;
     });
-    return rows;
-  }
-
-  const columns = useMemo(() => {
-    return data?.length ? transformColumnData(data[0]) : [];
-  }, [data]);
-
-  const rows = useMemo(() => {
-    return data?.length ? transformRowData(data) : [];
-  }, [data]);
+  }, [data, formatNumber, tRisk]);
 
   if (isLoading) {
     return (
       <div className="flex h-[100vh] flex-col place-content-center items-center">
         <Spinner color="highlight" />
-        <Text>Loading...</Text>
+        <Text>{tCommon('loading')}</Text>
       </div>
     );
   }
@@ -86,7 +72,7 @@ export function TableComponent({ data, isLoading }: any) {
   if (!data || rows.length === 0 || columns.length === 0) {
     return (
       <div className="flex h-full flex-col place-content-center items-center">
-        <Text>No data available.</Text>
+        <Text>{t('empty')}</Text>
       </div>
     );
   }

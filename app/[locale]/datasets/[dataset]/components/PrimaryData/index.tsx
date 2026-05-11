@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Button, Icon, Menu, Spinner, Text, Tray } from 'opub-ui';
 
-import { copyCurrentURL, handleRedirect } from '@/lib/utils';
-import { Icons } from '@/components/icons';
+import { useCopyURL } from '@/hooks/use-copy-url';
+import Icons from '@/components/icons';
 import Metadata from '../Metadata';
 
 interface PrimaryDataProps {
@@ -15,6 +16,9 @@ interface PrimaryDataProps {
 const currentURL = typeof window !== 'undefined' ? window.location.href : '';
 
 const PrimaryData: React.FC<PrimaryDataProps> = ({ data, isLoading }) => {
+  const t = useTranslations('datasets');
+  const tCommon = useTranslations('common');
+  const copyURL = useCopyURL();
   const sourceMetadata = data.metadata.find(
     (item: any) => item.metadataItem.label === 'Source'
   );
@@ -34,14 +38,14 @@ const PrimaryData: React.FC<PrimaryDataProps> = ({ data, isLoading }) => {
         {sourceMetadata?.value && (
           <div className="flex flex-wrap items-center">
             <div className="flex gap-2">
-              <Text>Source:</Text>
+              <Text>{t('labels.source')}</Text>
               <Text>{sourceMetadata.value}</Text>
             </div>
           </div>
         )}
         <div
           className="flex sm:block md:block lg:hidden"
-          title="About the Dataset"
+          title={t('detail.about.heading')}
         >
           <Tray
             size="narrow"
@@ -56,7 +60,7 @@ const PrimaryData: React.FC<PrimaryDataProps> = ({ data, isLoading }) => {
                 >
                   <div className="flex items-center gap-2 py-2">
                     <Icon source={Icons.info} size={24} color="default" />
-                    <Text>Metadata</Text>
+                    <Text>{t('detail.metadata.heading')}</Text>
                   </div>
                 </Button>
               </div>
@@ -81,10 +85,16 @@ const PrimaryData: React.FC<PrimaryDataProps> = ({ data, isLoading }) => {
           <div>
             <Link
               href={sourceLink.value}
-              onClick={(event) => handleRedirect(event, sourceLink.value)}
+              onClick={(event) => {
+                event.preventDefault();
+                const url = sourceLink.value;
+                if (window.confirm(tCommon('redirectConfirm', { url }))) {
+                  window.open(url, '_blank');
+                }
+              }}
               className="flex gap-1 text-textInteractive underline"
             >
-              <Text color="interactive">Visit Source Website</Text>
+              <Text color="interactive">{t('detail.metadata.sourceLink')}</Text>
               <Icon source={Icons.link} color="interactive" />
             </Link>
           </div>
@@ -93,10 +103,16 @@ const PrimaryData: React.FC<PrimaryDataProps> = ({ data, isLoading }) => {
           <div>
             <Link
               href={githubLink.value}
-              onClick={(event) => handleRedirect(event, githubLink.value)}
+              onClick={(event) => {
+                event.preventDefault();
+                const url = githubLink.value;
+                if (window.confirm(tCommon('redirectConfirm', { url }))) {
+                  window.open(url, '_blank');
+                }
+              }}
               className="flex gap-1 text-textInteractive underline"
             >
-              <Text color="interactive">Go to Github Repo</Text>
+              <Text color="interactive">{t('detail.metadata.githubLink')}</Text>
               <Icon source={Icons.link} color="interactive" />
             </Link>
           </div>
@@ -111,7 +127,7 @@ const PrimaryData: React.FC<PrimaryDataProps> = ({ data, isLoading }) => {
                     variant="bodyMd"
                     className=" underline"
                   >
-                    Share dataset
+                    {t('detail.share')}
                   </Text>
                   <Icon source={Icons.share} color="interactive" />
                 </div>
@@ -119,7 +135,7 @@ const PrimaryData: React.FC<PrimaryDataProps> = ({ data, isLoading }) => {
             }
             items={[
               {
-                content: 'Facebook',
+                content: tCommon('social.facebook'),
                 icon: Icons.IconBrandFacebook,
                 onAction: () =>
                   window.open(
@@ -127,7 +143,7 @@ const PrimaryData: React.FC<PrimaryDataProps> = ({ data, isLoading }) => {
                   ),
               },
               {
-                content: 'LinkedIn',
+                content: tCommon('social.linkedin'),
                 icon: Icons.IconBrandLinkedin,
                 onAction: () =>
                   window.open(
@@ -135,7 +151,7 @@ const PrimaryData: React.FC<PrimaryDataProps> = ({ data, isLoading }) => {
                   ),
               },
               {
-                content: 'Twitter',
+                content: tCommon('social.twitter'),
                 icon: Icons.IconBrandX,
                 onAction: () =>
                   window.open(
@@ -143,9 +159,9 @@ const PrimaryData: React.FC<PrimaryDataProps> = ({ data, isLoading }) => {
                   ),
               },
               {
-                content: 'Copy Link',
+                content: tCommon('copy.trigger'),
                 icon: Icons.link,
-                onAction: () => copyCurrentURL(),
+                onAction: () => copyURL(),
               },
             ]}
           />

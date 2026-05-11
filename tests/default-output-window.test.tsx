@@ -17,6 +17,12 @@ jest.mock('@/lib/api', () => ({
   })),
 }));
 
+// Provide userGuideLink and docsLink so the CTAs render.
+jest.mock('@/config/site', () => ({
+  userGuideLink: 'https://example.com/user-guide',
+  docsLink: 'https://example.com/docs',
+}));
+
 // Mock MediaRendering component
 jest.mock('@/components/media-rendering', () => ({
   MediaRendering: ({ children }: any) => <div>{children}</div>,
@@ -147,7 +153,7 @@ describe('DefaultWindow', () => {
 
   it('displays the correct indicator title', () => {
     render(<DefaultWindow {...defaultProps} />);
-    expect(screen.getByText('Overall Flood Risk')).toBeInTheDocument();
+    expect(screen.getByText('Overall Risk')).toBeInTheDocument();
   });
 
   it('shows district data when available', () => {

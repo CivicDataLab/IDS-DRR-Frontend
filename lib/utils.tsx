@@ -72,145 +72,32 @@ export function formatDateString(
   return formattedDate;
 }
 
-export function deSlugify(slug: string) {
-  // Replace hyphens or underscores with spaces
-  const deSlugified = slug.replace(/[-_]/g, ' ');
-  // Capitalize the first letter of each word
-  return deSlugified.replace(/\b\w/g, (char) => char.toUpperCase());
-}
-
-export function slugify(string: string) {
-  return string
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, '') // Remove non-word characters (excluding spaces and hyphens)
-    .replace(/\s+/g, '-') // Replace spaces with hyphens
-    .replace(/--+/g, '-'); // Replace consecutive hyphens with a single hyphen
-}
-
-const convertMap: any = {
-  border: (value: { width: any; style: any; color: any }) => {
-    return `${value.width} ${value.style} ${value.color}`;
-  },
-  shadow: (value: {
-    offsetX: any;
-    offsetY: any;
-    blur: any;
-    spread: any;
-    color: any;
-  }) => {
-    return `${value.offsetX} ${value.offsetY} ${value.blur} ${value.spread} ${value.color}`;
-  },
-  default: (value: any) => {
-    return value;
-  },
-};
-
-export function convertValue(value: any, category: any) {
-  return convertMap[category] ? convertMap[category](value) : value;
-}
-
-export const blobToBase64 = function (blob: Blob) {
-  let reader = new FileReader();
-  reader.onload = function () {
-    let dataUrl: any = reader.result;
-    let base64 = dataUrl?.split(',')[1];
-
-    return base64;
-  };
-  reader.readAsDataURL(blob);
-};
-
-// function to convert bytes into friendly format
-export function bytesToSize(bytes: number) {
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-  if (bytes === 0) return '0 Byte';
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return `${Math.round(bytes / Math.pow(1024, i))} ${sizes[i]}`;
-}
-
-export const range = (len: number) => {
-  const arr = [];
-  for (let i = 0; i < len; i++) {
-    arr.push(i);
-  }
-  return arr;
-};
-
-export function handleRedirect(event: any, link: any) {
-  event.preventDefault();
-  const confirmation = window.confirm(
-    `You are being redirected to "${link}". `
-  );
-  if (confirmation) {
-    window.open(link, '_blank');
-  }
-}
-
-export function copyCurrentURL() {
-  const currentURL = window.location.href;
-
+export async function copyToClipboard(url: string): Promise<boolean> {
   if (navigator.clipboard) {
-    navigator.clipboard
-      .writeText(currentURL)
-      .then(() => {
-        alert('URL copied to clipboard!');
-      })
-      .catch(() => {
-        alert('Failed to copy URL.');
-      });
-  } else {
-    // For browsers not supporting clipboard API
-    const textArea = document.createElement('textarea');
-    textArea.value = currentURL;
-    textArea.style.position = 'fixed';
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-
     try {
-      const success = document.execCommand('copy');
-      alert(success ? 'URL copied to clipboard!' : 'Failed to copy URL.');
+      await navigator.clipboard.writeText(url);
+      return true;
     } catch {
-      alert('Failed to copy URL.');
+      return false;
     }
-
+  }
+  const textArea = document.createElement('textarea');
+  textArea.value = url;
+  textArea.style.position = 'fixed';
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  try {
+    return document.execCommand('copy');
+  } catch {
+    return false;
+  } finally {
     document.body.removeChild(textArea);
   }
 }
 
-export function copyDefinedURL(url: any) {
-  const currentURL = url;
-
-  if (navigator.clipboard) {
-    navigator.clipboard
-      .writeText(currentURL)
-      .then(() => {
-        alert('URL copied to clipboard!');
-      })
-      .catch(() => {
-        alert('Failed to copy URL.');
-      });
-  } else {
-    // For browsers not supporting clipboard API
-    const textArea = document.createElement('textarea');
-    textArea.value = currentURL;
-    textArea.style.position = 'fixed';
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-
-    try {
-      const success = document.execCommand('copy');
-      alert(success ? 'URL copied to clipboard!' : 'Failed to copy URL.');
-    } catch {
-      alert('Failed to copy URL.');
-    }
-
-    document.body.removeChild(textArea);
-  }
-}
-
-export function toTitleCase(str: string) {
+export function toTitleCase(str: string | null | undefined) {
+  if (!str) return '';
   return str.toLowerCase().replace(/\b\w/g, function (char: string) {
     return char.toUpperCase();
   });

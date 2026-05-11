@@ -26,42 +26,43 @@ jest.mock('@/components/MapChart', () => ({
 
 // Mock utils
 jest.mock('@/app/[locale]/[state]/analytics/utils/utils', () => ({
-  formatNumberToIndianSystem: jest.fn((value) => `formatted-${value}`),
   getFactorNameBySlug: jest.fn((factorData, slug) => `Factor ${slug}`),
   getUnitsBySlug: jest.fn((slug) => `units-${slug}`),
 }));
 
-// Mock config
-jest.mock('@/config/consts', () => ({
-  Factors: ['risk-score', 'exposure', 'vulnerability'],
-  RiskText: {
-    1: { indicatorText: 'Very Low Risk' },
-    2: { indicatorText: 'Low Risk' },
-    3: { indicatorText: 'Medium Risk' },
-    4: { indicatorText: 'High Risk' },
-    5: { indicatorText: 'Very High Risk' },
-  },
+jest.mock('@/hooks/use-format-number', () => ({
+  useFormatNumber: () => (value: number | string) => `formatted-${value}`,
 }));
 
-// Mock geo_json
-jest.mock('@/geo_json/hp_rivers_geojson', () => ({
-  hp_rivers_features: [
-    {
-      type: 'Feature',
-      properties: {
-        name: 'River A',
-        'risk-score': 3,
-      },
-      geometry: {
-        type: 'LineString',
-        coordinates: [
-          [0, 0],
-          [1, 1],
-        ],
-      },
-    },
-  ],
+jest.mock('@/lib/analytics', () => ({
+  Factors: ['risk-score', 'exposure', 'vulnerability'],
 }));
+
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    ok: true,
+    json: () =>
+      Promise.resolve({
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            properties: {
+              name: 'River A',
+              'risk-score': 3,
+            },
+            geometry: {
+              type: 'LineString',
+              coordinates: [
+                [0, 0],
+                [1, 1],
+              ],
+            },
+          },
+        ],
+      }),
+  })
+) as jest.Mock;
 
 describe('MapComponent', () => {
   const mockIndicator = 'risk-score';

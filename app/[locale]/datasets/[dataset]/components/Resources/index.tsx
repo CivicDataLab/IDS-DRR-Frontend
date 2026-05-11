@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
 import { Button, Spinner, Tag, Text } from 'opub-ui';
 
 import { DATASET_RESOURCES_QUERY } from '@/config/graphql/dataset-queries';
@@ -11,6 +12,7 @@ import { GraphQL } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
 
 const Resources = () => {
+  const t = useTranslations('datasets');
   const params = useParams();
 
   const { data, isLoading }: { data: any; isLoading: boolean } = useQuery({
@@ -62,7 +64,7 @@ const Resources = () => {
       ) : data && data?.datasetResources?.length > 0 ? (
         <>
           <Text variant="headingLg" className="mx-6 lg:mx-0">
-            Downloadable Resources
+            {t('detail.resources.heading')}
           </Text>
           <div className="mx-6 mt-5 flex flex-col gap-8 bg-surfaceDefault p-6  lg:mx-0">
             {data?.datasetResources.map((item: any, index: number) => (
@@ -76,7 +78,7 @@ const Resources = () => {
                     <Tag>{item.fileDetails.format}</Tag>
                   </div>
                   <div>
-                    <Text>Updated: </Text>
+                    <Text>{t('labels.updated')}</Text>
                     <Text>{formatDate(item.modified)}</Text>
                   </div>
                   <div className="flex flex-col">
@@ -96,7 +98,7 @@ const Resources = () => {
                         size="slim"
                         kind="tertiary"
                       >
-                        {showMore[index] ? 'Show less' : 'Show more'}
+                        {showMore[index] ? t('showLess') : t('showMore')}
                       </Button>
                     )}
                   </div>
@@ -108,7 +110,7 @@ const Resources = () => {
                     className="flex w-fit justify-center"
                   >
                     <Button className=" bg-[#71E57DB2] font-Bold text-basePureBlack hover:bg-[#71E57DB2] hover:text-basePureBlack">
-                      Download
+                      {t('detail.resources.download')}
                     </Button>
                   </Link>
                 </div>

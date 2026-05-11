@@ -7,6 +7,7 @@ import { Spinner } from 'opub-ui';
 
 import { DATASET_QUERY } from '@/config/graphql/dataset-queries';
 import { GraphQL } from '@/lib/api';
+import { routes } from '@/lib/routes';
 import BreadCrumbs from '.././components/BreadCrumbs';
 import Details from './components/Details';
 import Metadata from './components/Metadata';
@@ -37,8 +38,8 @@ const DatasetDetailsPage = () => {
     <main style={{ background: '#F0F9F1' }}>
       <BreadCrumbs
         data={[
-          { href: '/', label: 'Home' },
-          { href: '/datasets', label: 'Datasets' },
+          { href: routes.home, label: 'Home' },
+          { href: routes.datasets(), label: 'Datasets' },
           { href: '#', label: 'Dataset Details' },
         ]}
       />

@@ -57,7 +57,7 @@ import {
 
 type TablerIconComponent = FC<ComponentProps<typeof IconArrowLeft>>;
 
-export const Icons: {
+const Icons: {
   [key: string]: TablerIconComponent;
 } = {
   back: IconArrowLeft,
