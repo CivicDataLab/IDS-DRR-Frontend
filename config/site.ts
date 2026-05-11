@@ -64,6 +64,6 @@ export const mainNav: { key: NavLinkKey; href: string }[] = [
     ? [{ key: 'aboutUs' as const, href: routes.aboutUs }]
     : []),
   ...(features.glossary
-    ? [{ key: 'glossary' as const, href: '/glossary' }]
+    ? [{ key: 'glossary' as const, href: routes.glossary }]
     : []),
 ];
