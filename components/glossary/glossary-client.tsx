@@ -2,8 +2,7 @@
 
 import * as React from 'react';
 import { useTranslations } from 'next-intl';
-import type { GlossaryIndexItem } from '@/glossary/index';
-import { glossaryTags, slugsByTag, termsBySlug } from '@/glossary/index';
+import type { GlossaryTerm } from 'ids-drr-branding-types';
 import {
   Accordion,
   AccordionContent,
@@ -19,17 +18,28 @@ import {
   Text,
 } from 'opub-ui';
 
+import { slugifyGlossaryTerm } from '@/lib/glossary';
+
 type Props = {
-  index: GlossaryIndexItem[];
+  terms: GlossaryTerm[];
 };
 
-function groupByLetter(items: GlossaryIndexItem[]) {
-  const map = new Map<string, GlossaryIndexItem[]>();
+type Indexed = GlossaryTerm & { slug: string; letter: string };
+
+function indexTerms(terms: GlossaryTerm[]): Indexed[] {
+  return terms.map((t) => ({
+    ...t,
+    slug: slugifyGlossaryTerm(t.term),
+    letter: (t.term[0] ?? '#').toUpperCase(),
+  }));
+}
+
+function groupByLetter(items: Indexed[]) {
+  const map = new Map<string, Indexed[]>();
   for (const item of items) {
-    const key = (item.letter || '#').toUpperCase();
-    const existing = map.get(key);
+    const existing = map.get(item.letter);
     if (existing) existing.push(item);
-    else map.set(key, [item]);
+    else map.set(item.letter, [item]);
   }
   return [...map.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
@@ -39,46 +49,41 @@ function groupByLetter(items: GlossaryIndexItem[]) {
     }));
 }
 
-export default function GlossaryClient({ index }: Props) {
+function uniqueTags(terms: GlossaryTerm[]): string[] {
+  const labelsByKey = new Map<string, string>();
+  for (const t of terms) {
+    const raw = t.tag?.trim();
+    if (!raw) continue;
+    const key = raw.toLowerCase();
+    if (!labelsByKey.has(key)) labelsByKey.set(key, raw);
+  }
+  return [...labelsByKey.values()].sort((a, b) => a.localeCompare(b));
+}
+
+export default function GlossaryClient({ terms }: Props) {
   const t = useTranslations('glossary');
   const tFilters = useTranslations('common.filters');
+
+  const indexed = React.useMemo(() => indexTerms(terms), [terms]);
+  const tags = React.useMemo(() => uniqueTags(terms), [terms]);
+
   const [selectedTag, setSelectedTag] = React.useState<string | null>(null);
   const [query, setQuery] = React.useState<string>('');
+  const [openSlug, setOpenSlug] = React.useState<string | null>(null);
   const deferredQuery = React.useDeferredValue(query);
-
-  const { indexBySlug, termBySlugLower } = React.useMemo(() => {
-    const indexBySlug: Record<string, GlossaryIndexItem> = {};
-    const termBySlugLower: Record<string, string> = {};
-    for (const item of index) {
-      indexBySlug[item.slug] = item;
-      termBySlugLower[item.slug] = (item.term ?? '').toLowerCase();
-    }
-    return { indexBySlug, termBySlugLower };
-  }, [index]);
-
   const normalizedQuery = deferredQuery.trim().toLowerCase();
 
-  const filteredIndex = React.useMemo(() => {
-    const base =
-      selectedTag === null
-        ? index
-        : (slugsByTag[selectedTag.toLowerCase()] ?? [])
-            .map((s) => indexBySlug[s])
-            .filter(Boolean);
+  const filtered = React.useMemo(() => {
+    const tagKey = selectedTag?.toLowerCase();
+    return indexed.filter((item) => {
+      if (tagKey && item.tag?.toLowerCase() !== tagKey) return false;
+      if (normalizedQuery && !item.term.toLowerCase().includes(normalizedQuery))
+        return false;
+      return true;
+    });
+  }, [indexed, selectedTag, normalizedQuery]);
 
-    if (!normalizedQuery) return base;
-
-    return base.filter((item) =>
-      (termBySlugLower[item.slug] ?? '').includes(normalizedQuery)
-    );
-  }, [index, indexBySlug, normalizedQuery, selectedTag, termBySlugLower]);
-
-  const grouped = React.useMemo(
-    () => groupByLetter(filteredIndex),
-    [filteredIndex]
-  );
-  const [openSlug, setOpenSlug] = React.useState<string | null>(null);
-  const [errorSlug, setErrorSlug] = React.useState<string | null>(null);
+  const grouped = React.useMemo(() => groupByLetter(filtered), [filtered]);
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-4">
@@ -107,7 +112,7 @@ export default function GlossaryClient({ index }: Props) {
             {tFilters('all')}
           </Tag>
         </div>
-        {glossaryTags.map((filter) => {
+        {tags.map((filter) => {
           const isActive = selectedTag?.toLowerCase() === filter.toLowerCase();
           return (
             <div
@@ -119,7 +124,6 @@ export default function GlossaryClient({ index }: Props) {
               className="cursor-pointer"
             >
               <Tag
-                key={filter}
                 variation={'filled'}
                 fillColor={isActive ? '#96d1ba' : '#f6f6f7'}
               >
@@ -148,19 +152,12 @@ export default function GlossaryClient({ index }: Props) {
               collapsible
               value={openSlug ?? ''}
               onValueChange={(val) => {
-                const next = val || null;
-                setOpenSlug(next);
-                if (next) {
-                  setErrorSlug(termsBySlug[next] ? null : next);
-                }
+                setOpenSlug(val || null);
               }}
               className="divide-y "
             >
               {items.map((item) => {
                 const isOpen = openSlug === item.slug;
-                const isError = errorSlug === item.slug;
-                const full = termsBySlug[item.slug];
-
                 return (
                   <AccordionItem
                     key={item.slug}
@@ -172,96 +169,84 @@ export default function GlossaryClient({ index }: Props) {
                         <div className="font-semibold text-textDefault">
                           {item.term}
                         </div>
-                        <Text color="subdued">{item.short}</Text>
+                        <Text color="subdued">{item.summary}</Text>
                       </div>
                     </AccordionTrigger>
 
                     <AccordionContent>
                       <div className="rounded-2 bg-baseSurfaceSubdued px-8">
-                        {isError && (
-                          <Text color="critical" variant="bodySm">
-                            {t('detail.error')}
-                          </Text>
-                        )}
-
-                        {isOpen && full && (
+                        {isOpen && (
                           <div className="mt-3 flex flex-col gap-8 py-3">
                             <div className="border bg-backgroundSolid flex flex-col gap-2 rounded-2 ">
                               <Text variant="headingMd" color="default">
                                 {t('detail.headings.definition')}
                               </Text>
-
                               <Text variant="bodyMd" color="default">
-                                {full.definitions.long}
+                                {item.definition}
                               </Text>
                             </div>
 
                             <div className="grid gap-3 rounded-2 bg-[#fff] md:grid-cols-3">
                               <DetailsCard
                                 title={t('detail.headings.methodology')}
-                                body={full.details?.ids_drr}
+                                body={item.methodology}
                               />
                               <DetailsCard
                                 title={t('detail.headings.usage')}
-                                body={full.details?.where_seen}
+                                body={item.usage}
                               />
                               <DetailsCard
                                 title={t('detail.headings.significance')}
-                                body={full.details?.why_it_matters}
+                                body={item.significance}
                               />
                             </div>
 
                             <ContextTabs
-                              policy={full.contexts?.policy}
-                              model={full.contexts?.model}
+                              policy={item.interpretation?.policy}
+                              model={item.interpretation?.model}
                             />
 
-                            {full.disaster_differences?.length &&
-                              full.disaster_differences.length > 0 && (
+                            {item.disasterMethodology &&
+                              item.disasterMethodology.length > 0 && (
                                 <div className="border flex flex-col gap-2 rounded-2 bg-baseSurfacePressed p-4">
                                   <Text variant="headingMd" color="default">
                                     {t('detail.headings.disasterMethodology')}
                                   </Text>
                                   <div className="mt-3 grid gap-3 md:grid-cols-3">
-                                    {full.disaster_differences.map(
-                                      (d) =>
-                                        d?.disaster_type && (
-                                          <div
-                                            key={d?.disaster_type}
-                                            className="border flex flex-col gap-2 rounded-2 bg-[#fff] p-3"
-                                          >
-                                            <Text
-                                              variant="headingMd"
-                                              color="default"
-                                            >
-                                              {d?.disaster_type}
-                                            </Text>
-                                            <Text
-                                              variant="bodyMd"
-                                              color="subdued"
-                                            >
-                                              {d?.difference}
-                                            </Text>
-                                          </div>
-                                        )
-                                    )}
+                                    {item.disasterMethodology.map((d) => (
+                                      <div
+                                        key={d.disasterType}
+                                        className="border flex flex-col gap-2 rounded-2 bg-[#fff] p-3"
+                                      >
+                                        <Text
+                                          variant="headingMd"
+                                          color="default"
+                                        >
+                                          {d.disasterType}
+                                        </Text>
+                                        <Text variant="bodyMd" color="subdued">
+                                          {d.methodology}
+                                        </Text>
+                                      </div>
+                                    ))}
                                   </div>
                                 </div>
                               )}
 
-                            <InfoCard
-                              title={t('detail.headings.related')}
-                              body={full?.related_terms?.join(', ')}
-                            />
+                            {item.related && item.related.length > 0 && (
+                              <InfoCard
+                                title={t('detail.headings.related')}
+                                items={item.related}
+                              />
+                            )}
 
-                            {full.common_misinterpretation && (
+                            {item.misinterpretation && (
                               <div className="border flex flex-col gap-2 rounded-2 bg-baseAlertSubued p-4">
                                 <Text variant="headingMd" color="default">
                                   {t('detail.headings.misinterpretation')}
                                 </Text>
-
                                 <Text variant="bodyMd" color="default">
-                                  {full.common_misinterpretation}
+                                  {item.misinterpretation}
                                 </Text>
                               </div>
                             )}
@@ -286,18 +271,16 @@ export default function GlossaryClient({ index }: Props) {
   );
 }
 
-function InfoCard({ title, body }: { title: string; body?: string }) {
-  if (!body) return null;
+function InfoCard({ title, items }: { title: string; items: string[] }) {
   return (
     <div className="border flex flex-col gap-2 rounded-2 px-1 py-3">
       <Text variant="headingMd" color="default">
         {title}
       </Text>
-
       <div className="flex flex-wrap gap-2">
-        {body.split(',').map((item) => (
-          <Tag variation="filled" key={item.trim()}>
-            {item.trim()}
+        {items.map((item) => (
+          <Tag variation="filled" key={item}>
+            {item}
           </Tag>
         ))}
       </div>

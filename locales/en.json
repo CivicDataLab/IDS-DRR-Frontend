@@ -223,8 +223,7 @@
           "title": "In Model",
           "heading": "Model"
         }
-      },
-      "error": "Couldn’t load details for this term."
+      }
     },
     "empty": "No results found"
   },

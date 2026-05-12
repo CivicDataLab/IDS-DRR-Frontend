@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation';
-import { getGlossaryIndex } from '@/glossary/index';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Text } from 'opub-ui';
 
-import { features } from '@/config/site';
+import { features, glossaryCsv } from '@/config/site';
+import { parseGlossary } from '@/lib/glossary';
 import GlossaryClient from '@/components/glossary/glossary-client';
 import GlossaryHeaderNav from '@/components/glossary/glossary-header-nav';
 
@@ -20,7 +20,7 @@ export default async function GlossaryPage({
   if (!features.glossary) notFound();
 
   const t = await getTranslations({ locale, namespace: 'glossary' });
-  const index = getGlossaryIndex();
+  const terms = parseGlossary(glossaryCsv);
 
   return (
     <main className="w-full bg-[#222136]">
@@ -41,7 +41,7 @@ export default async function GlossaryPage({
       </div>
 
       <section className="min-h-[calc(100vh-400px)] w-full bg-baseGreenSolid5 p-4 lg:p-0">
-        <GlossaryClient index={index} />
+        <GlossaryClient terms={terms} />
       </section>
     </main>
   );

@@ -10,8 +10,6 @@
     "gql/generated/**",
     // @import'd by styles/globals.css (knip doesn't follow CSS imports).
     "styles/tokens/_variables.css",
-    // Imported as ids-drr-branding; knip does not follow the file: link here.
-    "branding-stub/src/index.ts",
   ],
   "ignoreDependencies": [
     // `graphql-codegen --require dotenv/config` in npm scripts.
@@ -32,6 +30,5 @@
     // direct source imports knip can trace.
     "@jest/globals",
     "ts-jest",
-    "ts-node",
   ],
 }

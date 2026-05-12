@@ -11,7 +11,6 @@
     "build:tokens": "node ./config/tokens/generate.mjs",
     "postbuild:tokens": "node ./config/tokens/copy.js",
     "generate": "graphql-codegen --require dotenv/config --config ./config/codegen.ts --watch",
-    "generate:glossary": "ts-node -P tsconfig.scripts.json ./scripts/generate-glossary.ts",
     "clean": "rm -rf node_modules package-lock.json",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -76,7 +75,6 @@
     "tailwind-merge": "^1.12.0",
     "tailwindcss": "^3.3.2",
     "ts-jest": "^29.4.1",
-    "ts-node": "^10.9.2",
     "typescript": "^5.0.4"
   },
   "overrides": {

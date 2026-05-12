@@ -29,6 +29,9 @@ export const userGuideLink: string = config.userGuideLink ?? '';
 export const userManualLink: string = config.userManualLink ?? '';
 export const docsLink: string = config.docsLink ?? '';
 
+// Content
+export const glossaryCsv: string = config.glossaryCsv ?? '';
+
 // English is always loaded internally as the missing-key fallback,
 // but a deployment can omit it from `locales` to disable /en/ URLs.
 export const FALLBACK_LOCALE = 'en';
