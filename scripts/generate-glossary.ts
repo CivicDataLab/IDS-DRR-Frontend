@@ -117,7 +117,9 @@ function main() {
       const disaster_differences = buildDisasterDifferences(r);
       const related_terms = toRelatedTerms(r.related_terms ?? '');
 
-      const common_misinterpretation = (r.common_misinterpretation ?? '').trim();
+      const common_misinterpretation = (
+        r.common_misinterpretation ?? ''
+      ).trim();
 
       return {
         letter,
@@ -133,9 +135,7 @@ function main() {
           why_it_matters: (r.why_it_matters ?? '').trim(),
         },
         ...(contexts ? { contexts } : {}),
-        ...(disaster_differences.length > 0
-          ? { disaster_differences }
-          : {}),
+        ...(disaster_differences.length > 0 ? { disaster_differences } : {}),
         ...(related_terms.length > 0 ? { related_terms } : {}),
         ...(nonEmpty(common_misinterpretation)
           ? { common_misinterpretation }

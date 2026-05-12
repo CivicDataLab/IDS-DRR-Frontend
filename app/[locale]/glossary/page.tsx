@@ -1,17 +1,28 @@
 import { notFound } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
+import { getGlossaryIndex } from '@/glossary/index';
+import {
+  getTranslations,
+  setRequestLocale,
+} from 'next-intl/server';
 import { Text } from 'opub-ui';
 
 import { features } from '@/config/site';
-import { getGlossaryIndex } from '@/glossary/index';
 import GlossaryClient from '@/components/glossary/glossary-client';
 import GlossaryHeaderNav from '@/components/glossary/glossary-header-nav';
 
 export const dynamic = 'force-static';
 
-export default async function GlossaryPage() {
+export default async function GlossaryPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   if (!features.glossary) notFound();
-  const t = await getTranslations('glossary');
+
+  const t = await getTranslations({ locale, namespace: 'glossary' });
   const index = getGlossaryIndex();
 
   return (

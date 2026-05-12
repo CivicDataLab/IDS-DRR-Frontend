@@ -99,7 +99,10 @@ export const ChartView = ({
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_INDICATORS_BY_CATEGORY,
         {
-          stateCode: currentSelectedState?.code,
+          stateCode:
+            currentSelectedState?.code != null
+              ? String(currentSelectedState.code)
+              : undefined,
         }
       ),
     refetchOnMount: false,

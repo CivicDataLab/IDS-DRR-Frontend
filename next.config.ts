@@ -12,6 +12,11 @@ const nextConfig: NextConfig = {
   // https://github.com/CivicDataLab/opub-mono/pull/403
   webpack: (config) => {
     config.module.rules.push({
+      test: /\.csv$/,
+      type: 'asset/source',
+      include: /node_modules\/ids-drr-branding/,
+    });
+    config.module.rules.push({
       test: /\.(js|mjs)$/,
       enforce: 'pre',
       include: /node_modules\/opub-ui/,

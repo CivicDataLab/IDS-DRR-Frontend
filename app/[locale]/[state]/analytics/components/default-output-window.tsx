@@ -1,4 +1,9 @@
 import React from 'react';
+import { useTranslations } from 'next-intl';
+import { Button, Icon, Text } from 'opub-ui';
+
+import { docsLink, userGuideLink } from '@/config/site';
+import { cn } from '@/lib/utils';
 import {
   Ellipse,
   Exposure,
@@ -7,19 +12,11 @@ import {
   RiskScore,
   Vulnerability,
 } from '@/components/FactorIcons';
-import { useTranslations } from 'next-intl';
-import { Button, Icon, Text } from 'opub-ui';
-
-import { docsLink, userGuideLink } from '@/config/site';
-import { cn } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import styles from './styles.module.scss';
 
-export function DefaultWindow({
-  indicatorDescriptions,
-  onClose,
-}: any) {
+export function DefaultWindow({ indicatorDescriptions, onClose }: any) {
   const t = useTranslations('analytics.detail');
   const tCommon = useTranslations('common');
   const list: { title: string; slug: string; description: string }[] = [];
@@ -57,11 +54,7 @@ export function DefaultWindow({
         >
           {/* State-level header with only close button (no icon/title) */}
           <div className="mb-1 flex items-start justify-end ">
-            <Button
-              onClick={onClose}
-              kind="tertiary"
-              aria-label={t('close')}
-            >
+            <Button onClick={onClose} kind="tertiary" aria-label={t('close')}>
               <Icon source={Icons.cross} />
             </Button>
           </div>
@@ -79,11 +72,7 @@ export function DefaultWindow({
   );
 }
 
-export const AboutIndicator = ({
-  IndicatorData,
-}: {
-  IndicatorData: any;
-}) => {
+export const AboutIndicator = ({ IndicatorData }: { IndicatorData: any }) => {
   const t = useTranslations('analytics.about');
   const IconMap: { [key: string]: React.ReactNode } = {
     'risk-score': <RiskScore color={'#000000'} />,
@@ -114,10 +103,11 @@ export const AboutIndicator = ({
           />
         </div>
       </div>
-      <Text className="my-4" variant="bodyLg">
-        {t('calculation')}
-      </Text>
-
+      {IndicatorData.length > 1 && (
+        <Text className="my-4" variant="bodyLg">
+          {t('calculation')}
+        </Text>
+      )}
       <div className="flex flex-col items-start gap-4 p-3">
         {IndicatorData.slice(1)?.map((indicator: any, index: number) => (
           <div
@@ -182,5 +172,3 @@ export const AboutIndicator = ({
     </div>
   );
 };
-
-

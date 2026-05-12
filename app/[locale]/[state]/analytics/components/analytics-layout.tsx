@@ -96,7 +96,10 @@ export function AnalyticsMainLayout() {
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_INDICATORS_BY_CATEGORY,
         {
-          stateCode: currentSelectedState?.code,
+          stateCode:
+            currentSelectedState?.code != null
+              ? String(currentSelectedState.code)
+              : undefined,
         } as any
       ),
     enabled: Boolean(currentSelectedState?.code),
@@ -323,7 +326,10 @@ export function AnalyticsMainLayout() {
         ANALYTICS_INDICATORS,
         {
           indcFilter: { slug: indicator },
-          stateCode: currentSelectedState?.code,
+          stateCode:
+            currentSelectedState?.code != null
+              ? Number(currentSelectedState.code)
+              : undefined,
         } as any
       ),
     enabled: Boolean(isMapView && currentSelectedState?.code),
@@ -341,7 +347,10 @@ export function AnalyticsMainLayout() {
         ANALYTICS_INDICATORS,
         {
           indcFilter: { slug: 'risk-score' },
-          stateCode: currentSelectedState?.code,
+          stateCode:
+            currentSelectedState?.code != null
+              ? Number(currentSelectedState.code)
+              : undefined,
         } as any
       ),
     // Avoid a duplicate request when the selected indicator is already risk-score.
@@ -694,7 +703,8 @@ export function OutputWindowComponent({
         ANALYTICS_INDICATORS,
         {
           indcFilter: { slug: indicator },
-          stateCode: currentState?.code,
+          stateCode:
+            currentState?.code != null ? Number(currentState.code) : undefined,
         }
       ),
     enabled: Boolean(currentState?.code),

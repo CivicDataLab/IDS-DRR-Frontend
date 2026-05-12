@@ -3,10 +3,10 @@
 import React from 'react';
 import Image from 'next/image';
 import { useKeyDetect } from '@/hooks/use-key-detect';
-import { languages, logo, mainNav } from '@/config/site';
 import { useTranslations } from 'next-intl';
 import { Text } from 'opub-ui';
 
+import { languages, logo, mainNav } from '@/config/site';
 import { routes } from '@/lib/routes';
 import { TranslateDropdown } from './langSelect/lang-select';
 import NavLink from './nav-link';

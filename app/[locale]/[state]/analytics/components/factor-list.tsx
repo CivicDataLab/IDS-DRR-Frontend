@@ -79,7 +79,8 @@ export function FactorList({ currentState }: any) {
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_INDICATORS_BY_CATEGORY,
         {
-          stateCode: currentState?.code,
+          stateCode:
+            currentState?.code != null ? String(currentState.code) : undefined,
         }
       ),
     refetchOnMount: false,

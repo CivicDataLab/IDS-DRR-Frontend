@@ -29,7 +29,7 @@ export const ANALYTICS_DISTRICT_DATA = graphql(`
 `);
 
 export const ANALYTICS_INDICATORS = graphql(`
-  query indicators($indcFilter: IndicatorFilter, $stateCode: String) {
+  query indicators($indcFilter: IndicatorFilter, $stateCode: Int) {
     indicators(indcFilter: $indcFilter, stateCode: $stateCode)
   }
 `);

@@ -2,8 +2,8 @@ import { config } from 'ids-drr-branding';
 import type {
   Language,
   Resource,
-  StaticImageAsset,
   State,
+  StaticImageAsset,
   Story,
 } from 'ids-drr-branding-types';
 
@@ -17,7 +17,8 @@ export const languages: Language[] = config.languages ?? [];
 
 // Images
 export const logo: StaticImageAsset | undefined = config.logo;
-export const heroForeground: StaticImageAsset | undefined = config.heroForeground;
+export const heroForeground: StaticImageAsset | undefined =
+  config.heroForeground;
 export const heroBackground: string = config.heroBackground ?? '';
 export const favicon: string = config.favicon ?? '';
 export const appleIcon: string = config.appleIcon ?? '';
@@ -33,8 +34,10 @@ export const docsLink: string = config.docsLink ?? '';
 export const FALLBACK_LOCALE = 'en';
 export const locales: string[] = config.locales ?? [FALLBACK_LOCALE];
 export const defaultLocale: string = config.defaultLocale ?? locales[0];
-export const messages: Record<string, Record<string, unknown>> =
-  config.messages ?? {};
+export const messages: Record<
+  string,
+  Record<string, unknown>
+> = config.messages ?? {};
 
 // Feature flags
 const dataSpaceEnabled = Boolean(process.env.NEXT_PUBLIC_BACKEND_URL);
@@ -43,7 +46,7 @@ export const features = {
   datasets: dataSpaceEnabled,
   aboutUs: config.features?.aboutUs ?? false,
   reports: config.features?.reports ?? false,
-  glossary: config.features?.glossary ?? false,
+  glossary: Boolean(config.glossaryCsv),
 };
 
 // Navigation
