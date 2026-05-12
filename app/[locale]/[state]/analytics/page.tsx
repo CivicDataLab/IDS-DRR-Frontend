@@ -40,7 +40,7 @@ export default async function Home({
               queryFn: () =>
                 GraphQL(graphqlUrl, ANALYTICS_INDICATORS, {
                   indcFilter: { slug },
-                  stateCode: Number(stateCode),
+                  stateCode,
                 }),
             })
           )
