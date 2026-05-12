@@ -26,7 +26,7 @@ export type GlossaryItem = {
   common_misinterpretation?: string;
 };
 
-export type GlossaryDisasterDifference = {
+type GlossaryDisasterDifference = {
   disaster_type: string;
   difference: string;
 };
@@ -38,7 +38,7 @@ export type GlossaryIndexItem = {
   short: string;
 };
 
-export function slugifyGlossaryTerm(term: string) {
+function slugifyGlossaryTerm(term: string) {
   return term
     .toLowerCase()
     .trim()
@@ -51,14 +51,6 @@ export const termsBySlug: Record<string, GlossaryItem> =
   GlossaryTermsSource.reduce<Record<string, GlossaryItem>>((acc, item) => {
     const slug = slugifyGlossaryTerm(item.term);
     acc[slug] = item;
-    return acc;
-  }, {});
-
-export const slugsByLetter: Record<string, string[]> =
-  GlossaryTermsSource.reduce<Record<string, string[]>>((acc, item) => {
-    const letter = (item.letter || '#').toUpperCase();
-    const slug = slugifyGlossaryTerm(item.term);
-    acc[letter] = [...(acc[letter] ?? []), slug];
     return acc;
   }, {});
 
@@ -91,8 +83,4 @@ export function getGlossaryIndex(): GlossaryIndexItem[] {
     term: item.term,
     short: item.definitions.short,
   }));
-}
-
-export function getGlossaryTags() {
-  return glossaryTags;
 }

@@ -23,6 +23,7 @@ const config: Config = {
     // Mock d3 modules
     '^d3-scale$': '<rootDir>/tests/__mocks__/d3-scale.ts',
     '^d3-scale-chromatic$': '<rootDir>/tests/__mocks__/d3-scale-chromatic.ts',
+    '\\.csv$': '<rootDir>/tests/__mocks__/csv.ts',
   },
   collectCoverageFrom: [
     '{app,components,config,hooks,i18n,lib}/**/*.{ts,tsx}',
