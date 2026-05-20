@@ -1,6 +1,6 @@
 # IDS-DRR Frontend
 
-The frontend for **IDS-DRR** (Integrated Data System for Disaster Risk Reduction), built with **React 19**, **Next.js 15**, **TypeScript**, and **GraphQL**.
+The frontend for **IDS-DRR** (Intelligent Data Solution for Disaster Risk Reduction), built with **React 19**, **Next.js 15**, **TypeScript**, and **GraphQL**.
 
 This repository ships with **no deployment-specific content**. All branding, copy, languages, states, partners, "About" page, footer, etc. live in a separate **branding package** that is plugged in at install time. This keeps the core app reusable across deployments while individual deployments (e.g. India) maintain their own content in their own repos.
 
@@ -58,15 +58,15 @@ With no branding configured, the app runs against an empty in-repo "stub" — fe
 
 Copy `.env` to `.env.local` and adjust. Most of these have sensible defaults; the only ones you'll typically need to change for local work are the backend URLs.
 
-| Variable                                | Purpose                                                                                                                           | Required for local dev?                 |
-| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| Variable                                | Purpose                                                                                                                                                    | Required for local dev?                 |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
 | `BACKEND_URL`                           | URL of a [DataSpaceBackend](https://github.com/CivicDataLab/DataSpaceBackend) deployment (Django + GraphQL). Used server-side for the datasets/search API. | Yes, if you're working on dataset pages |
 | `NEXT_PUBLIC_BACKEND_URL`               | Same DataSpaceBackend URL, exposed to the browser. Its presence also enables `features.datasets` (the datasets nav link and pages).                        | Yes, if you're working on dataset pages |
-| `DATA_MANAGEMENT_LAYER_URL`             | URL of an [IDS-DRR-Data-Management](https://github.com/CivicDataLab/IDS-DRR-Data-Management) deployment. Used server-side.        | Yes, for analytics / SSR pages          |
-| `NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL` | Same data-management URL, exposed to the browser.                                                                                 | Yes, for analytics / SSR pages          |
-| `SITE_URL`                              | Canonical site URL (used in metadata and OG tags).                                                                                | Optional                                |
-| `NEXT_PUBLIC_GOOGLE_ANALYTICS_APP_ID`   | GA4 property id.                                                                                                                  | Optional                                |
-| `SENTRY_*`                              | Error tracking.                                                                                                                   | Optional in dev                         |
+| `DATA_MANAGEMENT_LAYER_URL`             | URL of an [IDS-DRR-Data-Management](https://github.com/CivicDataLab/IDS-DRR-Data-Management) deployment. Used server-side.                                 | Yes, for analytics / SSR pages          |
+| `NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL` | Same data-management URL, exposed to the browser.                                                                                                          | Yes, for analytics / SSR pages          |
+| `SITE_URL`                              | Canonical site URL (used in metadata and OG tags).                                                                                                         | Optional                                |
+| `NEXT_PUBLIC_GOOGLE_ANALYTICS_APP_ID`   | GA4 property id.                                                                                                                                           | Optional                                |
+| `SENTRY_*`                              | Error tracking.                                                                                                                                            | Optional in dev                         |
 
 > Any variable prefixed with `NEXT_PUBLIC_` is bundled into the client JavaScript — never put secrets in those.
 
