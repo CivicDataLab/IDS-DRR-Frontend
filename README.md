@@ -6,7 +6,9 @@ This repository ships with **no deployment-specific content**. All branding, cop
 
 <!-- once repo transfered -->
 
-> Reference branding implementation: [ids-drr-india-branding](https://github.com/CivicDataLab/ids-drr-india-branding).
+> Branding contract: [ids-drr-branding-types](https://github.com/CivicDataLab/ids-drr-branding-types).
+
+> Example branding implementation: [ids-drr-india-branding](https://github.com/CivicDataLab/ids-drr-india-branding).
 
 ![Coverage](https://img.shields.io/badge/Tests_Coverage-60%25-yellow)
 
@@ -17,7 +19,7 @@ This repository ships with **no deployment-specific content**. All branding, cop
 - [Requirements](#requirements)
 - [Quick start](#quick-start)
 - [Environment variables](#environment-variables)
-- [How the branding plugin works](#how-the-branding-plugin-works)
+- [How the branding package works](#how-the-branding-package-works)
 - [Available scripts](#available-scripts)
 - [Project structure](#project-structure)
 - [License](#license)
@@ -56,42 +58,44 @@ With no branding configured, the app runs against an empty in-repo "stub" — fe
 
 Copy `.env` to `.env.local` and adjust. Most of these have sensible defaults; the only ones you'll typically need to change for local work are the backend URLs.
 
-| Variable                                | Purpose                                                  | Required for local dev? |
-| --------------------------------------- | -------------------------------------------------------- | ----------------------- |
-| `BACKEND_URL`                           | GraphQL backend used at build time / SSR                 | Yes, for SSR pages      |
-| `NEXT_PUBLIC_BACKEND_URL`               | Same, exposed to the browser. Drives `features.datasets` | Yes                     |
-| `DATA_MANAGEMENT_LAYER_URL`             | Data management layer URL (server-side)                  | Yes, for SSR            |
-| `NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL` | Same, exposed to the browser                             | Yes                     |
-| `SITE_URL`                              | Canonical site URL (used in metadata, OG tags)           | Optional                |
-| `NEXT_PUBLIC_GOOGLE_ANALYTICS_APP_ID`   | GA4 property id                                          | Optional                |
-| `SENTRY_*`                              | Error tracking                                           | Optional in dev         |
+| Variable                                | Purpose                                                                                                                           | Required for local dev?                 |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| `BACKEND_URL`                           | URL of a [DataSpaceBackend](https://github.com/CivicDataLab/DataSpaceBackend) deployment (Django + GraphQL). Used server-side for the datasets/search API. | Yes, if you're working on dataset pages |
+| `NEXT_PUBLIC_BACKEND_URL`               | Same DataSpaceBackend URL, exposed to the browser. Its presence also enables `features.datasets` (the datasets nav link and pages).                        | Yes, if you're working on dataset pages |
+| `DATA_MANAGEMENT_LAYER_URL`             | URL of an [IDS-DRR-Data-Management](https://github.com/CivicDataLab/IDS-DRR-Data-Management) deployment. Used server-side.        | Yes, for analytics / SSR pages          |
+| `NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL` | Same data-management URL, exposed to the browser.                                                                                 | Yes, for analytics / SSR pages          |
+| `SITE_URL`                              | Canonical site URL (used in metadata and OG tags).                                                                                | Optional                                |
+| `NEXT_PUBLIC_GOOGLE_ANALYTICS_APP_ID`   | GA4 property id.                                                                                                                  | Optional                                |
+| `SENTRY_*`                              | Error tracking.                                                                                                                   | Optional in dev                         |
 
 > Any variable prefixed with `NEXT_PUBLIC_` is bundled into the client JavaScript — never put secrets in those.
 
 ---
 
-## How the branding plugin works
+## How the branding package works
 
 This section is short but worth reading once — almost every "where do I add this?" question comes back to it.
 
-The frontend imports a single npm package called `ids-drr-branding`. There are different _implementations_ of that package, each named identically so they can be swapped without code changes:
+The frontend imports a single npm package called `ids-drr-branding`. The **contract** for that package — the shape of its `config` object and the optional React components it can export — is defined by [ids-drr-branding-types](https://github.com/CivicDataLab/ids-drr-branding-types). That repo's `src/index.ts` is the source of truth; the inline comments there are the canonical documentation of every configurable field (states, resources, locales, messages, brand assets, links, feature flags, and so on).
 
-| Implementation                           | Where it lives                                        | When it's used                                         |
-| ---------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------ |
-| **Stub** (empty)                         | `branding-stub/` in this repo                         | Default. OSS dev, CI, anyone without deployment access |
-| **India** (reference)                    | `CivicDataLab/ids-drr-india-branding` (separate repo) | The India deployment                                   |
-| **Your deployment** (future state / org) | your own repo                                         | Any new deployment that forks IDS-DRR                  |
+Different deployments provide **different implementations** of that contract. They all use the same package name (`ids-drr-branding`) so they're drop-in replacements for each other.
 
-`package.json` declares `"ids-drr-branding": "file:./branding-stub"`, so by default the stub is what gets installed. The stub exports `undefined` for every optional component and `{}` for `config`. The frontend handles those gracefully — `app/[locale]/about-us/page.tsx`, for example, returns a 404 when no `AboutPage` is provided. See `config/branding.ts` and `config/site.ts` for the full contract.
+| Implementation                           | Where it lives                                                                   | When it's used                                         |
+| ---------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| **Stub** (empty)                         | `branding-stub/` in this repo                                                    | Default. OSS dev, CI, anyone without deployment access |
+| **India** (example implementation)       | [ids-drr-india-branding](https://github.com/CivicDataLab/ids-drr-india-branding) | The India deployment. Read this for a worked example.  |
+| **Your deployment** (future state / org) | your own repo, following the contract from `ids-drr-branding-types`              | Any new deployment that forks IDS-DRR                  |
+
+`package.json` declares `"ids-drr-branding": "file:./branding-stub"`, so by default the stub is what gets installed. The stub exports `undefined` for every optional component and `{}` for `config`. The frontend handles those gracefully — `app/[locale]/about-us/page.tsx`, for example, returns a 404 when no `AboutPage` is provided.
 
 **Where new code should live:**
 
 - Generic feature (chart, map, search, GraphQL query, layout, i18n machinery): **this repo**.
-- India-specific content (a logo, a partner name, the About-page copy, the glossary CSV): **the india-branding repo**.
+- Deployment-specific content (a logo, a partner name, the About-page copy, the glossary CSV): **the relevant branding repo** (e.g. `ids-drr-india-branding` for India).
 
-If you're not sure which side a change belongs on, open an issue and ask before opening the PR — getting this wrong is the most common reason a PR gets bounced.
+If you're not sure which side a change belongs on, open an issue and ask before opening the PR.
 
-**Running locally with the real India branding (only if you have access):**
+**Example: Running locally with the real India branding:**
 
 If you also have the `ids-drr-india-branding` repo cloned somewhere on disk and want to develop against it:
 
@@ -152,7 +156,7 @@ IDS-DRR-Frontend/
 └── tailwind.config.js
 ```
 
-The branding contract itself lives in the external [ids-drr-branding-types](https://github.com/open-contracting/ids-drr-branding-types) package — read its `src/index.ts` to see which slots a branding implementation can fill in.
+For the branding contract, see [ids-drr-branding-types](https://github.com/CivicDataLab/ids-drr-branding-types) (covered above in [How the branding package works](#how-the-branding-package-works)).
 
 ---
 
