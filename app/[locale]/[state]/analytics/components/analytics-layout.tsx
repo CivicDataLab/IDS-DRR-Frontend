@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { parseAsString, useQueryState } from 'next-usequerystate';
@@ -66,8 +66,12 @@ export function AnalyticsMainLayout() {
       ),
   });
 
-  const currentSelectedState = statesListData?.data?.getStates?.find(
-    (item: any) => item.slug === routerParams.state
+  const currentSelectedState = useMemo(
+    () =>
+      statesListData?.data?.getStates?.find(
+        (item: any) => item.slug === routerParams.state
+      ),
+    [statesListData?.data?.getStates, routerParams.state]
   );
 
   const stateLatestTimePeriod =
