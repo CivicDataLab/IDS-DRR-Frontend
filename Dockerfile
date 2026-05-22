@@ -17,12 +17,19 @@ ARG CONTEXT_SUBDIR=.
 ARG BRANDING_PACKAGE=${CONTEXT_SUBDIR}/branding-stub
 
 COPY ${CONTEXT_SUBDIR}/package.json ${CONTEXT_SUBDIR}/package-lock.json ./
-COPY ${BRANDING_PACKAGE}/ ./branding-stub/
+
+# Install against the branding-stub package first, so that branding-only edits
+# use the cached `npm ci` step.
+COPY ${CONTEXT_SUBDIR}/branding-stub/ ./branding-stub/
 
 # --mount=type=cache keeps the ~/.npm download cache warm between builds.
 # --force is retained deliberately to tolerate the existing peer-dep warnings.
 RUN --mount=type=cache,target=/root/.npm \
     npm ci --force --ignore-scripts
+
+# Swap in the real branding package. The symlink at node_modules/
+# ids-drr-branding (created by `npm ci`) now resolves to the new contents.
+COPY ${BRANDING_PACKAGE}/ ./branding-stub/
 
 
 
