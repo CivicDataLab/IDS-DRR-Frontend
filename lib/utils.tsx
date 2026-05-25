@@ -4,45 +4,17 @@ export function cn(...inputs: ClassNameValue[]) {
   return twMerge(inputs);
 }
 
-export function formatDate(
-  input: string | number,
-  isHyphenated = false
-): string {
-  const date = new Date(input);
-  // If hyphendated it would return date in this format - 2023-01-01 else in April 1, 2021
-  return isHyphenated
-    ? new Date(
-        date.toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'numeric',
-          day: 'numeric',
-        })
-      )
-        .toISOString()
-        .split('T')[0]
-    : date.toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-      });
+// Returns the UTC calendar date of `input` as "YYYY-MM-DD".
+// Use where a machine-readable ISO date string is needed.
+export function toISODate(input: string | number): string {
+  return new Date(input).toISOString().split('T')[0];
 }
 
-// util function to format data in the following format "2023_08"
-export function formatDateString(
-  dateString: string | null | undefined,
-  isHyphenated = false
-) {
-  if (!dateString) {
-    return '';
-  }
-
-  if (isHyphenated) {
-    return dateString.replace('_', '-');
-  }
-
-  // Split the string into year and month parts
-  const [year, month] = dateString.split('_');
-
+// Parses a "YYYY_MM" period string into a Date at UTC midnight on the first
+// of the month, or null if the string is malformed.
+export function parsePeriodString(value: string | null | undefined): Date | null {
+  if (!value) return null;
+  const [year, month] = value.split('_');
   const yearNum = parseInt(year, 10);
   const monthNum = parseInt(month, 10);
 
@@ -53,23 +25,9 @@ export function formatDateString(
     monthNum < 1 ||
     monthNum > 12
   ) {
-    return '';
+    return null;
   }
-
-  // Create a Date object with the specified year and month (subtract 1 from the month, as months in JavaScript are zero-based)
-  const dateObject = new Date(yearNum, monthNum - 1);
-
-  if (Number.isNaN(dateObject.getTime())) {
-    return '';
-  }
-
-  // Format the date as "Month Year"
-  const formattedDate = new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    year: 'numeric',
-  }).format(dateObject);
-
-  return formattedDate;
+  return new Date(Date.UTC(yearNum, monthNum - 1));
 }
 
 export async function copyToClipboard(url: string): Promise<boolean> {
@@ -101,29 +59,6 @@ export function toTitleCase(str: string | null | undefined) {
   return str.toLowerCase().replace(/\b\w/g, function (char: string) {
     return char.toUpperCase();
   });
-}
-
-export function formatReferenceDate(
-  input: string | number | any,
-  isHyphenated = false
-): string {
-  const date = new Date(input);
-  // If hyphendated it would return date in this format - 2023-01-01 else in April 1, 2021
-  return isHyphenated
-    ? new Date(
-        date.toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'numeric',
-          // day: 'numeric',
-        })
-      )
-        .toISOString()
-        .split('T')[0]
-    : date.toLocaleDateString('en-US', {
-        month: 'long',
-        // day: 'numeric',
-        year: 'numeric',
-      });
 }
 
 export async function downloadStateReport(link: string, fileName: string) {

@@ -131,7 +131,7 @@ jest.mock(
 jest.mock('@/lib/utils', () => ({
   cn: (...classes: string[]) => classes.filter(Boolean).join(' '),
   downloadStateReport: jest.fn(),
-  formatDate: jest.fn((timestamp) => '2023-08-01'),
+  toISODate: jest.fn((timestamp) => '2023-08-01'),
 }));
 
 jest.mock('@/hooks/use-copy-url', () => ({

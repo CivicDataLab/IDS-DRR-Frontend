@@ -4,15 +4,15 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 import { Button, Spinner, Tag, Text } from 'opub-ui';
 
 import { DATASET_RESOURCES_QUERY } from '@/config/graphql/dataset-queries';
 import { GraphQL } from '@/lib/api';
-import { formatDate } from '@/lib/utils';
 
 const Resources = () => {
   const t = useTranslations('datasets');
+  const format = useFormatter();
   const params = useParams();
 
   const { data, isLoading }: { data: any; isLoading: boolean } = useQuery({
@@ -79,7 +79,7 @@ const Resources = () => {
                   </div>
                   <div>
                     <Text>{t('labels.updated')}</Text>
-                    <Text>{formatDate(item.modified)}</Text>
+                    <Text>{format.dateTime(new Date(item.modified), 'longDate')}</Text>
                   </div>
                   <div className="flex flex-col">
                     <div

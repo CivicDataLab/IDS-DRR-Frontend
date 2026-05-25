@@ -12,7 +12,7 @@ import {
 import { InfoSquare } from '@/components/InfoCircle';
 import { useQuery } from '@tanstack/react-query';
 import { useQueryState } from 'next-usequerystate';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 import { Button, Icon, Text, Tooltip } from 'opub-ui';
 
 import { ANALYTICS_TIME_PERIODS } from '@/config/graphql/analaytics-queries';
@@ -20,7 +20,7 @@ import { GraphQL } from '@/lib/api';
 import { docsLink } from '@/config/site';
 import { useFormatNumber } from '@/hooks/use-format-number';
 import { Factors } from '@/lib/analytics';
-import { cn, formatDateString } from '@/lib/utils';
+import { cn, parsePeriodString } from '@/lib/utils';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import { getFactorNameBySlug, getLatestDate } from '../utils/utils';
@@ -39,6 +39,7 @@ export function OutputWindow({
   const tCommon = useTranslations('common');
   const tRisk = useTranslations('analytics.risk');
   const tAnalytics = useTranslations('analytics');
+  const format = useFormatter();
   const formatNumber = useFormatNumber();
   const searchParams = useSearchParams();
   let processedTime = getLatestDate(
@@ -65,7 +66,10 @@ export function OutputWindow({
     ? `${processedTime[0]}_${processedTime[1]}`
     : (latestTimePeriod as string);
 
-  const formattedTimePeriod = formatDateString(timePeriod);
+  const timePeriodDate = parsePeriodString(timePeriod);
+  const formattedTimePeriod = timePeriodDate
+    ? format.dateTime(timePeriodDate, 'monthYearShort')
+    : '';
   const region = searchParams.get('district-code') || '';
   const view = searchParams.get('view') || '';
 

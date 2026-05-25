@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { Button, Tag, Text, Tooltip } from 'opub-ui';
 
 import { routes } from '@/lib/routes';
-import { formatReferenceDate } from '@/lib/utils';
+import { useFormatPeriod } from '@/hooks/use-format-period';
 
 interface MetadataItem {
   label: string;
@@ -31,6 +31,7 @@ interface Dataset {
 const Cards = ({ data }: { data: Dataset }) => {
   const t = useTranslations('datasets');
   const tCommon = useTranslations('common');
+  const formatPeriod = useFormatPeriod();
   function getMetadataValue(data: Dataset, label: string): string | null {
     const metadataEntry = data.metadata.find(
       (entry) => entry.metadata_item.label === label
@@ -116,14 +117,8 @@ const Cards = ({ data }: { data: Dataset }) => {
                     fontWeight="regular"
                   >
                     {t('labels.referencePeriod')}{t('periodRange', {
-                      from:
-                        formatReferenceDate(
-                          getMetadataValue(data, 'Period From')
-                        ) || tCommon('na'),
-                      to:
-                        formatReferenceDate(
-                          getMetadataValue(data, 'Period To')
-                        ) || tCommon('na'),
+                      from: formatPeriod(getMetadataValue(data, 'Period From')),
+                      to: formatPeriod(getMetadataValue(data, 'Period To')),
                     })}
                   </Text>
                 </span>

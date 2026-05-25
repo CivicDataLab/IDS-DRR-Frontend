@@ -18,7 +18,7 @@ import {
 import { resources } from '@/config/site';
 import { fetchDatasets } from '@/lib/api';
 import { routes } from '@/lib/routes';
-import { formatReferenceDate } from '@/lib/utils';
+import { useFormatPeriod } from '@/hooks/use-format-period';
 
 interface MetadataItem {
   label: string;
@@ -46,6 +46,7 @@ const Resources = () => {
   const t = useTranslations('home.resources');
   const tDatasets = useTranslations('datasets');
   const tCommon = useTranslations('common');
+  const formatPeriod = useFormatPeriod();
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -143,8 +144,8 @@ const Resources = () => {
                           fontWeight="regular"
                         >
                           {tDatasets('labels.referencePeriod')}{tDatasets('periodRange', {
-                            from: formatReferenceDate(card.referencePeriodFrom) || tCommon('na'),
-                            to: formatReferenceDate(card.referencePeriodTo) || tCommon('na'),
+                            from: formatPeriod(card.referencePeriodFrom),
+                            to: formatPeriod(card.referencePeriodTo),
                           })}
                         </Text>
                       </div>
@@ -211,14 +212,8 @@ const Resources = () => {
                           fontWeight="regular"
                         >
                           {tDatasets('labels.referencePeriod')}{tDatasets('periodRange', {
-                            from:
-                              formatReferenceDate(
-                                getMetadataValue(item, 'Period From')
-                              ) || tCommon('na'),
-                            to:
-                              formatReferenceDate(
-                                getMetadataValue(item, 'Period To')
-                              ) || tCommon('na'),
+                            from: formatPeriod(getMetadataValue(item, 'Period From')),
+                            to: formatPeriod(getMetadataValue(item, 'Period To')),
                           })}
                         </Text>
                       </div>
