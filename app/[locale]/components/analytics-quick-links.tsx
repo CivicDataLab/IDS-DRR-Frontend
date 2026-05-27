@@ -16,12 +16,14 @@ import {
 
 import { PLATFORM_STATES_LIST } from '@/config/graphql/analaytics-queries';
 import { states } from '@/config/site';
+import { useStateName } from '@/hooks/use-state-name';
 import { GraphQL } from '@/lib/api';
 import { routes } from '@/lib/routes';
 import styles from './analytics-quick-links.module.css';
 
 export const QuickLinks = () => {
   const t = useTranslations('home.analytics');
+  const stateName = useStateName();
   const statesList = useQuery({
     queryKey: [`states_list`],
     queryFn: () =>
@@ -100,7 +102,7 @@ export const QuickLinks = () => {
                         className=" whitespace-nowrap"
                         as="h3"
                       >
-                        {item.name}
+                        {stateName(item.slug, item.name)}
                       </Text>
                     </div>
                   </Link>
@@ -115,7 +117,7 @@ export const QuickLinks = () => {
                       className={`h-32 w-32  object-contain px-3 opacity-25 ${styles.inactiveStateIcon}`}
                     />
                     <Text variant="headingLg" className=" whitespace-nowrap">
-                      {item.name}
+                      {stateName(item.slug, item.name)}
                     </Text>
                     <Text
                       variant="headingMd"
