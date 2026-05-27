@@ -251,7 +251,7 @@ const RenderOptions = ({
 
   const datesArray = normalizedTimePeriods.map((date: string) => {
     const [year, month] = date.split('_');
-    return new Date(parseInt(year), parseInt(month));
+    return new Date(Date.UTC(parseInt(year), parseInt(month) - 1));
   });
   const timestamps = datesArray.map((date: any) => date.getTime());
   if (timestamps.length > 0) {
