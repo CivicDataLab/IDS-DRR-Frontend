@@ -9,23 +9,11 @@ const nextConfig: NextConfig = {
   transpilePackages: ['opub-ui', 'ids-drr-branding'],
   // Dependencies of @sentry/node, to avoid "Critical dependency: the request of a dependency is an expression".
   serverExternalPackages: ['@prisma/instrumentation', '@fastify/otel'],
-  // https://github.com/CivicDataLab/opub-mono/pull/403
   webpack: (config) => {
     config.module.rules.push({
       test: /\.csv$/,
       type: 'asset/source',
       include: /node_modules\/ids-drr-branding/,
-    });
-    config.module.rules.push({
-      test: /\.(js|mjs)$/,
-      enforce: 'pre',
-      include: /node_modules\/opub-ui/,
-      use: [
-        {
-          loader: 'source-map-loader',
-          options: { filterSourceMappingUrl: () => 'remove' },
-        },
-      ],
     });
     return config;
   },
