@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl';
 import { Button, Icon, RadioGroup, RadioItem, YearCalendar } from 'opub-ui';
 
 import { routes, type AnalyticsView } from '@/lib/routes';
-import { formatDate } from '@/lib/utils';
+import { toISODate } from '@/lib/utils';
 import Icons from '@/components/icons';
 import {
   MobileFilterBox,
@@ -257,8 +257,8 @@ const RenderOptions = ({
   if (timestamps.length > 0) {
     const minTimestamp = Math.min(...timestamps);
     const maxTimestamp = Math.max(...timestamps);
-    minDate = formatDate(minTimestamp, true);
-    maxDate = formatDate(maxTimestamp, true);
+    minDate = toISODate(minTimestamp);
+    maxDate = toISODate(maxTimestamp);
   } else {
     const [year, month] = (timePeriodSelected || '2023_08').split('_');
     minDate = `${year}-${month}-01`;

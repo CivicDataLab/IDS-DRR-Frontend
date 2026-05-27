@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 import {
   Carousel,
   CarouselContent,
@@ -12,10 +12,10 @@ import {
 } from 'opub-ui';
 
 import { stories } from '@/config/site';
-import { formatDate } from '@/lib/utils';
 
 export const Stories = () => {
   const t = useTranslations('home.stories');
+  const format = useFormatter();
   return (
     <div
       className="flex w-full justify-center"
@@ -72,7 +72,7 @@ export const Stories = () => {
                         </Text>
                       </div>
                       <div className="flex flex-wrap justify-between">
-                        <Text>{formatDate(story.date)}</Text>
+                        <Text>{format.dateTime(new Date(story.date), 'longDate')}</Text>
                       </div>
                       <div>
                         <Text>{story.description}</Text>

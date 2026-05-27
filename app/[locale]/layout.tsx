@@ -9,6 +9,7 @@ import {
 } from 'next-intl/server';
 
 import { Footer } from '@/config/branding';
+import { formats } from '@/i18n/formats';
 import {
   appleIcon,
   favicon,
@@ -124,7 +125,7 @@ export default async function LocaleLayout({
         )}
       </head>
       <body className={fontSans.className}>
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={messages} formats={formats}>
           <Provider>
             <div className="min-h-screen flex flex-col">
               <MediaRendering minWidth={null} maxWidth="1023">

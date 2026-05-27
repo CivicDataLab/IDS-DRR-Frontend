@@ -80,18 +80,12 @@ jest.mock('@/components/MobileFilterBox', () => ({
 
 // Mock utility functions
 jest.mock('@/lib/utils', () => ({
-  formatDate: jest.fn((timestamp: number, isHyphenated: boolean) => {
+  toISODate: jest.fn((timestamp: number) => {
     const date = new Date(timestamp);
     if (isNaN(date.getTime())) {
       return '2023-01-01'; // Return default date for invalid timestamps
     }
-    return isHyphenated
-      ? date.toISOString().split('T')[0]
-      : date.toLocaleDateString('en-US', {
-          month: 'long',
-          day: 'numeric',
-          year: 'numeric',
-        });
+    return date.toISOString().split('T')[0];
   }),
 }));
 

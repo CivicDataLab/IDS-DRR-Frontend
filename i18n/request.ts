@@ -4,6 +4,7 @@ import { getRequestConfig } from 'next-intl/server';
 
 import { FALLBACK_LOCALE, locales, messages } from '../config/site';
 import defaultMessages from '../locales/en.json';
+import { formats } from './formats';
 
 // Recursive merge: values from `overrides` replace keys in `base` at any depth.
 // Plain objects are merged; everything else (strings, arrays, primitives) overrides.
@@ -56,5 +57,5 @@ export default getRequestConfig(async ({ requestLocale }) => {
     merged = deepMerge(merged, branding);
   }
 
-  return { locale, messages: merged };
+  return { locale, messages: merged, formats };
 });
