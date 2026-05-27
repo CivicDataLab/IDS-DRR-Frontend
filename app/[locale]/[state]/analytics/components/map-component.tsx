@@ -159,26 +159,11 @@ export const MapComponent = ({
   };
 
   const legendData = [
-    {
-      label: 'Very High Risk',
-      color: '#D41505',
-    },
-    {
-      label: 'High Risk',
-      color: '#FB8C35',
-    },
-    {
-      label: 'Medium Risk',
-      color: '#FFED6E',
-    },
-    {
-      label: 'Low Risk',
-      color: '#65A4BD',
-    },
-    {
-      label: 'Very Low Risk',
-      color: '#4575b4',
-    },
+    { label: tRisk('5'), color: '#D41505' },
+    { label: tRisk('4'), color: '#FB8C35' },
+    { label: tRisk('3'), color: '#FFED6E' },
+    { label: tRisk('2'), color: '#65A4BD' },
+    { label: tRisk('1'), color: '#4575b4' },
   ];
 
   const colorMap: { [key: number]: string } = {
