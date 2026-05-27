@@ -77,13 +77,19 @@ export const QuickLinks = () => {
           <div className="mr-2 rounded-1 bg-surfaceDefault">
             <CarouselPrevious />
           </div>
-          <CarouselContent className="container flex w-full gap-0 px-4 md:gap-6 lg:gap-2">
-            {/* Adjust padding */}
-            {analyticsWithResolvedLinks.map((item, index) => {
-              return (
+          <CarouselContent
+            className={`container flex w-full gap-0 px-4 md:gap-6 lg:gap-2 ${
+              analyticsWithResolvedLinks.length === 1 ? 'justify-center' : ''
+            }`}
+          >
+            {analyticsWithResolvedLinks.map((item, index) => (
               <CarouselItem
                 key={index}
-                className="lg flex items-center justify-center overflow-hidden px-1 md:basis-1/2 lg:basis-1/3 xl:basis-1/4 xl:px-7 2xl:basis-1/5"
+                className={`flex items-center justify-center overflow-hidden px-1 xl:px-7 ${
+                  analyticsWithResolvedLinks.length === 1
+                    ? 'basis-auto'
+                    : 'md:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/5'
+                }`}
               >
                 {item.status === 'active' ? (
                   <Link
@@ -128,8 +134,7 @@ export const QuickLinks = () => {
                   </div>
                 )}
               </CarouselItem>
-              );
-            })}
+            ))}
           </CarouselContent>
           <div className="ml-2 rounded-1 bg-surfaceDefault">
             <CarouselNext />
