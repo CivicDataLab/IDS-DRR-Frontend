@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { useKeyDetect } from '@/hooks/use-key-detect';
 import { Credits, PartnerLogos } from '@/config/branding';
 import { logo, mainNav } from '@/config/site';

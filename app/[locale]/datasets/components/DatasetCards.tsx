@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { Button, Tag, Text, Tooltip } from 'opub-ui';
 
