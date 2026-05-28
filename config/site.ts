@@ -29,7 +29,7 @@ export const openGraphImage: string = config.openGraphImage ?? '';
 export const tileLayers: TileLayers | undefined = config.tileLayers;
 
 // Links
-export const userGuideLink: string = config.userGuideLink ?? '';
+// export const userGuideLink: string = config.userGuideLink ?? '';
 export const userManualLink: string = config.userManualLink ?? '';
 export const docsLink: string = config.docsLink ?? '';
 

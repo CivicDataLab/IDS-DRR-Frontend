@@ -2,10 +2,11 @@
   "$schema": "https://unpkg.com/knip@5/schema.json",
   // Files knip can't see as "used" because they're referenced by
   // non-TS mechanisms (package.json scripts, CSS @imports, etc.).
+  "entry": ["branding-stub/src/index.ts"],
+
   "ignore": [
     // Consumed by `graphql-codegen --config ./config/codegen.ts` in the
     // `generate`/`build` npm scripts.
-    "config/codegen.ts",
     // graphql-codegen output, over which we don't have full control.
     "gql/generated/**",
     // @import'd by styles/globals.css (knip doesn't follow CSS imports).
@@ -20,9 +21,6 @@
     // Used by Next.js internally for image optimization when installed;
     // not imported directly from source.
     "sharp",
-    // Used by `graphql-codegen` via `preset: 'client'` in config/codegen.ts.
-    // Knip can't follow the string-valued preset reference.
-    "@graphql-codegen/client-preset",
     // Jest internals — referenced via jest config / runtime, not via
     // direct source imports knip can trace.
     "@jest/globals",
