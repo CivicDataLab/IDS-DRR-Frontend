@@ -3,17 +3,18 @@ import { FilterComp } from '@/app/[locale]/[state]/analytics/components/filter-c
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-// Mock next/navigation
-// const mockPush = jest.fn();
+// FilterComp keeps useSearchParams on next/navigation but pulls useRouter
+// from next-intl via @/i18n/navigation, so each mock targets its source.
 const mockParams = jest.fn();
 const mockSearchParams = jest.fn();
 
 jest.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: () => {},
-  }),
   useParams: () => mockParams(),
   useSearchParams: () => mockSearchParams(),
+}));
+
+jest.mock('@/i18n/navigation', () => ({
+  useRouter: () => ({ push: () => {} }),
 }));
 
 // Mock next-usequerystate

@@ -20,9 +20,6 @@
     // Used by Next.js internally for image optimization when installed;
     // not imported directly from source.
     "sharp",
-    // Wired into webpack in next.config.js to consume opub-ui's
-    // sourceMappingURL directives; knip doesn't trace JS config files.
-    "source-map-loader",
     // Used by `graphql-codegen` via `preset: 'client'` in config/codegen.ts.
     // Knip can't follow the string-valued preset reference.
     "@graphql-codegen/client-preset",

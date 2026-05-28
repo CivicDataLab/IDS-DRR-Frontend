@@ -23,10 +23,9 @@ jest.mock('next/image', () => ({
   },
 }));
 
-// Mock next/link to render an anchor tag directly
-jest.mock('next/link', () => ({
-  __esModule: true,
-  default: ({ href, children, ...rest }: any) => (
+// Mock @/i18n/navigation's locale-aware Link as a plain anchor for tests.
+jest.mock('@/i18n/navigation', () => ({
+  Link: ({ href, children, ...rest }: any) => (
     <a href={typeof href === 'string' ? href : href?.pathname} {...rest}>
       {children}
     </a>
