@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, Text } from 'opub-ui';
 
-import { docsLink, userGuideLink } from '@/config/site';
+import { docsLink, userManualLink } from '@/config/site';
 import { cn } from '@/lib/utils';
 import {
   Ellipse,
@@ -136,9 +136,9 @@ export const AboutIndicator = ({ IndicatorData }: { IndicatorData: any }) => {
 
       {/* Read the user guide CTA */}
       <div className="mt-4 flex w-full flex-col justify-end gap-4">
-        {userGuideLink && (
+        {userManualLink && (
           <a
-            href={userGuideLink}
+            href={userManualLink}
             target="_blank"
             className="rounded-lg flex h-12 w-full items-center justify-between gap-2 rounded-2 bg-[#F6F6F7] px-3 py-3"
           >
