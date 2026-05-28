@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   Exposure,
@@ -46,6 +46,13 @@ export function OutputWindow({
     searchParams.get('time-period')?.split(',') || []
   )?.split('-');
 
+  const sourceDataLink = useMemo(()=>{
+    if(indicatorDescriptions?.length > 0){
+      return indicatorDescriptions[0]?.IDS_dataSpace;
+    }
+    return undefined;
+  }, [indicatorDescriptions]);
+  
   const timePeriods = useQuery({
     queryKey: [`timePeriods`],
     queryFn: () =>
@@ -278,12 +285,13 @@ export function OutputWindow({
                 )}
               </div>
             ))}
-            {docsLink && (
-              <div className="px-1 py-3">
+              {(docsLink || (sourceDataLink && !isParentIndicator)) && (
+                <div className="px-1 py-3">
                 {/* TODO: Add the source data link here dynamically from api */}
                 <a
-                  href={docsLink}
+                  href={isParentIndicator ? docsLink :  sourceDataLink??docsLink}
                   target="_blank"
+                  rel="noopener noreferrer"
                   className="rounded-lg flex h-12 w-full items-center justify-between gap-2 rounded-2 bg-[#F6F6F7] px-3 py-3"
                 >
                   <Text
@@ -291,7 +299,7 @@ export function OutputWindow({
                     fontWeight="semibold"
                     className="text-[#3E7844]"
                   >
-                    {isParentIndicator
+                    {isParentIndicator || !sourceDataLink
                       ? t('docsLink')
                       : t('sourceLink')}
                   </Text>
@@ -301,7 +309,7 @@ export function OutputWindow({
                   />
                 </a>
               </div>
-            )}
+              )}
           </section>
         </aside>
       </MediaRendering>
