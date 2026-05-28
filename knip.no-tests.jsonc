@@ -12,7 +12,6 @@
   "$schema": "https://unpkg.com/knip@5/schema.json",
   // These issue categories are false positives once tests are excluded:
   // any test-only binary/dep shows up as unused.
-  "entry": ["branding-stub/src/index.ts"],
   "exclude": ["binaries", "dependencies", "devDependencies", "unlisted"],
   // Disable the auto-detected Jest plugin so tests don't re-enter.
   "jest": false,
