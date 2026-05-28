@@ -126,7 +126,7 @@ export default async function LocaleLayout({
       </head>
       <body className={fontSans.className}>
         <NextIntlClientProvider locale={locale} messages={messages} formats={formats}>
-          <Provider>
+          <Provider locale={locale}>
             <div className="min-h-screen flex flex-col">
               <MediaRendering minWidth={null} maxWidth="1023">
                 <MobileNav />
