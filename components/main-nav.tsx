@@ -6,9 +6,10 @@ import { useKeyDetect } from '@/hooks/use-key-detect';
 import { useTranslations } from 'next-intl';
 import { Text } from 'opub-ui';
 
-import { languages, logo, mainNav } from '@/config/site';
+import { languages, locales, logo, mainNav } from '@/config/site';
 import { routes } from '@/lib/routes';
 import { TranslateDropdown } from './langSelect/lang-select';
+import { LocaleDropdown } from './langSelect/locale-select';
 import NavLink from './nav-link';
 
 export function MainNav({ prefLangCookie }: { prefLangCookie: string }) {
@@ -54,9 +55,11 @@ export function MainNav({ prefLangCookie }: { prefLangCookie: string }) {
             </div>
           )}
 
-          {languages.length > 0 && (
+          {languages.length > 0 ? (
             <TranslateDropdown prefLangCookie={prefLangCookie} />
-          )}
+          ) : locales.length > 1 ? (
+            <LocaleDropdown />
+          ) : null}
         </div>
       </div>
     </header>

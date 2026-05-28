@@ -5,9 +5,9 @@ import { fireEvent, render, screen } from '@testing-library/react';
 // Mock opub-ui components
 jest.mock('opub-ui');
 
-// Mock next/navigation
+// The component uses next-intl's locale-aware useRouter via @/i18n/navigation.
 const mockPush = jest.fn();
-jest.mock('next/navigation', () => ({
+jest.mock('@/i18n/navigation', () => ({
   useRouter: () => ({ push: mockPush }),
 }));
 

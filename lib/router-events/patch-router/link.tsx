@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
-import NextLink from 'next/link';
 
+import { Link as NextLink } from '@/i18n/navigation';
 import { onStart } from '../events';
 import { shouldTriggerStartEvent } from './should-trigger-start-event';
 

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { captureException } from '@sentry/nextjs';
 import { useTranslations } from 'next-intl';
 import {
