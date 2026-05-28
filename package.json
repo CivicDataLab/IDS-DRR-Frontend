@@ -33,7 +33,7 @@
     "graphql": "^16.6.0",
     "graphql-request": "^7.4.0",
     "ids-drr-branding": "file:./branding-stub",
-    "ids-drr-branding-types": "github:open-contracting/ids-drr-branding-types",
+    "ids-drr-branding-types": "github:CivicDataLab/ids-drr-branding-types",
     "next": "15.5.9",
     "next-intl": "^3.4.0",
     "next-usequerystate": "^1.20.0",

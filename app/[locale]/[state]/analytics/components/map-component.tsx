@@ -53,10 +53,12 @@ export const MapComponent = ({
   const translatedTileLayers = React.useMemo(() => {
     if (!tileLayers) return undefined;
     return Object.fromEntries(
-      Object.entries(tileLayers).map(([key, layer]) => [
-        tMap.has(`layers.${key}`) ? tMap(`layers.${key}`) : key,
+      Object.entries(tileLayers).map(([key, layer]) => {
+        const translationKey = `layers.${key}` as any;
+        return [
+        tMap.has(translationKey) ? tMap(translationKey) : key,
         layer,
-      ])
+      ]})
     );
   }, [tMap]);
   const [map, setMap] = React.useState<any>(null);
