@@ -5,14 +5,16 @@ import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { useKeyDetect } from '@/hooks/use-key-detect';
 import { Credits, PartnerLogos } from '@/config/branding';
-import { logo, mainNav } from '@/config/site';
+import { languages, locales, logo, mainNav } from '@/config/site';
 import { useTranslations } from 'next-intl';
 import { IconButton, Text } from 'opub-ui';
 
 import { routes } from '@/lib/routes';
 import Icons from '@/components/icons';
+import { TranslateDropdown } from './langSelect/lang-select';
+import { LocaleDropdown } from './langSelect/locale-select';
 
-export function MobileNav() {
+export function MobileNav({ prefLangCookie }: { prefLangCookie: string }) {
   const t = useTranslations('nav');
   const tSite = useTranslations('site');
   const [open, setOpen] = React.useState(false);
@@ -69,10 +71,19 @@ export function MobileNav() {
       </header>
       {open && (
         <div
-          className="fixed z-10 flex h-[95vh] w-[100vw] flex-shrink-0 flex-col items-start justify-between border-t-1 border-solid border-baseGraySlateSolid11 bg-backgroundSolidDark px-5 py-8 text-textOnBGDefault"
+          className="fixed z-10 top-12 flex h-[95vh] w-[100vw] flex-shrink-0 flex-col items-start justify-between border-t-1 border-solid border-baseGraySlateSolid11 bg-backgroundSolidDark px-5 py-8 text-textOnBGDefault"
           style={{ zIndex: '100009' }}
         >
-          <div className="">
+          <div className="flex flex-row-reverse w-full justify-between">
+            {languages.length > 0 ? (
+              <div className="mt-2">
+                <TranslateDropdown prefLangCookie={prefLangCookie} />
+              </div>
+            ) : locales.length > 1 ? (
+              <div className="mt-2">
+                <LocaleDropdown />
+              </div>
+            ) : null}
             <div className="flex w-full items-center gap-3 p-3 pr-5">
               {mainNav.length > 0 && (
                 <div>
@@ -86,6 +97,7 @@ export function MobileNav() {
                   ))}
                 </div>
               )}
+            
             </div>
           </div>
           {(Credits || PartnerLogos) && (

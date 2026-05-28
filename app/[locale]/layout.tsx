@@ -129,7 +129,7 @@ export default async function LocaleLayout({
           <Provider locale={locale}>
             <div className="min-h-screen flex flex-col">
               <MediaRendering minWidth={null} maxWidth="1023">
-                <MobileNav />
+                <MobileNav prefLangCookie={prefLangCookie} />
               </MediaRendering>
               <MediaRendering minWidth="1024" maxWidth={null}>
                 <MainNav prefLangCookie={prefLangCookie} />
