@@ -7,7 +7,7 @@ import { interpolateBlues } from 'd3-scale-chromatic';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, Spinner, Text } from 'opub-ui';
 
-import { states } from '@/config/site';
+import { states, tileLayers } from '@/config/site';
 import { useFormatNumber } from '@/hooks/use-format-number';
 import { Factors, isRiskLevel } from '@/lib/analytics';
 import Icons from '@/components/icons';
@@ -47,7 +47,18 @@ export const MapComponent = ({
 }) => {
   const tRisk = useTranslations('analytics.risk');
   const tCommon = useTranslations('common');
+  const tMap = useTranslations('analytics.map');
   const formatNumber = useFormatNumber();
+
+  const translatedTileLayers = React.useMemo(() => {
+    if (!tileLayers) return undefined;
+    return Object.fromEntries(
+      Object.entries(tileLayers).map(([key, layer]) => [
+        tMap.has(`layers.${key}`) ? tMap(`layers.${key}`) : key,
+        layer,
+      ])
+    );
+  }, [tMap]);
   const [map, setMap] = React.useState<any>(null);
   const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
   const [overlayFeatures, setOverlayFeatures] = React.useState<any>(null);
@@ -304,6 +315,7 @@ export const MapComponent = ({
         )}
         <MapChart
           features={mapFeatures || mapData.features}
+          tileLayers={translatedTileLayers}
           addlFeaturesArray={overlayFeatures ? [overlayFeatures] : []}
           addlFeaturesStyleArray={addlFeaturesStyleArray}
           mapZoom={isMobile ? 8 : 7.4}
