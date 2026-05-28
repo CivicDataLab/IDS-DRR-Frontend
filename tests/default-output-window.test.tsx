@@ -17,9 +17,9 @@ jest.mock('@/lib/api', () => ({
   })),
 }));
 
-// Provide userGuideLink and docsLink so the CTAs render.
+// Provide userManualLink and docsLink so the CTAs render.
 jest.mock('@/config/site', () => ({
-  userGuideLink: 'https://example.com/user-guide',
+  userManualLink: 'https://example.com/user-guide',
   docsLink: 'https://example.com/docs',
 }));
 
