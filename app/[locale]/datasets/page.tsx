@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useReducer, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { captureException } from '@sentry/nextjs';
 import { useTranslations } from 'next-intl';
 import {
