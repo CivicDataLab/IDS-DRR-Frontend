@@ -2,8 +2,6 @@
   "$schema": "https://unpkg.com/knip@5/schema.json",
   // Files knip can't see as "used" because they're referenced by
   // non-TS mechanisms (package.json scripts, CSS @imports, etc.).
-  "entry": ["branding-stub/src/index.ts"],
-
   "ignore": [
     // Consumed by `graphql-codegen --config ./config/codegen.ts` in the
     // `generate`/`build` npm scripts.
