@@ -103,9 +103,11 @@ export function OutputWindow({
   // To filter out revenue circles from the district data boundary
   const DataBasedOnBoundary = !RevenueRegion ? districtData : data;
 
+  // `data` may briefly be [] during a district-to-subdistrict transition.
+  // The optional chaining yields undefined instead of throwing on `replace()`.
   const RegionName = !RevenueRegion
-    ? districtData[0]?.district
-    : data[0]?.[data[0].type.replace(/\s+/g, '-')];
+    ? districtData?.[0]?.district
+    : data?.[0]?.[data?.[0]?.type?.replace(/\s+/g, '-')];
 
   const [tooltipOpen, setTooltipOpen] = React.useState(false);
 

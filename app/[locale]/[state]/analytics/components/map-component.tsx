@@ -62,7 +62,6 @@ export const MapComponent = ({
     );
   }, [tMap]);
   const [map, setMap] = React.useState<any>(null);
-  const [mapFeatures, setMapFeatures] = React.useState<any>(mapData.features);
   const [overlayFeatures, setOverlayFeatures] = React.useState<any>(null);
 
   React.useEffect(() => {
@@ -87,6 +86,14 @@ export const MapComponent = ({
 
   const params = new URLSearchParams(window.location.search);
   const districtCode = params.get('district-code');
+
+  const mapFeatures = React.useMemo(() => {
+    if (!districtCode) return mapData?.features;
+    return (revenueMapData?.features || []).filter(
+      (feature: { properties: { [x: string]: string } }) =>
+        feature.properties['district-code'] === districtCode
+    );
+  }, [districtCode, mapData?.features, revenueMapData?.features]);
 
   const { width } = useWindowSize();
   const isMobile = width < 1023;
@@ -259,13 +266,7 @@ export const MapComponent = ({
       });
     }
 
-    const filterMapData = revenueMapData?.features.filter(
-      (feature: { properties: { [x: string]: string } }) =>
-        feature.properties['district-code'] === districtCode
-    );
-
-    setMapFeatures(districtCode ? filterMapData : mapData?.features);
-  }, [districtCode, map, mapData?.features, revenueMapData?.features]);
+  }, [districtCode, map, mapData?.features]);
 
   React.useEffect(() => {
     if (!map) return;

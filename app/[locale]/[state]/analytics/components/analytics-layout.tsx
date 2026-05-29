@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { parseAsString, useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
 import { Spinner, Tab, TabList, TabPanel, Tabs, Text } from 'opub-ui';
@@ -205,6 +205,7 @@ export function AnalyticsMainLayout() {
     enabled: Boolean(
       isMapView && currentSelectedState?.code && timePeriodSelected
     ),
+    placeholderData: keepPreviousData,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
@@ -230,6 +231,7 @@ export function AnalyticsMainLayout() {
     enabled: Boolean(
       isMapView && currentSelectedState?.code && timePeriodSelected
     ),
+    placeholderData: keepPreviousData,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
@@ -331,10 +333,25 @@ export function AnalyticsMainLayout() {
         } as any
       ),
     enabled: Boolean(isMapView && currentSelectedState?.code),
+    placeholderData: keepPreviousData,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
+
+  // Delay setting the map's indicator until all three per-indicator queries are fresh.
+  const [renderedIndicator, setRenderedIndicator] = useState(indicator);
+  if (
+    !mapData.isPlaceholderData &&
+    !revenueMapData.isPlaceholderData &&
+    !mapIndicatorsData.isPlaceholderData &&
+    mapData.data &&
+    revenueMapData.data &&
+    mapIndicatorsData.data &&
+    renderedIndicator !== indicator
+  ) {
+    setRenderedIndicator(indicator);
+  }
 
   // Data used for the state-level "About indicator" pane (always root list)
   const aboutIndicatorsData = useQuery<any>({
@@ -557,7 +574,7 @@ export function AnalyticsMainLayout() {
                   <>
                     {(statesListData?.isFetching ||
                       !timePeriodSelected ||
-                      (mapData?.isFetching && revenueMapData?.isFetching)) && (
+                      (mapData?.isLoading && revenueMapData?.isLoading)) && (
                       <div className="flex h-full flex-col place-content-center items-center">
                         <Spinner color="highlight" />
                         <Text>{tCommon('loading')}</Text>
@@ -566,9 +583,9 @@ export function AnalyticsMainLayout() {
 
                     {revenueMapData?.data && mapData?.data && (
                       <MapComponent
-                        indicator={indicator}
-                        mapDataloading={mapData?.isFetching}
-                        revenueMapDataLoading={revenueMapData?.isFetching}
+                        indicator={renderedIndicator}
+                        mapDataloading={mapData?.isLoading}
+                        revenueMapDataLoading={revenueMapData?.isLoading}
                         indicatorsData={mapIndicatorsData?.data?.indicators}
                         setRegion={setDistrictCode}
                         setRevenueRegion={setRevenueCode}
@@ -685,6 +702,7 @@ export function OutputWindowComponent({
           },
         }
       ),
+    placeholderData: keepPreviousData,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
@@ -702,26 +720,40 @@ export function OutputWindowComponent({
         }
       ),
     enabled: Boolean(currentState?.code),
+    placeholderData: keepPreviousData,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
 
+  // Delay setting the panel's indicator until both queries are fresh.
+  const [renderedIndicator, setRenderedIndicator] = useState(indicator);
+  if (
+    !sidePaneData.isPlaceholderData &&
+    !indicatorDescriptions.isPlaceholderData &&
+    sidePaneData.data &&
+    indicatorDescriptions.data &&
+    renderedIndicator !== indicator
+  ) {
+    setRenderedIndicator(indicator);
+  }
+
   return (
     <>
-      {sidePaneData?.isFetched && (
+      {sidePaneData?.data && (
         <OutputWindow
+          // During a district-to-subdistrict transition, the prior boundary's
+          // data is still in scope for one render; default to [] so the
+          // panel renders empty rather than crashing on the absent key.
           data={
-            sidePaneData?.data
-              ? sidePaneData?.data[
-                  !searchParams?.get('revenue-code')
-                    ? 'districtViewData'
-                    : 'revCircleViewData'
-                ]
-              : []
+            sidePaneData?.data?.[
+              !searchParams?.get('revenue-code')
+                ? 'districtViewData'
+                : 'revCircleViewData'
+            ] ?? []
           }
           indicatorDescriptions={indicatorDescriptions?.data?.indicators}
-          indicator={indicator}
+          indicator={renderedIndicator}
           boundary={boundary}
           currentState={currentState}
           onClose={onClose}
