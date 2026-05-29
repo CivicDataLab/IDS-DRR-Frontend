@@ -154,7 +154,16 @@
     "table": {
       "regionName": "Region Name",
       "regionBoundary": "Region Boundary",
-      "empty": "No data available."
+      "empty": "No data available.",
+      "labels": {
+        "rows": "Rows: ",
+        "pageIndex": "Page {current} of {total}",
+        "pageIndexMobile": "{current} / {total}",
+        "firstPage": "First Page",
+        "previousPage": "Previous Page",
+        "nextPage": "Next Page",
+        "lastPage": "Last Page"
+      }
     },
     "divisionHeading": "{name} Division",
     "subdivisionHeading": "{name} {type}",
