@@ -13,7 +13,17 @@ const nextConfig: NextConfig = {
     config.module.rules.push({
       test: /\.csv$/,
       type: 'asset/source',
-      include: /node_modules\/ids-drr-branding/,
+      // The ids-drr-branding package is consumed as `file:./branding-stub`,
+      // which npm symlinks into node_modules. Webpack resolves symlinks before
+      // matching `include`, so the CSV path depends on the install mode:
+      // - `node_modules/ids-drr-branding/` (e.g. npm --install-links or a registry install)
+      // - `branding-stub/` (e.g. Docker runtime bind-mount or build-time copy)
+      // - `../ids-drr-<name>-branding/` (e.g. manual symlink to conventional name)
+      include: [
+        /node_modules\/ids-drr-branding/,
+        /branding-stub/,
+        /ids-drr-[a-z-]+-branding/,
+      ],
     });
     return config;
   },
