@@ -42,6 +42,21 @@ export function TableComponent({ data, isLoading }: any) {
     return transformed;
   }, [data, t]);
 
+  const labels = useMemo(
+    () => ({
+      rows: t('labels.rows'),
+      pageIndex: (current: number, total: number) =>
+        t('labels.pageIndex', { current, total }),
+      pageIndexMobile: (current: number, total: number) =>
+        t('labels.pageIndexMobile', { current, total }),
+      firstPage: t('labels.firstPage'),
+      previousPage: t('labels.previousPage'),
+      nextPage: t('labels.nextPage'),
+      lastPage: t('labels.lastPage'),
+    }),
+    [t]
+  );
+
   const rows = useMemo(() => {
     if (!data?.length) return [];
     return data.map((item: Record<string, any>) => {
@@ -87,6 +102,7 @@ export function TableComponent({ data, isLoading }: any) {
         hasZebraStripingOnData
         sortColumns={columns.map((column) => column.accessorKey)}
         rows={rows}
+        labels={labels}
       />
     </div>
   );
