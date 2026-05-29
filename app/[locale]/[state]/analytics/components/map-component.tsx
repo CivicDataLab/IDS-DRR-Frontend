@@ -4,6 +4,7 @@ import React from 'react';
 import { useWindowSize } from '@/hooks/use-window-size';
 import * as d3 from 'd3-scale';
 import { interpolateBlues } from 'd3-scale-chromatic';
+import type { TileLayers } from 'ids-drr-branding-types';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, Spinner, Text } from 'opub-ui';
 
@@ -50,16 +51,17 @@ export const MapComponent = ({
   const tMap = useTranslations('analytics.map');
   const formatNumber = useFormatNumber();
 
-  const translatedTileLayers = React.useMemo(() => {
+  const translatedTileLayers = React.useMemo<TileLayers | undefined>(() => {
     if (!tileLayers) return undefined;
     return Object.fromEntries(
       Object.entries(tileLayers).map(([key, layer]) => {
         const translationKey = `layers.${key}` as any;
         return [
-        tMap.has(translationKey) ? tMap(translationKey) : key,
-        layer,
-      ]})
-    );
+          tMap.has(translationKey) ? tMap(translationKey) : key,
+          layer,
+        ];
+      })
+    ) as TileLayers;
   }, [tMap]);
   const [map, setMap] = React.useState<any>(null);
   const [overlayFeatures, setOverlayFeatures] = React.useState<any>(null);
