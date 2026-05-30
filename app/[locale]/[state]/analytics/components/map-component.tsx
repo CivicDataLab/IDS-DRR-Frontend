@@ -383,7 +383,7 @@ export const MapComponent = ({
           tileLayers={translatedTileLayers}
           addlFeaturesArray={overlayFeatures ? [overlayFeatures] : []}
           addlFeaturesStyleArray={addlFeaturesStyleArray}
-          mapZoom={isMobile ? 8 : 7.4}
+          mapZoom={6}
           mapProperty={indicator}
           zoomOnClick={false}
           isCustomColor={!Factors.includes(indicator)}
@@ -404,8 +404,20 @@ export const MapComponent = ({
           legendData={
             Factors.includes(indicator) ? legendData : customLegendData
           }
-          minZoom={isMobile ? 3 : 6}
-          maxZoom={isMobile ? 6.3 : 8}
+          {...(() => {
+            // Pair minZoom/maxZoom: setting one without the other makes Leaflet
+            // throw "Attempted to load an infinite number of tiles."
+            const stateConfig = states.find(
+              (s) => s.slug === currentSelectedState?.slug
+            );
+            if (stateConfig?.minZoom === undefined && stateConfig?.maxZoom === undefined) {
+              return {};
+            }
+            return {
+              minZoom: stateConfig?.minZoom ?? 0,
+              maxZoom: stateConfig?.maxZoom ?? 18,
+            };
+          })()}
           mapDataFn={mapDataFn}
           mouseover={(layer) => {
             const regionName = layer.feature?.properties.name;
