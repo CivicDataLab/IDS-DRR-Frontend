@@ -136,7 +136,8 @@
     "loading": "Loading data...",
     "map": {
       "loading": "Loading map data...",
-      "error": "Error loading map data."
+      "error": "Error loading map data.",
+      "noData": "No data available for this period."
     },
     "chart": {
       "axes": {

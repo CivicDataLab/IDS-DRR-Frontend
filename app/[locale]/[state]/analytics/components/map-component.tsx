@@ -108,15 +108,22 @@ export const MapComponent = ({
   }
 
   const customLegendData: { label: string; color: string }[] = [];
-  const allZeros = values.every((val) => val === 0);
+  const hasData = values.length > 0;
+  const allZeros = hasData && values.every((val) => val === 0);
+
+  // Neutral fill used when the indicator returns no data for the current
+  // selection (e.g. a slug that doesn't correspond to a data column).
+  const NO_DATA_FILL = '#e5e5e5';
 
   // Set the sequential scale properties
-  const colorScale = d3
-    .scaleSequential()
-    .domain([Math.min(...values), Math.max(...values)])
-    .interpolator(interpolateBlues);
+  const colorScale: (n: number) => string = hasData
+    ? d3
+        .scaleSequential()
+        .domain([Math.min(...values), Math.max(...values)])
+        .interpolator(interpolateBlues)
+    : () => NO_DATA_FILL;
 
-  if (!Factors.includes(indicator) && !allZeros) {
+  if (hasData && !Factors.includes(indicator) && !allZeros) {
     const min = Math.min(...values);
     const max = Math.max(...values);
     const step = (max - min) / 3;
@@ -153,6 +160,13 @@ export const MapComponent = ({
     customLegendData.unshift({
       color: colorScale(0),
       label: '0',
+    });
+  }
+
+  if (!hasData && !Factors.includes(indicator)) {
+    customLegendData.push({
+      color: NO_DATA_FILL,
+      label: tMap('noData'),
     });
   }
 
@@ -228,10 +242,12 @@ export const MapComponent = ({
       <span>${getFactorNameBySlug(indicatorsData, indicator)} : <span style="color: ${colorMap[riskValue]}; text-transform: ${Factors.includes(indicator) && 'uppercase'}; font-weight: bold;">${
         Factors.includes(indicator)
           ? riskText
-          : `${formatNumber(riskValue)} ${getUnitsBySlug(
-              indicatorsData,
-              indicator
-            )}`
+          : riskValue == null
+            ? tCommon('na')
+            : `${formatNumber(riskValue)} ${getUnitsBySlug(
+                indicatorsData,
+                indicator
+              )}`
       }</span></span>
       </div>`;
         },
@@ -399,10 +415,12 @@ export const MapComponent = ({
               ? isRiskLevel(riskKey)
                 ? tRisk(riskKey)
                 : tCommon('na')
-              : `${formatNumber(riskValue)} ${getUnitsBySlug(
-                  indicatorsData,
-                  indicator
-                )}`;
+              : riskValue == null
+                ? tCommon('na')
+                : `${formatNumber(riskValue)} ${getUnitsBySlug(
+                    indicatorsData,
+                    indicator
+                  )}`;
             // const riskText = Factors.includes(indicator)
             //   ? RiskText[riskValue]?.indicatorText
             //   : `${riskValue} ${getUnitsBySlug(indicatorsData, indicator)}`;
