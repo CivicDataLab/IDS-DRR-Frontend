@@ -340,7 +340,12 @@ export function AnalyticsMainLayout() {
   });
 
   // Delay setting the map's indicator until all three per-indicator queries are fresh.
+  // Keep `renderedIndicatorsData` in lockstep so the legend doesn't briefly
+  // look the prior slug up in the new indicator's metadata.
   const [renderedIndicator, setRenderedIndicator] = useState(indicator);
+  const [renderedIndicatorsData, setRenderedIndicatorsData] = useState<any>(
+    mapIndicatorsData?.data?.indicators
+  );
   if (
     !mapData.isPlaceholderData &&
     !revenueMapData.isPlaceholderData &&
@@ -351,6 +356,11 @@ export function AnalyticsMainLayout() {
     renderedIndicator !== indicator
   ) {
     setRenderedIndicator(indicator);
+    setRenderedIndicatorsData(mapIndicatorsData.data.indicators);
+  }
+  // Bootstrap when the first response lands (initial mount).
+  if (!renderedIndicatorsData && mapIndicatorsData?.data?.indicators) {
+    setRenderedIndicatorsData(mapIndicatorsData.data.indicators);
   }
 
   // Data used for the state-level "About indicator" pane (always root list)
@@ -587,7 +597,7 @@ export function AnalyticsMainLayout() {
                         indicator={renderedIndicator}
                         mapDataloading={mapData?.isLoading}
                         revenueMapDataLoading={revenueMapData?.isLoading}
-                        indicatorsData={mapIndicatorsData?.data?.indicators}
+                        indicatorsData={renderedIndicatorsData}
                         setRegion={setDistrictCode}
                         setRevenueRegion={setRevenueCode}
                         revenueMapData={revenueMapData?.data?.revCircleMapData}
@@ -728,7 +738,11 @@ export function OutputWindowComponent({
   });
 
   // Delay setting the panel's indicator until both queries are fresh.
+  // Keep `renderedIndicatorDescriptions` in lockstep so the panel doesn't
+  // briefly look the prior slug up in the new indicator's descriptions.
   const [renderedIndicator, setRenderedIndicator] = useState(indicator);
+  const [renderedIndicatorDescriptions, setRenderedIndicatorDescriptions] =
+    useState<any>(indicatorDescriptions?.data?.indicators);
   if (
     !sidePaneData.isPlaceholderData &&
     !indicatorDescriptions.isPlaceholderData &&
@@ -737,6 +751,13 @@ export function OutputWindowComponent({
     renderedIndicator !== indicator
   ) {
     setRenderedIndicator(indicator);
+    setRenderedIndicatorDescriptions(indicatorDescriptions.data.indicators);
+  }
+  if (
+    !renderedIndicatorDescriptions &&
+    indicatorDescriptions?.data?.indicators
+  ) {
+    setRenderedIndicatorDescriptions(indicatorDescriptions.data.indicators);
   }
 
   return (
@@ -753,7 +774,7 @@ export function OutputWindowComponent({
                 : 'revCircleViewData'
             ] ?? []
           }
-          indicatorDescriptions={indicatorDescriptions?.data?.indicators}
+          indicatorDescriptions={renderedIndicatorDescriptions}
           indicator={renderedIndicator}
           boundary={boundary}
           currentState={currentState}
