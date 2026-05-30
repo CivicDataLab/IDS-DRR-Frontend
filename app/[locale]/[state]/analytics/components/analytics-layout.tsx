@@ -593,7 +593,19 @@ export function AnalyticsMainLayout() {
                     )}
 
                     {revenueMapData?.data && mapData?.data && (
-                      <MapComponent
+                      <div className="relative">
+                        {(mapIndicatorsData?.isFetching ||
+                          (districtCode
+                            ? revenueMapData?.isFetching
+                            : mapData?.isFetching)) && (
+                          <div className="pointer-events-none absolute inset-x-0 top-4 z-[1000] flex justify-center">
+                            <div className="flex items-center gap-2 rounded bg-surfaceDefault px-3 py-1 shadow-basicMd">
+                              <Spinner color="highlight" />
+                              <Text variant="bodySm">{tCommon('loading')}</Text>
+                            </div>
+                          </div>
+                        )}
+                        <MapComponent
                         indicator={renderedIndicator}
                         mapDataloading={mapData?.isLoading}
                         revenueMapDataLoading={revenueMapData?.isLoading}
@@ -608,6 +620,7 @@ export function AnalyticsMainLayout() {
                           setIsOutputPaneOpen((prev) => !prev)
                         }
                       />
+                      </div>
                     )}
 
                     {view === 'map' &&
