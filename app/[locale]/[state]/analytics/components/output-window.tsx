@@ -161,8 +161,11 @@ export function OutputWindow({
             <Button
               className="self-start"
               onClick={() => {
-                (!RevenueRegion && setDistrictCode(null),
-                  RevenueRegion && setRevenueCode(null));
+                if (RevenueRegion) {
+                  setRevenueCode(null);
+                } else {
+                  setDistrictCode(null);
+                }
               }}
               kind="tertiary"
             >
@@ -359,7 +362,9 @@ export function OutputWindow({
                     onClick={() => {
                       setDistrictCode(null);
                       setRevenueCode(null);
-                      isExpanded ? setIsExpanded(false) : '';
+                      if (isExpanded) {
+                        setIsExpanded(false);
+                      }
                     }}
                     kind="tertiary"
                   >
