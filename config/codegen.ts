@@ -29,6 +29,7 @@ if (process.env.BACKEND_URL) {
 
 const config: CodegenConfig = {
   overwrite: true,
+  config: { defaultScalarType: 'any' },
   generates,
 };
 
