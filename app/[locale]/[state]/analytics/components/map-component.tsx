@@ -307,6 +307,17 @@ export const MapComponent = ({
     );
   }, [districtCode, map, mapData?.features, isOutputPaneOpen, isMobile, fitBoundsOptions, safeApply]);
 
+  // Defer popup close so a quick edge re-entry (cursor wobbling across a
+  // polygon's jagged boundary) doesn't tear down and rebuild the popup.
+  const popupCloseTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const poppedLayerRef = React.useRef<any>(null);
+  React.useEffect(
+    () => () => {
+      if (popupCloseTimerRef.current) clearTimeout(popupCloseTimerRef.current);
+    },
+    []
+  );
+
   React.useEffect(() => {
     if (!map || !map.getContainer()) return;
     if (districtCode) return;
@@ -405,6 +416,21 @@ export const MapComponent = ({
           })()}
           mapDataFn={mapDataFn}
           mouseover={(layer) => {
+            // If a close was pending, cancel it. When it was scheduled for a
+            // different layer (cursor moved A -> B faster than the timer),
+            // close that one now so we don't briefly show two popups.
+            if (popupCloseTimerRef.current) {
+              clearTimeout(popupCloseTimerRef.current);
+              popupCloseTimerRef.current = null;
+              if (poppedLayerRef.current && poppedLayerRef.current !== layer) {
+                poppedLayerRef.current.closePopup();
+                poppedLayerRef.current.unbindPopup();
+                poppedLayerRef.current = null;
+              }
+            }
+            // Same-layer wobble: the popup is still bound and open, no rebuild.
+            if (poppedLayerRef.current === layer) return;
+
             const regionName = layer.feature?.properties.name;
             const riskValue = layer.feature?.properties?.[indicator];
             const riskKey = String(riskValue);
@@ -421,11 +447,19 @@ export const MapComponent = ({
             // const riskText = Factors.includes(indicator)
             //   ? RiskText[riskValue]?.indicatorText
             //   : `${riskValue} ${getUnitsBySlug(indicatorsData, indicator)}`;
+            poppedLayerRef.current = layer;
             EnablePopup({ regionName, riskValue, riskText, layer });
           }}
           mouseout={(layer) => {
-            layer.closePopup();
-            layer.unbindPopup();
+            // Defer the close so quick re-entry along a jagged polygon edge
+            // (or an instant transition to an adjacent feature) doesn't tear
+            // down a popup that's about to be reopened.
+            popupCloseTimerRef.current = setTimeout(() => {
+              layer.closePopup();
+              layer.unbindPopup();
+              if (poppedLayerRef.current === layer) poppedLayerRef.current = null;
+              popupCloseTimerRef.current = null;
+            }, 100);
           }}
           click={(layer) =>
             onMapClick({ layerCode: layer.feature?.properties.code })
