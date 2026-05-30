@@ -574,7 +574,8 @@ export function AnalyticsMainLayout() {
                   <>
                     {(statesListData?.isFetching ||
                       !timePeriodSelected ||
-                      (mapData?.isLoading && revenueMapData?.isLoading)) && (
+                      !mapData?.data ||
+                      !revenueMapData?.data) && (
                       <div className="flex h-full flex-col place-content-center items-center">
                         <Spinner color="highlight" />
                         <Text>{tCommon('loading')}</Text>
