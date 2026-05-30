@@ -5,7 +5,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import {
   getMessages,
   getTranslations,
-  unstable_setRequestLocale,
+  setRequestLocale,
 } from 'next-intl/server';
 
 import { Footer } from '@/config/branding';
@@ -83,7 +83,7 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const locale = (await params).locale;
-  unstable_setRequestLocale(locale);
+  setRequestLocale(locale);
   const messages = await getMessages();
 
   // Get the language preference from cookies

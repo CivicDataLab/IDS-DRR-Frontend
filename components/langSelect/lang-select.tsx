@@ -19,7 +19,7 @@ export function TranslateDropdown({
       const decoded = decodeURIComponent(cookie || '/en/');
       const parts = decoded.split('/');
       return parts.length > 2 ? parts[2] : 'en';
-    } catch (error) {
+    } catch {
       return 'en';
     }
   };

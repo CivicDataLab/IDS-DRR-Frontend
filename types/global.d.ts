@@ -1,8 +1,18 @@
-type IntlMessages = typeof import('../locales/en.json');
+import { formats } from '@/i18n/formats';
+import messages from '@/locales/en.json';
 
-// Types derived from Messages are in global.d.ts for simplicity.
-type RiskLevel = keyof IntlMessages['analytics']['risk'];
-type NavLinkKey = keyof IntlMessages['nav']['links'];
+declare module 'next-intl' {
+  interface AppConfig {
+    Messages: typeof messages;
+    Formats: typeof formats;
+  }
+}
+
+declare global {
+  type IntlMessages = typeof messages;
+  type RiskLevel = keyof IntlMessages['analytics']['risk'];
+  type NavLinkKey = keyof IntlMessages['nav']['links'];
+}
 
 declare module '*.csv' {
   const content: string;

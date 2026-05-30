@@ -31,5 +31,10 @@ const config: Config = {
   modulePathIgnorePatterns: ['<rootDir>/.next/standalone/'],
 };
 
-// createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-export default createJestConfig(config);
+// https://next-intl.dev/docs/environments/testing#jest
+export default async () => ({
+  ...(await createJestConfig(config)()),
+  transformIgnorePatterns: [
+    '/node_modules/(?!(ids-drr-branding|next-intl|use-intl|@formatjs|icu-minify|intl-messageformat)/)',
+  ],
+});
