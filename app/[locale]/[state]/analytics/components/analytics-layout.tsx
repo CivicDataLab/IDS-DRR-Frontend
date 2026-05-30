@@ -339,18 +339,28 @@ export function AnalyticsMainLayout() {
     refetchOnReconnect: false,
   });
 
-  // Delay setting the map's indicator until all three per-indicator queries are fresh.
+  // Delay setting the map's indicator until the relevant queries are fresh.
+  // Keep `renderedIndicatorsData` in lockstep so the legend doesn't briefly
+  // look the prior slug up in the new indicator's metadata.
   const [renderedIndicator, setRenderedIndicator] = useState(indicator);
+  const [renderedIndicatorsData, setRenderedIndicatorsData] = useState<any>(
+    mapIndicatorsData?.data?.indicators
+  );
+  const mapDataReady = districtCode
+    ? !revenueMapData.isPlaceholderData && Boolean(revenueMapData.data)
+    : !mapData.isPlaceholderData && Boolean(mapData.data);
   if (
-    !mapData.isPlaceholderData &&
-    !revenueMapData.isPlaceholderData &&
+    mapDataReady &&
     !mapIndicatorsData.isPlaceholderData &&
-    mapData.data &&
-    revenueMapData.data &&
     mapIndicatorsData.data &&
     renderedIndicator !== indicator
   ) {
     setRenderedIndicator(indicator);
+    setRenderedIndicatorsData(mapIndicatorsData.data.indicators);
+  }
+  // Bootstrap when the first response lands (initial mount).
+  if (!renderedIndicatorsData && mapIndicatorsData?.data?.indicators) {
+    setRenderedIndicatorsData(mapIndicatorsData.data.indicators);
   }
 
   // Data used for the state-level "About indicator" pane (always root list)
@@ -574,7 +584,8 @@ export function AnalyticsMainLayout() {
                   <>
                     {(statesListData?.isFetching ||
                       !timePeriodSelected ||
-                      (mapData?.isLoading && revenueMapData?.isLoading)) && (
+                      !mapData?.data ||
+                      !revenueMapData?.data) && (
                       <div className="flex h-full flex-col place-content-center items-center">
                         <Spinner color="highlight" />
                         <Text>{tCommon('loading')}</Text>
@@ -582,11 +593,23 @@ export function AnalyticsMainLayout() {
                     )}
 
                     {revenueMapData?.data && mapData?.data && (
-                      <MapComponent
+                      <div className="relative">
+                        {(mapIndicatorsData?.isFetching ||
+                          (districtCode
+                            ? revenueMapData?.isFetching
+                            : mapData?.isFetching)) && (
+                          <div className="pointer-events-none absolute inset-x-0 top-4 z-[1000] flex justify-center">
+                            <div className="flex items-center gap-2 rounded bg-surfaceDefault px-3 py-1 shadow-basicMd">
+                              <Spinner color="highlight" />
+                              <Text variant="bodySm">{tCommon('loading')}</Text>
+                            </div>
+                          </div>
+                        )}
+                        <MapComponent
                         indicator={renderedIndicator}
                         mapDataloading={mapData?.isLoading}
                         revenueMapDataLoading={revenueMapData?.isLoading}
-                        indicatorsData={mapIndicatorsData?.data?.indicators}
+                        indicatorsData={renderedIndicatorsData}
                         setRegion={setDistrictCode}
                         setRevenueRegion={setRevenueCode}
                         revenueMapData={revenueMapData?.data?.revCircleMapData}
@@ -597,6 +620,7 @@ export function AnalyticsMainLayout() {
                           setIsOutputPaneOpen((prev) => !prev)
                         }
                       />
+                      </div>
                     )}
 
                     {view === 'map' &&
@@ -727,7 +751,11 @@ export function OutputWindowComponent({
   });
 
   // Delay setting the panel's indicator until both queries are fresh.
+  // Keep `renderedIndicatorDescriptions` in lockstep so the panel doesn't
+  // briefly look the prior slug up in the new indicator's descriptions.
   const [renderedIndicator, setRenderedIndicator] = useState(indicator);
+  const [renderedIndicatorDescriptions, setRenderedIndicatorDescriptions] =
+    useState<any>(indicatorDescriptions?.data?.indicators);
   if (
     !sidePaneData.isPlaceholderData &&
     !indicatorDescriptions.isPlaceholderData &&
@@ -736,6 +764,13 @@ export function OutputWindowComponent({
     renderedIndicator !== indicator
   ) {
     setRenderedIndicator(indicator);
+    setRenderedIndicatorDescriptions(indicatorDescriptions.data.indicators);
+  }
+  if (
+    !renderedIndicatorDescriptions &&
+    indicatorDescriptions?.data?.indicators
+  ) {
+    setRenderedIndicatorDescriptions(indicatorDescriptions.data.indicators);
   }
 
   return (
@@ -752,7 +787,7 @@ export function OutputWindowComponent({
                 : 'revCircleViewData'
             ] ?? []
           }
-          indicatorDescriptions={indicatorDescriptions?.data?.indicators}
+          indicatorDescriptions={renderedIndicatorDescriptions}
           indicator={renderedIndicator}
           boundary={boundary}
           currentState={currentState}

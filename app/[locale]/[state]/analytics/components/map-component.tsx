@@ -4,6 +4,7 @@ import React from 'react';
 import { useWindowSize } from '@/hooks/use-window-size';
 import * as d3 from 'd3-scale';
 import { interpolateBlues } from 'd3-scale-chromatic';
+import type { TileLayers } from 'ids-drr-branding-types';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, Spinner, Text } from 'opub-ui';
 
@@ -50,16 +51,17 @@ export const MapComponent = ({
   const tMap = useTranslations('analytics.map');
   const formatNumber = useFormatNumber();
 
-  const translatedTileLayers = React.useMemo(() => {
+  const translatedTileLayers = React.useMemo<TileLayers | undefined>(() => {
     if (!tileLayers) return undefined;
     return Object.fromEntries(
       Object.entries(tileLayers).map(([key, layer]) => {
         const translationKey = `layers.${key}` as any;
         return [
-        tMap.has(translationKey) ? tMap(translationKey) : key,
-        layer,
-      ]})
-    );
+          tMap.has(translationKey) ? tMap(translationKey) : key,
+          layer,
+        ];
+      })
+    ) as TileLayers;
   }, [tMap]);
   const [map, setMap] = React.useState<any>(null);
   const [overlayFeatures, setOverlayFeatures] = React.useState<any>(null);
@@ -105,15 +107,22 @@ export const MapComponent = ({
   }
 
   const customLegendData: { label: string; color: string }[] = [];
-  const allZeros = values.every((val) => val === 0);
+  const hasData = values.length > 0;
+  const allZeros = hasData && values.every((val) => val === 0);
+
+  // Neutral fill used when the indicator returns no data for the current
+  // selection (e.g. a slug that doesn't correspond to a data column).
+  const NO_DATA_FILL = '#e5e5e5';
 
   // Set the sequential scale properties
-  const colorScale = d3
-    .scaleSequential()
-    .domain([Math.min(...values), Math.max(...values)])
-    .interpolator(interpolateBlues);
+  const colorScale: (n: number) => string = hasData
+    ? d3
+        .scaleSequential()
+        .domain([Math.min(...values), Math.max(...values)])
+        .interpolator(interpolateBlues)
+    : () => NO_DATA_FILL;
 
-  if (!Factors.includes(indicator) && !allZeros) {
+  if (hasData && !Factors.includes(indicator) && !allZeros) {
     const min = Math.min(...values);
     const max = Math.max(...values);
     const step = (max - min) / 3;
@@ -150,6 +159,13 @@ export const MapComponent = ({
     customLegendData.unshift({
       color: colorScale(0),
       label: '0',
+    });
+  }
+
+  if (!hasData && !Factors.includes(indicator)) {
+    customLegendData.push({
+      color: NO_DATA_FILL,
+      label: tMap('noData'),
     });
   }
 
@@ -225,10 +241,12 @@ export const MapComponent = ({
       <span>${getFactorNameBySlug(indicatorsData, indicator)} : <span style="color: ${colorMap[riskValue]}; text-transform: ${Factors.includes(indicator) && 'uppercase'}; font-weight: bold;">${
         Factors.includes(indicator)
           ? riskText
-          : `${formatNumber(riskValue)} ${getUnitsBySlug(
-              indicatorsData,
-              indicator
-            )}`
+          : riskValue == null
+            ? tCommon('na')
+            : `${formatNumber(riskValue)} ${getUnitsBySlug(
+                indicatorsData,
+                indicator
+              )}`
       }</span></span>
       </div>`;
         },
@@ -245,36 +263,76 @@ export const MapComponent = ({
       .openPopup();
   }
 
-  React.useEffect(() => {
-    const getBoundsData = mapData.features.filter(
-      (feature: { properties: { [x: string]: string } }) =>
-        feature.properties['code'] === districtCode
-    );
-
-    if (
-      getBoundsData.length > 0 &&
-      getBoundsData[0]?.properties?.bounds &&
-      map &&
-      map.getContainer()
-    ) {
-      map.whenReady(() => {
-        try {
-          map.fitBounds(getBoundsData[0]?.properties?.bounds);
-        } catch (error) {
-          console.warn('Error fitting bounds:', error);
-        }
+  const safeApply = React.useCallback(
+    (apply: () => void) => {
+      requestAnimationFrame(() => {
+        map.invalidateSize();
+        const size = map.getSize();
+        if (!size.x || !size.y) return;
+        apply();
       });
-    }
+    },
+    [map]
+  );
 
-  }, [districtCode, map, mapData?.features]);
+  const OUTPUT_PANE_WIDTH = 450;
+  const fitBoundsOptions = React.useMemo(
+    () =>
+      isOutputPaneOpen && !isMobile
+        ? { paddingBottomRight: [OUTPUT_PANE_WIDTH, 0] as [number, number] }
+        : undefined,
+    [isOutputPaneOpen, isMobile]
+  );
+
+  // Fit to the selected district.
+  const fittedDistrictRef = React.useRef<string | null>(null);
+  React.useEffect(() => {
+    // Reset if user returns to state-level.
+    if (!districtCode) {
+      fittedDistrictRef.current = null;
+      return;
+    }
+    if (!map || !map.getContainer()) return;
+    const key = `${districtCode}|${isOutputPaneOpen}|${isMobile}`;
+    // Don't re-fit unnecessarily.
+    if (fittedDistrictRef.current === key) return;
+    fittedDistrictRef.current = key;
+    const feature = mapData.features.find(
+      (f: { properties: { [x: string]: string } }) =>
+        f.properties['code'] === districtCode
+    );
+    if (!feature?.properties?.bounds) return;
+    map.whenReady(() =>
+      safeApply(() => map.fitBounds(feature.properties.bounds, fitBoundsOptions))
+    );
+  }, [districtCode, map, mapData?.features, isOutputPaneOpen, isMobile, fitBoundsOptions, safeApply]);
+
+  // Defer popup close so a quick edge re-entry (cursor wobbling across a
+  // polygon's jagged boundary) doesn't tear down and rebuild the popup.
+  const popupCloseTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const poppedLayerRef = React.useRef<any>(null);
+  React.useEffect(
+    () => () => {
+      if (popupCloseTimerRef.current) clearTimeout(popupCloseTimerRef.current);
+    },
+    []
+  );
 
   React.useEffect(() => {
-    if (!map) return;
+    if (!map || !map.getContainer()) return;
     if (districtCode) return;
-    if (!currentSelectedState?.center) return;
 
-    map.setView(currentSelectedState.center, 7.4);
-  }, [map, districtCode, currentSelectedState]);
+    map.whenReady(() =>
+      safeApply(() => {
+        if (currentSelectedState?.bounds) {
+          map.fitBounds(currentSelectedState.bounds, fitBoundsOptions);
+        } else if (currentSelectedState?.center) {
+          const state = states.find((s) => s.slug === currentSelectedState.slug);
+          map.setView(currentSelectedState.center, state?.zoom ?? 6);
+        }
+      })
+    );
+  }, [map, districtCode, currentSelectedState, isOutputPaneOpen, isMobile, fitBoundsOptions, safeApply]);
 
   if (mapDataloading || revenueMapDataLoading)
     return (
@@ -321,7 +379,7 @@ export const MapComponent = ({
           tileLayers={translatedTileLayers}
           addlFeaturesArray={overlayFeatures ? [overlayFeatures] : []}
           addlFeaturesStyleArray={addlFeaturesStyleArray}
-          mapZoom={isMobile ? 8 : 7.4}
+          mapZoom={6}
           mapProperty={indicator}
           zoomOnClick={false}
           isCustomColor={!Factors.includes(indicator)}
@@ -342,10 +400,37 @@ export const MapComponent = ({
           legendData={
             Factors.includes(indicator) ? legendData : customLegendData
           }
-          minZoom={isMobile ? 3 : 6}
-          maxZoom={isMobile ? 6.3 : 8}
+          {...(() => {
+            // Pair minZoom/maxZoom: setting one without the other makes Leaflet
+            // throw "Attempted to load an infinite number of tiles."
+            const stateConfig = states.find(
+              (s) => s.slug === currentSelectedState?.slug
+            );
+            if (stateConfig?.minZoom === undefined && stateConfig?.maxZoom === undefined) {
+              return {};
+            }
+            return {
+              minZoom: stateConfig?.minZoom ?? 0,
+              maxZoom: stateConfig?.maxZoom ?? 18,
+            };
+          })()}
           mapDataFn={mapDataFn}
           mouseover={(layer) => {
+            // If a close was pending, cancel it. When it was scheduled for a
+            // different layer (cursor moved A -> B faster than the timer),
+            // close that one now so we don't briefly show two popups.
+            if (popupCloseTimerRef.current) {
+              clearTimeout(popupCloseTimerRef.current);
+              popupCloseTimerRef.current = null;
+              if (poppedLayerRef.current && poppedLayerRef.current !== layer) {
+                poppedLayerRef.current.closePopup();
+                poppedLayerRef.current.unbindPopup();
+                poppedLayerRef.current = null;
+              }
+            }
+            // Same-layer wobble: the popup is still bound and open, no rebuild.
+            if (poppedLayerRef.current === layer) return;
+
             const regionName = layer.feature?.properties.name;
             const riskValue = layer.feature?.properties?.[indicator];
             const riskKey = String(riskValue);
@@ -353,18 +438,28 @@ export const MapComponent = ({
               ? isRiskLevel(riskKey)
                 ? tRisk(riskKey)
                 : tCommon('na')
-              : `${formatNumber(riskValue)} ${getUnitsBySlug(
-                  indicatorsData,
-                  indicator
-                )}`;
+              : riskValue == null
+                ? tCommon('na')
+                : `${formatNumber(riskValue)} ${getUnitsBySlug(
+                    indicatorsData,
+                    indicator
+                  )}`;
             // const riskText = Factors.includes(indicator)
             //   ? RiskText[riskValue]?.indicatorText
             //   : `${riskValue} ${getUnitsBySlug(indicatorsData, indicator)}`;
+            poppedLayerRef.current = layer;
             EnablePopup({ regionName, riskValue, riskText, layer });
           }}
           mouseout={(layer) => {
-            layer.closePopup();
-            layer.unbindPopup();
+            // Defer the close so quick re-entry along a jagged polygon edge
+            // (or an instant transition to an adjacent feature) doesn't tear
+            // down a popup that's about to be reopened.
+            popupCloseTimerRef.current = setTimeout(() => {
+              layer.closePopup();
+              layer.unbindPopup();
+              if (poppedLayerRef.current === layer) poppedLayerRef.current = null;
+              popupCloseTimerRef.current = null;
+            }, 100);
           }}
           click={(layer) =>
             onMapClick({ layerCode: layer.feature?.properties.code })
