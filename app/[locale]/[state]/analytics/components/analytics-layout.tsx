@@ -339,19 +339,19 @@ export function AnalyticsMainLayout() {
     refetchOnReconnect: false,
   });
 
-  // Delay setting the map's indicator until all three per-indicator queries are fresh.
+  // Delay setting the map's indicator until the relevant queries are fresh.
   // Keep `renderedIndicatorsData` in lockstep so the legend doesn't briefly
   // look the prior slug up in the new indicator's metadata.
   const [renderedIndicator, setRenderedIndicator] = useState(indicator);
   const [renderedIndicatorsData, setRenderedIndicatorsData] = useState<any>(
     mapIndicatorsData?.data?.indicators
   );
+  const mapDataReady = districtCode
+    ? !revenueMapData.isPlaceholderData && Boolean(revenueMapData.data)
+    : !mapData.isPlaceholderData && Boolean(mapData.data);
   if (
-    !mapData.isPlaceholderData &&
-    !revenueMapData.isPlaceholderData &&
+    mapDataReady &&
     !mapIndicatorsData.isPlaceholderData &&
-    mapData.data &&
-    revenueMapData.data &&
     mapIndicatorsData.data &&
     renderedIndicator !== indicator
   ) {
