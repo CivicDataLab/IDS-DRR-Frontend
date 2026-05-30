@@ -88,7 +88,6 @@ export const MapComponent = ({
 
   const params = new URLSearchParams(window.location.search);
   const districtCode = params.get('district-code');
-  const revenueCode = params.get('revenue-code');
 
   const mapFeatures = React.useMemo(() => {
     if (!districtCode) return mapData?.features;
@@ -285,16 +284,19 @@ export const MapComponent = ({
     [isOutputPaneOpen, isMobile]
   );
 
-  // This and fittedRevenueRef prevent fitBounds when switching indicators.
+  // Fit to the selected district.
   const fittedDistrictRef = React.useRef<string | null>(null);
   React.useEffect(() => {
-    if (!districtCode || !map || !map.getContainer()) return;
-    // Set the key such that clicking the back icon from the subdistrict refits to the district.
-    const key = `${districtCode}|${revenueCode ?? ''}|${isOutputPaneOpen}|${isMobile}`;
+    // Reset if user returns to state-level.
+    if (!districtCode) {
+      fittedDistrictRef.current = null;
+      return;
+    }
+    if (!map || !map.getContainer()) return;
+    const key = `${districtCode}|${isOutputPaneOpen}|${isMobile}`;
+    // Don't re-fit unnecessarily.
     if (fittedDistrictRef.current === key) return;
     fittedDistrictRef.current = key;
-    // Don't fit to the district if a subdistrict is set.
-    if (revenueCode) return;
     const feature = mapData.features.find(
       (f: { properties: { [x: string]: string } }) =>
         f.properties['code'] === districtCode
@@ -303,24 +305,7 @@ export const MapComponent = ({
     map.whenReady(() =>
       safeApply(() => map.fitBounds(feature.properties.bounds, fitBoundsOptions))
     );
-  }, [districtCode, revenueCode, map, mapData?.features, isOutputPaneOpen, isMobile, fitBoundsOptions, safeApply]);
-
-  // Similar to fittedDistrictRef.
-  const fittedRevenueRef = React.useRef<string | null>(null);
-  React.useEffect(() => {
-    if (!revenueCode || !map || !map.getContainer()) return;
-    const key = `${revenueCode}|${isOutputPaneOpen}|${isMobile}`;
-    if (fittedRevenueRef.current === key) return;
-    const feature = revenueMapData?.features.find(
-      (f: { properties: { [x: string]: string } }) =>
-        f.properties['code'] === revenueCode
-    );
-    if (!feature?.properties?.bounds) return;
-    fittedRevenueRef.current = key;
-    map.whenReady(() =>
-      safeApply(() => map.fitBounds(feature.properties.bounds, fitBoundsOptions))
-    );
-  }, [revenueCode, map, revenueMapData?.features, isOutputPaneOpen, isMobile, fitBoundsOptions, safeApply]);
+  }, [districtCode, map, mapData?.features, isOutputPaneOpen, isMobile, fitBoundsOptions, safeApply]);
 
   React.useEffect(() => {
     if (!map || !map.getContainer()) return;
