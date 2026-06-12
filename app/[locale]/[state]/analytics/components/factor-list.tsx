@@ -266,14 +266,14 @@ export function FactorList({ currentState }: any) {
                           throw new Error('Time period is not defined');
                         }
 
-                        let time_period_array = time_period?.split(
+                        const time_period_array = time_period?.split(
                           ','
                         ) as string[];
 
                         let time_period_latest;
 
                         if (time_period_array?.length > 1) {
-                          let time_period_latest_date = new Date(
+                          const time_period_latest_date = new Date(
                             getLatestDate(time_period_array) as string
                           );
                           time_period_latest =

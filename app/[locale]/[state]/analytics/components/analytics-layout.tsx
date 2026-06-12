@@ -101,7 +101,7 @@ export function AnalyticsMainLayout() {
         ANALYTICS_INDICATORS_BY_CATEGORY,
         {
           stateCode: currentSelectedState?.code,
-        } as any
+        }
       ),
     enabled: Boolean(currentSelectedState?.code),
     refetchOnMount: false,
@@ -330,7 +330,7 @@ export function AnalyticsMainLayout() {
         {
           indcFilter: { slug: indicator },
           stateCode: currentSelectedState?.code,
-        } as any
+        }
       ),
     enabled: Boolean(isMapView && currentSelectedState?.code),
     placeholderData: keepPreviousData,
@@ -373,7 +373,7 @@ export function AnalyticsMainLayout() {
         {
           indcFilter: { slug: 'risk-score' },
           stateCode: currentSelectedState?.code,
-        } as any
+        }
       ),
     // Avoid a duplicate request when the selected indicator is already risk-score.
     enabled: Boolean(
@@ -389,7 +389,7 @@ export function AnalyticsMainLayout() {
       indicator === 'risk-score'
         ? mapIndicatorsData?.data?.indicators || []
         : aboutIndicatorsData?.data?.indicators || [];
-    const map = new Map<string, any>();
+    const map = new Map<string, unknown>();
     for (const item of raw) {
       if (!item?.slug) continue;
       if (!map.has(item.slug)) map.set(item.slug, item);
@@ -435,8 +435,8 @@ export function AnalyticsMainLayout() {
     tableData.data?.tableData
   );
 
-  let RevCircleDropdownOptions: Option[] = [];
-  let DistrictDropDownOption: Option[] = [];
+  const RevCircleDropdownOptions: Option[] = [];
+  const DistrictDropDownOption: Option[] = [];
 
   if (districtGeographiesData.data && !districtGeographiesData.isFetching) {
     districtGeographiesData.data?.getDistrictRevCircle?.forEach(
@@ -451,7 +451,7 @@ export function AnalyticsMainLayout() {
   }
 
   if (revenueGeographiesData.data && !revenueGeographiesData.isFetching) {
-    let rawData = revenueGeographiesData?.data?.getDistrictRevCircle;
+    const rawData = revenueGeographiesData?.data?.getDistrictRevCircle;
 
     if (rawData) {
       for (const revenueCircle in rawData) {
