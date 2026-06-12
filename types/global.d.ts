@@ -13,8 +13,3 @@ declare global {
   type RiskLevel = keyof IntlMessages['analytics']['risk'];
   type NavLinkKey = keyof IntlMessages['nav']['links'];
 }
-
-declare module '*.csv' {
-  const content: string;
-  export default content;
-}
