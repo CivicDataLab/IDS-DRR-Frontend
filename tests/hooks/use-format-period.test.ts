@@ -7,11 +7,12 @@ import { formats } from '../../i18n/formats';
 import messages from '../../locales/en.json';
 
 const wrapper = ({ children }: { children: React.ReactNode }) =>
-  React.createElement(
-    NextIntlClientProvider,
-    { locale: 'en', messages, formats },
-    children
-  );
+  React.createElement(NextIntlClientProvider, {
+    locale: 'en',
+    messages,
+    formats,
+    children,
+  });
 
 describe('useFormatPeriod', () => {
   it('formats a valid ISO date as month-year', () => {

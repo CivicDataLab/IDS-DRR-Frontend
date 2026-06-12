@@ -13,11 +13,16 @@ const mockLocation = {
   search: '?view=map',
 };
 
-(global as typeof globalThis & { location: Location; window: Window }).location =
-  mockLocation as Location;
-(global as typeof globalThis & { window: Window }).window = {
-  location: mockLocation,
-} as Window;
+Object.defineProperty(globalThis, 'location', {
+  value: mockLocation,
+  writable: true,
+  configurable: true,
+});
+Object.defineProperty(globalThis, 'window', {
+  value: { location: mockLocation },
+  writable: true,
+  configurable: true,
+});
 
 import { shouldTriggerStartEvent } from '@/lib/router-events/patch-router/should-trigger-start-event';
 

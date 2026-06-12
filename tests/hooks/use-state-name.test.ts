@@ -13,11 +13,11 @@ const messagesWithStates = {
 };
 
 const wrapper = ({ children }: { children: React.ReactNode }) =>
-  React.createElement(
-    NextIntlClientProvider,
-    { locale: 'en', messages: messagesWithStates },
-    children
-  );
+  React.createElement(NextIntlClientProvider, {
+    locale: 'en',
+    messages: messagesWithStates,
+    children,
+  });
 
 describe('useStateName', () => {
   it('returns translated state name when available', () => {

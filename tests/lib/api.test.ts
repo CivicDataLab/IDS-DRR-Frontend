@@ -1,3 +1,5 @@
+import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
+
 import { fetchDatasets, GraphQL } from '@/lib/api';
 
 jest.mock('graphql-request', () => ({
@@ -11,7 +13,10 @@ jest.mock('@sentry/nextjs', () => ({
 import { captureException } from '@sentry/nextjs';
 import { request } from 'graphql-request';
 
-const document = {} as any;
+const document = {} as TypedDocumentNode<
+  { items: number[] },
+  Record<string, never>
+>;
 
 describe('GraphQL', () => {
   beforeEach(() => {
@@ -21,7 +26,7 @@ describe('GraphQL', () => {
   it('returns data on success', async () => {
     (request as jest.Mock).mockResolvedValue({ items: [1, 2] });
 
-    await expect(GraphQL('http://localhost/graphql', document, {})).resolves.toEqual({
+    await expect(GraphQL('http://localhost/graphql', document)).resolves.toEqual({
       items: [1, 2],
     });
     expect(request).toHaveBeenCalledWith('http://localhost/graphql', document, {});
@@ -31,7 +36,7 @@ describe('GraphQL', () => {
     const error = new Error('network');
     (request as jest.Mock).mockRejectedValue(error);
 
-    await expect(GraphQL('http://localhost/graphql', document, {})).rejects.toThrow(
+    await expect(GraphQL('http://localhost/graphql', document)).rejects.toThrow(
       'network'
     );
     expect(captureException).toHaveBeenCalledWith(error);

@@ -355,7 +355,7 @@ export const Accordion = ({
         ? React.cloneElement(child as React.ReactElement, {
             openValue: value ?? defaultValue,
             onValueChange,
-          })
+          } as React.Attributes)
         : child
     )}
   </div>
@@ -375,7 +375,7 @@ export const AccordionItem = ({
             itemValue: value,
             openValue,
             onValueChange,
-          })
+          } as React.Attributes)
         : child
     )}
   </div>

@@ -12,7 +12,11 @@ jest.mock('@/lib/utils', () => ({
 import { copyToClipboard } from '@/lib/utils';
 
 const wrapper = ({ children }: { children: React.ReactNode }) =>
-  React.createElement(NextIntlClientProvider, { locale: 'en', messages }, children);
+  React.createElement(NextIntlClientProvider, {
+    locale: 'en',
+    messages,
+    children,
+  });
 
 describe('useCopyURL', () => {
   const alert = jest.fn();
