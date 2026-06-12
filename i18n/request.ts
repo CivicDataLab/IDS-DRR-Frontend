@@ -9,10 +9,10 @@ import { formats } from './formats';
 // Recursive merge: values from `overrides` replace keys in `base` at any depth.
 // Plain objects are merged; everything else (strings, arrays, primitives) overrides.
 function deepMerge(
-  base: Record<string, any>,
-  overrides: Record<string, any>
-): Record<string, any> {
-  const out: Record<string, any> = { ...base };
+  base: Record<string, unknown>,
+  overrides: Record<string, unknown>
+): Record<string, unknown> {
+  const out: Record<string, unknown> = { ...base };
   for (const [key, value] of Object.entries(overrides)) {
     const existing = out[key];
     if (
@@ -23,7 +23,10 @@ function deepMerge(
       typeof value === 'object' &&
       !Array.isArray(value)
     ) {
-      out[key] = deepMerge(existing, value);
+      out[key] = deepMerge(
+        existing as Record<string, unknown>,
+        value as Record<string, unknown>
+      );
     } else {
       out[key] = value;
     }

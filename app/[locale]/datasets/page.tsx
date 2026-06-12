@@ -178,7 +178,7 @@ const DatasetsListing = () => {
   const tNav = useTranslations('nav');
   const tCommon = useTranslations('common');
   const [facets, setFacets] = useState<{
-    results: any[];
+    results: unknown[];
     total: number;
     aggregations: Aggregations;
   } | null>(null);
@@ -196,7 +196,7 @@ const DatasetsListing = () => {
         .then((res: any) => {
           setFacets(res);
         })
-        .catch((err: any) => {
+        .catch((err: unknown) => {
           captureException(err);
           console.error(err);
         });

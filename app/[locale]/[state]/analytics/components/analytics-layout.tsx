@@ -389,7 +389,7 @@ export function AnalyticsMainLayout() {
       indicator === 'risk-score'
         ? mapIndicatorsData?.data?.indicators || []
         : aboutIndicatorsData?.data?.indicators || [];
-    const map = new Map<string, any>();
+    const map = new Map<string, unknown>();
     for (const item of raw) {
       if (!item?.slug) continue;
       if (!map.has(item.slug)) map.set(item.slug, item);

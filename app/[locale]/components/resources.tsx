@@ -54,7 +54,7 @@ const Resources = () => {
       .then((res: any) => {
         setData(res.results);
       })
-      .catch((err: any) => {
+      .catch((err: unknown) => {
         captureException(err);
       });
   }, []);

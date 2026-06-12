@@ -54,7 +54,7 @@ export function AnalyticsMobileLayout({
   aboutIndicatorsData: any;
   tableData: any;
   currentSelectedState: any;
-  statesList: Array<any>;
+  statesList: unknown[];
 }) {
   const t = useTranslations('analytics');
   const tCommon = useTranslations('common');
@@ -179,7 +179,7 @@ export function AnalyticsMobileLayout({
 
   const indicatorListForAbout = React.useMemo(() => {
     const raw = aboutIndicatorsData?.data?.indicators || [];
-    const uniqueBySlug = new Map<string, any>();
+    const uniqueBySlug = new Map<string, unknown>();
 
     for (const item of raw) {
       if (!item?.slug) continue;

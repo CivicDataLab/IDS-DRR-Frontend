@@ -59,8 +59,8 @@ export function TableComponent({ data, isLoading }: any) {
 
   const rows = useMemo(() => {
     if (!data?.length) return [];
-    return data.map((item: Record<string, any>) => {
-      const row: Record<string, any> = {};
+    return data.map((item: Record<string, unknown>) => {
+      const row: Record<string, unknown> = {};
       row['region-name'] = item['region-name'] as string;
       row['region-type'] = item.type;
       Object.keys(item).forEach((key) => {

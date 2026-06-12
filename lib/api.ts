@@ -16,7 +16,7 @@ export async function GraphQL<TResult, TVariables>(
       ...variables,
     });
     return data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     captureException(error);
     throw error;
   }
