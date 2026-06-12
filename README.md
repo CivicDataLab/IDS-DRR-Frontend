@@ -10,7 +10,7 @@ This repository ships with **no deployment-specific content**. All branding, cop
 
 > Example branding implementation: [ids-drr-india-branding](https://github.com/CivicDataLab/ids-drr-india-branding).
 
-[![codecov](https://codecov.io/github/CivicDataLab/IDS-DRR-Frontend/graph/badge.svg?token=4DD3Z7IX38)](https://codecov.io/github/CivicDataLab/IDS-DRR-Frontend)
+[![codecov](https://codecov.io/github/CivicDataLab/IDS-DRR-Frontend/branch/dev/graph/badge.svg?token=4DD3Z7IX38)](https://codecov.io/github/CivicDataLab/IDS-DRR-Frontend)
 
 ---
 
