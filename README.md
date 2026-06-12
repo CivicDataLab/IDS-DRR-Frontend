@@ -162,4 +162,4 @@ For the branding contract, see [ids-drr-branding-types](https://github.com/Civic
 
 ## License
 
-[MIT](./LICENSE) © CivicDataLab
+[AGPL3](./LICENSE) © CivicDataLab
