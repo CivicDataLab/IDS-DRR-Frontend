@@ -35,7 +35,13 @@ jobs:
       - run: npm run lint
       - run: npm run knip
       - run: npm run type-check
-      - run: npm run test
+      - run: npm run test:coverage
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info
+          fail_ci_if_error: false
       - run: npm run build
       - if: steps.npm_ci.outcome == 'failure'
         run: |

@@ -30,6 +30,7 @@ const config: Config = {
   collectCoverageFrom: [
     '{app,components,config,hooks,i18n,lib}/**/*.{ts,tsx}',
   ],
+  coverageReporters: ['text', 'lcov'],
   modulePathIgnorePatterns: ['<rootDir>/.next/standalone/'],
 };
 
