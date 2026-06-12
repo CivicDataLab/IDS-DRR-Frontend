@@ -113,8 +113,8 @@ export function AnalyticsMobileLayout({
     searchParams.get('revenue-code') || searchParams.get('district-code');
 
   // Initialize dropdown options
-  let RevCircleDropdownOptions: Option[] = [{ label: '', value: '' }];
-  let DistrictDropDownOption: Option[] = [{ label: '', value: '' }];
+  const RevCircleDropdownOptions: Option[] = [{ label: '', value: '' }];
+  const DistrictDropDownOption: Option[] = [{ label: '', value: '' }];
 
   // Populate district dropdown options
   if (districtGeographiesData.data && !districtGeographiesData.isFetching) {
@@ -130,7 +130,7 @@ export function AnalyticsMobileLayout({
 
   // Populate revenue circle dropdown options
   if (revenueGeographiesData.data && !revenueGeographiesData.isFetching) {
-    let rawData = revenueGeographiesData?.data?.getDistrictRevCircle;
+    const rawData = revenueGeographiesData?.data?.getDistrictRevCircle;
     if (rawData) {
       for (const revenueCircle in rawData) {
         const revenueCircles = rawData[revenueCircle];
@@ -159,7 +159,7 @@ export function AnalyticsMobileLayout({
   // Sync time period from URL on component mount
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    let processedTime = getLatestDate(
+    const processedTime = getLatestDate(
       params.get('time-period')?.split(',') || []
     )?.split('-');
 

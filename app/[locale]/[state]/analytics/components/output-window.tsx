@@ -42,7 +42,7 @@ export function OutputWindow({
   const format = useFormatter();
   const formatNumber = useFormatNumber();
   const searchParams = useSearchParams();
-  let processedTime = getLatestDate(
+  const processedTime = getLatestDate(
     searchParams.get('time-period')?.split(',') || []
   )?.split('-');
 

@@ -435,8 +435,8 @@ export function AnalyticsMainLayout() {
     tableData.data?.tableData
   );
 
-  let RevCircleDropdownOptions: Option[] = [];
-  let DistrictDropDownOption: Option[] = [];
+  const RevCircleDropdownOptions: Option[] = [];
+  const DistrictDropDownOption: Option[] = [];
 
   if (districtGeographiesData.data && !districtGeographiesData.isFetching) {
     districtGeographiesData.data?.getDistrictRevCircle?.forEach(
@@ -451,7 +451,7 @@ export function AnalyticsMainLayout() {
   }
 
   if (revenueGeographiesData.data && !revenueGeographiesData.isFetching) {
-    let rawData = revenueGeographiesData?.data?.getDistrictRevCircle;
+    const rawData = revenueGeographiesData?.data?.getDistrictRevCircle;
 
     if (rawData) {
       for (const revenueCircle in rawData) {
