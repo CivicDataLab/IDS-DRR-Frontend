@@ -113,4 +113,8 @@ export const MobileFilterBox = ({
   );
 };
 
-export const MobileFilterContent = ({ children }: any) => <>{children}</>;
+export const MobileFilterContent = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => <>{children}</>;
