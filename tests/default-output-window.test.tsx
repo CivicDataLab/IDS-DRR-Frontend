@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 
 import { DefaultWindow } from '../app/[locale]/[state]/analytics/components/default-output-window';
+import messages from '../locales/en.json';
 
 // Mock React.cache
 jest.mock('react', () => ({
@@ -148,7 +149,9 @@ describe('DefaultWindow', () => {
 
   it('renders without crashing', () => {
     render(<DefaultWindow {...defaultProps} />);
-    expect(screen.getByText('Know your risk indicators')).toBeInTheDocument();
+    expect(
+      screen.getByText(messages.analytics.about.heading)
+    ).toBeInTheDocument();
   });
 
   it('displays the correct indicator title', () => {

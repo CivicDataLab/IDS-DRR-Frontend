@@ -237,4 +237,19 @@ describe('AnalyticsMainLayout', () => {
     render(<AnalyticsMainLayout />);
     expect(screen.getByTestId('output-window')).toBeInTheDocument();
   });
+
+  it('renders output window for a revenue region selection', () => {
+    setSearchParams({
+      view: 'map',
+      'district-code': 'AS-01',
+      'revenue-code': 'RC-01',
+    });
+    render(<AnalyticsMainLayout />);
+    expect(screen.getByTestId('output-window')).toBeInTheDocument();
+  });
+
+  it('renders mobile layout alongside desktop content', () => {
+    render(<AnalyticsMainLayout />);
+    expect(screen.getByTestId('mobile-layout')).toBeInTheDocument();
+  });
 });

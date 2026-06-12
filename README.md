@@ -10,7 +10,7 @@ This repository ships with **no deployment-specific content**. All branding, cop
 
 > Example branding implementation: [ids-drr-india-branding](https://github.com/CivicDataLab/ids-drr-india-branding).
 
-![Coverage](https://img.shields.io/badge/Tests_Coverage-60%25-yellow)
+![Coverage](https://img.shields.io/badge/Tests_Coverage-80%25-lightgreen)
 
 ---
 

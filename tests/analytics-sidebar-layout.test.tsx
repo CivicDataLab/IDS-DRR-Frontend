@@ -39,14 +39,14 @@ jest.mock('@tanstack/react-query', () => ({
 
 describe('AnalyticsSideBarLayout', () => {
   const mockCurrentState = {
-    code: 'AS',
-    slug: 'assam',
-    name: 'Assam',
+    code: 'SA',
+    slug: 'state-alpha',
+    name: 'Alpha State',
   };
 
   const mockStatesList = [
-    { code: 'AS', slug: 'assam', name: 'Assam' },
-    { code: 'HP', slug: 'himachal-pradesh', name: 'Himachal Pradesh' },
+    { code: 'SA', slug: 'state-alpha', name: 'Alpha State' },
+    { code: 'SB', slug: 'state-beta', name: 'Beta State' },
   ];
 
   beforeEach(() => {
@@ -93,10 +93,10 @@ describe('AnalyticsSideBarLayout', () => {
     );
 
     const stateSelect = screen.getByRole('combobox');
-    fireEvent.change(stateSelect, { target: { value: 'himachal-pradesh' } });
+    fireEvent.change(stateSelect, { target: { value: 'state-beta' } });
 
     expect(mockPush).toHaveBeenCalledWith(
-      '/himachal-pradesh/analytics/?indicator=risk-score&view=map'
+      '/state-beta/analytics/?indicator=risk-score&view=map'
     );
   });
 });
