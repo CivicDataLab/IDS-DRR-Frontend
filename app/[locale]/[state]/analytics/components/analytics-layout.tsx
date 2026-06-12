@@ -101,7 +101,7 @@ export function AnalyticsMainLayout() {
         ANALYTICS_INDICATORS_BY_CATEGORY,
         {
           stateCode: currentSelectedState?.code,
-        } as any
+        }
       ),
     enabled: Boolean(currentSelectedState?.code),
     refetchOnMount: false,
@@ -330,7 +330,7 @@ export function AnalyticsMainLayout() {
         {
           indcFilter: { slug: indicator },
           stateCode: currentSelectedState?.code,
-        } as any
+        }
       ),
     enabled: Boolean(isMapView && currentSelectedState?.code),
     placeholderData: keepPreviousData,
@@ -373,7 +373,7 @@ export function AnalyticsMainLayout() {
         {
           indcFilter: { slug: 'risk-score' },
           stateCode: currentSelectedState?.code,
-        } as any
+        }
       ),
     // Avoid a duplicate request when the selected indicator is already risk-score.
     enabled: Boolean(
