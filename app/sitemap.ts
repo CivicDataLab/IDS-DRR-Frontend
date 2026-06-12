@@ -1,9 +1,10 @@
 import type { MetadataRoute } from 'next';
 
 import { features, locales, siteUrl, states } from '@/config/site';
+import { fetchDatasets } from '@/lib/api';
 import { ANALYTICS_VIEWS, routes } from '@/lib/routes';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
   const activeStates = states.filter((s) => s.status === 'active');
   const entries: MetadataRoute.Sitemap = [];
@@ -43,6 +44,28 @@ export default function sitemap(): MetadataRoute.Sitemap {
         changeFrequency: 'monthly',
         priority: 0.5,
       });
+    }
+  }
+
+  if (features.datasets) {
+    let datasets: Array<{ id: string; modified?: string }> = [];
+    try {
+      const res = await fetchDatasets('?size=10000&page=1');
+      datasets = (res?.results ?? [])
+        .filter((d: any) => d?.id)
+        .map((d: any) => ({ id: d.id, modified: d.modified }));
+    } catch {
+      // intentionally swallow error to not abort if the backend is unreachable
+    }
+    for (const locale of locales) {
+      for (const { id, modified } of datasets) {
+        entries.push({
+          url: `${siteUrl}/${locale}${routes.datasetDetail(id)}`,
+          lastModified: modified ? new Date(modified) : lastModified,
+          changeFrequency: 'monthly',
+          priority: 0.6,
+        });
+      }
     }
   }
 
