@@ -15,6 +15,8 @@ const config: Config = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   testEnvironment: 'jest-environment-jsdom',
   moduleNameMapper: {
+    // Intl-aware render; imports from @testing-library/react/pure internally.
+    '^@testing-library/react$': '<rootDir>/tests/test-utils.tsx',
     // Handle module aliases
     '^@/(.*)$': '<rootDir>/$1',
     // Mock opub-ui components
@@ -28,6 +30,7 @@ const config: Config = {
   collectCoverageFrom: [
     '{app,components,config,hooks,i18n,lib}/**/*.{ts,tsx}',
   ],
+  coverageReporters: ['text', 'lcov'],
   modulePathIgnorePatterns: ['<rootDir>/.next/standalone/'],
 };
 

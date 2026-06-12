@@ -32,29 +32,37 @@ jest.mock('@/i18n/navigation', () => ({
   ),
 }));
 
-const mockedStates = [
-  { slug: 'assam', latest_time_period: '2025_03' },
-  { slug: 'himachal-pradesh', latest_time_period: '2025_06' },
-  { slug: 'odisha', latest_time_period: '2024_11' },
-  { slug: 'bihar', latest_time_period: '2024_12' },
-  { slug: 'uttar-pradesh', latest_time_period: '2025_01' },
+/** Generic deployment-agnostic state fixtures (not tied to ids-drr-branding). */
+const mockStatesConfig = [
+  { name: 'Alpha State', slug: 'state-alpha', icon: '/test/alpha.svg', status: 'active' },
+  { name: 'Beta State', slug: 'state-beta', icon: '/test/beta.svg', status: 'active' },
+  { name: 'Gamma State', slug: 'state-gamma', icon: '/test/gamma.svg', status: 'active' },
+  { name: 'Delta State', slug: 'state-delta', icon: '/test/delta.svg', status: 'active' },
+  { name: 'Epsilon State', slug: 'state-epsilon', icon: '/test/epsilon.svg', status: 'active' },
+] as const;
+
+const mockedApiStates = [
+  { slug: 'state-alpha', latest_time_period: '2025_03' },
+  { slug: 'state-beta', latest_time_period: '2025_06' },
+  { slug: 'state-gamma', latest_time_period: '2024_11' },
+  { slug: 'state-delta', latest_time_period: '2024_12' },
+  { slug: 'state-epsilon', latest_time_period: '2025_01' },
 ];
 
 jest.mock('@/config/site', () => ({
-  ...jest.requireActual('@/config/site'),
   states: [
-    { name: 'Assam', slug: 'assam', icon: '/assets/logo/states/Assam.svg', status: 'active' },
-    { name: 'Himachal Pradesh', slug: 'himachal-pradesh', icon: '/assets/logo/states/Hp.svg', status: 'active' },
-    { name: 'Odisha', slug: 'odisha', icon: '/assets/logo/states/Odisha.svg', status: 'active' },
-    { name: 'Bihar', slug: 'bihar', icon: '/assets/logo/states/Bihar.svg', status: 'active' },
-    { name: 'Uttar Pradesh', slug: 'uttar-pradesh', icon: '/assets/logo/states/Up.svg', status: 'active' },
+    { name: 'Alpha State', slug: 'state-alpha', icon: '/test/alpha.svg', status: 'active' },
+    { name: 'Beta State', slug: 'state-beta', icon: '/test/beta.svg', status: 'active' },
+    { name: 'Gamma State', slug: 'state-gamma', icon: '/test/gamma.svg', status: 'active' },
+    { name: 'Delta State', slug: 'state-delta', icon: '/test/delta.svg', status: 'active' },
+    { name: 'Epsilon State', slug: 'state-epsilon', icon: '/test/epsilon.svg', status: 'active' },
   ],
 }));
 
 jest.mock('@tanstack/react-query', () => ({
   useQuery: jest.fn(() => ({
     data: {
-      getStates: mockedStates,
+      getStates: mockedApiStates,
     },
   })),
 }));
@@ -101,12 +109,9 @@ describe('QuickLinks Component', () => {
   it('renders all state cards with correct information', () => {
     render(<QuickLinks />);
 
-    // Check for all state names
-    expect(screen.getByText('Assam')).toBeInTheDocument();
-    expect(screen.getByText('Himachal Pradesh')).toBeInTheDocument();
-    expect(screen.getByText('Odisha')).toBeInTheDocument();
-    expect(screen.getByText('Bihar')).toBeInTheDocument();
-    expect(screen.getByText('Uttar Pradesh')).toBeInTheDocument();
+    mockStatesConfig.forEach(({ name }) => {
+      expect(screen.getByText(name)).toBeInTheDocument();
+    });
   });
 
   it('renders state card icons as decorative', () => {
@@ -122,19 +127,11 @@ describe('QuickLinks Component', () => {
   it('renders state cards with correct navigation links', () => {
     render(<QuickLinks />);
 
-    const stateCards = [
-      { name: /Assam/i, slug: 'assam' },
-      { name: /Himachal Pradesh/i, slug: 'himachal-pradesh' },
-      { name: /Odisha/i, slug: 'odisha' },
-      { name: /Bihar/i, slug: 'bihar' },
-      { name: /Uttar Pradesh/i, slug: 'uttar-pradesh' },
-    ];
-
-    stateCards.forEach(({ name, slug }) => {
-      const matchedState = mockedStates.find((state) => state.slug === slug);
+    mockStatesConfig.forEach(({ name, slug }) => {
+      const matchedState = mockedApiStates.find((state) => state.slug === slug);
       expect(matchedState).toBeDefined();
 
-      const link = screen.getByRole('link', { name });
+      const link = screen.getByRole('link', { name: new RegExp(name, 'i') });
       expect(link).toHaveAttribute(
         'href',
         `/${slug}/analytics/?indicator=risk-score&view=map&time-period=${matchedState?.latest_time_period}`
