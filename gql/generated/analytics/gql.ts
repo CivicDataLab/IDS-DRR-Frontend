@@ -23,7 +23,7 @@ type Documents = {
     "\n  query revenueCircleMapData(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n    $geoFilter: GeoFilter\n  ) {\n    revCircleMapData(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": typeof types.RevenueCircleMapDataDocument,
     "\n  query districtMapData(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n    $geoFilter: GeoFilter\n  ) {\n    districtMapData(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": typeof types.DistrictMapDataDocument,
     "\n  query tableData(\n    $indcFilter: IndicatorFilter\n    $dataFilter: DataFilter\n    $geoFilter: GeoFilter\n  ) {\n    tableData(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": typeof types.TableDataDocument,
-    "\n  query getStatesList {\n    getStates\n  }\n": typeof types.GetStatesListDocument,
+    "\n  query getStatesList {\n    getStates {\n      name\n      slug\n      code\n      center\n      bounds\n      child_type\n      resource_id\n      time_periods\n      latest_time_period\n    }\n  }\n": typeof types.GetStatesListDocument,
 };
 const documents: Documents = {
     "\n  query revCircleViewData(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n    $geoFilter: GeoFilter!\n  ) {\n    revCircleViewData(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": types.RevCircleViewDataDocument,
@@ -35,7 +35,7 @@ const documents: Documents = {
     "\n  query revenueCircleMapData(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n    $geoFilter: GeoFilter\n  ) {\n    revCircleMapData(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": types.RevenueCircleMapDataDocument,
     "\n  query districtMapData(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n    $geoFilter: GeoFilter\n  ) {\n    districtMapData(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": types.DistrictMapDataDocument,
     "\n  query tableData(\n    $indcFilter: IndicatorFilter\n    $dataFilter: DataFilter\n    $geoFilter: GeoFilter\n  ) {\n    tableData(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": types.TableDataDocument,
-    "\n  query getStatesList {\n    getStates\n  }\n": types.GetStatesListDocument,
+    "\n  query getStatesList {\n    getStates {\n      name\n      slug\n      code\n      center\n      bounds\n      child_type\n      resource_id\n      time_periods\n      latest_time_period\n    }\n  }\n": types.GetStatesListDocument,
 };
 
 /**
@@ -91,7 +91,7 @@ export function graphql(source: "\n  query tableData(\n    $indcFilter: Indicato
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query getStatesList {\n    getStates\n  }\n"): (typeof documents)["\n  query getStatesList {\n    getStates\n  }\n"];
+export function graphql(source: "\n  query getStatesList {\n    getStates {\n      name\n      slug\n      code\n      center\n      bounds\n      child_type\n      resource_id\n      time_periods\n      latest_time_period\n    }\n  }\n"): (typeof documents)["\n  query getStatesList {\n    getStates {\n      name\n      slug\n      code\n      center\n      bounds\n      child_type\n      resource_id\n      time_periods\n      latest_time_period\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

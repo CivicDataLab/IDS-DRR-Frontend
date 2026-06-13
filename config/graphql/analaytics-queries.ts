@@ -1,4 +1,4 @@
-import { graphql } from '@/gql/generated/analytics';
+import { type DocumentType, graphql } from '@/gql/generated/analytics';
 
 export const ANALYTICS_REVENUE_TABLE_DATA = graphql(`
   query revCircleViewData(
@@ -98,6 +98,21 @@ export const ANALYTICS_TABLE_DATA = graphql(`
 
 export const PLATFORM_STATES_LIST = graphql(`
   query getStatesList {
-    getStates
+    getStates {
+      name
+      slug
+      code
+      center
+      bounds
+      child_type
+      resource_id
+      time_periods
+      latest_time_period
+    }
   }
 `);
+
+/** A single state as returned by the `getStates` query. */
+export type State = DocumentType<
+  typeof PLATFORM_STATES_LIST
+>['getStates'][number];

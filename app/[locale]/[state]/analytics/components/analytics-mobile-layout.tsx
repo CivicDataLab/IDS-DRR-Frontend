@@ -8,6 +8,7 @@ import { parseAsString, useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, Menu, Text } from 'opub-ui';
 
+import { type State } from '@/config/graphql/analaytics-queries';
 import { features } from '@/config/site';
 import { routes } from '@/lib/routes';
 import { cn, downloadStateReport } from '@/lib/utils';
@@ -53,8 +54,8 @@ export function AnalyticsMobileLayout({
   mapIndicatorsData: any;
   aboutIndicatorsData: any;
   tableData: any;
-  currentSelectedState: any;
-  statesList: unknown[];
+  currentSelectedState: State;
+  statesList: State[];
 }) {
   const t = useTranslations('analytics');
   const tCommon = useTranslations('common');
@@ -145,7 +146,7 @@ export function AnalyticsMobileLayout({
           ) => {
             RevCircleDropdownOptions.push({
               label:
-                circle[currentSelectedState.child_type] ||
+                circle[currentSelectedState.child_type ?? ''] ||
                 circle['revenue-circle'],
               value: circle.code,
               districtCode: circle.district_code,

@@ -17,6 +17,7 @@ import {
   ANALYTICS_REVENUE_TABLE_DATA,
   ANALYTICS_TABLE_DATA,
   PLATFORM_STATES_LIST,
+  type State,
 } from '@/config/graphql/analaytics-queries';
 import { features } from '@/config/site';
 import { GraphQL } from '@/lib/api';
@@ -69,7 +70,7 @@ export function AnalyticsMainLayout() {
   const currentSelectedState = useMemo(
     () =>
       statesListData?.data?.getStates?.find(
-        (item: any) => item.slug === routerParams.state
+        (item: State) => item.slug === routerParams.state
       ),
     [statesListData?.data?.getStates, routerParams.state]
   );
@@ -197,7 +198,7 @@ export function AnalyticsMainLayout() {
           indcFilter: { slug: indicator },
           dataFilter: { dataPeriod: timePeriodSelected },
           geoFilter: {
-            code: [currentSelectedState?.code],
+            code: [currentSelectedState!.code],
           },
         }
       ),
@@ -223,7 +224,7 @@ export function AnalyticsMainLayout() {
           indcFilter: { slug: indicator },
           dataFilter: { dataPeriod: timePeriodSelected },
           geoFilter: {
-            code: [currentSelectedState?.code],
+            code: [currentSelectedState!.code],
           },
         }
       ),
@@ -246,7 +247,7 @@ export function AnalyticsMainLayout() {
         {
           geoFilter: {
             type: 'district',
-            code: [currentSelectedState?.code],
+            code: [currentSelectedState!.code],
           },
         }
       ),
@@ -265,7 +266,7 @@ export function AnalyticsMainLayout() {
         {
           geoFilter: {
             type: currentSelectedState?.child_type,
-            code: [currentSelectedState?.code],
+            code: [currentSelectedState!.code],
           },
         }
       ),
@@ -417,7 +418,7 @@ export function AnalyticsMainLayout() {
               districtCode === '' ||
               districtCode === null ||
               typeof districtCode === 'undefined'
-                ? currentSelectedState?.code
+                ? currentSelectedState!.code
                 : districtCode,
             ],
           },
@@ -468,7 +469,7 @@ export function AnalyticsMainLayout() {
           ) => {
             RevCircleDropdownOptions.push({
               label:
-                circle[currentSelectedState?.child_type] ||
+                circle[currentSelectedState?.child_type ?? ''] ||
                 circle['revenue-circle'],
               value: circle.code,
               districtCode: circle.district_code,

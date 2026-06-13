@@ -2,6 +2,8 @@ import React from 'react';
 import { AnalyticsMobileLayout } from '@/app/[locale]/[state]/analytics/components/analytics-mobile-layout';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { makeState } from './fixtures';
+
 // Mock opub-ui components
 jest.mock('opub-ui');
 
@@ -250,13 +252,14 @@ describe('AnalyticsMobileLayout', () => {
     },
     isLoading: false,
   };
-  const mockCurrentSelectedState = {
+  const mockCurrentSelectedState = makeState({
     code: 'AS',
     name: 'Assam',
-  };
+    slug: 'assam',
+  });
   const mockStatesList = [
-    { code: 'AS', name: 'Assam' },
-    { code: 'HP', name: 'Himachal Pradesh' },
+    mockCurrentSelectedState,
+    makeState({ code: 'HP', name: 'Himachal Pradesh', slug: 'himachal-pradesh' }),
   ];
 
   beforeEach(() => {
@@ -555,10 +558,7 @@ describe('AnalyticsMobileLayout', () => {
   });
 
   it('handles different current states', () => {
-    const differentState = {
-      code: 'HP',
-      name: 'Himachal Pradesh',
-    };
+    const differentState = makeState({ code: 'HP', name: 'Himachal Pradesh' });
 
     render(
       <AnalyticsMobileLayout

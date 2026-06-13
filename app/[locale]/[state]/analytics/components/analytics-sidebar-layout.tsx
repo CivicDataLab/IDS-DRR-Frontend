@@ -5,6 +5,7 @@ import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { Select, Spinner, Text } from 'opub-ui';
 
+import { type State } from '@/config/graphql/analaytics-queries';
 import { useStateName } from '@/hooks/use-state-name';
 import { routes } from '@/lib/routes';
 import { cn } from '@/lib/utils';
@@ -14,8 +15,8 @@ import styles from './styles.module.scss';
 
 interface DashboardLayoutProps {
   children?: React.ReactNode;
-  currentState: any;
-  statesList: any;
+  currentState: State;
+  statesList: State[];
 }
 
 export function AnalyticsSideBarLayout({
@@ -59,7 +60,13 @@ export function AnalyticsSideBarLayout({
   );
 }
 
-function IndicatorListWrapper({ statesList, currentState }: any) {
+function IndicatorListWrapper({
+  statesList,
+  currentState,
+}: {
+  statesList: State[];
+  currentState: State;
+}) {
   const t = useTranslations('analytics.sidebar');
   const router = useRouter();
   const stateName = useStateName();

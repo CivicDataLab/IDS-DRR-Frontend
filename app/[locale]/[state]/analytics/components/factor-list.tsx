@@ -14,7 +14,10 @@ import { useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, Menu, Select, Text, Tooltip } from 'opub-ui';
 
-import { ANALYTICS_INDICATORS_BY_CATEGORY } from '@/config/graphql/analaytics-queries';
+import {
+  ANALYTICS_INDICATORS_BY_CATEGORY,
+  type State,
+} from '@/config/graphql/analaytics-queries';
 import { features } from '@/config/site';
 import { GraphQL } from '@/lib/api';
 import { routes } from '@/lib/routes';
@@ -56,7 +59,7 @@ function getIcon(slug: string) {
   }
 }
 
-export function FactorList({ currentState }: any) {
+export function FactorList({ currentState }: { currentState: State }) {
   const t = useTranslations('analytics');
   const tCommon = useTranslations('common');
   const stateName = useStateName();

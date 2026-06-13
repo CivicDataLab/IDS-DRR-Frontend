@@ -2,6 +2,8 @@ import React from 'react';
 import { FactorList } from '@/app/[locale]/[state]/analytics/components/factor-list';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
+import { makeState } from './fixtures';
+
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
   useSearchParams: () =>
@@ -148,10 +150,10 @@ jest.mock('@/app/[locale]/[state]/analytics/utils/utils', () => ({
 }));
 
 describe('FactorList', () => {
-  const mockCurrentState = {
+  const mockCurrentState = makeState({
     code: 'AS',
     name: 'Assam',
-  };
+  });
 
   const mockIndicatorData = [
     {
@@ -341,7 +343,7 @@ describe('FactorList', () => {
       error: null,
     });
 
-    const differentState = { code: 'HP', name: 'Himachal Pradesh' };
+    const differentState = makeState({ code: 'HP', name: 'Himachal Pradesh' });
     render(<FactorList currentState={differentState} />);
 
     expect(screen.getByText('ACTIONS')).toBeInTheDocument();
