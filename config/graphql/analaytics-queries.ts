@@ -30,15 +30,57 @@ export const ANALYTICS_DISTRICT_DATA = graphql(`
 
 export const ANALYTICS_INDICATORS = graphql(`
   query indicators($indcFilter: IndicatorFilter, $stateCode: String) {
-    indicators(indcFilter: $indcFilter, stateCode: $stateCode)
+    indicators(indcFilter: $indcFilter, stateCode: $stateCode) {
+      name
+      slug
+      short_description
+      long_description
+      unit__name
+      IDS_dataSpace
+    }
   }
 `);
 
+/** A single indicator as returned by the `indicators` query. */
+export type Indicator = DocumentType<
+  typeof ANALYTICS_INDICATORS
+>['indicators'][number];
+
 export const ANALYTICS_INDICATORS_BY_CATEGORY = graphql(`
   query indicatorsByCategory($stateCode: String) {
-    indicatorsByCategory(stateCode: $stateCode)
+    indicatorsByCategory(stateCode: $stateCode) {
+      slug
+      name
+      description
+      IDS_dataSpace
+      children {
+        slug
+        name
+        description
+        IDS_dataSpace
+        children {
+          slug
+          name
+          description
+          IDS_dataSpace
+        }
+      }
+    }
   }
 `);
+
+/**
+ * A node in the indicator category tree. The query above fetches a bounded
+ * depth (root -> pillar -> indicator); `children` is optional so the finite
+ * generated result is assignable to this recursive shape without a cast.
+ */
+export interface IndicatorCategory {
+  slug: string;
+  name: string;
+  description: string | null;
+  IDS_dataSpace: string | null;
+  children?: IndicatorCategory[];
+}
 
 export const ANALYTICS_TIME_PERIODS = graphql(`
   query dataTimePeriods {

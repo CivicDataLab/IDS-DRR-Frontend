@@ -8,6 +8,7 @@ import type { TileLayers } from 'ids-drr-branding-types';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, Spinner, Text } from 'opub-ui';
 
+import { type Indicator } from '@/config/graphql/analaytics-queries';
 import { states, tileLayers } from '@/config/site';
 import { useFormatNumber } from '@/hooks/use-format-number';
 import { Factors, isRiskLevel } from '@/lib/analytics';
@@ -30,13 +31,7 @@ export const MapComponent = ({
 }: {
   indicator: string;
   mapDataloading: boolean;
-  indicatorsData: {
-    name: string;
-    slug: string;
-    unit: string;
-    long_description?: string;
-    short_description: string;
-  }[];
+  indicatorsData: Indicator[] | undefined;
   revenueMapDataLoading: boolean;
   mapData: any;
   revenueMapData: any;

@@ -16,6 +16,7 @@ import {
   ANALYTICS_REVENUE_MAP_DATA,
   ANALYTICS_REVENUE_TABLE_DATA,
   ANALYTICS_TABLE_DATA,
+  type IndicatorCategory,
   PLATFORM_STATES_LIST,
   type State,
 } from '@/config/graphql/analaytics-queries';
@@ -94,7 +95,7 @@ export function AnalyticsMainLayout() {
   const hasExplicitTimePeriodParam =
     timePeriodParam !== null && timePeriodParam !== '';
 
-  const indicatorsByCategoryData = useQuery<any>({
+  const indicatorsByCategoryData = useQuery({
     queryKey: [`indicatorsByCategory_${currentSelectedState?.code}`],
     queryFn: () =>
       GraphQL(
@@ -114,14 +115,14 @@ export function AnalyticsMainLayout() {
     const categories =
       indicatorsByCategoryData?.data?.indicatorsByCategory || [];
     const riskScoreRoot = categories.find(
-      (item: any) => item?.slug === 'risk-score'
+      (item: IndicatorCategory) => item?.slug === 'risk-score'
     );
     const govtResponseNode = riskScoreRoot?.children?.find(
-      (item: any) => item?.slug === 'government-response'
+      (item: IndicatorCategory) => item?.slug === 'government-response'
     );
     const children = govtResponseNode?.children || [];
     const monthly = children
-      .map((child: any) => String(child?.slug || ''))
+      .map((child: IndicatorCategory) => String(child?.slug || ''))
       .filter((slug: string) => slug && !slug.includes('fy-cumsum'));
     return new Set(monthly);
   }, [indicatorsByCategoryData?.data?.indicatorsByCategory]);
@@ -130,14 +131,14 @@ export function AnalyticsMainLayout() {
     const categories =
       indicatorsByCategoryData?.data?.indicatorsByCategory || [];
     const riskScoreRoot = categories.find(
-      (item: any) => item?.slug === 'risk-score'
+      (item: IndicatorCategory) => item?.slug === 'risk-score'
     );
     const govtResponseNode = riskScoreRoot?.children?.find(
-      (item: any) => item?.slug === 'government-response'
+      (item: IndicatorCategory) => item?.slug === 'government-response'
     );
     const children = govtResponseNode?.children || [];
     const cumulative = children
-      .map((child: any) => String(child?.slug || ''))
+      .map((child: IndicatorCategory) => String(child?.slug || ''))
       .filter((slug: string) => slug && slug.includes('fy-cumsum'));
     return new Set(cumulative);
   }, [indicatorsByCategoryData?.data?.indicatorsByCategory]);
@@ -322,7 +323,7 @@ export function AnalyticsMainLayout() {
     setTimePeriodParam,
   ]);
   // Data used for map legends and factor labels (must match currently selected `indicator`)
-  const mapIndicatorsData = useQuery<any>({
+  const mapIndicatorsData = useQuery({
     queryKey: [`indicators_${indicator}_${currentSelectedState?.code}`],
     queryFn: () =>
       GraphQL(
@@ -344,7 +345,7 @@ export function AnalyticsMainLayout() {
   // Keep `renderedIndicatorsData` in lockstep so the legend doesn't briefly
   // look the prior slug up in the new indicator's metadata.
   const [renderedIndicator, setRenderedIndicator] = useState(indicator);
-  const [renderedIndicatorsData, setRenderedIndicatorsData] = useState<any>(
+  const [renderedIndicatorsData, setRenderedIndicatorsData] = useState(
     mapIndicatorsData?.data?.indicators
   );
   const mapDataReady = districtCode
@@ -365,7 +366,7 @@ export function AnalyticsMainLayout() {
   }
 
   // Data used for the state-level "About indicator" pane (always root list)
-  const aboutIndicatorsData = useQuery<any>({
+  const aboutIndicatorsData = useQuery({
     queryKey: [`indicators_risk-score_${currentSelectedState?.code}`],
     queryFn: () =>
       GraphQL(
@@ -733,7 +734,7 @@ export function OutputWindowComponent({
     refetchOnReconnect: false,
   });
 
-  const indicatorDescriptions: any = useQuery({
+  const indicatorDescriptions = useQuery({
     queryKey: [`indicators_${indicator}_${currentState?.code}`],
     queryFn: () =>
       GraphQL(

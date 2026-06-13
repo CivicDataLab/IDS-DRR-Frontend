@@ -16,6 +16,7 @@ import { Button, Icon, Menu, Select, Text, Tooltip } from 'opub-ui';
 
 import {
   ANALYTICS_INDICATORS_BY_CATEGORY,
+  type IndicatorCategory,
   type State,
 } from '@/config/graphql/analaytics-queries';
 import { features } from '@/config/site';
@@ -30,12 +31,7 @@ import { getLatestDate } from '../utils/utils';
 import RadioButton from './RadioButton';
 import styles from './styles.module.scss';
 
-interface TreeNode {
-  slug: string;
-  name: string;
-  description: string;
-  children: TreeNode[];
-}
+type TreeNode = IndicatorCategory;
 
 interface NestedSidebarProps {
   data: TreeNode[];
@@ -404,7 +400,7 @@ const NestedSidebarItem: React.FC<{
       </div>
       {hasChildren && isExpanded && (
         <div className={cn('relative', level === 0 && 'ml-4')}>
-          {node.children.map((child) => (
+          {node.children?.map((child) => (
             <NestedSidebarItem
               key={child.slug}
               node={child}

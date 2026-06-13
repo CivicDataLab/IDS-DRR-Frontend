@@ -8,7 +8,10 @@ import { parseAsString, useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
 import { Spinner, Text } from 'opub-ui';
 
-import { ANALYTICS_INDICATORS_BY_CATEGORY } from '@/config/graphql/analaytics-queries';
+import {
+  ANALYTICS_INDICATORS_BY_CATEGORY,
+  type IndicatorCategory,
+} from '@/config/graphql/analaytics-queries';
 import { Factors } from '@/lib/analytics';
 import { GraphQL } from '@/lib/api';
 import { toTitleCase } from '@/lib/utils';
@@ -193,7 +196,13 @@ export const ChartView = ({
     t,
   ]);
 
-  const findNameBySlug = (data: any, slug: string): string | undefined => {
+  const findNameBySlug = (
+    data: IndicatorCategory | undefined,
+    slug: string
+  ): string | undefined => {
+    if (!data) {
+      return undefined;
+    }
     if (data.slug === slug) {
       return data.name;
     }
@@ -232,7 +241,7 @@ export const ChartView = ({
           <Text variant="headingLg" fontWeight="semibold">
             {`${
               findNameBySlug(
-                indicatorsQuery?.data?.indicatorsByCategory[0] || {},
+                indicatorsQuery?.data?.indicatorsByCategory[0],
                 indicator
               ) || indicator
             } `}

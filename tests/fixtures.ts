@@ -1,4 +1,5 @@
 import {
+  type Indicator,
   type State,
 } from '@/config/graphql/analaytics-queries';
 
@@ -16,5 +17,19 @@ export const makeState = (overrides: Partial<State> = {}): State => ({
   resource_id: '',
   time_periods: [],
   latest_time_period: null,
+  ...overrides,
+});
+
+/**
+ * Build a complete `Indicator` fixture, overriding only the fields a test
+ * cares about.
+ */
+export const makeIndicator = (overrides: Partial<Indicator> = {}): Indicator => ({
+  name: '',
+  slug: '',
+  long_description: null,
+  short_description: null,
+  unit__name: null,
+  IDS_dataSpace: null,
   ...overrides,
 });
