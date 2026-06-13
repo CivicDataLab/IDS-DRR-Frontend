@@ -74,6 +74,11 @@ export const CHARTS_QUERY = graphql(`
   }
 `);
 
+/** A single chart as returned by the `chartsData` query. */
+export type ChartDetail = DocumentType<
+  typeof CHARTS_QUERY
+>['chartsDetails'][number];
+
 export const DATASET_RESOURCES_QUERY = graphql(`
   query datasetResources($datasetId: UUID!) {
     datasetResources(datasetId: $datasetId) {
@@ -107,3 +112,8 @@ export const DATASET_RESOURCES_QUERY = graphql(`
     }
   }
 `);
+
+/** A single resource as returned by the `datasetResources` query. */
+export type DatasetResource = DocumentType<
+  typeof DATASET_RESOURCES_QUERY
+>['datasetResources'][number];

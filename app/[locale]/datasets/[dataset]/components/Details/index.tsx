@@ -19,14 +19,14 @@ import {
   Text,
 } from 'opub-ui';
 
-import { CHARTS_QUERY } from '@/config/graphql/dataset-queries';
+import { CHARTS_QUERY, type ChartDetail } from '@/config/graphql/dataset-queries';
 import { GraphQL } from '@/lib/api';
 import { useCopyURL } from '@/hooks/use-copy-url';
 import Icons from '@/components/icons';
 
 // The CHARTS_QUERY DataSpace query returns the echarts option as `item.chart`.
 // This returns the first `type: 'map'` series, or undefined.
-const findMapSeries = (item: any) =>
+const findMapSeries = (item: ChartDetail) =>
   Array.isArray(item?.chart?.series)
     ? item.chart.series.find((s: any) => s?.type === 'map')
     : undefined;
@@ -44,7 +44,7 @@ const MapChart = ({
   item,
   mapName,
 }: {
-  item: any;
+  item: ChartDetail;
   mapName: string;
 }) => {
   const chartType = item.chartType;
@@ -87,7 +87,7 @@ const Details = () => {
   const copyURL = useCopyURL();
   const params = useParams();
 
-  const { data, isLoading }: { data: any; isLoading: boolean } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [`chartdata_${params.dataset}`],
     queryFn: () =>
       GraphQL(
@@ -99,7 +99,7 @@ const Details = () => {
       ),
   });
 
-  const renderChart = (item: any) => {
+  const renderChart = (item: ChartDetail) => {
     const mapSeries = findMapSeries(item);
     if (mapSeries?.map) {
       return <MapChart item={item} mapName={mapSeries.map} />;
@@ -116,7 +116,7 @@ const Details = () => {
         <div className=" mt-8 flex justify-center">
           <Spinner />
         </div>
-      ) : data?.chartsDetails?.length > 0 ? (
+      ) : (data?.chartsDetails?.length ?? 0) > 0 ? (
         <>
           <Text variant="headingLg" className="mx-6 lg:mx-0">
             {t('visualizations.heading')}
@@ -125,7 +125,7 @@ const Details = () => {
             <Carousel className="w-full">
               <div className=" px-12">
                 <CarouselContent className="flex-grow">
-                  {data?.chartsDetails.map((item: any, index: any) => (
+                  {data?.chartsDetails?.map((item, index) => (
                     <CarouselItem key={index} className="m-auto">
                       <div className="w-full border-2 border-solid border-baseGraySlateSolid4 bg-surfaceDefault p-6 text-center shadow-basicLg max-sm:p-2">
                         <div className=" lg:p-10">{renderChart(item)} </div>
