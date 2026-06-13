@@ -2,21 +2,26 @@ import Metadata from '@/app/[locale]/datasets/[dataset]/components/Metadata';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { makeDataset } from '../fixtures';
+
 jest.mock('opub-ui');
 
 jest.mock('@/i18n/navigation', () => ({
   Link: ({ href, children }: any) => <a href={href}>{children}</a>,
 }));
 
-const data = {
+const data = makeDataset({
   metadata: [
-    { metadataItem: { label: 'Source' }, value: 'Gov' },
-    { metadataItem: { label: 'Source Website' }, value: 'https://source.example' },
-    { metadataItem: { label: 'Update Frequency' }, value: 'Monthly' },
+    { metadataItem: { id: '1', label: 'Source' }, value: 'Gov' },
+    {
+      metadataItem: { id: '2', label: 'Source Website' },
+      value: 'https://source.example',
+    },
+    { metadataItem: { id: '3', label: 'Update Frequency' }, value: 'Monthly' },
   ],
   formats: ['CSV'],
   categories: [{ name: 'Climate' }],
-};
+});
 
 describe('Metadata', () => {
   it('renders filtered metadata, formats, and categories', () => {

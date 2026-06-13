@@ -1,6 +1,6 @@
-import { gql } from 'graphql-request';
+import { type DocumentType, graphql } from '@/gql/generated/datasets';
 
-export const DATASET_QUERY: any = gql`
+export const DATASET_QUERY = graphql(`
   query datasets($filters: DatasetFilter) {
     datasets(filters: $filters) {
       tags {
@@ -33,9 +33,12 @@ export const DATASET_QUERY: any = gql`
       formats
     }
   }
-`;
+`);
 
-export const CHARTS_QUERY: any = gql`
+/** A single dataset as returned by the `datasets` query. */
+export type Dataset = DocumentType<typeof DATASET_QUERY>['datasets'][number];
+
+export const CHARTS_QUERY = graphql(`
   query chartsData($datasetId: UUID!) {
     chartsDetails(datasetId: $datasetId) {
       chartType
@@ -69,9 +72,9 @@ export const CHARTS_QUERY: any = gql`
       chart
     }
   }
-`;
+`);
 
-export const DATASET_RESOURCES_QUERY: any = gql`
+export const DATASET_RESOURCES_QUERY = graphql(`
   query datasetResources($datasetId: UUID!) {
     datasetResources(datasetId: $datasetId) {
       id
@@ -103,4 +106,4 @@ export const DATASET_RESOURCES_QUERY: any = gql`
       }
     }
   }
-`;
+`);
