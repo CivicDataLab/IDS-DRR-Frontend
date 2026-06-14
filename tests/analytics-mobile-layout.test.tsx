@@ -2,7 +2,7 @@ import React from 'react';
 import { AnalyticsMobileLayout } from '@/app/[locale]/[state]/analytics/components/analytics-mobile-layout';
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { makeState } from './fixtures';
+import { makeIndicator, makeState } from './fixtures';
 
 // Mock opub-ui components
 jest.mock('opub-ui');
@@ -231,12 +231,12 @@ describe('AnalyticsMobileLayout', () => {
   const mockIndicatorsData = {
     data: {
       indicators: [
-        {
+        makeIndicator({
           name: 'Risk Score',
           slug: 'risk-score',
-          unit: 'score',
+          unit__name: 'score',
           short_description: 'Overall risk assessment',
-        },
+        }),
       ],
     },
   };

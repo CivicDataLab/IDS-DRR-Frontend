@@ -20,6 +20,7 @@ import {
 } from 'opub-ui';
 
 import { CHARTS_QUERY, type ChartDetail } from '@/config/graphql/dataset-queries';
+import { type JsonScalar } from '@/lib/types';
 import { GraphQL } from '@/lib/api';
 import { useCopyURL } from '@/hooks/use-copy-url';
 import Icons from '@/components/icons';
@@ -28,7 +29,7 @@ import Icons from '@/components/icons';
 // This returns the first `type: 'map'` series, or undefined.
 const findMapSeries = (item: ChartDetail) =>
   Array.isArray(item?.chart?.series)
-    ? item.chart.series.find((s: any) => s?.type === 'map')
+    ? item.chart.series.find((s: JsonScalar) => s?.type === 'map')
     : undefined;
 
 const MapError = () => {

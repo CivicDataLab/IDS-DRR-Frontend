@@ -11,6 +11,7 @@ import { Spinner, Text } from 'opub-ui';
 import {
   ANALYTICS_INDICATORS_BY_CATEGORY,
   type IndicatorCategory,
+  type State,
 } from '@/config/graphql/analaytics-queries';
 import { Factors } from '@/lib/analytics';
 import { GraphQL } from '@/lib/api';
@@ -24,7 +25,7 @@ export const ChartView = ({
   DistrictDropDownOption,
   timeLimits,
 }: {
-  currentSelectedState: any;
+  currentSelectedState: State;
   RevCircleDropdownOptions: Option[];
   DistrictDropDownOption: Option[];
   timeLimits: string[];

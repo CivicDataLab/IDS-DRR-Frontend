@@ -2,6 +2,8 @@ import React from 'react';
 import { ChartView } from '@/app/[locale]/[state]/analytics/components/chart-view';
 import { act, render, screen, waitFor } from '@testing-library/react';
 
+import { makeState } from './fixtures';
+
 // ----------------------
 // Helpers
 // ----------------------
@@ -95,7 +97,7 @@ jest.mock('@/lib/api', () => ({
 // Test Suite
 // ----------------------
 describe('ChartView', () => {
-  const mockCurrentSelectedState = { code: 'AS', name: 'Assam' };
+  const mockCurrentSelectedState = makeState({ code: 'AS', name: 'Assam' });
   const mockRevCircleDropdownOptions = [
     { label: 'Revenue Circle A', value: 'RC001' },
   ];

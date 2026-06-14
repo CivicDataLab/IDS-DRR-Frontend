@@ -41,7 +41,7 @@ const fallbackMessages = deepMerge(defaultMessages, messages[FALLBACK_LOCALE] ??
 export default getRequestConfig(async ({ requestLocale }) => {
   const locale = await requestLocale;
 
-  if (!locale || !locales.includes(locale as any)) {
+  if (!locale || !(locales as readonly string[]).includes(locale)) {
     captureException(new Error(`Invalid locale: ${locale}`));
     notFound();
   }

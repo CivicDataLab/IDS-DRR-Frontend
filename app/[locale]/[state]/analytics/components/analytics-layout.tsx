@@ -16,12 +16,14 @@ import {
   ANALYTICS_REVENUE_MAP_DATA,
   ANALYTICS_REVENUE_TABLE_DATA,
   ANALYTICS_TABLE_DATA,
+  type Indicator,
   type IndicatorCategory,
   PLATFORM_STATES_LIST,
   type State,
 } from '@/config/graphql/analaytics-queries';
 import { features } from '@/config/site';
 import { GraphQL } from '@/lib/api';
+import { type JsonScalar } from '@/lib/types';
 import { MediaRendering } from '@/components/media-rendering';
 import { getLatestDate } from '../utils/utils';
 import { AnalyticsMobileLayout } from './analytics-mobile-layout';
@@ -391,7 +393,7 @@ export function AnalyticsMainLayout() {
       indicator === 'risk-score'
         ? mapIndicatorsData?.data?.indicators || []
         : aboutIndicatorsData?.data?.indicators || [];
-    const map = new Map<string, unknown>();
+    const map = new Map<string, Indicator>();
     for (const item of raw) {
       if (!item?.slug) continue;
       if (!map.has(item.slug)) map.set(item.slug, item);
@@ -460,7 +462,7 @@ export function AnalyticsMainLayout() {
         const revenueCircles = rawData[revenueCircle];
         revenueCircles.forEach(
           (
-            circle: any
+            circle: JsonScalar
             // {
             // 'revenue-circle': string;
             // tehsil: string;
@@ -696,7 +698,11 @@ export function OutputWindowComponent({
   currentState,
   time_period,
   onClose,
-}: any) {
+}: {
+  currentState: State;
+  time_period: string | null | undefined;
+  onClose: () => void;
+}) {
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator');
   const region =
@@ -705,11 +711,11 @@ export function OutputWindowComponent({
     ? 'revenue-circle'
     : 'district';
 
-  const sidePaneQuery: any = !searchParams.get('revenue-code')
+  const sidePaneQuery: JsonScalar = !searchParams.get('revenue-code')
     ? ANALYTICS_DISTRICT_DATA
     : ANALYTICS_REVENUE_TABLE_DATA;
 
-  const sidePaneData: any = useQuery({
+  const sidePaneData = useQuery<JsonScalar>({
     queryKey: [
       `sidePaneData_${indicator}_${region}_${boundary}_${time_period}`,
     ],
@@ -757,7 +763,7 @@ export function OutputWindowComponent({
   // briefly look the prior slug up in the new indicator's descriptions.
   const [renderedIndicator, setRenderedIndicator] = useState(indicator);
   const [renderedIndicatorDescriptions, setRenderedIndicatorDescriptions] =
-    useState<any>(indicatorDescriptions?.data?.indicators);
+    useState(indicatorDescriptions?.data?.indicators);
   if (
     !sidePaneData.isPlaceholderData &&
     !indicatorDescriptions.isPlaceholderData &&
@@ -790,7 +796,7 @@ export function OutputWindowComponent({
             ] ?? []
           }
           indicatorDescriptions={renderedIndicatorDescriptions}
-          indicator={renderedIndicator}
+          indicator={renderedIndicator ?? ''}
           boundary={boundary}
           currentState={currentState}
           onClose={onClose}

@@ -21,13 +21,13 @@ export default async function Home({
   const graphqlUrl = `${process.env.DATA_MANAGEMENT_LAYER_URL}/graphql`;
 
   try {
-    const statesData = await queryClient.fetchQuery<any>({
+    const statesData = await queryClient.fetchQuery({
       queryKey: [`states_list`],
       queryFn: () => GraphQL(graphqlUrl, PLATFORM_STATES_LIST),
     });
 
     const stateCode = statesData?.getStates?.find(
-      (s: any) => s.slug === stateSlug
+      (s) => s.slug === stateSlug
     )?.code;
 
     if (stateCode) {

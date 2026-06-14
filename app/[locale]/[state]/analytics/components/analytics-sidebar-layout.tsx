@@ -103,7 +103,7 @@ function IndicatorListWrapper({
                   name={'State'}
                   label={''}
                   value={currentState?.slug}
-                  options={statesList.map((state: any) => {
+                  options={statesList.map((state) => {
                     return {
                       label: stateName(state.slug, state.name),
                       value: state.slug,

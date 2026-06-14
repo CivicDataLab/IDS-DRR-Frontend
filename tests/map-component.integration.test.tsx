@@ -2,7 +2,7 @@ import React from 'react';
 import { MapComponent } from '@/app/[locale]/[state]/analytics/components/map-component';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { makeIndicator } from './fixtures';
+import { makeIndicator, makeState } from './fixtures';
 
 jest.mock('opub-ui');
 
@@ -143,7 +143,7 @@ const baseProps = {
   ],
   setRegion: jest.fn(),
   setRevenueRegion: jest.fn(),
-  currentSelectedState: {
+  currentSelectedState: makeState({
     slug: 'assam',
     code: 'AS',
     bounds: [
@@ -151,7 +151,7 @@ const baseProps = {
       [2, 2],
     ],
     center: [26.2, 91.7],
-  },
+  }),
 };
 
 const districtFeatures = {

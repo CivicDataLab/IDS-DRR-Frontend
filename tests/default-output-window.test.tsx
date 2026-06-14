@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 
 import { DefaultWindow } from '../app/[locale]/[state]/analytics/components/default-output-window';
+import { makeIndicator } from './fixtures';
 import messages from '../locales/en.json';
 
 // Mock React.cache
@@ -117,31 +118,31 @@ const mockChartData = {
 describe('DefaultWindow', () => {
   const defaultProps = {
     indicatorDescriptions: [
-      {
+      makeIndicator({
         name: 'Overall Flood Risk',
         slug: 'risk-score',
         short_description: 'Overall flood risk explanation',
-      },
-      {
+      }),
+      makeIndicator({
         name: 'Hazard',
         slug: 'flood-hazard',
         short_description: 'Hazard explanation',
-      },
-      {
+      }),
+      makeIndicator({
         name: 'Exposure',
         slug: 'exposure',
         short_description: 'Exposure explanation',
-      },
-      {
+      }),
+      makeIndicator({
         name: 'Vulnerability',
         slug: 'vulnerability',
         short_description: 'Vulnerability explanation',
-      },
-      {
+      }),
+      makeIndicator({
         name: 'Government Response',
         slug: 'government-response',
         short_description: 'Government response explanation',
-      },
+      }),
     ],
     indicator: 'risk-score',
     boundary: 'district',

@@ -15,6 +15,7 @@ import {
 } from 'opub-ui';
 
 import { fetchDatasets } from '@/lib/api';
+import { type JsonScalar } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import BreadCrumbs from './components/BreadCrumbs';
 import Card from './components/DatasetCards';
@@ -193,7 +194,7 @@ const DatasetsListing = () => {
   useEffect(() => {
     if (variables) {
       fetchDatasets(variables)
-        .then((res: any) => {
+        .then((res: JsonScalar) => {
           setFacets(res);
         })
         .catch((err: unknown) => {
@@ -350,7 +351,7 @@ const DatasetsListing = () => {
                     onPageChange={handlePageChange}
                     onPageSizeChange={handlePageSizeChange}
                   >
-                    {datasetDetails.map((item: any, index: any) => (
+                    {datasetDetails.map((item: JsonScalar, index: number) => (
                       <Card key={index} data={item} />
                     ))}
                   </GraphqlPagination>

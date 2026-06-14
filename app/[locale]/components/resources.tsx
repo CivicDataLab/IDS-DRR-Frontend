@@ -18,6 +18,7 @@ import {
 import { resources } from '@/config/site';
 import { fetchDatasets } from '@/lib/api';
 import { routes } from '@/lib/routes';
+import { type JsonScalar } from '@/lib/types';
 import { useFormatPeriod } from '@/hooks/use-format-period';
 
 interface MetadataItem {
@@ -51,7 +52,7 @@ const Resources = () => {
 
   useEffect(() => {
     fetchDatasets('?&size=5&page=1&sort=recent')
-      .then((res: any) => {
+      .then((res: JsonScalar) => {
         setData(res.results);
       })
       .catch((err: unknown) => {
@@ -160,7 +161,7 @@ const Resources = () => {
                   </Link>
                 </CarouselItem>
               ))}
-              {data.map((item: any, index: any) => (
+              {data.map((item: JsonScalar, index: number) => (
                 <CarouselItem
                   key={index}
                   className="ml-2  overflow-hidden rounded-2 bg-surfaceDefault p-3 md:basis-1/2 lg:ml-0 lg:basis-1/3  lg:p-6 "
@@ -219,7 +220,7 @@ const Resources = () => {
                       </div>
                       {item?.formats?.length > 0 && (
                         <div className=" flex gap-2">
-                          {item?.formats?.map((fileType: any, index: any) => (
+                          {item?.formats?.map((fileType: JsonScalar, index: number) => (
                             <Tag key={index} background-color="#E1F0FF">
                               {fileType}
                             </Tag>

@@ -5,6 +5,8 @@ import FilterDropdownOptions, {
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { makeState } from './fixtures';
+
 // Mock next-usequerystate
 const mockSetDistrictCode = jest.fn();
 const mockSetRevenueCode = jest.fn();
@@ -50,9 +52,9 @@ jest.mock('@internationalized/date', () => ({
 }));
 
 const defaultProps = {
-  currentSelectedState: {
+  currentSelectedState: makeState({
     child_type: 'revenue-circle',
-  },
+  }),
   RevCircleDropdownOptions: [
     { label: 'Revenue Circle 1', value: 'rc1', districtCode: 'D001' },
     { label: 'Revenue Circle 2', value: 'rc2', districtCode: 'D001' },
@@ -338,7 +340,7 @@ describe('FilterDropdownOptions', () => {
     it('handles currentSelectedState without child_type', () => {
       const propsWithoutChildType = {
         ...defaultProps,
-        currentSelectedState: {},
+        currentSelectedState: makeState(),
       };
 
       render(<FilterDropdownOptions {...propsWithoutChildType} />);
@@ -350,7 +352,7 @@ describe('FilterDropdownOptions', () => {
     it('handles currentSelectedState with child_type: null (backend contract for states without grandchildren)', () => {
       const propsWithNullChildType = {
         ...defaultProps,
-        currentSelectedState: { child_type: null },
+        currentSelectedState: makeState({ child_type: null }),
       };
 
       render(<FilterDropdownOptions {...propsWithNullChildType} />);

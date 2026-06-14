@@ -15,8 +15,13 @@ import { useQueryState } from 'next-usequerystate';
 import { useFormatter, useTranslations } from 'next-intl';
 import { Button, Icon, Text, Tooltip } from 'opub-ui';
 
-import { ANALYTICS_TIME_PERIODS } from '@/config/graphql/analaytics-queries';
+import {
+  ANALYTICS_TIME_PERIODS,
+  type Indicator,
+  type State,
+} from '@/config/graphql/analaytics-queries';
 import { GraphQL } from '@/lib/api';
+import { type JsonScalar } from '@/lib/types';
 import { docsLink } from '@/config/site';
 import { useFormatNumber } from '@/hooks/use-format-number';
 import { Factors } from '@/lib/analytics';
@@ -34,7 +39,14 @@ export function OutputWindow({
   boundary,
   currentState,
   onClose,
-}: any) {
+}: {
+  data: JsonScalar;
+  indicatorDescriptions: Indicator[] | undefined;
+  indicator: string;
+  boundary: string;
+  currentState: State;
+  onClose?: () => void;
+}) {
   const t = useTranslations('analytics.detail');
   const tCommon = useTranslations('common');
   const tRisk = useTranslations('analytics.risk');
@@ -47,8 +59,8 @@ export function OutputWindow({
   )?.split('-');
 
   const sourceDataLink = useMemo(()=>{
-    if(indicatorDescriptions?.length > 0){
-      return indicatorDescriptions[0]?.IDS_dataSpace;
+    if((indicatorDescriptions?.length ?? 0) > 0){
+      return indicatorDescriptions?.[0]?.IDS_dataSpace;
     }
     return undefined;
   }, [indicatorDescriptions]);
@@ -96,7 +108,7 @@ export function OutputWindow({
   const [revenueCode, setDistrictCode] = useQueryState('district-code');
   const [districtCode, setRevenueCode] = useQueryState('revenue-code');
 
-  const districtData = data?.filter((item: any) =>
+  const districtData = data?.filter((item: JsonScalar) =>
     Object.hasOwnProperty.call(item, 'district')
   );
 
@@ -112,8 +124,8 @@ export function OutputWindow({
   const [tooltipOpen, setTooltipOpen] = React.useState(false);
 
   function getDescription(indicatorSlug: string) {
-    const descriptionObject = indicatorDescriptions.find(
-      (desc: { slug: string }) => desc.slug === indicatorSlug
+    const descriptionObject = indicatorDescriptions?.find(
+      (desc) => desc.slug === indicatorSlug
     );
     return descriptionObject ? descriptionObject.long_description : tCommon('na');
   }
@@ -204,7 +216,7 @@ export function OutputWindow({
               {RevenueRegion
                 ? tAnalytics('subdivisionHeading', {
                     name: RegionName,
-                    type: currentState.child_type,
+                    type: currentState.child_type ?? '',
                   })
                 : tAnalytics('divisionHeading', { name: RegionName })}
             </Text>
@@ -221,7 +233,7 @@ export function OutputWindow({
           </div>
           {/* //--------  */}
           <section className="mt-4">
-            {DataBasedOnBoundary.map((data: any, index: any) => (
+            {DataBasedOnBoundary.map((data: JsonScalar, index: number) => (
               <div key={`boundary-${index}`} className="mb-4">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
@@ -283,7 +295,6 @@ export function OutputWindow({
                       boundary={boundary}
                       IconMap={IconMap}
                       indicator={indicator}
-                      indicatorDescription={indicatorDescriptions}
                       getDescription={getDescription}
                     />
                   </div>
@@ -380,7 +391,7 @@ export function OutputWindow({
                       {RevenueRegion
                         ? tAnalytics('subdivisionHeading', {
                             name: RegionName,
-                            type: currentState.child_type,
+                            type: currentState.child_type ?? '',
                           })
                         : tAnalytics('divisionHeading', { name: RegionName })}
                     </Text>
@@ -412,7 +423,7 @@ export function OutputWindow({
               <section className="mt-4">
                 {region !== null &&
                   region.length > 0 &&
-                  DataBasedOnBoundary.map((data: any, index: any) => (
+                  DataBasedOnBoundary.map((data: JsonScalar, index: number) => (
                     <div key={`boundary-${index}`} className="mb-4">
                       <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
@@ -499,7 +510,14 @@ function OtherFactorScores({
   indicator,
   getDescription,
   IconMap,
-}: any) {
+}: {
+  factorData: Indicator[] | undefined;
+  data: JsonScalar;
+  boundary: string;
+  indicator: string;
+  getDescription: (slug: string) => string | null | undefined;
+  IconMap: { [key: string]: React.ReactNode };
+}) {
   const clonedData = structuredClone(data);
   delete clonedData[boundary];
   delete clonedData[`${boundary}-code`];
@@ -511,7 +529,7 @@ function OtherFactorScores({
 
   // TODO: Change the filteration to the factor specific structure for it to work with data having objects
   return FactorVariables.filter(
-    (scoreType: any) => typeof data[scoreType] === 'object'
+    (scoreType) => typeof data[scoreType] === 'object'
   ).map((scoreType) => (
     <div key={scoreType} className=" flex items-center gap-4">
       {/* //change  */}

@@ -5,9 +5,11 @@ import {
   safeParseDate,
 } from '@/app/[locale]/[state]/analytics/utils/utils';
 
+import { makeIndicator } from '../fixtures';
+
 const factorData = [
-  { slug: 'risk-score', name: 'Risk Score', unit__name: 'score' },
-  { slug: 'population', name: 'Population', unit__name: 'people' },
+  makeIndicator({ slug: 'risk-score', name: 'Risk Score', unit__name: 'score' }),
+  makeIndicator({ slug: 'population', name: 'Population', unit__name: 'people' }),
 ];
 
 describe('safeParseDate', () => {
