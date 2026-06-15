@@ -4,8 +4,15 @@ import { Spinner, Table, Text } from 'opub-ui';
 
 import { useFormatNumber } from '@/hooks/use-format-number';
 import { Factors } from '@/lib/analytics';
+import { type JsonScalar } from '@/lib/types';
 
-export function TableComponent({ data, isLoading }: any) {
+export function TableComponent({
+  data,
+  isLoading,
+}: {
+  data: JsonScalar;
+  isLoading: boolean;
+}) {
   const t = useTranslations('analytics.table');
   const tCommon = useTranslations('common');
   const tRisk = useTranslations('analytics.risk');
@@ -13,7 +20,11 @@ export function TableComponent({ data, isLoading }: any) {
   const columns = useMemo(() => {
     if (!data?.length) return [];
     // Add district column
-    const transformed: { accessorKey: string; header: any; id?: string }[] = [
+    const transformed: {
+      accessorKey: string;
+      header: React.ReactNode;
+      id?: string;
+    }[] = [
       {
         accessorKey: 'region-name',
         header: t('regionName'),
@@ -34,7 +45,7 @@ export function TableComponent({ data, isLoading }: any) {
         transformed.push({
           accessorKey: key,
           id: key,
-          header: item.title,
+          header: item.title as React.ReactNode,
         });
       }
     });
@@ -68,7 +79,7 @@ export function TableComponent({ data, isLoading }: any) {
         if (value !== null && typeof value === 'object' && 'value' in value) {
           row[key] = Factors.includes(key)
             ? tRisk(String(parseInt((value as { value: string }).value)) as RiskLevel)
-            : formatNumber((value as { value: any }).value).toString();
+            : formatNumber((value as { value: JsonScalar }).value).toString();
         }
       });
       return row;

@@ -5,12 +5,13 @@ import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, Menu, Spinner, Text, Tray } from 'opub-ui';
 
+import { type Dataset } from '@/config/graphql/dataset-queries';
 import { useCopyURL } from '@/hooks/use-copy-url';
 import Icons from '@/components/icons';
 import Metadata from '../Metadata';
 
 interface PrimaryDataProps {
-  data: any;
+  data: Dataset | undefined;
   isLoading?: boolean;
 }
 const currentURL = typeof window !== 'undefined' ? window.location.href : '';
@@ -19,14 +20,15 @@ const PrimaryData: React.FC<PrimaryDataProps> = ({ data, isLoading }) => {
   const t = useTranslations('datasets');
   const tCommon = useTranslations('common');
   const copyURL = useCopyURL();
-  const sourceMetadata = data.metadata.find(
-    (item: any) => item.metadataItem.label === 'Source'
+  const metadata = data?.metadata ?? [];
+  const sourceMetadata = metadata.find(
+    (item) => item.metadataItem.label === 'Source'
   );
-  const sourceLink = data.metadata.find(
-    (item: any) => item.metadataItem.label === 'Source Website'
+  const sourceLink = metadata.find(
+    (item) => item.metadataItem.label === 'Source Website'
   );
-  const githubLink = data.metadata.find(
-    (item: any) => item.metadataItem.label === 'Github Repo Link'
+  const githubLink = metadata.find(
+    (item) => item.metadataItem.label === 'Github Repo Link'
   );
 
   const [open, setOpen] = useState(false);

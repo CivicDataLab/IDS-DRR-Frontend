@@ -2,6 +2,8 @@ import React from 'react';
 import { MapComponent } from '@/app/[locale]/[state]/analytics/components/map-component';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
+import { makeIndicator, makeState } from './fixtures';
+
 jest.mock('opub-ui');
 
 jest.mock('@/hooks/use-window-size', () => ({
@@ -126,22 +128,22 @@ const baseProps = {
   mapDataloading: false,
   revenueMapDataLoading: false,
   indicatorsData: [
-    {
+    makeIndicator({
       name: 'Risk Score',
       slug: 'risk-score',
-      unit: 'score',
+      unit__name: 'score',
       short_description: 'Risk',
-    },
-    {
+    }),
+    makeIndicator({
       name: 'Exposure',
       slug: 'exposure',
-      unit: 'mm',
+      unit__name: 'mm',
       short_description: 'Exposure',
-    },
+    }),
   ],
   setRegion: jest.fn(),
   setRevenueRegion: jest.fn(),
-  currentSelectedState: {
+  currentSelectedState: makeState({
     slug: 'assam',
     code: 'AS',
     bounds: [
@@ -149,7 +151,7 @@ const baseProps = {
       [2, 2],
     ],
     center: [26.2, 91.7],
-  },
+  }),
 };
 
 const districtFeatures = {

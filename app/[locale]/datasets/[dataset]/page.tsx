@@ -21,7 +21,7 @@ const DatasetDetailsPage = () => {
 
   const params = useParams();
 
-  const { data, isLoading }: { data: any; isLoading: boolean } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['dataset_details', params.dataset],
     queryFn: () =>
       GraphQL(

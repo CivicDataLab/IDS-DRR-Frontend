@@ -8,9 +8,14 @@ import type { TileLayers } from 'ids-drr-branding-types';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, Spinner, Text } from 'opub-ui';
 
+import {
+  type Indicator,
+  type State,
+} from '@/config/graphql/analaytics-queries';
 import { states, tileLayers } from '@/config/site';
 import { useFormatNumber } from '@/hooks/use-format-number';
 import { Factors, isRiskLevel } from '@/lib/analytics';
+import { type JsonScalar } from '@/lib/types';
 import Icons from '@/components/icons';
 import MapChart from '@/components/MapChart';
 import { getFactorNameBySlug, getUnitsBySlug } from '../utils/utils';
@@ -30,19 +35,13 @@ export const MapComponent = ({
 }: {
   indicator: string;
   mapDataloading: boolean;
-  indicatorsData: {
-    name: string;
-    slug: string;
-    unit: string;
-    long_description?: string;
-    short_description: string;
-  }[];
+  indicatorsData: Indicator[] | undefined;
   revenueMapDataLoading: boolean;
-  mapData: any;
-  revenueMapData: any;
-  setRegion: any;
-  setRevenueRegion: any;
-  currentSelectedState: any;
+  mapData: JsonScalar;
+  revenueMapData: JsonScalar;
+  setRegion: (region: string) => void;
+  setRevenueRegion: (region: string) => void;
+  currentSelectedState: State;
   isOutputPaneOpen?: boolean;
   onToggleOutputPane?: () => void;
 }) => {
@@ -55,6 +54,7 @@ export const MapComponent = ({
     if (!tileLayers) return undefined;
     return Object.fromEntries(
       Object.entries(tileLayers).map(([key, layer]) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic next-intl key, guarded by tMap.has
         const translationKey = `layers.${key}` as any;
         return [
           tMap.has(translationKey) ? tMap(translationKey) : key,
@@ -63,7 +63,9 @@ export const MapComponent = ({
       })
     ) as TileLayers;
   }, [tMap]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Leaflet map instance
   const [map, setMap] = React.useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Leaflet overlay layer
   const [overlayFeatures, setOverlayFeatures] = React.useState<any>(null);
 
   React.useEffect(() => {
@@ -132,7 +134,7 @@ export const MapComponent = ({
       const from = grades[i];
       const to = grades[i + 1];
 
-      const formatValue = (num: any) => {
+      const formatValue = (num: number) => {
         if (num < 1) {
           return num < 0.001 ? '0' : num.toFixed(3);
         }
@@ -230,6 +232,7 @@ export const MapComponent = ({
     regionName: string;
     riskValue: number;
     riskText: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Leaflet layer
     layer: any;
   }) {
     layer
@@ -310,6 +313,7 @@ export const MapComponent = ({
   // Defer popup close so a quick edge re-entry (cursor wobbling across a
   // polygon's jagged boundary) doesn't tear down and rebuild the popup.
   const popupCloseTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Leaflet layer ref
   const poppedLayerRef = React.useRef<any>(null);
   React.useEffect(
     () => () => {

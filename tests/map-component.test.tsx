@@ -2,6 +2,8 @@ import React from 'react';
 import { MapComponent } from '@/app/[locale]/[state]/analytics/components/map-component';
 import { render, screen } from '@testing-library/react';
 
+import { makeIndicator, makeState } from './fixtures';
+
 // Mock opub-ui components
 jest.mock('opub-ui');
 
@@ -70,18 +72,18 @@ describe('MapComponent', () => {
   const mockRevenueMapDataLoading = false;
   const mockSetRegion = jest.fn();
   const mockSetRevenueRegion = jest.fn();
-  const mockCurrentSelectedState = {
+  const mockCurrentSelectedState = makeState({
     code: 'AS',
     name: 'Assam',
-  };
+  });
 
   const mockIndicatorsData = [
-    {
+    makeIndicator({
       name: 'Risk Score',
       slug: 'risk-score',
-      unit: 'score',
+      unit__name: 'score',
       short_description: 'Overall risk assessment',
-    },
+    }),
   ];
 
   const mockMapData = {
@@ -364,10 +366,10 @@ describe('MapComponent', () => {
   });
 
   it('handles different current states', () => {
-    const differentState = {
+    const differentState = makeState({
       code: 'HP',
       name: 'Himachal Pradesh',
-    };
+    });
 
     render(
       <MapComponent

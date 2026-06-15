@@ -14,7 +14,11 @@ import { useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, Menu, Select, Text, Tooltip } from 'opub-ui';
 
-import { ANALYTICS_INDICATORS_BY_CATEGORY } from '@/config/graphql/analaytics-queries';
+import {
+  ANALYTICS_INDICATORS_BY_CATEGORY,
+  type IndicatorCategory,
+  type State,
+} from '@/config/graphql/analaytics-queries';
 import { features } from '@/config/site';
 import { GraphQL } from '@/lib/api';
 import { routes } from '@/lib/routes';
@@ -27,12 +31,7 @@ import { getLatestDate } from '../utils/utils';
 import RadioButton from './RadioButton';
 import styles from './styles.module.scss';
 
-interface TreeNode {
-  slug: string;
-  name: string;
-  description: string;
-  children: TreeNode[];
-}
+type TreeNode = IndicatorCategory;
 
 interface NestedSidebarProps {
   data: TreeNode[];
@@ -56,7 +55,7 @@ function getIcon(slug: string) {
   }
 }
 
-export function FactorList({ currentState }: any) {
+export function FactorList({ currentState }: { currentState: State }) {
   const t = useTranslations('analytics');
   const tCommon = useTranslations('common');
   const stateName = useStateName();
@@ -401,7 +400,7 @@ const NestedSidebarItem: React.FC<{
       </div>
       {hasChildren && isExpanded && (
         <div className={cn('relative', level === 0 && 'ml-4')}>
-          {node.children.map((child) => (
+          {node.children?.map((child) => (
             <NestedSidebarItem
               key={child.slug}
               node={child}

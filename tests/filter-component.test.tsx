@@ -3,6 +3,8 @@ import { FilterComp } from '@/app/[locale]/[state]/analytics/components/filter-c
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { makeState } from './fixtures';
+
 // FilterComp keeps useSearchParams on next/navigation but pulls useRouter
 // from next-intl via @/i18n/navigation, so each mock targets its source.
 const mockParams = jest.fn();
@@ -101,9 +103,9 @@ jest.mock('@internationalized/date', () => ({
 const defaultProps = {
   timePeriod: '2023_08',
   timePeriods: ['2023_01', '2023_02', '2023_03', '2023_12'],
-  currentSelectedState: {
+  currentSelectedState: makeState({
     child_type: 'revenue-circle',
-  },
+  }),
   statesList: [
     { name: 'State 1', slug: 'state-1' },
     { name: 'State 2', slug: 'state-2' },

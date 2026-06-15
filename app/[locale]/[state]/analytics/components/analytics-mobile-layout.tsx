@@ -8,8 +8,13 @@ import { parseAsString, useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, Menu, Text } from 'opub-ui';
 
+import {
+  type Indicator,
+  type State,
+} from '@/config/graphql/analaytics-queries';
 import { features } from '@/config/site';
 import { routes } from '@/lib/routes';
+import { type JsonScalar } from '@/lib/types';
 import { cn, downloadStateReport } from '@/lib/utils';
 import { useCopyURL } from '@/hooks/use-copy-url';
 import Icons from '@/components/icons';
@@ -45,16 +50,16 @@ export function AnalyticsMobileLayout({
 }: {
   timePeriod: string;
   indicator: string;
-  mapData: any;
-  revenueMapData: any;
-  districtGeographiesData: any;
-  revenueGeographiesData: any;
+  mapData: JsonScalar;
+  revenueMapData: JsonScalar;
+  districtGeographiesData: JsonScalar;
+  revenueGeographiesData: JsonScalar;
   timePeriods: string[];
-  mapIndicatorsData: any;
-  aboutIndicatorsData: any;
-  tableData: any;
-  currentSelectedState: any;
-  statesList: unknown[];
+  mapIndicatorsData: { data?: { indicators: Indicator[] } } | undefined;
+  aboutIndicatorsData: { data?: { indicators: Indicator[] } } | undefined;
+  tableData: JsonScalar;
+  currentSelectedState: State;
+  statesList: State[];
 }) {
   const t = useTranslations('analytics');
   const tCommon = useTranslations('common');
@@ -136,7 +141,7 @@ export function AnalyticsMobileLayout({
         const revenueCircles = rawData[revenueCircle];
         revenueCircles.forEach(
           (
-            circle: any
+            circle: JsonScalar
             //   {
             //   'revenue-circle': string;
             //   code: string;
@@ -145,7 +150,7 @@ export function AnalyticsMobileLayout({
           ) => {
             RevCircleDropdownOptions.push({
               label:
-                circle[currentSelectedState.child_type] ||
+                circle[currentSelectedState.child_type ?? ''] ||
                 circle['revenue-circle'],
               value: circle.code,
               districtCode: circle.district_code,
@@ -179,7 +184,7 @@ export function AnalyticsMobileLayout({
 
   const indicatorListForAbout = React.useMemo(() => {
     const raw = aboutIndicatorsData?.data?.indicators || [];
-    const uniqueBySlug = new Map<string, unknown>();
+    const uniqueBySlug = new Map<string, Indicator>();
 
     for (const item of raw) {
       if (!item?.slug) continue;
@@ -188,7 +193,7 @@ export function AnalyticsMobileLayout({
       }
     }
 
-    return Array.from(uniqueBySlug.values()).map((item: any) => ({
+    return Array.from(uniqueBySlug.values()).map((item) => ({
       title: item?.name,
       slug: item?.slug,
       description: item?.short_description || item?.long_description || tCommon('na'),
@@ -201,7 +206,7 @@ export function AnalyticsMobileLayout({
     setIsOutputPaneOpen(true);
   }, [view, indicator, timePeriodSelected, region]);
 
-  const RenderView = ({ selectedView }: any) => {
+  const RenderView = ({ selectedView }: { selectedView: string }) => {
     switch (selectedView) {
       case 'map':
         return (

@@ -39,7 +39,7 @@ export const QuickLinks = () => {
   const analyticsWithResolvedLinks = useMemo(() => {
     return states.map((item) => {
       const stateFromApi = statesList.data?.getStates?.find(
-        (state: any) => state.slug === item.slug
+        (state) => state.slug === item.slug
       );
       const resolvedTimePeriod =
         stateFromApi?.latest_time_period ||

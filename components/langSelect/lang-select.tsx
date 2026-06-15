@@ -35,6 +35,7 @@ export function TranslateDropdown({
   }, [prefLangCookie]);
 
   const googleTranslateElementInit = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Google Translate runtime global
     new (window as any).google.translate.TranslateElement(
       {
         pageLanguage: 'en',
@@ -46,6 +47,7 @@ export function TranslateDropdown({
   };
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Google Translate runtime global
     (window as any).googleTranslateElementInit = googleTranslateElementInit;
   }, []);
 

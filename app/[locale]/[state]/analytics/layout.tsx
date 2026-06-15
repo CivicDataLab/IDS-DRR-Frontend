@@ -36,7 +36,7 @@ export default async function AnalyticsLayout({
   const state = resolvedParams.state;
   const statesListData = await getStatesList();
   const currentState = statesListData?.find(
-    (item: any) => item.slug === state
+    (item) => item.slug === state
   );
 
   if (!currentState) notFound();

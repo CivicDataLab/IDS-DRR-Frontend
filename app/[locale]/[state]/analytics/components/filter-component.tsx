@@ -8,7 +8,9 @@ import { parseAsString, useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, RadioGroup, RadioItem, YearCalendar } from 'opub-ui';
 
+import { type State } from '@/config/graphql/analaytics-queries';
 import { routes, type AnalyticsView } from '@/lib/routes';
+import { type JsonScalar } from '@/lib/types';
 import { toISODate } from '@/lib/utils';
 import Icons from '@/components/icons';
 import {
@@ -26,9 +28,9 @@ export function FilterComp({
 }: {
   timePeriod: string;
   timePeriods: string[];
-  districtGeographiesData: any;
-  revenueGeographiesData: any;
-  currentSelectedState: any;
+  districtGeographiesData: JsonScalar;
+  revenueGeographiesData: JsonScalar;
+  currentSelectedState: State | null;
   // getDistrictOptions: any;
 }) {
   const t = useTranslations('analytics.filters');
@@ -146,7 +148,7 @@ export function FilterComp({
       options:
         revenueGeographiesData?.data?.getDistrictRevCircle?.[regionName]?.map(
           (circle: { code: string; [key: string]: string }) => ({
-            label: circle[currentSelectedState.child_type],
+            label: circle[currentSelectedState?.child_type ?? ''],
             value: circle.code,
           })
         ) || [],
@@ -206,7 +208,17 @@ const RenderOptions = ({
   timePeriodData,
   timePeriodSelected,
   setTimePeriodSelected,
-}: any) => {
+}: {
+  filterOptions: JsonScalar;
+  selectedOption: string;
+  regionSelected: string;
+  setRegionSelected: (value: string) => void;
+  revenueSelected: string;
+  setRevenueSelected: (value: string) => void;
+  timePeriodData: JsonScalar;
+  timePeriodSelected: string;
+  setTimePeriodSelected: (value: string) => void;
+}) => {
   const t = useTranslations('analytics.filters');
   const [selectedState, setSelectedState] = useState('');
   const router = useRouter();
@@ -254,7 +266,7 @@ const RenderOptions = ({
     const [year, month] = date.split('_');
     return new Date(Date.UTC(parseInt(year), parseInt(month) - 1));
   });
-  const timestamps = datesArray.map((date: any) => date.getTime());
+  const timestamps = datesArray.map((date: Date) => date.getTime());
   if (timestamps.length > 0) {
     const minTimestamp = Math.min(...timestamps);
     const maxTimestamp = Math.max(...timestamps);
@@ -283,7 +295,7 @@ const RenderOptions = ({
           {value === 'revenue-circle' && !regionSelected ? (
             <div>{t('subdivision.emptyPrompt')}</div>
           ) : (
-            options.map((item: any, idx: any) =>
+            options.map((item: JsonScalar, idx: number) =>
               item.type === 'group' ? (
                 <div
                   key={idx}

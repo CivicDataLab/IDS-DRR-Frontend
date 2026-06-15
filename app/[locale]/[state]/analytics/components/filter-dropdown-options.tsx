@@ -1,8 +1,13 @@
-import { parseDate, type CalendarDate } from '@internationalized/date';
+import {
+  parseDate,
+  type CalendarDate,
+  type DateValue,
+} from '@internationalized/date';
 import { parseAsString, useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
 import { MonthPicker, MultiMonthPicker, Select } from 'opub-ui';
 
+import { type State } from '@/config/graphql/analaytics-queries';
 import { toTitleCase } from '@/lib/utils';
 import { getLatestDate, safeParseDate } from '../utils/utils';
 
@@ -20,7 +25,7 @@ export default function FilterDropdownOptions({
   monthMulti = false,
   timeLimits,
 }: {
-  currentSelectedState: any;
+  currentSelectedState: State;
   RevCircleDropdownOptions: Option[];
   DistrictDropDownOption: Option[];
   monthMulti?: boolean;
@@ -182,7 +187,7 @@ export default function FilterDropdownOptions({
               label={t('month.labelMulti')}
               minValue={minValue}
               maxValue={maxValue}
-              onChange={(dates: any) => {
+              onChange={(dates: DateValue[]) => {
                 if (!dates || dates.length === 0) {
                   // Allow clearing all selected months without breaking the view.
                   setSelectedTimePeriod([], { shallow: false });
@@ -191,7 +196,7 @@ export default function FilterDropdownOptions({
 
                 setSelectedTimePeriod(
                   dates.map(
-                    (date: any) =>
+                    (date) =>
                       `${date.year}_${
                         date.month < 10 ? `0${date.month}` : `${date.month}`
                       }`
@@ -207,7 +212,8 @@ export default function FilterDropdownOptions({
               label={t('month.label')}
               minValue={minValue}
               maxValue={maxValue}
-              onChange={(date: any) => {
+              onChange={(date: DateValue | null) => {
+                if (!date) return;
                 setSelectedTimePeriod(
                   [
                     `${date.year}_${
