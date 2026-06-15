@@ -12,6 +12,11 @@ jest.mock('@sentry/nextjs', () => ({
   captureException: jest.fn(),
 }));
 
+jest.mock('@/config/site', () => ({
+  ...jest.requireActual('@/config/site'),
+  locales: ['en'],
+}));
+
 import getRequestConfig from '@/i18n/request';
 
 describe('i18n request config', () => {
