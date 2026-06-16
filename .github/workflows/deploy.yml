@@ -32,6 +32,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6.0.3
 
+      - name: Clone branding repo
+        run: git clone https://github.com/CivicDataLab/ids-drr-india-branding.git ../ids-drr-india-branding
+
       # ghcr.io image paths must be lowercase; the repo slug is mixed-case.
       - id: meta
         run: |
@@ -49,11 +52,18 @@ jobs:
       - uses: docker/build-push-action@v7
         with:
           push: true
-          file: Dockerfile
+          context: ..
+          file: IDS-DRR-Frontend/Dockerfile
           target: runner
           build-args: |
-            NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
+            CONTEXT_SUBDIR=IDS-DRR-Frontend
+            BRANDING_PACKAGE=ids-drr-india-branding
             NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL=${{ secrets.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL }}
+            NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
+            NEXT_PUBLIC_TIME_PERIOD=${{ secrets.NEXT_PUBLIC_TIME_PERIOD }}
+            NEXT_PUBLIC_GOOGLE_ANALYTICS_APP_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_ANALYTICS_APP_ID }}
+            NEXT_PUBLIC_GOOGLE_TRANSLATE_KEY=${{ secrets.NEXT_PUBLIC_GOOGLE_TRANSLATE_KEY }}
+            NEXT_PUBLIC_DOWNLOAD_REPORT_LINK=${{ secrets.NEXT_PUBLIC_DOWNLOAD_REPORT_LINK }}
           tags: |
             ghcr.io/${{ steps.meta.outputs.name }}:${{ steps.meta.outputs.env_tag }}
             ghcr.io/${{ steps.meta.outputs.name }}:${{ github.sha }}

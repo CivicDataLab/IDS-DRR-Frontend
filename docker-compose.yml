@@ -49,7 +49,7 @@ services:
     build:
       <<: *build-common
       target: runner
-    image: ids-drr-frontend:prod
+    image: ${GHCR_IMAGE:-ghcr.io/civicdatalab/ids-drr-frontend}:${IMAGE_TAG:-prod}
     ports:
       - "${PORT:-3000}:3000"
     env_file:
