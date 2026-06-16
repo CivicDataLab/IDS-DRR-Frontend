@@ -2,6 +2,8 @@ import PrimaryData from '@/app/[locale]/datasets/[dataset]/components/PrimaryDat
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { makeDataset } from '../fixtures';
+
 jest.mock('opub-ui');
 
 jest.mock('@/i18n/navigation', () => ({
@@ -36,15 +38,21 @@ jest.mock(
   })
 );
 
-const data = {
+const data = makeDataset({
   title: 'Flood Dataset',
   description: 'Detailed flood dataset description.',
   metadata: [
-    { metadataItem: { label: 'Source' }, value: 'Open Data Portal' },
-    { metadataItem: { label: 'Source Website' }, value: 'https://source.example' },
-    { metadataItem: { label: 'Github Repo Link' }, value: 'https://github.example/repo' },
+    { metadataItem: { id: '1', label: 'Source' }, value: 'Open Data Portal' },
+    {
+      metadataItem: { id: '2', label: 'Source Website' },
+      value: 'https://source.example',
+    },
+    {
+      metadataItem: { id: '3', label: 'Github Repo Link' },
+      value: 'https://github.example/repo',
+    },
   ],
-};
+});
 
 describe('PrimaryData', () => {
   beforeEach(() => {

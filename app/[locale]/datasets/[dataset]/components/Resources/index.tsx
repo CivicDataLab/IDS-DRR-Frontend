@@ -7,7 +7,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useFormatter, useTranslations } from 'next-intl';
 import { Button, Spinner, Tag, Text } from 'opub-ui';
 
-import { DATASET_RESOURCES_QUERY } from '@/config/graphql/dataset-queries';
+import {
+  DATASET_RESOURCES_QUERY,
+  type DatasetResource,
+} from '@/config/graphql/dataset-queries';
 import { GraphQL } from '@/lib/api';
 
 const Resources = () => {
@@ -15,7 +18,7 @@ const Resources = () => {
   const format = useFormatter();
   const params = useParams();
 
-  const { data, isLoading }: { data: any; isLoading: boolean } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [`resources_${params.dataset}`],
     queryFn: () =>
       GraphQL(
@@ -61,13 +64,13 @@ const Resources = () => {
         <div className="mt-8 flex justify-center">
           <Spinner />
         </div>
-      ) : data && data?.datasetResources?.length > 0 ? (
+      ) : (data?.datasetResources?.length ?? 0) > 0 ? (
         <>
           <Text variant="headingLg" className="mx-6 lg:mx-0">
             {t('detail.resources.heading')}
           </Text>
           <div className="mx-6 mt-5 flex flex-col gap-8 bg-surfaceDefault p-6  lg:mx-0">
-            {data?.datasetResources.map((item: any, index: number) => (
+            {data?.datasetResources?.map((item: DatasetResource, index) => (
               <div
                 key={index}
                 className="flex flex-col gap-4  lg:flex-row lg:justify-between"
@@ -75,7 +78,7 @@ const Resources = () => {
                 <div className="gap flex flex-col lg:w-4/5">
                   <div className="item flex flex-wrap items-center gap-2">
                     <Text variant="headingMd">{item.name}</Text>
-                    <Tag>{item.fileDetails.format}</Tag>
+                    <Tag>{item.fileDetails?.format}</Tag>
                   </div>
                   <div>
                     <Text>{t('labels.updated')}</Text>

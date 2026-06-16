@@ -3,6 +3,8 @@ import { OutputWindow } from '@/app/[locale]/[state]/analytics/components/output
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { makeIndicator, makeState } from './fixtures';
+
 jest.mock('opub-ui');
 
 jest.mock('@/components/media-rendering', () => ({
@@ -117,7 +119,7 @@ const indicatorDescriptions = [
     name: 'Government Response',
     long_description: 'Government response description',
   },
-];
+].map((d) => makeIndicator(d));
 
 const districtRow = {
   district: 'Kamrup',
@@ -148,7 +150,7 @@ describe('OutputWindow', () => {
         indicatorDescriptions={indicatorDescriptions}
         indicator="risk-score"
         boundary="district"
-        currentState={{ child_type: 'Tehsil' }}
+        currentState={makeState({ child_type: 'Tehsil' })}
         onClose={onClose}
         {...overrides}
       />

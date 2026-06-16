@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslations } from 'next-intl';
 import { Button, Icon, Text } from 'opub-ui';
 
+import { type Indicator } from '@/config/graphql/analaytics-queries';
 import { docsLink, userManualLink } from '@/config/site';
 import { cn } from '@/lib/utils';
 import {
@@ -16,19 +17,23 @@ import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import styles from './styles.module.scss';
 
-export function DefaultWindow({ indicatorDescriptions, onClose }: any) {
+export function DefaultWindow({
+  indicatorDescriptions,
+  onClose,
+}: {
+  indicatorDescriptions: Indicator[] | undefined;
+  onClose?: () => void;
+  chartData?: unknown[];
+  indicator?: string;
+  boundary?: string;
+}) {
   const t = useTranslations('analytics.detail');
   const tCommon = useTranslations('common');
   const list: { title: string; slug: string; description: string }[] = [];
 
   if (indicatorDescriptions) {
     indicatorDescriptions.forEach(
-      (item: {
-        name: string;
-        slug: string;
-        long_description?: string;
-        short_description: string;
-      }) => {
+      (item) => {
         list.push({
           title: item?.name,
           slug: item?.slug,
@@ -72,7 +77,11 @@ export function DefaultWindow({ indicatorDescriptions, onClose }: any) {
   );
 }
 
-export const AboutIndicator = ({ IndicatorData }: { IndicatorData: any }) => {
+export const AboutIndicator = ({
+  IndicatorData,
+}: {
+  IndicatorData: { title: string; slug: string; description: string }[];
+}) => {
   const t = useTranslations('analytics.about');
   const IconMap: { [key: string]: React.ReactNode } = {
     'risk-score': <RiskScore color={'#000000'} />,
@@ -109,7 +118,7 @@ export const AboutIndicator = ({ IndicatorData }: { IndicatorData: any }) => {
         </Text>
       )}
       <div className="flex flex-col items-start gap-4 p-3">
-        {IndicatorData.slice(1)?.map((indicator: any, index: number) => (
+        {IndicatorData.slice(1)?.map((indicator, index) => (
           <div
             key={indicator.slug ?? index}
             className="flex flex-row items-start gap-2"

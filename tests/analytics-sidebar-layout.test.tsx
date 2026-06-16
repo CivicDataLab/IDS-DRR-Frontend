@@ -2,6 +2,8 @@ import React from 'react';
 import { AnalyticsSideBarLayout } from '@/app/[locale]/[state]/analytics/components/analytics-sidebar-layout';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { makeState } from './fixtures';
+
 // Mock opub-ui components
 jest.mock('opub-ui');
 
@@ -38,15 +40,15 @@ jest.mock('@tanstack/react-query', () => ({
 }));
 
 describe('AnalyticsSideBarLayout', () => {
-  const mockCurrentState = {
+  const mockCurrentState = makeState({
     code: 'SA',
     slug: 'state-alpha',
     name: 'Alpha State',
-  };
+  });
 
   const mockStatesList = [
-    { code: 'SA', slug: 'state-alpha', name: 'Alpha State' },
-    { code: 'SB', slug: 'state-beta', name: 'Beta State' },
+    makeState({ code: 'SA', slug: 'state-alpha', name: 'Alpha State' }),
+    makeState({ code: 'SB', slug: 'state-beta', name: 'Beta State' }),
   ];
 
   beforeEach(() => {

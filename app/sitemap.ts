@@ -3,6 +3,7 @@ import type { MetadataRoute } from 'next';
 import { features, locales, siteUrl, states } from '@/config/site';
 import { fetchDatasets } from '@/lib/api';
 import { ANALYTICS_VIEWS, routes } from '@/lib/routes';
+import { type JsonScalar } from '@/lib/types';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
@@ -52,8 +53,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     try {
       const res = await fetchDatasets('?size=10000&page=1');
       datasets = (res?.results ?? [])
-        .filter((d: any) => d?.id)
-        .map((d: any) => ({ id: d.id, modified: d.modified }));
+        .filter((d: JsonScalar) => d?.id)
+        .map((d: JsonScalar) => ({ id: d.id, modified: d.modified }));
     } catch {
       // intentionally swallow error to not abort if the backend is unreachable
     }

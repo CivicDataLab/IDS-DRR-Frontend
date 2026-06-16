@@ -1,0 +1,57 @@
+# docker-compose.yml — IDS-DRR-Frontend
+#
+# Prerequisites:
+#   Clone the India branding repo as a sibling directory:
+#     git clone https://github.com/CivicDataLab/ids-drr-india-branding.git ../ids-drr-india-branding
+#
+# Env files (gitignored — create these on the server):
+#   .env.development  — dev values
+#   .env.production   — prod values
+#
+# Usage:
+#   Dev:   docker compose --env-file .env.development up dev --build
+#   Prod:  docker compose --env-file .env.production  up prod --build
+#
+# --env-file feeds ${VAR} substitutions used in build args below.
+
+x-build-common: &build-common
+  context: ..
+  dockerfile: IDS-DRR-Frontend/Dockerfile
+  args:
+    CONTEXT_SUBDIR: IDS-DRR-Frontend
+    BRANDING_PACKAGE: ids-drr-india-branding
+    NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL: ${NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}
+    NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-}
+    NEXT_PUBLIC_TIME_PERIOD: ${NEXT_PUBLIC_TIME_PERIOD:-}
+    NEXT_PUBLIC_GOOGLE_ANALYTICS_APP_ID: ${NEXT_PUBLIC_GOOGLE_ANALYTICS_APP_ID:-}
+    NEXT_PUBLIC_GOOGLE_TRANSLATE_KEY: ${NEXT_PUBLIC_GOOGLE_TRANSLATE_KEY:-}
+    NEXT_PUBLIC_DOWNLOAD_REPORT_LINK: ${NEXT_PUBLIC_DOWNLOAD_REPORT_LINK:-}
+
+services:
+  dev:
+    build:
+      <<: *build-common
+      target: dev
+    image: ids-drr-frontend:dev
+    ports:
+      - "${PORT:-3000}:3000"
+    volumes:
+      - .:/app
+      - ../ids-drr-india-branding:/app/branding-stub
+      - /app/node_modules
+      - /app/.next
+    working_dir: /app
+    env_file:
+      - .env.development
+    command: npm run dev
+
+  prod:
+    build:
+      <<: *build-common
+      target: runner
+    image: ids-drr-frontend:prod
+    ports:
+      - "${PORT:-3000}:3000"
+    env_file:
+      - .env.production
+    restart: unless-stopped

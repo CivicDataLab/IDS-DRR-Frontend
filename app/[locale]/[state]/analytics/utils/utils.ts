@@ -1,5 +1,7 @@
 import { parseDate, type CalendarDate } from '@internationalized/date';
 
+import { type Indicator } from '@/config/graphql/analaytics-queries';
+
 export function safeParseDate(value: string): CalendarDate | undefined {
   try {
     return parseDate(value);
@@ -8,17 +10,19 @@ export function safeParseDate(value: string): CalendarDate | undefined {
   }
 }
 
-export function getFactorNameBySlug(factorData: any, slug: string) {
-  const factorName = factorData?.filter(
-    (factor: { slug: string }) => factor.slug === slug
-  );
+export function getFactorNameBySlug(
+  factorData: Indicator[] | undefined,
+  slug: string
+) {
+  const factorName = factorData?.filter((factor) => factor.slug === slug);
   return factorName?.[0]?.name ?? slug;
 }
 
-export function getUnitsBySlug(factorData: any, slug: string) {
-  const factorName = factorData?.filter(
-    (factor: { slug: string }) => factor.slug === slug
-  );
+export function getUnitsBySlug(
+  factorData: Indicator[] | undefined,
+  slug: string
+) {
+  const factorName = factorData?.filter((factor) => factor.slug === slug);
   return factorName?.[0]?.unit__name || '';
 }
 
