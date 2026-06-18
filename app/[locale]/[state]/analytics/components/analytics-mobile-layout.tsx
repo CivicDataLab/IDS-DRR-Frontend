@@ -271,6 +271,7 @@ export function AnalyticsMobileLayout({
             districtGeographiesData={districtGeographiesData}
             revenueGeographiesData={revenueGeographiesData}
             currentSelectedState={currentSelectedState}
+            monthMulti={view === 'chart'}
             // getDistrictOptions={getDistrictOptions}
           />
         </div>
