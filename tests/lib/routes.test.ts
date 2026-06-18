@@ -27,6 +27,7 @@ describe('routes', () => {
     expect(routes.datasetDetail('my-dataset')).toBe('/datasets/my-dataset');
     expect(routes.glossary).toBe('/glossary');
     expect(routes.aboutUs).toBe('/about-us');
+    expect(routes.privacyPolicy).toBe('/privacy-policy');
   });
 
   it('builds report URLs from env', () => {

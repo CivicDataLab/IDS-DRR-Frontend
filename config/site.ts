@@ -53,6 +53,7 @@ export const features = {
   datasets: dataSpaceEnabled,
   aboutUs: config.features?.aboutUs ?? false,
   reports: config.features?.reports ?? false,
+  privacyPolicy: config.features?.privacyPolicy ?? false,
   glossary: Boolean(config.glossaryCsv),
 };
 

@@ -1,7 +1,7 @@
 import sitemap from '@/app/sitemap';
 
 jest.mock('@/config/site', () => ({
-  features: { datasets: true, aboutUs: true, glossary: false },
+  features: { datasets: true, aboutUs: true, privacyPolicy: true, glossary: false },
   locales: ['en'],
   siteUrl: 'https://example.com',
   states: [
@@ -32,6 +32,7 @@ describe('sitemap', () => {
     );
     expect(urls).toContain('https://example.com/en/datasets?size=5&page=1&sort=recent');
     expect(urls).toContain('https://example.com/en/about-us');
+    expect(urls).toContain('https://example.com/en/privacy-policy');
     expect(urls).toContain('https://example.com/en/datasets/dataset-1');
   });
 });

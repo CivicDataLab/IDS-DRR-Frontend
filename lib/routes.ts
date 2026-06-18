@@ -38,6 +38,8 @@ export const routes = {
 
   aboutUs: '/about-us',
 
+  privacyPolicy: '/privacy-policy',
+
   report: (geoCode: string, timePeriod: string) =>
     `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?${qs({
       geo_code: geoCode,
