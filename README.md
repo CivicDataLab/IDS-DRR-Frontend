@@ -4,8 +4,6 @@ The frontend for **IDS-DRR** (Intelligent Data Solution for Disaster Risk Reduct
 
 This repository ships with **no deployment-specific content**. All branding, copy, languages, states, partners, "About" page, footer, etc. live in a separate **branding package** that is plugged in at install time. This keeps the core app reusable across deployments while individual deployments (e.g. India) maintain their own content in their own repos.
 
-<!-- once repo transfered -->
-
 > Branding contract: [ids-drr-branding-types](https://github.com/CivicDataLab/ids-drr-branding-types).
 
 > Example branding implementation: [ids-drr-india-branding](https://github.com/CivicDataLab/ids-drr-india-branding).
