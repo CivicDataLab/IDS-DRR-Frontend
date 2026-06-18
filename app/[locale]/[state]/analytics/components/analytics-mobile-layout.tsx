@@ -263,7 +263,7 @@ export function AnalyticsMobileLayout({
         )}
       >
         {/* <div className="flex w-full flex-grow flex-col overflow-y-scroll"> */}
-        <div className="fixed top-[56px] z-9 flex h-[8vh] w-full items-center bg-[#FFFF] px-4 sm:h-[6%] sm:px-6 md:h-[5%] md:px-8">
+        <div className="fixed top-[56px] z-9 flex h-[8vh] min-h-[56px] w-full items-center bg-[#FFFF] px-4 sm:h-[6%] sm:px-6 md:h-[5%] md:px-8">
           <FactorList currentState={currentSelectedState} />
           <FilterComp
             timePeriod={timePeriod}
