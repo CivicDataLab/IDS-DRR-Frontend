@@ -5,6 +5,7 @@ describe('branding config', () => {
     expect(branding).toBeDefined();
     // Stub package may export undefined slots; importing still validates the contract.
     expect('AboutPage' in branding).toBe(true);
+    expect('PrivacyPolicy' in branding).toBe(true);
     expect('Footer' in branding).toBe(true);
   });
 });
