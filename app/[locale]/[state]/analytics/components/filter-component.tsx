@@ -6,7 +6,15 @@ import { useRouter } from '@/i18n/navigation';
 import { parseDate } from '@internationalized/date';
 import { parseAsString, useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
-import { Button, Icon, RadioGroup, RadioItem, YearCalendar } from 'opub-ui';
+import {
+  Button,
+  Icon,
+  MultiSelectYearCalendar,
+  RadioGroup,
+  RadioItem,
+  YearCalendar,
+} from 'opub-ui';
+import type { CalendarDate, DateValue } from '@internationalized/date';
 
 import { type State } from '@/config/graphql/analaytics-queries';
 import { routes, type AnalyticsView } from '@/lib/routes';
@@ -24,6 +32,7 @@ export function FilterComp({
   currentSelectedState,
   districtGeographiesData,
   revenueGeographiesData,
+  monthMulti = false,
   // getDistrictOptions,
 }: {
   timePeriod: string;
@@ -31,6 +40,7 @@ export function FilterComp({
   districtGeographiesData: JsonScalar;
   revenueGeographiesData: JsonScalar;
   currentSelectedState: State | null;
+  monthMulti?: boolean;
   // getDistrictOptions: any;
 }) {
   const t = useTranslations('analytics.filters');
@@ -191,6 +201,7 @@ export function FilterComp({
             timePeriodData={timePeriods}
             timePeriodSelected={timePeriodSelected}
             setTimePeriodSelected={setTimePeriodSelected}
+            monthMulti={monthMulti}
           />
         </MobileFilterContent>
       </MobileFilterBox>
@@ -208,6 +219,7 @@ const RenderOptions = ({
   timePeriodData,
   timePeriodSelected,
   setTimePeriodSelected,
+  monthMulti = false,
 }: {
   filterOptions: JsonScalar;
   selectedOption: string;
@@ -218,6 +230,7 @@ const RenderOptions = ({
   timePeriodData: JsonScalar;
   timePeriodSelected: string;
   setTimePeriodSelected: (value: string) => void;
+  monthMulti?: boolean;
 }) => {
   const t = useTranslations('analytics.filters');
   const [selectedState, setSelectedState] = useState('');
@@ -317,6 +330,53 @@ const RenderOptions = ({
         </RadioGroup>
       );
     case 'month-picker':
+      if (monthMulti) {
+        const selectedDates: CalendarDate[] = (timePeriodSelected || '')
+          .split(',')
+          .filter(Boolean)
+          .map((p) => {
+            const [year, month] = p.split('_');
+            if (!year || !month) return undefined;
+            return parseDate(
+              `${year}-${month.padStart(2, '0')}-01`
+            ) as CalendarDate;
+          })
+          .filter((d): d is CalendarDate => d !== undefined);
+        const periodYears = normalizedTimePeriods
+          .map((p: string) => parseInt(p.split('_')[0], 10))
+          .filter((y: number) => !isNaN(y));
+        const yearRange =
+          periodYears.length > 0
+            ? {
+                start: Math.min(...periodYears),
+                end: Math.max(...periodYears),
+              }
+            : undefined;
+        return (
+          <div className="self-center">
+            <MultiSelectYearCalendar
+              value={selectedDates}
+              yearRange={yearRange}
+              onChange={(dates: DateValue[]) => {
+                if (!dates || dates.length === 0) {
+                  setTimePeriodSelected('');
+                  return;
+                }
+                setTimePeriodSelected(
+                  dates
+                    .map(
+                      (d) =>
+                        `${d.year}_${
+                          d.month < 10 ? `0${d.month}` : `${d.month}`
+                        }`
+                    )
+                    .join(',')
+                );
+              }}
+            />
+          </div>
+        );
+      }
       return (
         <div className=" self-center">
           <YearCalendar
