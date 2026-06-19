@@ -112,9 +112,12 @@ export const ChartView = ({
   });
 
   useEffect(() => {
-    // If no time period is selected, avoid making a chart API call.
-    // The UI already shows a "Please select a time period" message in this state.
-    if (!timePeriod || timePeriod.length === 0) {
+    // Skip the chart API call when a required filter is missing.
+    if (
+      !timePeriod ||
+      timePeriod.length === 0 ||
+      (!districtCode && !revenueCode)
+    ) {
       setLoading(false);
       setChartData(null);
       return;

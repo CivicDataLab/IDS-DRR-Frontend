@@ -161,6 +161,11 @@ describe('ChartView', () => {
   });
 
   it('shows loading state', async () => {
+    jest
+      .requireMock('next-usequerystate')
+      .useQueryState.mockImplementation(
+        setupQueryState({ 'district-code': ['DIST001', mockSetDistrictCode] })
+      );
     (global.fetch as jest.Mock).mockImplementation(
       () => new Promise(() => undefined)
     );
