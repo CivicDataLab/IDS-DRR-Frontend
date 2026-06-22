@@ -76,6 +76,7 @@ function IndicatorListWrapper({
       {/* DESKTOP  */}
       <MediaRendering minWidth="1024" maxWidth={null}>
         <aside
+          aria-labelledby="analytics-sidebar-heading"
           className={cn(
             'overflow-hidden bg-surfaceDefault pr-0 shadow-basicMd',
             'shadow-inset z-1 hidden shrink-0 basis-[320px] bg-[#F4FBF5] md:block',
@@ -93,7 +94,11 @@ function IndicatorListWrapper({
             ></span>
             <div>
               <div className="mb-5 pl-4">
-                <Text className="text-textSubdued" fontWeight="bold">
+                <Text
+                  id="analytics-sidebar-heading"
+                  className="text-textSubdued"
+                  fontWeight="bold"
+                >
                   {t('heading')}
                 </Text>
               </div>

@@ -262,7 +262,7 @@ const DatasetsListing = () => {
                   {t('count', { count: datasetDetails?.length, total: count })}
                 </Text>
               </div>
-              <div className=" w-full max-w-[550px] md:block">
+              <div role="search" className=" w-full max-w-[550px] md:block">
                 <SearchInput
                   label={t('search.label')}
                   name="Search"
@@ -318,13 +318,17 @@ const DatasetsListing = () => {
             </Tray>
           </div>
           <div className="row flex gap-5 bg-surfaceDefault pb-10">
-            <div className="hidden min-w-64 max-w-64 lg:block">
+            <aside
+              aria-labelledby="datasets-filter-heading"
+              className="hidden min-w-64 max-w-64 lg:block"
+            >
               <Filter
+                headingId="datasets-filter-heading"
                 options={filterOptions}
                 setSelectedOptions={handleFilterChange}
                 selectedOptions={queryParams.filters}
               />
-            </div>
+            </aside>
 
             <div className="flex w-full flex-col px-2">
               <div className="flex gap-2 border-b-2 border-solid border-baseGraySlateSolid4 pb-4">
