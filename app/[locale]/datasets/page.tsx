@@ -249,7 +249,7 @@ const DatasetsListing = () => {
           { href: '#', label: tNav('links.datasets') },
         ]}
       />
-      {datasetDetails.length < 0 ? (
+      {!facets ? (
         <div className="flex h-96 items-center justify-center">
           <Spinner />
         </div>
