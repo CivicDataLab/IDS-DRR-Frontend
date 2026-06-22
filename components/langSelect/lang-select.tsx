@@ -66,7 +66,11 @@ export function TranslateDropdown({
 
   return (
     <div>
-      <div id="google_translate_element" className="invisible h-px w-px"></div>
+      <div
+        id="google_translate_element"
+        aria-hidden="true"
+        className="invisible h-px w-px"
+      ></div>
 
       <Select
         name="lang-select"
