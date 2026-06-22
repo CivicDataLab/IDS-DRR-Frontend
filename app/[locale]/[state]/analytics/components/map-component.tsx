@@ -364,6 +364,8 @@ export const MapComponent = ({
         className={`relative w-full ${isMobile ? 'h-full' : 'h-[98%]'} ${isMobile ? 'pt-[68px]' : ''}`}
       > */}
       <div
+        role="application"
+        aria-label={tMap('ariaLabel')}
         className={`relative w-full ${isMobile ? 'h-full pt-[8dvh] sm:pt-[7dvh] md:pt-[6dvh]' : 'h-[95vh]'} sm:h-[85vh] md:h-[72vh]`}
       >
         {/* Toggle button just below map layers – always available on desktop when pane is closed */}
