@@ -77,7 +77,11 @@ export default function GlossaryClient({ terms }: Props) {
     const tagKey = selectedTag?.toLowerCase();
     return indexed.filter((item) => {
       if (tagKey && item.tag?.toLowerCase() !== tagKey) return false;
-      if (normalizedQuery && !item.term.toLowerCase().includes(normalizedQuery))
+      if (
+        normalizedQuery &&
+        !item.term.toLowerCase().includes(normalizedQuery) &&
+        !item.definition.toLowerCase().includes(normalizedQuery)
+      )
         return false;
       return true;
     });
