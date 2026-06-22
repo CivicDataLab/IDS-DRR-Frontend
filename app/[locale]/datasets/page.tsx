@@ -356,6 +356,11 @@ const DatasetsListing = () => {
                     ))}
                   </GraphqlPagination>
                 )}
+                {facets && datasetDetails?.length === 0 && (
+                  <div className="flex flex-col items-center gap-2 py-16 text-center">
+                    <Text variant="headingMd">{t('empty')}</Text>
+                  </div>
+                )}
               </div>
             </div>
           </div>
