@@ -242,7 +242,7 @@ const DatasetsListing = () => {
   );
 
   return (
-    <main className="bg-surfaceDefault">
+    <div className="bg-surfaceDefault">
       <BreadCrumbs
         data={[
           { href: '/', label: tNav('links.home') },
@@ -365,7 +365,7 @@ const DatasetsListing = () => {
           </div>
         </section>
       )}
-    </main>
+    </div>
   );
 };
 

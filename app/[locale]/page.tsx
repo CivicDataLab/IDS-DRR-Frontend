@@ -12,7 +12,7 @@ import Resources from './components/resources';
 
 export default function Home() {
   return (
-    <main className="bg-baseGreenSolid5 ">
+    <div className="bg-baseGreenSolid5 ">
       <div className="inline-flex w-full flex-col items-center ">
         {IntroSection
           ? <IntroSection />
@@ -23,6 +23,6 @@ export default function Home() {
         {stories.length > 0 && <Stories />}
         {OutroSection && <OutroSection />}
       </div>
-    </main>
+    </div>
   );
 }

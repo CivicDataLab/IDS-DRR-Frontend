@@ -48,7 +48,7 @@ export function AnalyticsSideBarLayout({
             statesList={statesList}
             currentState={currentState}
           />
-          <main className={cn(styles.Main)}>{children}</main>
+          <div className={cn(styles.Main)}>{children}</div>
         </div>
       ) : (
         <div className="flex h-[100vh] flex-col  place-content-center items-center">

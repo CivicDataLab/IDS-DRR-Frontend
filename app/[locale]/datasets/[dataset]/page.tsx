@@ -35,7 +35,7 @@ const DatasetDetailsPage = () => {
   });
 
   return (
-    <main style={{ background: '#F0F9F1' }}>
+    <div style={{ background: '#F0F9F1' }}>
       <BreadCrumbs
         data={[
           { href: routes.home, label: 'Home' },
@@ -87,7 +87,7 @@ const DatasetDetailsPage = () => {
           </div>
         </div>
       )}
-    </main>
+    </div>
   );
 };
 
