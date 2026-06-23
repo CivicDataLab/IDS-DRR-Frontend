@@ -356,6 +356,8 @@ export const MapComponent = ({
     },
   ];
 
+  const stateConfig = states.find((s) => s.slug === currentSelectedState?.slug);
+
   return (
     <>
       {' '}
@@ -383,7 +385,8 @@ export const MapComponent = ({
           tileLayers={translatedTileLayers}
           addlFeaturesArray={overlayFeatures ? [overlayFeatures] : []}
           addlFeaturesStyleArray={addlFeaturesStyleArray}
-          mapZoom={6}
+          mapCenter={currentSelectedState?.center}
+          mapZoom={stateConfig?.zoom ?? 6}
           mapProperty={indicator}
           zoomOnClick={false}
           isCustomColor={!Factors.includes(indicator)}
@@ -407,9 +410,6 @@ export const MapComponent = ({
           {...(() => {
             // Pair minZoom/maxZoom: setting one without the other makes Leaflet
             // throw "Attempted to load an infinite number of tiles."
-            const stateConfig = states.find(
-              (s) => s.slug === currentSelectedState?.slug
-            );
             if (stateConfig?.minZoom === undefined && stateConfig?.maxZoom === undefined) {
               return {};
             }
