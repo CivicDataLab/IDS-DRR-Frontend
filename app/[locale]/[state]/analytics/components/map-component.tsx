@@ -300,7 +300,7 @@ export const MapComponent = ({
     // Don't re-fit unnecessarily.
     if (fittedDistrictRef.current === key) return;
     fittedDistrictRef.current = key;
-    const feature = mapData.features.find(
+    const feature = mapData?.features?.find(
       (f: { properties: { [x: string]: string } }) =>
         f.properties['code'] === districtCode
     );
@@ -379,7 +379,7 @@ export const MapComponent = ({
           </div>
         )}
         <MapChart
-          features={mapFeatures || mapData.features}
+          features={mapFeatures || mapData?.features}
           tileLayers={translatedTileLayers}
           addlFeaturesArray={overlayFeatures ? [overlayFeatures] : []}
           addlFeaturesStyleArray={addlFeaturesStyleArray}
