@@ -249,7 +249,7 @@ const DatasetsListing = () => {
           { href: '#', label: tNav('links.datasets') },
         ]}
       />
-      {datasetDetails.length < 0 ? (
+      {!facets ? (
         <div className="flex h-96 items-center justify-center">
           <Spinner />
         </div>
@@ -359,6 +359,11 @@ const DatasetsListing = () => {
                       <Card key={index} data={item} />
                     ))}
                   </GraphqlPagination>
+                )}
+                {facets && datasetDetails?.length === 0 && (
+                  <div className="flex flex-col items-center gap-2 py-16 text-center">
+                    <Text variant="headingMd">{t('empty')}</Text>
+                  </div>
                 )}
               </div>
             </div>

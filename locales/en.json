@@ -251,6 +251,7 @@
       }
     },
     "count": "Showing {count} of {total} Datasets",
+    "empty": "No datasets found",
     "pagination": {
       "rows": "Rows: ",
       "page": "Page {current} of {total}",
