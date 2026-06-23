@@ -23,7 +23,7 @@ export default async function GlossaryPage({
   const terms = parseGlossary(glossaryCsv);
 
   return (
-    <main className="w-full bg-[#222136]">
+    <div className="w-full bg-[#222136]">
       <div className="bg-[#222136]">
         <div className=" mx-auto mb-6 flex h-[300px] w-full max-w-6xl flex-col items-start justify-center  space-y-4 p-4 lg:p-0">
           <Text variant="heading4xl" className="text-[#FFC152]">
@@ -43,6 +43,6 @@ export default async function GlossaryPage({
       <section className="min-h-[calc(100vh-400px)] w-full bg-baseGreenSolid5 p-4 lg:p-0">
         <GlossaryClient terms={terms} />
       </section>
-    </main>
+    </div>
   );
 }

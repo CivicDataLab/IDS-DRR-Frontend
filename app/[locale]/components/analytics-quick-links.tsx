@@ -73,11 +73,15 @@ export const QuickLinks = () => {
       </div>
       <div>
         {/* <Carousel className="flex w-full items-center justify-center"> */}
-        <Carousel className="flex w-full items-center justify-center gap-2 px-2">
+        <Carousel
+          aria-roledescription="carousel"
+          className="flex w-full items-center justify-center gap-2 px-2"
+        >
           <div className="mr-2 rounded-1 bg-surfaceDefault">
             <CarouselPrevious />
           </div>
           <CarouselContent
+            aria-live="polite"
             className={`container flex w-full gap-0 px-4 md:gap-6 lg:gap-2 ${
               analyticsWithResolvedLinks.length === 1 ? 'justify-center' : ''
             }`}
