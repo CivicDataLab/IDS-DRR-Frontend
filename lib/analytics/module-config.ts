@@ -1,9 +1,12 @@
-import type { HazardType, Module } from 'ids-drr-branding-types';
+import type { Module } from 'ids-drr-branding-types';
 
 import { getStateBranding } from '@/lib/state-map-config';
 
-/** Fallback module when branding lists no active modules for a state. */
-const DEFAULT_MODULE_SLUG: HazardType = 'flood';
+/**
+ * Last-resort module when a state's branding lists no modules at all.
+ * Preserves single-hazard (flood) deployments that predate module config.
+ */
+const DEFAULT_MODULE_SLUG = 'flood';
 
 /** Active hazard modules configured for a state in branding. */
 export function getActiveModules(stateSlug: string | undefined): Module[] {
@@ -15,19 +18,18 @@ export function getActiveModules(stateSlug: string | undefined): Module[] {
 }
 
 /** First active module for a state, or the platform default. */
-export function getDefaultModuleSlug(
-  stateSlug: string | undefined
-): HazardType | string {
+export function getDefaultModuleSlug(stateSlug: string | undefined): string {
   return getActiveModules(stateSlug)[0]?.slug ?? DEFAULT_MODULE_SLUG;
 }
 
 export function isValidModuleForState(
   stateSlug: string | undefined,
   moduleSlug: string
-): moduleSlug is HazardType {
+): boolean {
   const activeModules = getActiveModules(stateSlug);
+  // No modules configured: accept only the default (single-hazard deployments).
   if (activeModules.length === 0) {
-    return moduleSlug === 'flood' || moduleSlug === 'heat';
+    return moduleSlug === DEFAULT_MODULE_SLUG;
   }
   return activeModules.some((module) => module.slug === moduleSlug);
 }

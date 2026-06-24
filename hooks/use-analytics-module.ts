@@ -1,10 +1,9 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import type { HazardType } from 'ids-drr-branding-types';
 
 /** Hazard module slug from the `[module]` analytics route segment. */
-export function useAnalyticsModule(): HazardType | string {
+export function useAnalyticsModule(): string {
   const module = useParams().module;
 
   if (typeof module !== 'string') {

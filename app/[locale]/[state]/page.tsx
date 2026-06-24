@@ -95,7 +95,7 @@ export default function StatePage() {
         </Text>
       </div>
       <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 ">
-        {state.modules.map((hazardModule: Module) => {
+        {(state.modules ?? []).map((hazardModule: Module) => {
           if (hazardModule.status === 'active') {
             return (
               <ModuleHubCard
