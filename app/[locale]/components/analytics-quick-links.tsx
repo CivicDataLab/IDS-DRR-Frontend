@@ -91,7 +91,7 @@ export const QuickLinks = () => {
                       className={cn(
                         'flex h-40 w-full gap-4 rounded-2 bg-surfaceDefault p-4 shadow-elementCard',
                         multiModule
-                          ? 'flex-row items-center'
+                          ? 'flex-row items-center md:h-32'
                           : 'flex-col items-center justify-center text-center'
                       )}
                     >
