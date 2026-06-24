@@ -22,16 +22,22 @@ export function getDefaultModuleSlug(stateSlug: string | undefined): string {
   return getActiveModules(stateSlug)[0]?.slug ?? DEFAULT_MODULE_SLUG;
 }
 
+/**
+ * Whether a module route is valid for a state, per the backend's authoritative
+ * module list (`State.modules`, derived from imported indicators). Branding
+ * only decorates modules for display; the backend decides which modules
+ * actually have data, so route guards validate against it.
+ */
 export function isValidModuleForState(
-  stateSlug: string | undefined,
+  stateModules: readonly string[] | undefined,
   moduleSlug: string
 ): boolean {
-  const activeModules = getActiveModules(stateSlug);
-  // No modules configured: accept only the default (single-hazard deployments).
-  if (activeModules.length === 0) {
+  const modules = stateModules ?? [];
+  // No modules reported: accept only the default (legacy single-hazard data).
+  if (modules.length === 0) {
     return moduleSlug === DEFAULT_MODULE_SLUG;
   }
-  return activeModules.some((module) => module.slug === moduleSlug);
+  return modules.includes(moduleSlug);
 }
 
 export function getModuleBranding(

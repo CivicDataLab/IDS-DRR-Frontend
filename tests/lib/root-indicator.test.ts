@@ -9,8 +9,8 @@ describe('getRootIndicatorSlug', () => {
     expect(getRootIndicatorSlug('assam', 'heat')).toBe('heat-risk-score');
   });
 
-  it('falls back to risk-score for unknown modules', () => {
-    expect(getRootIndicatorSlug('assam', 'unknown')).toBe('risk-score');
+  it('derives <module>-risk-score by convention for other modules', () => {
+    expect(getRootIndicatorSlug('assam', 'unknown')).toBe('unknown-risk-score');
   });
 });
 

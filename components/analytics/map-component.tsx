@@ -14,7 +14,8 @@ import {
   type State,
 } from '@/config/graphql/analaytics-queries';
 import { states, tileLayers } from '@/config/site';
-import { Factors, isRiskLevel } from '@/lib/analytics';
+import { isRiskLevel } from '@/lib/analytics';
+import { isScoreIndicator } from '@/lib/analytics/factor-role';
 import { hasSubDistrictSupport } from '@/lib/state-map-config';
 import { type JsonScalar } from '@/lib/types';
 import Icons from '@/components/icons';
@@ -133,7 +134,7 @@ export const MapComponent = ({
         .interpolator(interpolateBlues)
     : () => NO_DATA_FILL;
 
-  if (hasData && !Factors.includes(indicator) && !allZeros) {
+  if (hasData && !isScoreIndicator(indicator) && !allZeros) {
     const min = Math.min(...values);
     const max = Math.max(...values);
     const step = (max - min) / 3;
@@ -173,7 +174,7 @@ export const MapComponent = ({
     });
   }
 
-  if (!hasData && !Factors.includes(indicator)) {
+  if (!hasData && !isScoreIndicator(indicator)) {
     customLegendData.push({
       color: NO_DATA_FILL,
       label: tMap('noData'),
@@ -254,8 +255,8 @@ export const MapComponent = ({
           return `
       <div>
       <strong>${regionName.toUpperCase()}</strong><br/>
-      <span>${getFactorNameBySlug(indicatorsData, indicator)} : <span style="color: ${colorMap[riskValue]}; text-transform: ${Factors.includes(indicator) && 'uppercase'}; font-weight: bold;">${
-        Factors.includes(indicator)
+      <span>${getFactorNameBySlug(indicatorsData, indicator)} : <span style="color: ${colorMap[riskValue]}; text-transform: ${isScoreIndicator(indicator) && 'uppercase'}; font-weight: bold;">${
+        isScoreIndicator(indicator)
           ? riskText
           : riskValue == null
             ? tCommon('na')
@@ -432,11 +433,11 @@ export const MapComponent = ({
           mapZoom={stateConfig?.zoom ?? 6}
           mapProperty={indicator}
           zoomOnClick={false}
-          isCustomColor={!Factors.includes(indicator)}
+          isCustomColor={!isScoreIndicator(indicator)}
           customColor={colorScale}
           horizontalLegend={isMobile ? true : false}
           legendHeading={{
-            heading: !Factors.includes(indicator)
+            heading: !isScoreIndicator(indicator)
               ? `${getFactorNameBySlug(indicatorsData, indicator)} ${
                   getUnitsBySlug(indicatorsData, indicator) &&
                   `${
@@ -448,7 +449,7 @@ export const MapComponent = ({
               : '',
           }}
           legendData={
-            Factors.includes(indicator) ? legendData : customLegendData
+            isScoreIndicator(indicator) ? legendData : customLegendData
           }
           {...(() => {
             // Pair minZoom/maxZoom: setting one without the other makes Leaflet
@@ -484,7 +485,7 @@ export const MapComponent = ({
             const regionName = layer.feature?.properties.name;
             const riskValue = layer.feature?.properties?.[indicator];
             const riskKey = String(riskValue);
-            const riskText = Factors.includes(indicator)
+            const riskText = isScoreIndicator(indicator)
               ? isRiskLevel(riskKey)
                 ? tRisk(riskKey)
                 : tCommon('na')
@@ -494,7 +495,7 @@ export const MapComponent = ({
                     indicatorsData,
                     indicator
                   )}`;
-            // const riskText = Factors.includes(indicator)
+            // const riskText = isScoreIndicator(indicator)
             //   ? RiskText[riskValue]?.indicatorText
             //   : `${riskValue} ${getUnitsBySlug(indicatorsData, indicator)}`;
             poppedLayerRef.current = layer;

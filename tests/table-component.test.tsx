@@ -10,9 +10,6 @@ jest.mock('@/hooks/use-format-number', () => ({
   useFormatNumber: () => (value: number | string) => `formatted-${value}`,
 }));
 
-jest.mock('@/lib/analytics', () => ({
-  Factors: ['risk-score', 'exposure', 'vulnerability'],
-}));
 
 describe('TableComponent', () => {
   const mockData = [

@@ -163,6 +163,7 @@ export const PLATFORM_STATES_LIST = graphql(`
       bounds
       child_type
       resource_id
+      modules
       time_periods
       latest_time_period
     }

@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 import { Spinner, Table, Text } from 'opub-ui';
 
 import { useFormatNumber } from '@/hooks/use-format-number';
-import { Factors } from '@/lib/analytics';
+import { isScoreIndicator } from '@/lib/analytics/factor-role';
 import { type JsonScalar } from '@/lib/types';
 
 export function TableComponent({
@@ -77,7 +77,7 @@ export function TableComponent({
       Object.keys(item).forEach((key) => {
         const value = item[key];
         if (value !== null && typeof value === 'object' && 'value' in value) {
-          row[key] = Factors.includes(key)
+          row[key] = isScoreIndicator(key)
             ? tRisk(String(parseInt((value as { value: string }).value)) as RiskLevel)
             : formatNumber((value as { value: JsonScalar }).value).toString();
         }

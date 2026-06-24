@@ -14,26 +14,28 @@ import {
   type State,
 } from '@/config/graphql/analaytics-queries';
 import { docsLink } from '@/config/site';
-import { Factors } from '@/lib/analytics';
 import { getFactorNameBySlug, getLatestDate } from '@/lib/analytics/utils';
 import { isRootRiskIndicator } from '@/lib/analytics/root-indicator';
 import { GraphQL } from '@/lib/api';
 import { type JsonScalar } from '@/lib/types';
 import { cn, parsePeriodString } from '@/lib/utils';
-import {
-  Exposure,
-  FloodHazard,
-  GovtResponse,
-  RiskScore,
-  Vulnerability,
-} from '@/components/FactorIcons';
-import { getFactorRole } from '@/lib/analytics/factor-role';
+import { getFactorIcon } from '@/lib/analytics/factor-icon';
+import { getFactorRole, isScoreIndicator } from '@/lib/analytics/factor-role';
 import Icons from '@/components/icons';
 import { InfoSquare } from '@/components/InfoCircle';
 import { MediaRendering } from '@/components/media-rendering';
 import { useAnalyticsModule } from '@/hooks/use-analytics-module';
 import { ScoreInfo } from './score-info';
 import styles from './styles.module.scss';
+
+/**
+ * Factor icon for an indicator, or nothing for non-factor (raw metric) slugs.
+ * Keyed by canonical role, so any hazard resolves without a per-hazard map —
+ * replaces the former hardcoded, hazard-specific `IconMap`.
+ */
+function factorIcon(slug: string) {
+  return getFactorRole(slug) ? getFactorIcon(slug) : null;
+}
 
 export function OutputWindow({
   data,
@@ -130,16 +132,6 @@ export function OutputWindow({
       ? descriptionObject.long_description
       : tCommon('na');
   }
-
-  const IconMap: { [key: string]: React.ReactNode } = {
-    'risk-score': <RiskScore color={'#000'} />,
-    'heat-risk-score': <RiskScore color={'#000'} />,
-    vulnerability: <Vulnerability color={'#000'} />,
-    'flood-hazard': <FloodHazard color={'#000'} />,
-    'heat-hazard': <FloodHazard color={'#000'} />,
-    exposure: <Exposure color={'#000'} />,
-    'government-response': <GovtResponse color={'#000'} />,
-  };
 
   const colorMap: { [key: number]: string } = {
     1: 'text-mapRiskVeryLow',
@@ -238,7 +230,7 @@ export function OutputWindow({
               <div key={`boundary-${index}`} className="mb-4">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    {IconMap[indicator]}
+                    {factorIcon(indicator)}
                     <Text
                       variant="bodyLg"
                       fontWeight={
@@ -247,7 +239,7 @@ export function OutputWindow({
                     >
                       {getFactorNameBySlug(indicatorDescriptions, indicator)}
                     </Text>
-                    {!Factors.includes(indicator) && (
+                    {!isScoreIndicator(indicator) && (
                       <Text variant="bodyMd" fontWeight="bold">
                         {/* {data[indicator]['value']} */}
                         {formatNumber(data[indicator]['value'])}
@@ -262,7 +254,7 @@ export function OutputWindow({
                       )}
                       fontWeight="semibold"
                     >
-                      {Factors.includes(indicator) &&
+                      {isScoreIndicator(indicator) &&
                         tRisk(
                           String(
                             parseInt(data[indicator]['value'])
@@ -284,7 +276,7 @@ export function OutputWindow({
                     </Tooltip>
                   </div>
                 </div>
-                {Factors.includes(indicator) && (
+                {isScoreIndicator(indicator) && (
                   <div className="mt-5 flex flex-col gap-2">
                     <Text className="text-baseGraySlateSolid11">
                       {t('contributingIndicators', {
@@ -298,7 +290,6 @@ export function OutputWindow({
                       factorData={indicatorDescriptions}
                       data={data}
                       boundary={boundary}
-                      IconMap={IconMap}
                       indicator={indicator}
                       getDescription={getDescription}
                     />
@@ -434,7 +425,7 @@ export function OutputWindow({
                     <div key={`boundary-${index}`} className="mb-4">
                       <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
-                          {IconMap[indicator]}
+                          {factorIcon(indicator)}
                           <Text
                             variant="bodyLg"
                             fontWeight={
@@ -448,7 +439,7 @@ export function OutputWindow({
                               indicator
                             )}
                           </Text>
-                          {!Factors.includes(indicator) && (
+                          {!isScoreIndicator(indicator) && (
                             <Text variant="bodyMd" fontWeight="bold">
                               {formatNumber(data[indicator]['value'])}
                               {/* {data[indicator]['value']} */}
@@ -463,7 +454,7 @@ export function OutputWindow({
                             )}
                             fontWeight="semibold"
                           >
-                            {Factors.includes(indicator) &&
+                            {isScoreIndicator(indicator) &&
                               tRisk(
                                 String(
                                   parseInt(data[indicator]['value'])
@@ -485,7 +476,7 @@ export function OutputWindow({
                           </Tooltip>
                         </div>
                       </div>
-                      {Factors.includes(indicator) && (
+                      {isScoreIndicator(indicator) && (
                         <div className="mt-5 flex flex-col gap-2">
                           <Text className="text-baseGraySlateSolid11">
                             {t('contributingIndicators', {
@@ -499,7 +490,6 @@ export function OutputWindow({
                             factorData={indicatorDescriptions}
                             data={data}
                             boundary={boundary}
-                            IconMap={IconMap}
                             indicator={indicator}
                             getDescription={getDescription}
                           />
@@ -522,14 +512,12 @@ function OtherFactorScores({
   boundary,
   indicator,
   getDescription,
-  IconMap,
 }: {
   factorData: Indicator[] | undefined;
   data: JsonScalar;
   boundary: string;
   indicator: string;
   getDescription: (slug: string) => string | null | undefined;
-  IconMap: { [key: string]: React.ReactNode };
 }) {
   const clonedData = structuredClone(data);
   delete clonedData[boundary];
@@ -547,7 +535,7 @@ function OtherFactorScores({
     <div key={scoreType} className=" flex items-center gap-4">
       {/* //change  */}
       <div className="flex-shrink-0">
-        <div className="h-6 w-6">{IconMap[scoreType]}</div>
+        <div className="h-6 w-6">{factorIcon(scoreType)}</div>
       </div>
       {isRootRiskIndicator(indicator) && (
         <Text className="shrink-1 min-w-[200px]">

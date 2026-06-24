@@ -32,3 +32,13 @@ export function getFactorRole(slug: string): FactorRole | null {
     ) ?? null
   );
 }
+
+/**
+ * Whether an indicator is rendered on the 1–5 risk-score scale rather than as
+ * a raw metric value. Score-style indicators are exactly the SENDAI factor
+ * pillars (any hazard), so this keys off the factor role — language-independent
+ * and hazard-agnostic, replacing the former hardcoded `Factors` allowlist.
+ */
+export function isScoreIndicator(slug: string): boolean {
+  return getFactorRole(slug) !== null;
+}
