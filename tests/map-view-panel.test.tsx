@@ -3,7 +3,7 @@ import { MapViewPanel } from '@/components/analytics/map-view-panel';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { makeState } from './fixtures';
+import { makeIndicatorCategory, makeState } from './fixtures';
 
 jest.mock('@/components/analytics/map-component', () => ({
   MapComponent: () => <div data-testid="map-component">Vector map</div>,
@@ -36,12 +36,12 @@ const baseProps = {
 };
 
 const rasterCategories = [
-  {
+  makeIndicatorCategory({
     slug: 'land-surface-temperature',
     name: 'Land Surface Temperature',
     is_raster_available: true,
     children: [],
-  },
+  }),
 ];
 
 describe('MapViewPanel', () => {

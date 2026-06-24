@@ -1,5 +1,6 @@
 import {
   type Indicator,
+  type IndicatorCategory,
   type State,
 } from '@/config/graphql/analaytics-queries';
 import { type Dataset } from '@/config/graphql/dataset-queries';
@@ -31,6 +32,20 @@ export const makeIndicator = (overrides: Partial<Indicator> = {}): Indicator => 
   long_description: null,
   short_description: null,
   unit__name: null,
+  IDS_dataSpace: null,
+  ...overrides,
+});
+
+/**
+ * Build a complete `IndicatorCategory` fixture, overriding only the fields a test
+ * cares about.
+ */
+export const makeIndicatorCategory = (
+  overrides: Partial<IndicatorCategory> = {}
+): IndicatorCategory => ({
+  name: '',
+  slug: '',
+  description: null,
   IDS_dataSpace: null,
   ...overrides,
 });
