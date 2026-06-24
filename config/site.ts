@@ -8,6 +8,9 @@ import type {
   TileLayers,
 } from 'ids-drr-branding-types';
 
+import { stateQuickLink } from '@/lib/analytics/build-route';
+import { routes } from '@/lib/routes';
+
 // Arrays
 export const states: State[] = config.states ?? [];
 export const resources: Resource[] = config.resources ?? [];
@@ -64,20 +67,22 @@ export const siteUrl =
     : process.env.SITE_URL || '';
 
 export const mainNav: { key: NavLinkKey; href: string }[] = [
-  { key: 'home', href: '/' },
+  { key: 'home', href: routes.home },
   ...(defaultState
-    ? [{ key: 'analytics' as const, href: `/${defaultState.slug}` }]
-    : []),
-  ...(features.datasets
     ? [
         {
-          key: 'datasets' as const,
-          href: '/datasets?size=5&page=1&sort=recent',
+          key: 'analytics' as const,
+          href: stateQuickLink(defaultState.slug),
         },
       ]
     : []),
-  ...(features.aboutUs ? [{ key: 'aboutUs' as const, href: '/about-us' }] : []),
+  ...(features.datasets
+    ? [{ key: 'datasets' as const, href: routes.datasets() }]
+    : []),
+  ...(features.aboutUs
+    ? [{ key: 'aboutUs' as const, href: routes.aboutUs }]
+    : []),
   ...(features.glossary
-    ? [{ key: 'glossary' as const, href: '/glossary' }]
+    ? [{ key: 'glossary' as const, href: routes.glossary }]
     : []),
 ];

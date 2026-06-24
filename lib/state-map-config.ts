@@ -1,11 +1,10 @@
+import { config } from 'ids-drr-branding';
 import type { HazardType, Module, State } from 'ids-drr-branding-types';
-
-import { states } from '@/config/site';
 
 /** Branding config for a state, matched by analytics route slug. */
 export function getStateBranding(slug: string | undefined): State | undefined {
   if (!slug) return undefined;
-  return states.find((state) => state.slug === slug);
+  return (config.states ?? []).find((state) => state.slug === slug);
 }
 
 function getStateModule(

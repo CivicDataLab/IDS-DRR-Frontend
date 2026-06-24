@@ -86,6 +86,15 @@ const heatModule = {
   name: 'Heat',
 } as const;
 
+jest.mock('@/lib/state-map-config', () => ({
+  getStateBranding: jest.fn((slug: string | undefined) => {
+    if (!slug) return undefined;
+    const { states } = jest.requireMock('@/config/site');
+    return states.find((state: { slug: string }) => state.slug === slug);
+  }),
+  hasSubDistrictSupport: jest.fn(() => true),
+}));
+
 jest.mock('@/config/site', () => ({
   states: [
     {
