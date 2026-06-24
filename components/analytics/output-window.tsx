@@ -27,6 +27,7 @@ import {
   RiskScore,
   Vulnerability,
 } from '@/components/FactorIcons';
+import { getFactorRole } from '@/lib/analytics/factor-role';
 import Icons from '@/components/icons';
 import { InfoSquare } from '@/components/InfoCircle';
 import { MediaRendering } from '@/components/media-rendering';
@@ -99,17 +100,9 @@ export function OutputWindow({
   const isMapView = !view || view === 'map';
 
   const RevenueRegion = searchParams.get('revenue-code') || '';
-  // Sub indicators under "Overall Flood Risk"
-  const parentIndicatorSlugs = [
-    'risk-score',
-    'flood-hazard',
-    'exposure',
-    'vulnerability',
-    'government-response',
-  ];
-  const isParentIndicator = Boolean(
-    indicator && parentIndicatorSlugs.includes(indicator)
-  );
+  // A "parent" indicator is the root risk score or one of its pillar factors
+  // (hazard/exposure/vulnerability/government-response), for any hazard module.
+  const isParentIndicator = Boolean(indicator && getFactorRole(indicator));
 
   const [revenueCode, setDistrictCode] = useQueryState('district-code');
   const [districtCode, setRevenueCode] = useQueryState('revenue-code');
