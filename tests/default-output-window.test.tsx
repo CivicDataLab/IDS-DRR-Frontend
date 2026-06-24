@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 
-import { DefaultWindow } from '../app/[locale]/[state]/analytics/components/default-output-window';
+import { DefaultWindow } from '@/components/analytics/default-output-window';
 import { makeIndicator } from './fixtures';
 import messages from '../locales/en.json';
 
@@ -57,6 +57,13 @@ jest.mock('@tanstack/react-query', () => ({
     error: null,
     refetch: jest.fn(),
   })),
+}));
+
+// Mock factor icons
+jest.mock('@/lib/analytics/factor-icon', () => ({
+  getFactorIcon: (slug: string) => (
+    <div data-testid={`factor-icon-${slug}`} />
+  ),
 }));
 
 // Mock icons
@@ -157,7 +164,7 @@ describe('DefaultWindow', () => {
 
   it('displays the correct indicator title', () => {
     render(<DefaultWindow {...defaultProps} />);
-    expect(screen.getByText('Overall Risk')).toBeInTheDocument();
+    expect(screen.getByText('Overall Flood Risk')).toBeInTheDocument();
   });
 
   it('shows district data when available', () => {

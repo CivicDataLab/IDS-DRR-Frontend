@@ -3,6 +3,7 @@ import { ProgressBar } from 'opub-ui';
 
 import { useFormatNumber } from '@/hooks/use-format-number';
 import { isRiskLevel, RiskColorMap } from '@/lib/analytics';
+import { isRootRiskIndicator } from '@/lib/analytics/root-indicator';
 
 interface ScoreProps {
   label: string;
@@ -17,7 +18,7 @@ export function ScoreInfo({ label, value, indicator }: ScoreProps) {
   const level = String(parseInt(value, 10));
   return (
     <div className="flex-1">
-      {indicator === 'risk-score' ? (
+      {isRootRiskIndicator(indicator) ? (
         <ProgressBar
           size="small"
           customColor={isRiskLevel(level) ? RiskColorMap[level] : undefined}
@@ -26,7 +27,7 @@ export function ScoreInfo({ label, value, indicator }: ScoreProps) {
       ) : (
         <span>{label}</span>
       )}{' '}
-      {indicator !== 'risk-score' && (
+      {!isRootRiskIndicator(indicator) && (
         <strong className="pl-2">{formatNumber(value)}</strong>
       )}
     </div>

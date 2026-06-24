@@ -1,5 +1,5 @@
 import React from 'react';
-import { AnalyticsSideBarLayout } from '@/app/[locale]/[state]/analytics/components/analytics-sidebar-layout';
+import { AnalyticsSideBarLayout } from '@/components/analytics/analytics-sidebar-layout';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { makeState } from './fixtures';
@@ -20,7 +20,11 @@ jest.mock('@/components/media-rendering', () => ({
   ),
 }));
 
-jest.mock('@/app/[locale]/[state]/analytics/components/factor-list', () => ({
+jest.mock('@/hooks/use-analytics-module', () => ({
+  useAnalyticsModule: () => 'flood',
+}));
+
+jest.mock('@/components/analytics/factor-list', () => ({
   FactorList: ({ currentState }: any) => (
     <div data-testid="factor-list" data-state={currentState?.code}>
       Factor List Component
@@ -98,7 +102,7 @@ describe('AnalyticsSideBarLayout', () => {
     fireEvent.change(stateSelect, { target: { value: 'state-beta' } });
 
     expect(mockPush).toHaveBeenCalledWith(
-      '/state-beta/analytics/?indicator=risk-score&view=map'
+      '/state-beta/flood/analytics/?indicator=risk-score&view=map'
     );
   });
 });

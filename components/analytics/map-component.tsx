@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useFormatNumber } from '@/hooks/use-format-number';
 import { useWindowSize } from '@/hooks/use-window-size';
 import * as d3 from 'd3-scale';
 import { interpolateBlues } from 'd3-scale-chromatic';
@@ -13,12 +14,13 @@ import {
   type State,
 } from '@/config/graphql/analaytics-queries';
 import { states, tileLayers } from '@/config/site';
-import { useFormatNumber } from '@/hooks/use-format-number';
 import { Factors, isRiskLevel } from '@/lib/analytics';
+import { hasSubDistrictSupport } from '@/lib/state-map-config';
 import { type JsonScalar } from '@/lib/types';
 import Icons from '@/components/icons';
 import MapChart from '@/components/MapChart';
-import { getFactorNameBySlug, getUnitsBySlug } from '../utils/utils';
+import { getFactorNameBySlug, getUnitsBySlug } from '@/lib/analytics/utils';
+import { useAnalyticsModule } from '@/hooks/use-analytics-module';
 
 export const MapComponent = ({
   indicator,
@@ -49,6 +51,11 @@ export const MapComponent = ({
   const tCommon = useTranslations('common');
   const tMap = useTranslations('analytics.map');
   const formatNumber = useFormatNumber();
+  const analyticsModule = useAnalyticsModule();
+  const withSubDistrictSupport = hasSubDistrictSupport(
+    currentSelectedState?.slug,
+    analyticsModule
+  );
 
   const translatedTileLayers = React.useMemo<TileLayers | undefined>(() => {
     if (!tileLayers) return undefined;
@@ -56,10 +63,7 @@ export const MapComponent = ({
       Object.entries(tileLayers).map(([key, layer]) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic next-intl key, guarded by tMap.has
         const translationKey = `layers.${key}` as any;
-        return [
-          tMap.has(translationKey) ? tMap(translationKey) : key,
-          layer,
-        ];
+        return [tMap.has(translationKey) ? tMap(translationKey) : key, layer];
       })
     ) as TileLayers;
   }, [tMap]);
@@ -92,12 +96,17 @@ export const MapComponent = ({
   const districtCode = params.get('district-code');
 
   const mapFeatures = React.useMemo(() => {
-    if (!districtCode) return mapData?.features;
+    if (!withSubDistrictSupport || !districtCode) return mapData?.features;
     return (revenueMapData?.features || []).filter(
       (feature: { properties: { [x: string]: string } }) =>
         feature.properties['district-code'] === districtCode
     );
-  }, [districtCode, mapData?.features, revenueMapData?.features]);
+  }, [
+    districtCode,
+    mapData?.features,
+    revenueMapData?.features,
+    withSubDistrictSupport,
+  ]);
 
   const { width } = useWindowSize();
   const isMobile = width < 1023;
@@ -213,14 +222,18 @@ export const MapComponent = ({
   };
 
   const onMapClick = ({ layerCode }: { layerCode: string }) => {
-    if (!districtCode) {
+    if (!withSubDistrictSupport) {
       setRegion(layerCode);
+      return;
     }
 
-    if (districtCode) {
-      setRevenueRegion(layerCode);
-      setRegion(districtCode);
+    if (!districtCode) {
+      setRegion(layerCode);
+      return;
     }
+
+    setRevenueRegion(layerCode);
+    setRegion(districtCode);
   };
 
   function EnablePopup({
@@ -291,7 +304,7 @@ export const MapComponent = ({
   const fittedDistrictRef = React.useRef<string | null>(null);
   React.useEffect(() => {
     // Reset if user returns to state-level.
-    if (!districtCode) {
+    if (!withSubDistrictSupport || !districtCode) {
       fittedDistrictRef.current = null;
       return;
     }
@@ -306,13 +319,26 @@ export const MapComponent = ({
     );
     if (!feature?.properties?.bounds) return;
     map.whenReady(() =>
-      safeApply(() => map.fitBounds(feature.properties.bounds, fitBoundsOptions))
+      safeApply(() =>
+        map.fitBounds(feature.properties.bounds, fitBoundsOptions)
+      )
     );
-  }, [districtCode, map, mapData?.features, isOutputPaneOpen, isMobile, fitBoundsOptions, safeApply]);
+  }, [
+    districtCode,
+    withSubDistrictSupport,
+    map,
+    mapData?.features,
+    isOutputPaneOpen,
+    isMobile,
+    fitBoundsOptions,
+    safeApply,
+  ]);
 
   // Defer popup close so a quick edge re-entry (cursor wobbling across a
   // polygon's jagged boundary) doesn't tear down and rebuild the popup.
-  const popupCloseTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const popupCloseTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Leaflet layer ref
   const poppedLayerRef = React.useRef<any>(null);
   React.useEffect(
@@ -324,21 +350,32 @@ export const MapComponent = ({
 
   React.useEffect(() => {
     if (!map || !map.getContainer()) return;
-    if (districtCode) return;
+    if (withSubDistrictSupport && districtCode) return;
 
     map.whenReady(() =>
       safeApply(() => {
         if (currentSelectedState?.bounds) {
           map.fitBounds(currentSelectedState.bounds, fitBoundsOptions);
         } else if (currentSelectedState?.center) {
-          const state = states.find((s) => s.slug === currentSelectedState.slug);
+          const state = states.find(
+            (s) => s.slug === currentSelectedState.slug
+          );
           map.setView(currentSelectedState.center, state?.zoom ?? 6);
         }
       })
     );
-  }, [map, districtCode, currentSelectedState, isOutputPaneOpen, isMobile, fitBoundsOptions, safeApply]);
+  }, [
+    map,
+    districtCode,
+    withSubDistrictSupport,
+    currentSelectedState,
+    isOutputPaneOpen,
+    isMobile,
+    fitBoundsOptions,
+    safeApply,
+  ]);
 
-  if (mapDataloading || revenueMapDataLoading)
+  if (mapDataloading || (withSubDistrictSupport && revenueMapDataLoading))
     return (
       <div className="flex h-full flex-col place-content-center items-center">
         <Spinner color="highlight" />
@@ -357,6 +394,10 @@ export const MapComponent = ({
   ];
 
   const stateConfig = states.find((s) => s.slug === currentSelectedState?.slug);
+  const mapCenter =
+    currentSelectedState?.center?.length === 2
+      ? (currentSelectedState.center as [number, number])
+      : undefined;
 
   return (
     <>
@@ -387,7 +428,7 @@ export const MapComponent = ({
           tileLayers={translatedTileLayers}
           addlFeaturesArray={overlayFeatures ? [overlayFeatures] : []}
           addlFeaturesStyleArray={addlFeaturesStyleArray}
-          mapCenter={currentSelectedState?.center}
+          mapCenter={mapCenter}
           mapZoom={stateConfig?.zoom ?? 6}
           mapProperty={indicator}
           zoomOnClick={false}
@@ -412,7 +453,10 @@ export const MapComponent = ({
           {...(() => {
             // Pair minZoom/maxZoom: setting one without the other makes Leaflet
             // throw "Attempted to load an infinite number of tiles."
-            if (stateConfig?.minZoom === undefined && stateConfig?.maxZoom === undefined) {
+            if (
+              stateConfig?.minZoom === undefined &&
+              stateConfig?.maxZoom === undefined
+            ) {
               return {};
             }
             return {
@@ -463,7 +507,8 @@ export const MapComponent = ({
             popupCloseTimerRef.current = setTimeout(() => {
               layer.closePopup();
               layer.unbindPopup();
-              if (poppedLayerRef.current === layer) poppedLayerRef.current = null;
+              if (poppedLayerRef.current === layer)
+                poppedLayerRef.current = null;
               popupCloseTimerRef.current = null;
             }, 100);
           }}

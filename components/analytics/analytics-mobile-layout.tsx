@@ -10,21 +10,24 @@ import { Button, Icon, Menu, Text } from 'opub-ui';
 
 import {
   type Indicator,
+  type IndicatorCategory,
   type State,
 } from '@/config/graphql/analaytics-queries';
 import { features } from '@/config/site';
+import { hasSubDistrictSupport } from '@/lib/state-map-config';
 import { routes } from '@/lib/routes';
 import { type JsonScalar } from '@/lib/types';
 import { cn, downloadStateReport } from '@/lib/utils';
 import { useCopyURL } from '@/hooks/use-copy-url';
 import Icons from '@/components/icons';
-import { getLatestDate } from '../utils/utils';
+import { getLatestDate } from '@/lib/analytics/utils';
+import { useAnalyticsModule } from '@/hooks/use-analytics-module';
 import { OutputWindowComponent } from './analytics-layout';
 import { ChartView } from './chart-view';
 import { AboutIndicator } from './default-output-window';
 import { FactorList } from './factor-list';
 import { FilterComp } from './filter-component';
-import { MapComponent } from './map-component';
+import { MapViewPanel } from './map-view-panel';
 import { TableComponent } from './table-component';
 
 interface Option {
@@ -37,6 +40,7 @@ interface Option {
 export function AnalyticsMobileLayout({
   timePeriod,
   indicator,
+  indicatorCategories,
   mapData,
   revenueMapData,
   districtGeographiesData,
@@ -50,6 +54,7 @@ export function AnalyticsMobileLayout({
 }: {
   timePeriod: string;
   indicator: string;
+  indicatorCategories?: IndicatorCategory[];
   mapData: JsonScalar;
   revenueMapData: JsonScalar;
   districtGeographiesData: JsonScalar;
@@ -64,6 +69,11 @@ export function AnalyticsMobileLayout({
   const t = useTranslations('analytics');
   const tCommon = useTranslations('common');
   const stateName = useStateName();
+  const analyticsModule = useAnalyticsModule();
+  const withSubDistrictSupport = hasSubDistrictSupport(
+    currentSelectedState?.slug,
+    analyticsModule
+  );
   const copyURL = useCopyURL();
   //Remove default page scroll to make only the content scrollable
   useLockBody();
@@ -114,8 +124,10 @@ export function AnalyticsMobileLayout({
     parseAsString.withDefault('map')
   );
   const searchParams = useSearchParams();
-  const region =
-    searchParams.get('revenue-code') || searchParams.get('district-code');
+  const isMapView = !view || view === 'map';
+  const districtCode = searchParams.get('district-code');
+  const revenueCode = searchParams.get('revenue-code');
+  const region = revenueCode || districtCode;
 
   // Initialize dropdown options
   const RevCircleDropdownOptions: Option[] = [{ label: '', value: '' }];
@@ -210,8 +222,13 @@ export function AnalyticsMobileLayout({
     switch (selectedView) {
       case 'map':
         return (
-          <MapComponent
+          <MapViewPanel
             indicator={indicator}
+            indicatorCategories={indicatorCategories}
+            analyticsModule={analyticsModule}
+            timePeriod={timePeriod}
+            districtCode={districtCode}
+            revenueCode={revenueCode}
             mapDataloading={mapData?.isFetching}
             revenueMapDataLoading={revenueMapData?.isFetching}
             indicatorsData={mapIndicatorsData?.data?.indicators}
@@ -231,6 +248,7 @@ export function AnalyticsMobileLayout({
               RevCircleDropdownOptions={RevCircleDropdownOptions}
               DistrictDropDownOption={DistrictDropDownOption}
               timeLimits={timePeriods}
+              withSubDistrictSupport={withSubDistrictSupport}
             />
           </div>
         );
@@ -278,7 +296,8 @@ export function AnalyticsMobileLayout({
 
         {mapData.isLoading ? (
           <div className="p-4 text-center">{t('map.loading')}</div>
-        ) : mapData.isError || revenueMapData.isError ? (
+        ) : mapData.isError ||
+          (withSubDistrictSupport && revenueMapData.isError) ? (
           <div className="text-red-500 p-4 text-center">
             {t('map.error')}
           </div>
@@ -288,7 +307,7 @@ export function AnalyticsMobileLayout({
       </div>
 
       {/* <OutputWindowComponent /> */}
-      {view === 'map' && !isOutputPaneOpen && (
+      {isMapView && !isOutputPaneOpen && (
         <div className="absolute right-6 top-[140px] z-[1001]">
           <Button
             kind="tertiary"
@@ -301,7 +320,7 @@ export function AnalyticsMobileLayout({
         </div>
       )}
 
-      {view === 'map' &&
+      {isMapView &&
         isOutputPaneOpen &&
         (region !== null && region.length > 0 ? (
           <OutputWindowComponent

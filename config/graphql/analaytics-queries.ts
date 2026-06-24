@@ -1,4 +1,4 @@
-import { type DocumentType, graphql } from '@/gql/generated/analytics';
+import { graphql, type DocumentType } from '@/gql/generated/analytics';
 
 export const ANALYTICS_REVENUE_TABLE_DATA = graphql(`
   query revCircleViewData(
@@ -47,22 +47,35 @@ export type Indicator = DocumentType<
 >['indicators'][number];
 
 export const ANALYTICS_INDICATORS_BY_CATEGORY = graphql(`
-  query indicatorsByCategory($stateCode: String) {
-    indicatorsByCategory(stateCode: $stateCode) {
+  query indicatorsByCategory(
+    $parentId: Int
+    $stateCode: String
+    $module: String
+  ) {
+    indicatorsByCategory(
+      parentId: $parentId
+      stateCode: $stateCode
+      module: $module
+    ) {
       slug
       name
       description
       IDS_dataSpace
+      is_raster_available
       children {
         slug
         name
         description
         IDS_dataSpace
+        is_raster_available
+        category
         children {
           slug
           name
           description
           IDS_dataSpace
+          category
+          is_raster_available
         }
       }
     }
@@ -79,12 +92,14 @@ export interface IndicatorCategory {
   name: string;
   description: string | null;
   IDS_dataSpace: string | null;
+  is_raster_available?: boolean;
+  category?: string | null;
   children?: IndicatorCategory[];
 }
 
 export const ANALYTICS_TIME_PERIODS = graphql(`
-  query dataTimePeriods {
-    getDataTimePeriods {
+  query dataTimePeriods($module: String, $stateCode: String) {
+    getDataTimePeriods(module: $module, stateCode: $stateCode) {
       value
     }
   }
@@ -139,8 +154,8 @@ export const ANALYTICS_TABLE_DATA = graphql(`
 `);
 
 export const PLATFORM_STATES_LIST = graphql(`
-  query getStatesList {
-    getStates {
+  query getStatesList($module: String) {
+    getStates(module: $module) {
       name
       slug
       code

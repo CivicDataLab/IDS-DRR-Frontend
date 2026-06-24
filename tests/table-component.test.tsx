@@ -1,5 +1,5 @@
 import React from 'react';
-import { TableComponent } from '@/app/[locale]/[state]/analytics/components/table-component';
+import { TableComponent } from '@/components/analytics/table-component';
 import { render, screen } from '@testing-library/react';
 
 // Mock opub-ui components

@@ -1,14 +1,4 @@
-import { parseDate, type CalendarDate } from '@internationalized/date';
-
 import { type Indicator } from '@/config/graphql/analaytics-queries';
-
-export function safeParseDate(value: string): CalendarDate | undefined {
-  try {
-    return parseDate(value);
-  } catch {
-    return undefined;
-  }
-}
 
 export function getFactorNameBySlug(
   factorData: Indicator[] | undefined,

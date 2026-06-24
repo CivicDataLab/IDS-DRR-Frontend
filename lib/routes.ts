@@ -1,3 +1,5 @@
+import { getRootIndicatorSlug } from '@/lib/analytics/root-indicator';
+
 export const ANALYTICS_VIEWS = ['map', 'chart', 'table'] as const;
 export type AnalyticsView = (typeof ANALYTICS_VIEWS)[number];
 
@@ -19,9 +21,16 @@ const qs = (params: Record<string, string>) =>
 export const routes = {
   home: '/',
 
-  analytics: (stateSlug: string, opts: AnalyticsOptions = {}) =>
-    `/${stateSlug}/analytics/?${qs({
-      indicator: 'risk-score',
+  /** State hub — module picker before analytics. */
+  state: (stateSlug: string) => `/${stateSlug}`,
+
+  analytics: (
+    stateSlug: string,
+    moduleSlug: string,
+    opts: AnalyticsOptions = {}
+  ) =>
+    `/${stateSlug}/${moduleSlug}/analytics/?${qs({
+      indicator: getRootIndicatorSlug(stateSlug, moduleSlug),
       view: opts.view ?? 'map',
       ...(opts.timePeriod ? { 'time-period': opts.timePeriod } : {}),
     })}`,

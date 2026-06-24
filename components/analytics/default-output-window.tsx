@@ -4,15 +4,8 @@ import { Button, Icon, Text } from 'opub-ui';
 
 import { type Indicator } from '@/config/graphql/analaytics-queries';
 import { docsLink, userManualLink } from '@/config/site';
+import { getFactorIcon } from '@/lib/analytics/factor-icon';
 import { cn } from '@/lib/utils';
-import {
-  Ellipse,
-  Exposure,
-  FloodHazard,
-  GovtResponse,
-  RiskScore,
-  Vulnerability,
-} from '@/components/FactorIcons';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import styles from './styles.module.scss';
@@ -83,42 +76,36 @@ export const AboutIndicator = ({
   IndicatorData: { title: string; slug: string; description: string }[];
 }) => {
   const t = useTranslations('analytics.about');
-  const IconMap: { [key: string]: React.ReactNode } = {
-    'risk-score': <RiskScore color={'#000000'} />,
-    vulnerability: <Vulnerability color={'#000000'} />,
-    'flood-hazard': <FloodHazard color={'#000000'} />,
-    exposure: <Exposure color={'#000000'} />,
-    'government-response': <GovtResponse color={'#000000'} />,
-  };
+  const rootIndicator = IndicatorData[0];
+  const childIndicators = IndicatorData.slice(1);
+
   return (
     <div className="mx-1 mb-5 flex flex-col">
       <Text variant="headingMd" fontWeight="bold" className="mb-5 uppercase">
         {t('heading')}
       </Text>
-      <div className="flex flex-row items-start gap-2">
-        <div className="flex flex-col">
-          <Text variant="headingMd" fontWeight="semibold">
-            {t('overallRisk')}
-          </Text>
-          <Text color="subdued">{t('description')}</Text>
+      {rootIndicator && (
+        <div className="flex flex-row items-start gap-2">
+          <div className="flex flex-col">
+            <Text variant="headingMd" fontWeight="semibold">
+              {rootIndicator.title}
+            </Text>
+            <Text color="subdued">{rootIndicator.description}</Text>
+          </div>
+          <div className="flex h-full items-start justify-start">
+            {getFactorIcon(rootIndicator.slug)}
+          </div>
         </div>
-        <div className="flex h-full items-start justify-start">
-          <Icon
-            source={Icons.IconSwimming}
-            // color={'default'}
-            stroke={2}
-            size={28}
-            className="text-[#000]"
-          />
-        </div>
-      </div>
-      {IndicatorData.length > 1 && (
+      )}
+      {childIndicators.length > 0 && (
         <Text className="my-4" variant="bodyLg">
-          {t('calculation')}
+          {t('calculation', {
+            name: rootIndicator?.title ?? t('overallRisk'),
+          })}
         </Text>
       )}
       <div className="flex flex-col items-start gap-4 p-3">
-        {IndicatorData.slice(1)?.map((indicator, index) => (
+        {childIndicators.map((indicator, index) => (
           <div
             key={indicator.slug ?? index}
             className="flex flex-row items-start gap-2"
@@ -136,7 +123,7 @@ export const AboutIndicator = ({
                 <Text color="subdued">{indicator.description}</Text>
               </div>
               <div className="flex h-full items-start justify-start">
-                {IconMap[indicator.slug] || <Ellipse color="#000000" />}
+                {getFactorIcon(indicator.slug)}
               </div>
             </div>
           </div>

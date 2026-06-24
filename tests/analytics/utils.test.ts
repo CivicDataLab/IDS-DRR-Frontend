@@ -2,8 +2,7 @@ import {
   getFactorNameBySlug,
   getLatestDate,
   getUnitsBySlug,
-  safeParseDate,
-} from '@/app/[locale]/[state]/analytics/utils/utils';
+} from '@/lib/analytics/utils';
 
 import { makeIndicator } from '../fixtures';
 
@@ -11,19 +10,6 @@ const factorData = [
   makeIndicator({ slug: 'risk-score', name: 'Risk Score', unit__name: 'score' }),
   makeIndicator({ slug: 'population', name: 'Population', unit__name: 'people' }),
 ];
-
-describe('safeParseDate', () => {
-  it('parses valid ISO date strings', () => {
-    const result = safeParseDate('2025-03-01');
-    expect(result?.year).toBe(2025);
-    expect(result?.month).toBe(3);
-    expect(result?.day).toBe(1);
-  });
-
-  it('returns undefined for invalid dates', () => {
-    expect(safeParseDate('not-a-date')).toBeUndefined();
-  });
-});
 
 describe('getFactorNameBySlug', () => {
   it('returns the factor name when found', () => {

@@ -1,10 +1,14 @@
 import React from 'react';
-import { MapComponent } from '@/app/[locale]/[state]/analytics/components/map-component';
+import { MapComponent } from '@/components/analytics/map-component';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { makeIndicator, makeState } from './fixtures';
 
 jest.mock('opub-ui');
+
+jest.mock('next/navigation', () => ({
+  useParams: () => ({ state: 'assam', module: 'flood' }),
+}));
 
 jest.mock('@/hooks/use-window-size', () => ({
   useWindowSize: jest.fn(() => ({ width: 1200, height: 800 })),
@@ -14,7 +18,7 @@ jest.mock('@/hooks/use-format-number', () => ({
   useFormatNumber: () => (value: number | string) => `fmt-${value}`,
 }));
 
-jest.mock('@/app/[locale]/[state]/analytics/utils/utils', () => ({
+jest.mock('@/lib/analytics/utils', () => ({
   getFactorNameBySlug: jest.fn((_data, slug) => `Factor ${slug}`),
   getUnitsBySlug: jest.fn(() => 'mm'),
 }));
@@ -191,7 +195,7 @@ describe('MapComponent integration', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers();
-    window.history.pushState({}, '', '/assam/analytics');
+    window.history.pushState({}, '', '/assam/flood/analytics');
   });
 
   afterEach(() => {
@@ -233,7 +237,7 @@ describe('MapComponent integration', () => {
   });
 
   it('filters revenue features when a district is selected', () => {
-    window.history.pushState({}, '', '/assam/analytics?district-code=AS-01');
+    window.history.pushState({}, '', '/assam/flood/analytics?district-code=AS-01');
     const setRevenueRegion = jest.fn();
     const setRegion = jest.fn();
 
@@ -255,7 +259,7 @@ describe('MapComponent integration', () => {
 
   it('shows toggle button and fits bounds when output pane opens', async () => {
     const onToggleOutputPane = jest.fn();
-    window.history.pushState({}, '', '/assam/analytics?district-code=AS-01');
+    window.history.pushState({}, '', '/assam/flood/analytics?district-code=AS-01');
 
     render(
       <MapComponent

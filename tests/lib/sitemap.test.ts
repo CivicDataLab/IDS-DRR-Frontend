@@ -5,8 +5,12 @@ jest.mock('@/config/site', () => ({
   locales: ['en'],
   siteUrl: 'https://example.com',
   states: [
-    { slug: 'active-state', status: 'active' },
-    { slug: 'draft-state', status: 'draft' },
+    {
+      slug: 'active-state',
+      status: 'active',
+      modules: [{ slug: 'flood', status: 'active' }],
+    },
+    { slug: 'draft-state', status: 'draft', modules: [] },
   ],
 }));
 
@@ -17,17 +21,18 @@ jest.mock('@/lib/api', () => ({
 }));
 
 describe('sitemap', () => {
-  it('builds URLs for home, analytics, datasets, and detail pages', async () => {
+  it('builds URLs for home, state hubs, analytics, datasets, and detail pages', async () => {
     const entries = await sitemap();
     const urls = entries.map((entry) => entry.url);
 
     expect(urls).toContain('https://example.com/en/');
-    expect(urls.some((url) => url.includes('/active-state/analytics'))).toBe(
+    expect(urls).toContain('https://example.com/en/active-state');
+    expect(urls.some((url) => url.includes('/active-state/flood/analytics'))).toBe(
       true
     );
     expect(urls).not.toEqual(
       expect.arrayContaining([
-        expect.stringContaining('/draft-state/analytics'),
+        expect.stringContaining('/draft-state/flood/analytics'),
       ])
     );
     expect(urls).toContain('https://example.com/en/datasets?size=5&page=1&sort=recent');

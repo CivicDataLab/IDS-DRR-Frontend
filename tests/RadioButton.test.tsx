@@ -1,5 +1,5 @@
 import React from 'react';
-import RadioButton from '@/app/[locale]/[state]/analytics/components/RadioButton';
+import RadioButton from '@/components/analytics/RadioButton';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 // Mock opub-ui components

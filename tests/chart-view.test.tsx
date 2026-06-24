@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChartView } from '@/app/[locale]/[state]/analytics/components/chart-view';
+import { ChartView } from '@/components/analytics/chart-view';
 import { act, render, screen, waitFor } from '@testing-library/react';
 
 import { makeState } from './fixtures';
@@ -68,7 +68,7 @@ jest.mock('@/components/media-rendering', () => ({
 }));
 
 jest.mock(
-  '@/app/[locale]/[state]/analytics/components/filter-dropdown-options',
+  '@/components/analytics/filter-dropdown-options',
   () => ({
     __esModule: true,
     default: () => (

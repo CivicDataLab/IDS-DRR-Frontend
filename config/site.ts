@@ -8,8 +8,6 @@ import type {
   TileLayers,
 } from 'ids-drr-branding-types';
 
-import { routes } from '@/lib/routes';
-
 // Arrays
 export const states: State[] = config.states ?? [];
 export const resources: Resource[] = config.resources ?? [];
@@ -66,17 +64,20 @@ export const siteUrl =
     : process.env.SITE_URL || '';
 
 export const mainNav: { key: NavLinkKey; href: string }[] = [
-  { key: 'home', href: routes.home },
+  { key: 'home', href: '/' },
   ...(defaultState
-    ? [{ key: 'analytics' as const, href: routes.analytics(defaultState.slug) }]
+    ? [{ key: 'analytics' as const, href: `/${defaultState.slug}` }]
     : []),
   ...(features.datasets
-    ? [{ key: 'datasets' as const, href: routes.datasets() }]
+    ? [
+        {
+          key: 'datasets' as const,
+          href: '/datasets?size=5&page=1&sort=recent',
+        },
+      ]
     : []),
-  ...(features.aboutUs
-    ? [{ key: 'aboutUs' as const, href: routes.aboutUs }]
-    : []),
+  ...(features.aboutUs ? [{ key: 'aboutUs' as const, href: '/about-us' }] : []),
   ...(features.glossary
-    ? [{ key: 'glossary' as const, href: routes.glossary }]
+    ? [{ key: 'glossary' as const, href: '/glossary' }]
     : []),
 ];

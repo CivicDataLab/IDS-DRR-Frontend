@@ -1,6 +1,6 @@
 import React from 'react';
 // Component under test
-import { AnalyticsMainLayout } from '@/app/[locale]/[state]/analytics/components/analytics-layout';
+import { AnalyticsMainLayout } from '@/components/analytics/analytics-layout';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -56,7 +56,7 @@ jest.mock('@/lib/api', () => ({
 
 // Mock heavy child components to simple placeholders
 jest.mock(
-  '@/app/[locale]/[state]/analytics/components/filter-dropdown-options',
+  '@/components/analytics/filter-dropdown-options',
   () => ({
     __esModule: true,
     default: () => (
@@ -64,36 +64,40 @@ jest.mock(
     ),
   })
 );
-jest.mock('@/app/[locale]/[state]/analytics/components/map-component', () => ({
-  MapComponent: () => <div data-testid="map-component">MapComponent</div>,
+jest.mock('@/components/analytics/map-view-panel', () => ({
+  MapViewPanel: () => <div data-testid="map-component">MapViewPanel</div>,
 }));
 jest.mock(
-  '@/app/[locale]/[state]/analytics/components/table-component',
+  '@/components/analytics/table-component',
   () => ({
     TableComponent: () => (
       <div data-testid="table-component">TableComponent</div>
     ),
   })
 );
-jest.mock('@/app/[locale]/[state]/analytics/components/chart-view', () => ({
+jest.mock('@/components/analytics/chart-view', () => ({
   ChartView: () => <div data-testid="chart-view">ChartView</div>,
 }));
 jest.mock(
-  '@/app/[locale]/[state]/analytics/components/analytics-mobile-layout',
+  '@/components/analytics/analytics-mobile-layout',
   () => ({
     AnalyticsMobileLayout: () => (
       <div data-testid="mobile-layout">MobileLayout</div>
     ),
   })
 );
-jest.mock('@/app/[locale]/[state]/analytics/components/output-window', () => ({
+jest.mock('@/components/analytics/output-window', () => ({
   OutputWindow: () => <div data-testid="output-window">OutputWindow</div>,
 }));
 
 // Mock getLatestDate utility
-jest.mock('@/app/[locale]/[state]/analytics/utils/utils', () => ({
+jest.mock('@/lib/analytics/utils', () => ({
   getLatestDate: (arr: string[]) =>
     arr[arr.length - 1]?.replace('_', '-') || null,
+  getFactorNameBySlug: (
+    factorData: { slug: string; name?: string }[] | undefined,
+    slug: string
+  ) => factorData?.find((factor) => factor.slug === slug)?.name ?? slug,
 }));
 
 // Mock GraphQL queries usage via react-query useQuery
@@ -142,7 +146,7 @@ const mockTimePeriodsQuery = {
 } as any;
 
 const mockIndicatorsQuery = {
-  data: { indicators: [{ slug: 'risk-score' }] },
+  data: { indicators: [{ slug: 'risk-score', name: 'Overall Flood Risk' }] },
   isFetching: false,
 } as any;
 
@@ -213,6 +217,9 @@ describe('AnalyticsMainLayout', () => {
 
   it('renders map view with filter and map component', () => {
     render(<AnalyticsMainLayout />);
+    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(
+      'Overall Flood Risk'
+    );
     expect(screen.getAllByTestId('filter-dropdown')[0]).toBeInTheDocument();
     expect(screen.getByTestId('map-component')).toBeInTheDocument();
     // OutputWindow not shown when no region

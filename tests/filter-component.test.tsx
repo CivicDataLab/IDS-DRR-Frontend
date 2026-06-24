@@ -1,5 +1,5 @@
 import React from 'react';
-import { FilterComp } from '@/app/[locale]/[state]/analytics/components/filter-component';
+import { FilterComp } from '@/components/analytics/filter-component';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 

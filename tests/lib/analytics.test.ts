@@ -3,7 +3,7 @@ import { Factors, isRiskLevel, RiskColorMap } from '@/lib/analytics';
 describe('analytics constants', () => {
   it('exports score-style factor slugs', () => {
     expect(Factors).toContain('risk-score');
-    expect(Factors).toHaveLength(5);
+    expect(Factors).toHaveLength(7);
   });
 
   it('maps each risk level to colors', () => {

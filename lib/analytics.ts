@@ -6,6 +6,12 @@ export const Factors = [
   'vulnerability',
   'government-response',
   'exposure',
+  // Heat indicators
+  'heat-risk-score',
+  'heat-hazard',
+  // 'heat-exposure',
+  // 'heat-vulnerability',
+  // 'heat-government-response',
 ];
 
 export const RiskColorMap: Record<

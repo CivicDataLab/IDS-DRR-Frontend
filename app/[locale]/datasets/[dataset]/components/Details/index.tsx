@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import { useCopyURL } from '@/hooks/use-copy-url';
 import { useQuery } from '@tanstack/react-query';
 import ReactECharts from 'echarts-for-react';
 import * as echarts from 'echarts/core';
@@ -19,10 +20,12 @@ import {
   Text,
 } from 'opub-ui';
 
-import { CHARTS_QUERY, type ChartDetail } from '@/config/graphql/dataset-queries';
-import { type JsonScalar } from '@/lib/types';
+import {
+  CHARTS_QUERY,
+  type ChartDetail,
+} from '@/config/graphql/dataset-queries';
 import { GraphQL } from '@/lib/api';
-import { useCopyURL } from '@/hooks/use-copy-url';
+import { type JsonScalar } from '@/lib/types';
 import Icons from '@/components/icons';
 
 // The CHARTS_QUERY DataSpace query returns the echarts option as `item.chart`.

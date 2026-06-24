@@ -2,16 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import {
-  Exposure,
-  FloodHazard,
-  GovtResponse,
-  RiskScore,
-  Vulnerability,
-} from '@/components/FactorIcons';
+import { useAnalyticsModule } from '@/hooks/use-analytics-module';
+import { useCopyURL } from '@/hooks/use-copy-url';
+import { useStateName } from '@/hooks/use-state-name';
 import { useQuery } from '@tanstack/react-query';
-import { useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
+import { useQueryState } from 'next-usequerystate';
 import { Button, Icon, Menu, Select, Text, Tooltip } from 'opub-ui';
 
 import {
@@ -20,14 +16,25 @@ import {
   type State,
 } from '@/config/graphql/analaytics-queries';
 import { features } from '@/config/site';
+import {
+  areAllIndicatorLeaves,
+  collectBranchSlugs,
+  groupIndicatorsByCategory,
+  shouldShowIndicatorCategories,
+} from '@/lib/analytics/indicator-tree';
+import { getLatestDate } from '@/lib/analytics/utils';
 import { GraphQL } from '@/lib/api';
 import { routes } from '@/lib/routes';
 import { cn, downloadStateReport } from '@/lib/utils';
-import { useCopyURL } from '@/hooks/use-copy-url';
-import { useStateName } from '@/hooks/use-state-name';
+import {
+  Exposure,
+  FloodHazard,
+  GovtResponse,
+  RiskScore,
+  Vulnerability,
+} from '@/components/FactorIcons';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
-import { getLatestDate } from '../utils/utils';
 import RadioButton from './RadioButton';
 import styles from './styles.module.scss';
 
@@ -36,19 +43,42 @@ type TreeNode = IndicatorCategory;
 interface NestedSidebarProps {
   data: TreeNode[];
   indicator: string | null;
+  branchSlugs: Set<string>;
+}
+
+function isDescendantSelected(
+  node: TreeNode,
+  indicator: string | null
+): boolean {
+  if (!indicator) return false;
+  if (node.slug === indicator) return true;
+  return (
+    node.children?.some((child) => isDescendantSelected(child, indicator)) ??
+    false
+  );
 }
 
 function getIcon(slug: string) {
   switch (slug) {
     case 'risk-score':
       return <RiskScore color="#000000" />;
+    case 'heat-risk-score':
+      return <RiskScore color="#000000" />;
     case 'vulnerability':
+      return <Vulnerability color="#000000" />;
+    case 'heat-vulnerability':
       return <Vulnerability color="#000000" />;
     case 'flood-hazard':
       return <FloodHazard color="#000000" />;
+    case 'heat-hazard':
+      return <FloodHazard color="#000000" />;
     case 'exposure':
       return <Exposure color="#000000" />;
+    case 'heat-exposure':
+      return <Exposure color="#000000" />;
     case 'government-response':
+      return <GovtResponse color="#000000" />;
+    case 'heat-government-response':
       return <GovtResponse color="#000000" />;
     default:
       return <RiskScore color="#000000" />;
@@ -72,15 +102,18 @@ export function FactorList({ currentState }: { currentState: State }) {
   const [selectedIndicator, setSelectedIndicator] = useState(indicator || '');
 
   const [downloadReportLoading, setDownloadReportLoading] = useState(false);
+  const analyticsModule = useAnalyticsModule();
 
   const indicatorsQuery = useQuery({
-    queryKey: [`indicatorsByCategory_${currentState.code}`],
+    queryKey: [`indicatorsByCategory_${currentState.code}_${analyticsModule}`],
     queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_INDICATORS_BY_CATEGORY,
         {
+          parentId: null,
           stateCode: currentState?.code,
+          module: analyticsModule,
         }
       ),
     refetchOnMount: false,
@@ -97,16 +130,15 @@ export function FactorList({ currentState }: { currentState: State }) {
           const isMapLike = view === 'map' || view === 'table';
           const isChart = view === 'chart';
 
-          const filteredChildren =
-            isMapLike
-              ? node.children.filter((child) =>
-                  String(child.slug).includes('fy-cumsum')
+          const filteredChildren = isMapLike
+            ? node.children.filter((child) =>
+                String(child.slug).includes('fy-cumsum')
+              )
+            : isChart
+              ? node.children.filter(
+                  (child) => !String(child.slug).includes('fy-cumsum')
                 )
-              : isChart
-                ? node.children.filter(
-                    (child) => !String(child.slug).includes('fy-cumsum')
-                  )
-                : node.children;
+              : node.children;
 
           return {
             ...node,
@@ -127,6 +159,11 @@ export function FactorList({ currentState }: { currentState: State }) {
 
     return indicatorNodes ? filterRecursively(indicatorNodes) : [];
   }, [indicatorNodes, view]);
+
+  const branchSlugs = React.useMemo(
+    () => collectBranchSlugs(indicatorNodes),
+    [indicatorNodes]
+  );
 
   useEffect(() => {
     setSelectedIndicator(indicator || '');
@@ -171,9 +208,9 @@ export function FactorList({ currentState }: { currentState: State }) {
             name="boundary-select"
             labelInline
             options={
-                  indicatorsQuery.isFetched
-                    ? flattenIndicators(filteredIndicatorNodes)
-                    : []
+              indicatorsQuery.isFetched
+                ? flattenIndicators(filteredIndicatorNodes)
+                : []
             }
           />
         )}
@@ -185,6 +222,7 @@ export function FactorList({ currentState }: { currentState: State }) {
             <NestedSidebar
               data={filteredIndicatorNodes}
               indicator={indicator}
+              branchSlugs={branchSlugs}
             />
           )}
 
@@ -257,7 +295,9 @@ export function FactorList({ currentState }: { currentState: State }) {
                   className="self-start"
                   onClick={async () => {
                     const confirmation = window.confirm(
-                      t('actions.download.confirm', { name: stateName(currentState.slug, currentState.name) })
+                      t('actions.download.confirm', {
+                        name: stateName(currentState.slug, currentState.name),
+                      })
                     );
                     if (confirmation) {
                       try {
@@ -287,7 +327,9 @@ export function FactorList({ currentState }: { currentState: State }) {
                           `${currentState.name}-Report`
                         );
                       } catch (error) {
-                        alert(t('actions.download.error', { error: String(error) }));
+                        alert(
+                          t('actions.download.error', { error: String(error) })
+                        );
                       } finally {
                         setDownloadReportLoading(false);
                       }
@@ -312,25 +354,89 @@ export function FactorList({ currentState }: { currentState: State }) {
   );
 }
 
+const IndicatorRadio: React.FC<{
+  node: TreeNode;
+  indicator: string | null;
+}> = ({ node, indicator }) => {
+  const [, setIndicatorSelected] = useQueryState('indicator');
+
+  return (
+    <Tooltip content={node.description}>
+      <RadioButton
+        id={`radio-${node.slug}`}
+        isSelected={indicator === node.slug}
+        changed={(value: string) => {
+          setIndicatorSelected(value, { shallow: false });
+        }}
+        label={node.name}
+        value={node.slug}
+      />
+    </Tooltip>
+  );
+};
+
+const CategorizedIndicatorList: React.FC<{
+  nodes: TreeNode[];
+  indicator: string | null;
+}> = ({ nodes, indicator }) => {
+  const showCategories = shouldShowIndicatorCategories(nodes);
+
+  if (!showCategories) {
+    return (
+      <div className="flex flex-col gap-2 pl-3">
+        {nodes.map((node) => (
+          <IndicatorRadio key={node.slug} node={node} indicator={indicator} />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-2 pl-3">
+      {groupIndicatorsByCategory(nodes).map(({ category, indicators }) => (
+        <div key={category ?? 'uncategorized'} className="flex flex-col gap-2">
+          {category && (
+            <Text className="text-sm uppercase leading-[140%] text-[#757575]">
+              {category}
+            </Text>
+          )}
+          {indicators.map((node) => (
+            <IndicatorRadio key={node.slug} node={node} indicator={indicator} />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+};
+
 const NestedSidebarItem: React.FC<{
   node: TreeNode;
   level: number;
   indicator: string | null;
-}> = ({ node, level, indicator }) => {
-  const [isExpanded, setIsExpanded] = useState(node.slug === 'risk-score');
+  branchSlugs: Set<string>;
+}> = ({ node, level, indicator, branchSlugs }) => {
+  const [isExpanded, setIsExpanded] = useState(
+    node.slug === 'risk-score' || node.slug === 'heat-risk-score'
+  );
   const [, setIndicatorSelected] = useQueryState('indicator');
   const isActive = node.slug === indicator;
   const hasChildren = node.children && node.children.length > 0;
+  const isBranch = branchSlugs.has(node.slug);
+
   useEffect(() => {
-    if (node.slug === indicator) {
+    if (node.slug === indicator || isDescendantSelected(node, indicator)) {
       setIsExpanded(true);
     }
-  }, [indicator, node.slug]);
+  }, [indicator, node]);
 
   const toggleExpand = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsExpanded(!isExpanded);
   };
+
+  if (level > 0 && !isBranch) {
+    return <IndicatorRadio node={node} indicator={indicator} />;
+  }
 
   return (
     <div className={cn('relative', level === 0 && 'pl-4')}>
@@ -344,28 +450,28 @@ const NestedSidebarItem: React.FC<{
         tabIndex={0}
         aria-label={node.name}
       >
-        {level < 2 ? (
-          <div
-            role="button"
-            tabIndex={0}
-            onClick={() => {
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => {
+            setIsExpanded(true);
+            setIndicatorSelected(node.slug, { shallow: false });
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.stopPropagation();
               setIsExpanded(true);
-              setIndicatorSelected(node.slug, { shallow: false });
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.stopPropagation();
-                setIsExpanded(true);
-              }
-            }}
-            className={cn(
-              'group flex h-10 w-full items-center gap-4',
-              isActive && 'px-2',
-              isActive && 'bg-[#96e79eb2]'
-            )}
-          >
-            <div className="relative">
-              <div className="group-hover:hidden">{getIcon(node.slug)}</div>
+            }
+          }}
+          className={cn(
+            'group flex h-10 w-full items-center gap-4',
+            isActive && 'px-2',
+            isActive && 'bg-[#96e79eb2]'
+          )}
+        >
+          <div className="relative">
+            <div className="group-hover:hidden">{getIcon(node.slug)}</div>
+            {isBranch ? (
               <div className="hidden group-hover:block">
                 <Button
                   monochrome={true}
@@ -379,42 +485,47 @@ const NestedSidebarItem: React.FC<{
                   )}
                 </Button>
               </div>
-            </div>
-            <Tooltip content={node.description}>
-              <Text fontWeight="semibold">{node.name}</Text>
-            </Tooltip>
+            ) : null}
           </div>
-        ) : (
           <Tooltip content={node.description}>
-            <RadioButton
-              id={`radio-${node.slug}`}
-              isSelected={indicator === node.slug}
-              changed={(value: string) => {
-                setIndicatorSelected(value, { shallow: false });
-              }}
-              label={node.name}
-              value={node.slug}
-            />
+            <Text fontWeight="semibold">{node.name}</Text>
           </Tooltip>
-        )}
+        </div>
       </div>
-      {hasChildren && isExpanded && (
-        <div className={cn('relative', level === 0 && 'ml-4')}>
-          {node.children?.map((child) => (
-            <NestedSidebarItem
-              key={child.slug}
-              node={child}
+      {isBranch && isExpanded && hasChildren && (
+        <div
+          className={cn(
+            'relative flex flex-col gap-2',
+            level === 0 && 'pl-5 pr-4'
+          )}
+        >
+          {areAllIndicatorLeaves(node.children!) ? (
+            <CategorizedIndicatorList
+              nodes={node.children!}
               indicator={indicator}
-              level={level + 1}
             />
-          ))}
+          ) : (
+            node.children?.map((child) => (
+              <NestedSidebarItem
+                key={child.slug}
+                node={child}
+                indicator={indicator}
+                level={level + 1}
+                branchSlugs={branchSlugs}
+              />
+            ))
+          )}
         </div>
       )}
     </div>
   );
 };
 
-const NestedSidebar: React.FC<NestedSidebarProps> = ({ data, indicator }) => {
+const NestedSidebar: React.FC<NestedSidebarProps> = ({
+  data,
+  indicator,
+  branchSlugs,
+}) => {
   return (
     <div>
       {data?.map((node) => (
@@ -423,6 +534,7 @@ const NestedSidebar: React.FC<NestedSidebarProps> = ({ data, indicator }) => {
           node={node}
           indicator={indicator}
           level={0}
+          branchSlugs={branchSlugs}
         />
       ))}
     </div>
