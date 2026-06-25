@@ -27,9 +27,8 @@ const FACTOR_ROLES: FactorRole[] = [
  */
 export function getFactorRole(slug: string): FactorRole | null {
   return (
-    FACTOR_ROLES.find(
-      (role) => slug === role || slug.endsWith(`-${role}`)
-    ) ?? null
+    FACTOR_ROLES.find((role) => slug === role || slug.endsWith(`-${role}`)) ??
+    null
   );
 }
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { MapComponent } from '@/components/analytics/map-component';
+import { hasSubDistrictSupport } from '@/lib/state-map-config';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { makeIndicator, makeState } from './fixtures';
@@ -21,6 +22,10 @@ jest.mock('@/hooks/use-format-number', () => ({
 jest.mock('@/lib/analytics/utils', () => ({
   getFactorNameBySlug: jest.fn((_data, slug) => `Factor ${slug}`),
   getUnitsBySlug: jest.fn(() => 'mm'),
+}));
+
+jest.mock('@/lib/state-map-config', () => ({
+  hasSubDistrictSupport: jest.fn(() => true),
 }));
 
 jest.mock('@/components/icons', () => ({
@@ -71,7 +76,11 @@ jest.mock('@/components/MapChart', () => {
       }, [props.setMap]);
 
       return (
-        <div data-testid="map-chart" data-legend-count={props.legendData?.length}>
+        <div
+          data-testid="map-chart"
+          data-legend-count={props.legendData?.length}
+          data-feature-count={props.features?.length ?? 0}
+        >
           <button
             type="button"
             data-testid="map-mouseover"
@@ -173,6 +182,19 @@ const districtFeatures = {
         ],
       },
     },
+    {
+      type: 'Feature',
+      properties: {
+        name: 'District B',
+        code: 'AS-02',
+        'risk-score': 2,
+        exposure: 0.8,
+        bounds: [
+          [1, 1],
+          [2, 2],
+        ],
+      },
+    },
   ],
 };
 
@@ -194,6 +216,7 @@ const revenueFeatures = {
 describe('MapComponent integration', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.mocked(hasSubDistrictSupport).mockReturnValue(true);
     jest.useFakeTimers();
     window.history.pushState({}, '', '/assam/flood/analytics');
   });
@@ -298,5 +321,63 @@ describe('MapComponent integration', () => {
     });
 
     expect(screen.getByTestId('map-chart')).toBeInTheDocument();
+  });
+
+  it('zooms to district bounds when sub-district drill-down is disabled', async () => {
+    jest.mocked(hasSubDistrictSupport).mockReturnValue(false);
+    window.history.pushState(
+      {},
+      '',
+      '/assam/heat/analytics?district-code=AS-01'
+    );
+
+    render(
+      <MapComponent
+        {...baseProps}
+        indicator="heat-risk-score"
+        mapData={districtFeatures}
+        revenueMapData={revenueFeatures}
+      />
+    );
+
+    await waitFor(() => {
+      expect(mockMap.fitBounds).toHaveBeenCalledWith(
+        [
+          [0, 0],
+          [1, 1],
+        ],
+        undefined
+      );
+    });
+    expect(mockMap.fitBounds).not.toHaveBeenCalledWith(
+      [
+        [0, 0],
+        [2, 2],
+      ],
+      expect.anything()
+    );
+  });
+
+  it('shows only the selected district when sub-district drill-down is disabled', () => {
+    jest.mocked(hasSubDistrictSupport).mockReturnValue(false);
+    window.history.pushState(
+      {},
+      '',
+      '/assam/heat/analytics?district-code=AS-01'
+    );
+
+    render(
+      <MapComponent
+        {...baseProps}
+        indicator="heat-risk-score"
+        mapData={districtFeatures}
+        revenueMapData={revenueFeatures}
+      />
+    );
+
+    expect(screen.getByTestId('map-chart')).toHaveAttribute(
+      'data-feature-count',
+      '1'
+    );
   });
 });

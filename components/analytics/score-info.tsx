@@ -1,7 +1,7 @@
 import React from 'react';
+import { useFormatNumber } from '@/hooks/use-format-number';
 import { ProgressBar } from 'opub-ui';
 
-import { useFormatNumber } from '@/hooks/use-format-number';
 import { isRiskLevel, RiskColorMap } from '@/lib/analytics';
 import { isRootRiskIndicator } from '@/lib/analytics/root-indicator';
 
@@ -17,7 +17,7 @@ export function ScoreInfo({ label, value, indicator }: ScoreProps) {
   // parseInt (lenient on the trailing unit) rather than Number (strict).
   const level = String(parseInt(value, 10));
   return (
-    <div className="flex-1">
+    <div className="ml-1 flex-1">
       {isRootRiskIndicator(indicator) ? (
         <ProgressBar
           size="small"

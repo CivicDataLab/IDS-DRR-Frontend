@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useAnalyticsModule } from '@/hooks/use-analytics-module';
 import { useFormatNumber } from '@/hooks/use-format-number';
 import { useWindowSize } from '@/hooks/use-window-size';
 import type { TileLayers } from 'ids-drr-branding-types';
@@ -27,7 +28,6 @@ import { hasSubDistrictSupport } from '@/lib/state-map-config';
 import { type JsonScalar } from '@/lib/types';
 import Icons from '@/components/icons';
 import MapChart from '@/components/MapChart';
-import { useAnalyticsModule } from '@/hooks/use-analytics-module';
 
 const RASTER_PANE = 'idsRasterOverlayPane';
 

@@ -7,8 +7,38 @@ import { docsLink, userManualLink } from '@/config/site';
 import { getFactorIcon } from '@/lib/analytics/factor-icon';
 import { cn } from '@/lib/utils';
 import Icons from '@/components/icons';
+import { InfoSquare } from '@/components/InfoCircle';
 import { MediaRendering } from '@/components/media-rendering';
 import styles from './styles.module.scss';
+
+export function IndicatorDescriptionCard({
+  description,
+}: {
+  description: string;
+}) {
+  if (!description) return null;
+
+  return (
+    <div
+      className={cn(
+        'box-border flex w-full flex-row items-start gap-3 self-stretch rounded-1',
+        'border border-borderSubdued bg-surfaceSubdued p-3'
+      )}
+      role="note"
+    >
+      <span className="mt-0.5 inline-flex h-4 w-4 shrink-0 [&_svg]:h-full [&_svg]:w-full">
+        <InfoSquare color="#222136" aria-hidden />
+      </span>
+      <Text
+        variant="bodyMd"
+        fontWeight="regular"
+        className="min-w-0 flex-1 leading-[135%] text-textMedium"
+      >
+        {description}
+      </Text>
+    </div>
+  );
+}
 
 export function DefaultWindow({
   indicatorDescriptions,
@@ -25,16 +55,14 @@ export function DefaultWindow({
   const list: { title: string; slug: string; description: string }[] = [];
 
   if (indicatorDescriptions) {
-    indicatorDescriptions.forEach(
-      (item) => {
-        list.push({
-          title: item?.name,
-          slug: item?.slug,
-          description:
-            item?.short_description || item?.long_description || tCommon('na'),
-        });
-      }
-    );
+    indicatorDescriptions.forEach((item) => {
+      list.push({
+        title: item?.name,
+        slug: item?.slug,
+        description:
+          item?.short_description || item?.long_description || tCommon('na'),
+      });
+    });
   }
 
   return (

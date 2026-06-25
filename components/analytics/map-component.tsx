@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useAnalyticsModule } from '@/hooks/use-analytics-module';
 import { useFormatNumber } from '@/hooks/use-format-number';
 import { useWindowSize } from '@/hooks/use-window-size';
 import * as d3 from 'd3-scale';
@@ -16,12 +17,11 @@ import {
 import { states, tileLayers } from '@/config/site';
 import { isRiskLevel } from '@/lib/analytics';
 import { isScoreIndicator } from '@/lib/analytics/factor-role';
+import { getFactorNameBySlug, getUnitsBySlug } from '@/lib/analytics/utils';
 import { hasSubDistrictSupport } from '@/lib/state-map-config';
 import { type JsonScalar } from '@/lib/types';
 import Icons from '@/components/icons';
 import MapChart from '@/components/MapChart';
-import { getFactorNameBySlug, getUnitsBySlug } from '@/lib/analytics/utils';
-import { useAnalyticsModule } from '@/hooks/use-analytics-module';
 
 export const MapComponent = ({
   indicator,
@@ -97,11 +97,19 @@ export const MapComponent = ({
   const districtCode = params.get('district-code');
 
   const mapFeatures = React.useMemo(() => {
-    if (!withSubDistrictSupport || !districtCode) return mapData?.features;
-    return (revenueMapData?.features || []).filter(
-      (feature: { properties: { [x: string]: string } }) =>
-        feature.properties['district-code'] === districtCode
-    );
+    if (withSubDistrictSupport && districtCode) {
+      return (revenueMapData?.features || []).filter(
+        (feature: { properties: { [x: string]: string } }) =>
+          feature.properties['district-code'] === districtCode
+      );
+    }
+    if (!withSubDistrictSupport && districtCode) {
+      return (mapData?.features || []).filter(
+        (feature: { properties: { [x: string]: string } }) =>
+          feature.properties.code === districtCode
+      );
+    }
+    return mapData?.features;
   }, [
     districtCode,
     mapData?.features,
@@ -283,7 +291,7 @@ export const MapComponent = ({
   const safeApply = React.useCallback(
     (apply: () => void) => {
       requestAnimationFrame(() => {
-        map.invalidateSize();
+        map?.invalidateSize();
         const size = map.getSize();
         if (!size.x || !size.y) return;
         apply();
@@ -301,11 +309,10 @@ export const MapComponent = ({
     [isOutputPaneOpen, isMobile]
   );
 
-  // Fit to the selected district.
+  // Fit to the selected district (vector parity with raster drill-down).
   const fittedDistrictRef = React.useRef<string | null>(null);
   React.useEffect(() => {
-    // Reset if user returns to state-level.
-    if (!withSubDistrictSupport || !districtCode) {
+    if (!districtCode) {
       fittedDistrictRef.current = null;
       return;
     }
@@ -351,7 +358,8 @@ export const MapComponent = ({
 
   React.useEffect(() => {
     if (!map || !map.getContainer()) return;
-    if (withSubDistrictSupport && districtCode) return;
+    // When a district is selected, keep the district zoom from the effect above.
+    if (districtCode) return;
 
     map.whenReady(() =>
       safeApply(() => {

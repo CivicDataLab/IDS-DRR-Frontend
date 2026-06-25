@@ -2,6 +2,7 @@
 
 import React, { useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useAnalyticsModule } from '@/hooks/use-analytics-module';
 import { useFormatNumber } from '@/hooks/use-format-number';
 import { useQuery } from '@tanstack/react-query';
 import { useFormatter, useTranslations } from 'next-intl';
@@ -14,17 +15,17 @@ import {
   type State,
 } from '@/config/graphql/analaytics-queries';
 import { docsLink } from '@/config/site';
-import { getFactorNameBySlug, getLatestDate } from '@/lib/analytics/utils';
+import { getFactorIcon } from '@/lib/analytics/factor-icon';
+import { getFactorRole, isScoreIndicator } from '@/lib/analytics/factor-role';
 import { isRootRiskIndicator } from '@/lib/analytics/root-indicator';
+import { getFactorNameBySlug, getLatestDate } from '@/lib/analytics/utils';
 import { GraphQL } from '@/lib/api';
 import { type JsonScalar } from '@/lib/types';
 import { cn, parsePeriodString } from '@/lib/utils';
-import { getFactorIcon } from '@/lib/analytics/factor-icon';
-import { getFactorRole, isScoreIndicator } from '@/lib/analytics/factor-role';
 import Icons from '@/components/icons';
 import { InfoSquare } from '@/components/InfoCircle';
 import { MediaRendering } from '@/components/media-rendering';
-import { useAnalyticsModule } from '@/hooks/use-analytics-module';
+import { IndicatorDescriptionCard } from './default-output-window';
 import { ScoreInfo } from './score-info';
 import styles from './styles.module.scss';
 
@@ -128,10 +129,17 @@ export function OutputWindow({
     const descriptionObject = indicatorDescriptions?.find(
       (desc) => desc.slug === indicatorSlug
     );
-    return descriptionObject
-      ? descriptionObject.long_description
-      : tCommon('na');
+    if (!descriptionObject) return tCommon('na');
+    return (
+      descriptionObject.long_description ||
+      descriptionObject.short_description ||
+      tCommon('na')
+    );
   }
+
+  const selectedIndicatorDescription = indicator
+    ? getDescription(indicator)
+    : '';
 
   const colorMap: { [key: number]: string } = {
     1: 'text-mapRiskVeryLow',
@@ -224,7 +232,7 @@ export function OutputWindow({
               </Text>
             </div>
           </div>
-          {/* //--------  */}
+
           <section className="mt-4">
             {DataBasedOnBoundary.map((data: JsonScalar, index: number) => (
               <div key={`boundary-${index}`} className="mb-4">
@@ -246,6 +254,7 @@ export function OutputWindow({
                       </Text>
                     )}
                   </div>
+
                   <div className="flex items-center gap-4">
                     <Text
                       className={cn(
@@ -276,6 +285,13 @@ export function OutputWindow({
                     </Tooltip>
                   </div>
                 </div>
+                {region && selectedIndicatorDescription !== tCommon('na') && (
+                  <div className="mt-4">
+                    <IndicatorDescriptionCard
+                      description={selectedIndicatorDescription}
+                    />
+                  </div>
+                )}
                 {isScoreIndicator(indicator) && (
                   <div className="mt-5 flex flex-col gap-2">
                     <Text className="text-baseGraySlateSolid11">
@@ -417,6 +433,14 @@ export function OutputWindow({
                 </div>
               </div>
 
+              {region && selectedIndicatorDescription !== tCommon('na') && (
+                <div className="mt-4">
+                  <IndicatorDescriptionCard
+                    description={selectedIndicatorDescription}
+                  />
+                </div>
+              )}
+
               {/* Aside content */}
               <section className="mt-4">
                 {region !== null &&
@@ -534,9 +558,11 @@ function OtherFactorScores({
   ).map((scoreType) => (
     <div key={scoreType} className=" flex items-center gap-4">
       {/* //change  */}
-      <div className="flex-shrink-0">
-        <div className="h-6 w-6">{factorIcon(scoreType)}</div>
-      </div>
+      {getFactorRole(scoreType) && (
+        <div className="flex-shrink-0">
+          <div className="h-6 w-6 ">{factorIcon(scoreType)}</div>
+        </div>
+      )}
       {isRootRiskIndicator(indicator) && (
         <Text className="shrink-1 min-w-[200px]">
           {getFactorNameBySlug(factorData, scoreType)}
