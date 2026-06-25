@@ -44,14 +44,14 @@ function ModuleHubCard({
           <div className="flex flex-wrap gap-2">
             {districtCount != null && districtCount > 0 && (
               <Tag variation="filled">
-                {t('insightsAcrossDivisions', { count: districtCount })}
+                {t('insights', { count: districtCount })}
               </Tag>
             )}
             {veryHighRiskCount != null &&
               veryHighRiskCount > 0 &&
               !isLoading && (
                 <Tag variation="filled" fillColor="#FFF4F4" textColor="red">
-                  {t('veryHighRiskDivisions', { count: veryHighRiskCount })}
+                  {t('veryHighRiskCount', { count: veryHighRiskCount })}
                 </Tag>
               )}
             {isLoading && (
@@ -89,9 +89,9 @@ export default function StatePage() {
         <Text variant="heading3xl" fontWeight="bold">
           {t('heading', { stateName: stateName(state.slug, state.name) })}
         </Text>
-        <Text variant="bodyLg">{t('intro')}</Text>
+        <Text variant="bodyLg">{t('description')}</Text>
         <Text variant="bodyLg" fontWeight="semibold">
-          {t('tagline')}
+          {t('emptyPrompt')}
         </Text>
       </div>
       <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 ">
@@ -125,13 +125,13 @@ export default function StatePage() {
           </Text>
 
           <Text variant="bodyMd" fontWeight="bold" className="text-textMedium">
-            {t('notes.heatPilot.label')}
+            {t('notes.heat.label')}
             <Text
               variant="bodyMd"
               fontWeight="regular"
               className="pl-1 text-textMedium"
             >
-              {t('notes.heatPilot.description')}
+              {t('notes.heat.description')}
             </Text>
           </Text>
         </div>

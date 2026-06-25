@@ -45,7 +45,7 @@ export const QuickLinks = () => {
           {t('description')}
         </Text>
         <Text variant="bodyLg" fontWeight="semibold" color="default">
-          {t('selectState')}
+          {t('emptyPrompt')}
         </Text>
       </div>
       <Carousel
@@ -109,7 +109,7 @@ export const QuickLinks = () => {
                         {activeModules.length > 0 && modules.length > 1 && (
                           <>
                             <Text variant="bodyMd" color="subdued">
-                              {t('analyticsAvailable')}
+                              {t('available')}
                             </Text>
                             <div className="flex flex-wrap gap-x-3 gap-y-1">
                               {activeModules.map((module: Module) => (
