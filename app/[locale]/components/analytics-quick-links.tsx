@@ -21,6 +21,7 @@ import { GraphQL } from '@/lib/api';
 import { routes } from '@/lib/routes';
 import styles from './analytics-quick-links.module.css';
 
+
 export const QuickLinks = () => {
   const t = useTranslations('home.analytics');
   const stateName = useStateName();
