@@ -35,7 +35,7 @@ export function MainNav({ prefLangCookie }: { prefLangCookie: string }) {
                   src={logo}
                   alt={t('homeAlt', { name: tSite('name') })}
                   priority
-                  className="h-6 w-auto"
+                  className="h-12 w-auto"
                 />
               )}
               <div className="flex flex-col gap-1"></div>

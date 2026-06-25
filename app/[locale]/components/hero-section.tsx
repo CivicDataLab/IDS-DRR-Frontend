@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { Text } from 'opub-ui';
+import { Divider, Text } from 'opub-ui';
 
 import { heroBackground, heroForeground } from '@/config/site';
 import { cn } from '@/lib/utils';
@@ -12,10 +12,14 @@ export const HeroSection = () => {
   return (
     <section
       className={cn(styles.HeroSection)}
-      style={heroBackground ? { backgroundImage: `url(${heroBackground})` } : undefined}
+      style={
+        heroBackground
+          ? { backgroundImage: `url(${heroBackground})` }
+          : undefined
+      }
       aria-labelledby="hero-heading"
     >
-      <div className=" container flex h-full w-full flex-col items-center justify-end self-center py-14">
+      <div className=" container flex h-full w-full flex-col items-center justify-end self-center py-10">
         <Text
           id="hero-heading"
           className=" sr-only"
@@ -25,12 +29,15 @@ export const HeroSection = () => {
           {tSite('name')}
         </Text>
         {heroForeground && (
-          <Image
-            src={heroForeground}
-            alt=""
-            sizes={`(min-width: 1024px) ${heroForeground.width}px, 100vw`}
-            className="block h-auto max-w-full lg:max-w-none"
-          />
+          <div className="mb-4 flex w-fit max-w-full flex-col items-stretch gap-10">
+            <Image
+              src={heroForeground}
+              alt=""
+              sizes={`(min-width: 1024px) ${heroForeground.width}px, 100vw`}
+              className="lg:max-w-90 block h-auto w-full max-w-full object-contain lg:h-40 lg:w-auto"
+            />
+            <Divider className="h-1 w-full" />
+          </div>
         )}
 
         <Text
