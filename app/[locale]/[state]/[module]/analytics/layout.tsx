@@ -18,12 +18,12 @@ export default async function ModuleAnalyticsLayout({
 }) {
   const { state, module } = await params;
 
-  if (!isValidModuleForState(state, module)) notFound();
-
   const statesListData = await getStatesList(module);
   const currentState = statesListData?.find((item) => item.slug === state);
 
   if (!currentState) notFound();
+  // The backend's module list for this state is authoritative.
+  if (!isValidModuleForState(currentState.modules, module)) notFound();
 
   return (
     <AnalyticsSideBarLayout

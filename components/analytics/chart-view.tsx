@@ -13,7 +13,7 @@ import {
   type IndicatorCategory,
   type State,
 } from '@/config/graphql/analaytics-queries';
-import { Factors } from '@/lib/analytics';
+import { isScoreIndicator } from '@/lib/analytics/factor-role';
 import { GraphQL } from '@/lib/api';
 import { toTitleCase } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
@@ -146,14 +146,14 @@ export const ChartView = ({
                 field_name: indicator,
                 color: '#222136',
                 label: toTitleCase(indicator).replaceAll('-', ' '),
-                ...(Factors.includes(indicator)
+                ...(isScoreIndicator(indicator)
                   ? {
                       value_mapping: value_mapping_list,
                     }
                   : {}),
               },
             ],
-      y_axis_label: Factors.includes(indicator)
+      y_axis_label: isScoreIndicator(indicator)
         ? t('chart.axes.score')
         : t('chart.axes.units'),
       // aggregate_type: 'SUM',

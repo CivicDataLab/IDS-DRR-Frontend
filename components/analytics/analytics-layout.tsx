@@ -24,6 +24,7 @@ import {
   type State,
 } from '@/config/graphql/analaytics-queries';
 import { features } from '@/config/site';
+import { getFactorRole } from '@/lib/analytics/factor-role';
 import { getRootIndicatorSlug } from '@/lib/analytics/root-indicator';
 import { getFactorNameBySlug, getLatestDate } from '@/lib/analytics/utils';
 import { GraphQL } from '@/lib/api';
@@ -169,8 +170,7 @@ export function AnalyticsMainLayout() {
     );
     const govtResponseNode = riskScoreRoot?.children?.find(
       (item: IndicatorCategory) =>
-        item?.slug === 'government-response' ||
-        item?.slug === 'heat-government-response'
+        getFactorRole(item?.slug ?? '') === 'government-response'
     );
     const children = govtResponseNode?.children || [];
     const monthly = children
@@ -187,8 +187,7 @@ export function AnalyticsMainLayout() {
     );
     const govtResponseNode = riskScoreRoot?.children?.find(
       (item: IndicatorCategory) =>
-        item?.slug === 'government-response' ||
-        item?.slug === 'heat-government-response'
+        getFactorRole(item?.slug ?? '') === 'government-response'
     );
     const children = govtResponseNode?.children || [];
     const cumulative = children

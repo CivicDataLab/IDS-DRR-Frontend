@@ -26,13 +26,8 @@ import { getLatestDate } from '@/lib/analytics/utils';
 import { GraphQL } from '@/lib/api';
 import { routes } from '@/lib/routes';
 import { cn, downloadStateReport } from '@/lib/utils';
-import {
-  Exposure,
-  FloodHazard,
-  GovtResponse,
-  RiskScore,
-  Vulnerability,
-} from '@/components/FactorIcons';
+import { getFactorIcon } from '@/lib/analytics/factor-icon';
+import { isRootRiskIndicator } from '@/lib/analytics/root-indicator';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import RadioButton from './RadioButton';
@@ -58,32 +53,6 @@ function isDescendantSelected(
   );
 }
 
-function getIcon(slug: string) {
-  switch (slug) {
-    case 'risk-score':
-      return <RiskScore color="#000000" />;
-    case 'heat-risk-score':
-      return <RiskScore color="#000000" />;
-    case 'vulnerability':
-      return <Vulnerability color="#000000" />;
-    case 'heat-vulnerability':
-      return <Vulnerability color="#000000" />;
-    case 'flood-hazard':
-      return <FloodHazard color="#000000" />;
-    case 'heat-hazard':
-      return <FloodHazard color="#000000" />;
-    case 'exposure':
-      return <Exposure color="#000000" />;
-    case 'heat-exposure':
-      return <Exposure color="#000000" />;
-    case 'government-response':
-      return <GovtResponse color="#000000" />;
-    case 'heat-government-response':
-      return <GovtResponse color="#000000" />;
-    default:
-      return <RiskScore color="#000000" />;
-  }
-}
 
 export function FactorList({ currentState }: { currentState: State }) {
   const t = useTranslations('analytics');
@@ -415,9 +384,7 @@ const NestedSidebarItem: React.FC<{
   indicator: string | null;
   branchSlugs: Set<string>;
 }> = ({ node, level, indicator, branchSlugs }) => {
-  const [isExpanded, setIsExpanded] = useState(
-    node.slug === 'risk-score' || node.slug === 'heat-risk-score'
-  );
+  const [isExpanded, setIsExpanded] = useState(isRootRiskIndicator(node.slug));
   const [, setIndicatorSelected] = useQueryState('indicator');
   const isActive = node.slug === indicator;
   const hasChildren = node.children && node.children.length > 0;
@@ -470,7 +437,7 @@ const NestedSidebarItem: React.FC<{
           )}
         >
           <div className="relative">
-            <div className="group-hover:hidden">{getIcon(node.slug)}</div>
+            <div className="group-hover:hidden">{getFactorIcon(node.slug)}</div>
             {isBranch ? (
               <div className="hidden group-hover:block">
                 <Button

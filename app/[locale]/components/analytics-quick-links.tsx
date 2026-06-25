@@ -20,12 +20,6 @@ import { getActiveModules } from '@/lib/analytics/module-config';
 import { cn } from '@/lib/utils';
 import styles from './analytics-quick-links.module.css';
 
-function moduleTextClass(slug: string) {
-  if (slug === 'flood') return 'text-textInteractive';
-  if (slug === 'heat') return 'text-textCritical';
-  return 'text-textDefault';
-}
-
 export const QuickLinks = () => {
   const t = useTranslations('home.analytics');
   const stateName = useStateName();
@@ -122,6 +116,11 @@ export const QuickLinks = () => {
                                 <span
                                   key={module.slug}
                                   className="inline-flex items-center gap-1"
+                                  style={
+                                    module.color
+                                      ? { color: module.color }
+                                      : undefined
+                                  }
                                 >
                                   {module.icon && (
                                     <Image
@@ -130,12 +129,7 @@ export const QuickLinks = () => {
                                       className="h-4 w-4 shrink-0 object-contain"
                                     />
                                   )}
-                                  <Text
-                                    variant="bodyMd"
-                                    className={moduleTextClass(module.slug)}
-                                  >
-                                    {module.name}
-                                  </Text>
+                                  <Text variant="bodyMd">{module.name}</Text>
                                 </span>
                               ))}
                             </div>

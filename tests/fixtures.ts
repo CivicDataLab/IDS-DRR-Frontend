@@ -17,6 +17,7 @@ export const makeState = (overrides: Partial<State> = {}): State => ({
   bounds: null,
   child_type: null,
   resource_id: '',
+  modules: [],
   time_periods: [],
   latest_time_period: null,
   ...overrides,

@@ -81,9 +81,6 @@ jest.mock('@/lib/utils', () => ({
   toTitleCase: jest.fn((str) => str.charAt(0).toUpperCase() + str.slice(1)),
 }));
 
-jest.mock('@/lib/analytics', () => ({
-  Factors: ['risk-score', 'exposure', 'vulnerability'],
-}));
 
 jest.mock('@/config/graphql/analaytics-queries', () => ({
   ANALYTICS_INDICATORS_BY_CATEGORY: 'mock-query',

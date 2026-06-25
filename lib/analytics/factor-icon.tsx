@@ -7,25 +7,22 @@ import {
   RiskScore,
   Vulnerability,
 } from '@/components/FactorIcons';
+import { type FactorRole, getFactorRole } from '@/lib/analytics/factor-role';
 
+const ICON_BY_ROLE = {
+  'risk-score': RiskScore,
+  hazard: FloodHazard,
+  exposure: Exposure,
+  vulnerability: Vulnerability,
+  'government-response': GovtResponse,
+} satisfies Record<FactorRole, typeof RiskScore>;
+
+/**
+ * Icon for an indicator, keyed by its canonical factor role (hazard-agnostic).
+ * Any hazard's `<module>-<factor>` slug resolves automatically; non-factor
+ * indicators fall back to the risk-score icon.
+ */
 export function getFactorIcon(slug: string, color = '#000000') {
-  switch (slug) {
-    case 'risk-score':
-    case 'heat-risk-score':
-      return <RiskScore color={color} />;
-    case 'vulnerability':
-    case 'heat-vulnerability':
-      return <Vulnerability color={color} />;
-    case 'flood-hazard':
-    case 'heat-hazard':
-      return <FloodHazard color={color} />;
-    case 'exposure':
-    case 'heat-exposure':
-      return <Exposure color={color} />;
-    case 'government-response':
-    case 'heat-government-response':
-      return <GovtResponse color={color} />;
-    default:
-      return <RiskScore color={color} />;
-  }
+  const Icon = ICON_BY_ROLE[getFactorRole(slug) ?? 'risk-score'];
+  return <Icon color={color} />;
 }

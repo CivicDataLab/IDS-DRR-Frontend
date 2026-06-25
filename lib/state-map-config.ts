@@ -1,5 +1,5 @@
 import { config } from 'ids-drr-branding';
-import type { HazardType, Module, State } from 'ids-drr-branding-types';
+import type { Module, State } from 'ids-drr-branding-types';
 
 /** Branding config for a state, matched by analytics route slug. */
 export function getStateBranding(slug: string | undefined): State | undefined {
@@ -9,7 +9,7 @@ export function getStateBranding(slug: string | undefined): State | undefined {
 
 function getStateModule(
   stateSlug: string | undefined,
-  moduleSlug: HazardType | string = 'flood'
+  moduleSlug: string = 'flood'
 ): Module | undefined {
   return getStateBranding(stateSlug)?.modules?.find(
     (hazardModule) => hazardModule.slug === moduleSlug
@@ -23,7 +23,7 @@ function getStateModule(
  */
 export function hasSubDistrictSupport(
   stateSlug: string | undefined,
-  moduleSlug: HazardType | string = 'flood'
+  moduleSlug: string = 'flood'
 ): boolean {
   const hazardModule = getStateModule(stateSlug, moduleSlug);
   return hazardModule?.withSubDistrictSupport ?? true;
