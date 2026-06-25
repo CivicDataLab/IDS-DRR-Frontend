@@ -6,20 +6,12 @@ import { render, screen } from '@testing-library/react';
 jest.mock('opub-ui');
 
 // Mock utils
-jest.mock('@/app/[locale]/[state]/analytics/utils/utils', () => ({
-  formatNumberToIndianSystem: jest.fn((value) => `formatted-${value}`),
+jest.mock('@/hooks/use-format-number', () => ({
+  useFormatNumber: () => (value: number | string) => `formatted-${value}`,
 }));
 
-// Mock config
-jest.mock('@/config/consts', () => ({
+jest.mock('@/lib/analytics', () => ({
   Factors: ['risk-score', 'exposure', 'vulnerability'],
-  RiskText: {
-    1: { indicatorText: 'Very Low Risk' },
-    2: { indicatorText: 'Low Risk' },
-    3: { indicatorText: 'Medium Risk' },
-    4: { indicatorText: 'High Risk' },
-    5: { indicatorText: 'Very High Risk' },
-  },
 }));
 
 describe('TableComponent', () => {

@@ -1,12 +1,19 @@
+'use client';
+
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import ReactECharts from 'echarts-for-react';
 import { parseAsString, useQueryState } from 'next-usequerystate';
+import { useTranslations } from 'next-intl';
 import { Spinner, Text } from 'opub-ui';
 
-import { Factors } from '@/config/consts';
-import { ANALYTICS_INDICATORS_BY_CATEGORY } from '@/config/graphql/analaytics-queries';
+import {
+  ANALYTICS_INDICATORS_BY_CATEGORY,
+  type IndicatorCategory,
+  type State,
+} from '@/config/graphql/analaytics-queries';
+import { Factors } from '@/lib/analytics';
 import { GraphQL } from '@/lib/api';
 import { toTitleCase } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
@@ -18,11 +25,14 @@ export const ChartView = ({
   DistrictDropDownOption,
   timeLimits,
 }: {
-  currentSelectedState: any;
+  currentSelectedState: State;
   RevCircleDropdownOptions: Option[];
   DistrictDropDownOption: Option[];
   timeLimits: string[];
 }) => {
+  const t = useTranslations('analytics');
+  const tCommon = useTranslations('common');
+  const tFactors = useTranslations('factors');
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -41,49 +51,49 @@ export const ChartView = ({
   const value_mapping_list = useMemo(
     () => [
       { key: '0.0', value: '' },
-      { key: '1.0', value: 'Very Low Risk' },
-      { key: '2.0', value: 'Low Risk' },
-      { key: '3.0', value: 'Medium Risk' },
-      { key: '4.0', value: 'High Risk' },
-      { key: '5.0', value: 'Very High Risk' },
+      { key: '1.0', value: t('risk.1') },
+      { key: '2.0', value: t('risk.2') },
+      { key: '3.0', value: t('risk.3') },
+      { key: '4.0', value: t('risk.4') },
+      { key: '5.0', value: t('risk.5') },
     ],
-    []
+    [t]
   );
 
   const riskscoreFields = useMemo(
     () => [
       {
         field_name: 'risk-score',
-        label: 'Risk Score',
+        label: tFactors('riskScore.name'),
         color: '#7B4DD9',
         value_mapping: value_mapping_list,
       },
       {
         field_name: 'exposure',
-        label: 'Exposure',
+        label: tFactors('exposure.name'),
         color: '#89672A',
         value_mapping: value_mapping_list,
       },
       {
         field_name: 'vulnerability',
-        label: 'Vulnerability',
+        label: tFactors('vulnerability.name'),
         color: '#3B8F44',
         value_mapping: value_mapping_list,
       },
       {
         field_name: 'flood-hazard',
-        label: 'Flood Hazard',
+        label: tFactors('hazard.name'),
         color: '#C41C8D',
         value_mapping: value_mapping_list,
       },
       {
         field_name: 'government-response',
-        label: 'Government Response',
+        label: tFactors('governmentResponse.name'),
         color: '#FB4E93',
         value_mapping: value_mapping_list,
       },
     ],
-    [value_mapping_list]
+    [value_mapping_list, tFactors]
   );
 
   const indicatorsQuery = useQuery({
@@ -102,9 +112,12 @@ export const ChartView = ({
   });
 
   useEffect(() => {
-    // If no time period is selected, avoid making a chart API call.
-    // The UI already shows a "Please select a time period" message in this state.
-    if (!timePeriod || timePeriod.length === 0) {
+    // Skip the chart API call when a required filter is missing.
+    if (
+      !timePeriod ||
+      timePeriod.length === 0 ||
+      (!districtCode && !revenueCode)
+    ) {
       setLoading(false);
       setChartData(null);
       return;
@@ -116,7 +129,7 @@ export const ChartView = ({
         indicator === 'risk-score' ? 'GROUPED_BAR_VERTICAL' : 'BAR_VERTICAL',
       x_axis_column: 'timeperiod',
       // time_column: 'timeperiod',
-      x_axis_label: 'Time Period',
+      x_axis_label: t('chart.axes.timePeriod'),
       y_axis_column:
         indicator === 'risk-score'
           ? riskscoreFields
@@ -132,7 +145,7 @@ export const ChartView = ({
                   : {}),
               },
             ],
-      y_axis_label: Factors.includes(indicator) ? 'Score' : 'Units',
+      y_axis_label: Factors.includes(indicator) ? t('chart.axes.score') : t('chart.axes.units'),
       // aggregate_type: 'SUM',
       show_legend: true,
       filters: [
@@ -174,7 +187,7 @@ export const ChartView = ({
       .catch((error) => {
         setLoading(false);
         setChartData(null);
-        console.log(error);
+        console.error('Failed to load chart data:', error);
       });
   }, [
     districtCode,
@@ -184,9 +197,16 @@ export const ChartView = ({
     currentSelectedState.resource_id,
     riskscoreFields,
     value_mapping_list,
+    t,
   ]);
 
-  const findNameBySlug = (data: any, slug: string): string | undefined => {
+  const findNameBySlug = (
+    data: IndicatorCategory | undefined,
+    slug: string
+  ): string | undefined => {
+    if (!data) {
+      return undefined;
+    }
     if (data.slug === slug) {
       return data.name;
     }
@@ -218,37 +238,50 @@ export const ChartView = ({
 
       {timePeriod.length === 0 ? (
         <div className="flex h-[calc(100dvh_-_400px)] flex-col place-content-center items-center">
-          <Text>Please select a time period</Text>
+          <Text>{t('chart.emptyPrompt.timePeriod')}</Text>
         </div>
       ) : (
         <div className="mt-2 w-full bg-surfaceDefault p-4 pb-0 pt-8 max-sm:p-2">
           <Text variant="headingLg" fontWeight="semibold">
             {`${
               findNameBySlug(
-                indicatorsQuery?.data?.indicatorsByCategory[0] || {},
+                indicatorsQuery?.data?.indicatorsByCategory[0],
                 indicator
               ) || indicator
             } `}
             {(revenueCode || districtCode) && '- '}
             {revenueCode &&
-              `${RevCircleDropdownOptions.find((option) => option.value === revenueCode)?.label} ${toTitleCase(currentSelectedState?.child_type)}, `}
+              `${t('subdivisionHeading', {
+                name:
+                  RevCircleDropdownOptions.find(
+                    (option) => option.value === revenueCode
+                  )?.label || '',
+                type: toTitleCase(currentSelectedState?.child_type),
+              })}, `}
             {districtCode &&
-              `${DistrictDropDownOption.find((option) => option.value === districtCode)?.label} District`}
+              t('divisionHeading', {
+                name:
+                  DistrictDropDownOption.find(
+                    (option) => option.value === districtCode
+                  )?.label || '',
+              })}
           </Text>
 
           {loading ? (
             <div className="flex h-[calc(100dvh_-_400px)] flex-col place-content-center items-center">
               <Spinner color="highlight" />
-              <Text>Loading...</Text>
+              <Text>{tCommon('loading')}</Text>
             </div>
           ) : districtCode || revenueCode ? (
             chartData == null || chartData['error'] ? (
               <div className="flex h-[calc(100dvh_-_400px)] flex-col place-content-center items-center">
                 <Text>
-                  Error:{' '}
-                  {chartData == null
-                    ? 'Failed to fetch the data'
-                    : chartData['error']}
+                  {t('chart.error', {
+                    message:
+                      chartData == null
+                        ? t('chart.fetchError')
+                        : chartData['error'],
+                  })}
                 </Text>
               </div>
             ) : (
@@ -262,7 +295,7 @@ export const ChartView = ({
             )
           ) : (
             <div className="flex h-[calc(100dvh_-_400px)] flex-col place-content-center items-center">
-              <Text>Please select a district or revenue code</Text>
+              <Text>{t('chart.emptyPrompt.region')}</Text>
             </div>
           )}
         </div>

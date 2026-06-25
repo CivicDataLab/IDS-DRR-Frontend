@@ -1,74 +1,72 @@
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
+import { getTranslations } from 'next-intl/server';
 import { Text } from 'opub-ui';
 
-import { DatasetCatalogText } from '@/config/consts';
+import { routes } from '@/lib/routes';
 
-export const DatasetCatalog = () => {
+export const DatasetCatalog = async () => {
+  const t = await getTranslations('home.datasets');
+  const tFactors = await getTranslations('factors');
   const Catalog = [
     {
-      name: 'Hazard',
+      key: 'hazard',
       icon: '/logo/Hazard.svg',
-      link: '/datasets?categories=Hazard',
-      description:
-        'Hazards or Potential of a physical event that may cause loss of life or property',
-      alt: 'hazard logo',
+      category: 'Hazard',
     },
     {
-      name: 'Exposure',
+      key: 'exposure',
       icon: '/logo/Exposure.svg',
-      link: '/datasets?categories=Exposure',
-      description:
-        'The situation of people, infrastructure, housing, production capacities, and other tangible human assets located in hazard-prone areas',
-      alt: 'exposure logo',
+      category: 'Exposure',
     },
     {
-      name: 'Vulnerability',
+      key: 'vulnerability',
       icon: '/logo/Vulnerability.svg',
-      link: '/datasets?categories=Vulnerability',
-      description:
-        'Physical, Social, Economic, and Environmental vulnerabilities which increase susceptibility of an area or a community to impact of hazards',
-      alt: 'vulnerability logo',
+      category: 'Vulnerability',
     },
     {
-      name: 'Government Response',
+      key: 'governmentResponse',
       icon: '/logo/Government_Response.svg',
-      link: '/datasets?categories=Government+Response',
-      description:
-        'Government Response with respect to capacities or resources that can reduce the level of risk, or the effects of disasters',
-      alt: 'government response logo',
+      category: 'Government Response',
     },
-  ];
+  ] as const;
   return (
     <section
       className="flex w-full flex-col gap-9 px-5 py-6 lg:px-6 lg:py-20"
-      aria-label="Catalog of available datasets"
+      aria-labelledby="home-datasets-heading"
     >
       <div className="container flex flex-col gap-4 ">
-        <Text variant="heading3xl" fontWeight="bold" color="default" as="h2">
-          Dataset Catalog
+        <Text
+          id="home-datasets-heading"
+          variant="heading3xl"
+          fontWeight="bold"
+          color="default"
+          as="h2"
+        >
+          {t('heading')}
         </Text>
         <Text variant="bodyLg" fontWeight="regular" color="default">
-          {DatasetCatalogText}
+          {t('description')}
         </Text>
       </div>
       <div className="container grid grid-cols-1 gap-8 lg:grid-cols-2">
-        {Catalog.map((item, index) => (
+        {Catalog.map((item) => (
           <div
-            key={index}
-            // className="flex rounded-2 bg-surfaceDefault p-6 shadow-elementCard"
+            key={item.key}
             className="flex h-full min-h-[150px] rounded-2 bg-surfaceDefault p-6 shadow-elementCard"
           >
             <Link
-              href={item.link}
+              href={routes.datasets({ category: item.category })}
               className=" flex items-center gap-4 no-underline"
             >
-              <Image src={item.icon} alt={item.alt} width={66} height={66} />
+              <Image src={item.icon} alt="" width={66} height={66} />
               <div className=" flex flex-col justify-center gap-2">
                 <Text variant="headingMd" as="h4">
-                  {item.name}
+                  {tFactors(`${item.key}.name`)}
                 </Text>
-                <Text variant="bodySm">{item.description}</Text>
+                <Text variant="bodySm">
+                  {tFactors(`${item.key}.description`)}
+                </Text>
               </div>
             </Link>
           </div>

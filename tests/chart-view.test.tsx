@@ -2,6 +2,8 @@ import React from 'react';
 import { ChartView } from '@/app/[locale]/[state]/analytics/components/chart-view';
 import { act, render, screen, waitFor } from '@testing-library/react';
 
+import { makeState } from './fixtures';
+
 // ----------------------
 // Helpers
 // ----------------------
@@ -79,7 +81,7 @@ jest.mock('@/lib/utils', () => ({
   toTitleCase: jest.fn((str) => str.charAt(0).toUpperCase() + str.slice(1)),
 }));
 
-jest.mock('@/config/consts', () => ({
+jest.mock('@/lib/analytics', () => ({
   Factors: ['risk-score', 'exposure', 'vulnerability'],
 }));
 
@@ -95,16 +97,14 @@ jest.mock('@/lib/api', () => ({
 // Test Suite
 // ----------------------
 describe('ChartView', () => {
-  const mockCurrentSelectedState = { code: 'AS', name: 'Assam' };
+  const mockCurrentSelectedState = makeState({ code: 'AS', name: 'Assam' });
   const mockRevCircleDropdownOptions = [
     { label: 'Revenue Circle A', value: 'RC001' },
   ];
   const mockDistrictDropDownOption = [
     { label: 'District 1', value: 'DIST001' },
   ];
-  const mockTimeLimits = {
-    data: { getDataTimePeriods: [{ value: '2023_08' }] },
-  };
+  const mockTimeLimits = ['2023_08'];
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -161,6 +161,11 @@ describe('ChartView', () => {
   });
 
   it('shows loading state', async () => {
+    jest
+      .requireMock('next-usequerystate')
+      .useQueryState.mockImplementation(
+        setupQueryState({ 'district-code': ['DIST001', mockSetDistrictCode] })
+      );
     (global.fetch as jest.Mock).mockImplementation(
       () => new Promise(() => undefined)
     );
@@ -179,6 +184,9 @@ describe('ChartView', () => {
   });
 
   it('shows error state', async () => {
+    // The component logs the failure via console.error; silence that in
+    // this test since we're exercising the failure path deliberately.
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     jest
       .requireMock('next-usequerystate')
       .useQueryState.mockImplementation(
@@ -203,6 +211,7 @@ describe('ChartView', () => {
     expect(
       await screen.findByText(/Error: Failed to fetch/i)
     ).toBeInTheDocument();
+    errorSpy.mockRestore();
   });
 
   it('sends correct payload in fetch', async () => {

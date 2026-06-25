@@ -3,14 +3,25 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useLockBody } from '@/hooks/use-lock-body';
+import { useStateName } from '@/hooks/use-state-name';
 import { parseAsString, useQueryState } from 'next-usequerystate';
+import { useTranslations } from 'next-intl';
 import { Button, Icon, Menu, Text } from 'opub-ui';
 
-import { cn, copyCurrentURL, downloadStateReport } from '@/lib/utils';
+import {
+  type Indicator,
+  type State,
+} from '@/config/graphql/analaytics-queries';
+import { features } from '@/config/site';
+import { routes } from '@/lib/routes';
+import { type JsonScalar } from '@/lib/types';
+import { cn, downloadStateReport } from '@/lib/utils';
+import { useCopyURL } from '@/hooks/use-copy-url';
 import Icons from '@/components/icons';
 import { getLatestDate } from '../utils/utils';
 import { OutputWindowComponent } from './analytics-layout';
 import { ChartView } from './chart-view';
+import { AboutIndicator } from './default-output-window';
 import { FactorList } from './factor-list';
 import { FilterComp } from './filter-component';
 import { MapComponent } from './map-component';
@@ -31,23 +42,29 @@ export function AnalyticsMobileLayout({
   districtGeographiesData,
   revenueGeographiesData,
   timePeriods,
-  indicatorsData,
+  mapIndicatorsData,
+  aboutIndicatorsData,
   tableData,
   currentSelectedState,
   statesList,
 }: {
   timePeriod: string;
   indicator: string;
-  mapData: any;
-  revenueMapData: any;
-  districtGeographiesData: any;
-  revenueGeographiesData: any;
+  mapData: JsonScalar;
+  revenueMapData: JsonScalar;
+  districtGeographiesData: JsonScalar;
+  revenueGeographiesData: JsonScalar;
   timePeriods: string[];
-  indicatorsData: any;
-  tableData: any;
-  currentSelectedState: any;
-  statesList: Array<any>;
+  mapIndicatorsData: { data?: { indicators: Indicator[] } } | undefined;
+  aboutIndicatorsData: { data?: { indicators: Indicator[] } } | undefined;
+  tableData: JsonScalar;
+  currentSelectedState: State;
+  statesList: State[];
 }) {
+  const t = useTranslations('analytics');
+  const tCommon = useTranslations('common');
+  const stateName = useStateName();
+  const copyURL = useCopyURL();
   //Remove default page scroll to make only the content scrollable
   useLockBody();
 
@@ -64,25 +81,29 @@ export function AnalyticsMobileLayout({
   const buttons = [
     {
       icon: Icons.IconMap,
-      title: 'Map',
+      title: t('views.map'),
       value: 'map',
       disabled: false,
     },
-    {
-      icon: Icons.IconChartBar,
-      title: 'Chart',
-      value: 'chart',
-      disabled: false,
-    },
+    ...(features.chart
+      ? [
+          {
+            icon: Icons.IconChartBar,
+            title: t('views.chart'),
+            value: 'chart',
+            disabled: false,
+          },
+        ]
+      : []),
     {
       icon: Icons.IconTableAlias,
-      title: 'Table',
+      title: t('views.table'),
       value: 'table',
       disabled: false,
     },
     {
       icon: Icons.IconDots,
-      title: 'More',
+      title: t('views.more'),
       value: 'more',
       disabled: false,
     },
@@ -97,8 +118,8 @@ export function AnalyticsMobileLayout({
     searchParams.get('revenue-code') || searchParams.get('district-code');
 
   // Initialize dropdown options
-  let RevCircleDropdownOptions: Option[] = [{ label: '', value: '' }];
-  let DistrictDropDownOption: Option[] = [{ label: '', value: '' }];
+  const RevCircleDropdownOptions: Option[] = [{ label: '', value: '' }];
+  const DistrictDropDownOption: Option[] = [{ label: '', value: '' }];
 
   // Populate district dropdown options
   if (districtGeographiesData.data && !districtGeographiesData.isFetching) {
@@ -114,13 +135,13 @@ export function AnalyticsMobileLayout({
 
   // Populate revenue circle dropdown options
   if (revenueGeographiesData.data && !revenueGeographiesData.isFetching) {
-    let rawData = revenueGeographiesData?.data?.getDistrictRevCircle;
+    const rawData = revenueGeographiesData?.data?.getDistrictRevCircle;
     if (rawData) {
       for (const revenueCircle in rawData) {
         const revenueCircles = rawData[revenueCircle];
         revenueCircles.forEach(
           (
-            circle: any
+            circle: JsonScalar
             //   {
             //   'revenue-circle': string;
             //   code: string;
@@ -129,7 +150,7 @@ export function AnalyticsMobileLayout({
           ) => {
             RevCircleDropdownOptions.push({
               label:
-                circle[currentSelectedState.child_type] ||
+                circle[currentSelectedState.child_type ?? ''] ||
                 circle['revenue-circle'],
               value: circle.code,
               districtCode: circle.district_code,
@@ -143,7 +164,7 @@ export function AnalyticsMobileLayout({
   // Sync time period from URL on component mount
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    let processedTime = getLatestDate(
+    const processedTime = getLatestDate(
       params.get('time-period')?.split(',') || []
     )?.split('-');
 
@@ -159,8 +180,33 @@ export function AnalyticsMobileLayout({
   const [activeButton, setActiveButton] = useState(view);
   // const [activeButton, setActiveButton] = useState(''); // State for managing active buttons
   const [filteredTableData] = useState(tableData.data?.tableData);
+  const [isOutputPaneOpen, setIsOutputPaneOpen] = useState(true);
 
-  const RenderView = ({ selectedView }: any) => {
+  const indicatorListForAbout = React.useMemo(() => {
+    const raw = aboutIndicatorsData?.data?.indicators || [];
+    const uniqueBySlug = new Map<string, Indicator>();
+
+    for (const item of raw) {
+      if (!item?.slug) continue;
+      if (!uniqueBySlug.has(item.slug)) {
+        uniqueBySlug.set(item.slug, item);
+      }
+    }
+
+    return Array.from(uniqueBySlug.values()).map((item) => ({
+      title: item?.name,
+      slug: item?.slug,
+      description: item?.short_description || item?.long_description || tCommon('na'),
+    }));
+  }, [aboutIndicatorsData?.data?.indicators, tCommon]);
+
+  // Re-open mobile output pane when selection/filters change in map view
+  React.useEffect(() => {
+    if (view !== 'map') return;
+    setIsOutputPaneOpen(true);
+  }, [view, indicator, timePeriodSelected, region]);
+
+  const RenderView = ({ selectedView }: { selectedView: string }) => {
     switch (selectedView) {
       case 'map':
         return (
@@ -168,7 +214,7 @@ export function AnalyticsMobileLayout({
             indicator={indicator}
             mapDataloading={mapData?.isFetching}
             revenueMapDataLoading={revenueMapData?.isFetching}
-            indicatorsData={indicatorsData?.data?.indicators}
+            indicatorsData={mapIndicatorsData?.data?.indicators}
             setRegion={setDistrictCode}
             setRevenueRegion={setRevenueCode}
             revenueMapData={revenueMapData?.data?.revCircleMapData}
@@ -217,7 +263,7 @@ export function AnalyticsMobileLayout({
         )}
       >
         {/* <div className="flex w-full flex-grow flex-col overflow-y-scroll"> */}
-        <div className="fixed top-[56px] z-9 flex h-[8vh] w-full items-center bg-[#FFFF] px-4 sm:h-[6%] sm:px-6 md:h-[5%] md:px-8">
+        <div className="fixed top-[56px] z-9 flex h-[8vh] min-h-[56px] w-full items-center bg-[#FFFF] px-4 sm:h-[6%] sm:px-6 md:h-[5%] md:px-8">
           <FactorList currentState={currentSelectedState} />
           <FilterComp
             timePeriod={timePeriod}
@@ -225,15 +271,16 @@ export function AnalyticsMobileLayout({
             districtGeographiesData={districtGeographiesData}
             revenueGeographiesData={revenueGeographiesData}
             currentSelectedState={currentSelectedState}
+            monthMulti={view === 'chart'}
             // getDistrictOptions={getDistrictOptions}
           />
         </div>
 
         {mapData.isLoading ? (
-          <div className="p-4 text-center">Loading map data...</div>
+          <div className="p-4 text-center">{t('map.loading')}</div>
         ) : mapData.isError || revenueMapData.isError ? (
           <div className="text-red-500 p-4 text-center">
-            Error loading map data.
+            {t('map.error')}
           </div>
         ) : (
           <RenderView selectedView={view} />
@@ -241,12 +288,41 @@ export function AnalyticsMobileLayout({
       </div>
 
       {/* <OutputWindowComponent /> */}
-      {region !== null && region.length > 0 && view === 'map' && (
-        <OutputWindowComponent
-          currentState={currentSelectedState}
-          time_period={timePeriodSelected}
-        />
+      {view === 'map' && !isOutputPaneOpen && (
+        <div className="absolute right-6 top-[140px] z-[1001]">
+          <Button
+            kind="tertiary"
+            onClick={() => setIsOutputPaneOpen(true)}
+            className="border flex h-8 w-8 items-center justify-center border-borderSubdued bg-surfaceDefault shadow-basicSm"
+            aria-label={t('detail.open')}
+          >
+            <Icon source={Icons.layoutSidebarRightCollapse} />
+          </Button>
+        </div>
       )}
+
+      {view === 'map' &&
+        isOutputPaneOpen &&
+        (region !== null && region.length > 0 ? (
+          <OutputWindowComponent
+            currentState={currentSelectedState}
+            time_period={timePeriodSelected}
+            onClose={() => setIsOutputPaneOpen(false)}
+          />
+        ) : (
+          <div className="fixed bottom-[8vh] left-0 right-0 z-[1000] max-h-[70vh] overflow-y-auto border-t-1 border-solid border-borderSubdued bg-surfaceDefault px-4 py-3">
+            <div className="mb-2 flex justify-end">
+              <Button
+                onClick={() => setIsOutputPaneOpen(false)}
+                kind="tertiary"
+                aria-label={t('detail.close')}
+              >
+                <Icon source={Icons.cross} />
+              </Button>
+            </div>
+            <AboutIndicator IndicatorData={indicatorListForAbout} />
+          </div>
+        ))}
 
       <div className="sticky bottom-0 flex h-[8vh] w-full flex-row justify-between gap-1 bg-baseIndigoSolid1 p-1 sm:p-2 md:p-3">
         {buttons.map((button, index) =>
@@ -287,28 +363,32 @@ export function AnalyticsMobileLayout({
               }
               items={[
                 {
-                  content: 'Share',
+                  content: t('actions.share.label'),
                   icon: Icons.share,
                   // onAction: toggleShareOptions,
-                  onAction: () => {
-                    copyCurrentURL();
-                  },
+                  onAction: () => copyURL(),
                 },
-                {
-                  content: 'Download Report',
-                  icon: Icons.download,
-                  onAction: () => {
-                    const confirmation = window.confirm(
-                      `Do you want to download the report for "${currentSelectedState.name}". `
-                    );
-                    if (confirmation) {
-                      downloadStateReport(
-                        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentSelectedState.code}&time_period=${timePeriodSelected}`,
-                        `${currentSelectedState.name}-Report`
-                      );
-                    }
-                  },
-                },
+                ...(features.reports
+                  ? [
+                      {
+                        content: t('actions.download.label'),
+                        icon: Icons.download,
+                        onAction: () => {
+                          const confirmation = window.confirm(
+                            t('actions.download.confirm', {
+                              name: stateName(currentSelectedState.slug, currentSelectedState.name),
+                            })
+                          );
+                          if (confirmation) {
+                            downloadStateReport(
+                              routes.report(currentSelectedState.code, timePeriodSelected),
+                              `${currentSelectedState.name}-Report`
+                            );
+                          }
+                        },
+                      },
+                    ]
+                  : []),
               ]}
             />
           ) : (

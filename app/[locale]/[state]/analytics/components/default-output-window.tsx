@@ -1,4 +1,10 @@
 import React from 'react';
+import { useTranslations } from 'next-intl';
+import { Button, Icon, Text } from 'opub-ui';
+
+import { type Indicator } from '@/config/graphql/analaytics-queries';
+import { docsLink, userManualLink } from '@/config/site';
+import { cn } from '@/lib/utils';
 import {
   Ellipse,
   Exposure,
@@ -6,37 +12,33 @@ import {
   GovtResponse,
   RiskScore,
   Vulnerability,
-} from '@/public/FactorIcons';
-import { Divider, Icon, ProgressBar, Text } from 'opub-ui';
-
-import { learnMoreLink, RiskColorMap } from '@/config/consts';
-import { cn, handleRedirect } from '@/lib/utils';
+} from '@/components/FactorIcons';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
-import NavLink from '@/components/nav-link';
-import { OutputWindowHeader } from './output-window';
+import styles from './styles.module.scss';
 
 export function DefaultWindow({
-  chartData,
   indicatorDescriptions,
-  indicator,
-  boundary,
-}: any) {
+  onClose,
+}: {
+  indicatorDescriptions: Indicator[] | undefined;
+  onClose?: () => void;
+  chartData?: unknown[];
+  indicator?: string;
+  boundary?: string;
+}) {
+  const t = useTranslations('analytics.detail');
+  const tCommon = useTranslations('common');
   const list: { title: string; slug: string; description: string }[] = [];
 
   if (indicatorDescriptions) {
-    indicatorDescriptions.map(
-      (item: {
-        name: string;
-        slug: string;
-        long_description?: string;
-        short_description: string;
-      }) => {
+    indicatorDescriptions.forEach(
+      (item) => {
         list.push({
           title: item?.name,
           slug: item?.slug,
           description:
-            item?.short_description || item?.long_description || 'NA',
+            item?.short_description || item?.long_description || tCommon('na'),
         });
       }
     );
@@ -49,15 +51,21 @@ export function DefaultWindow({
           className={cn(
             'p-4 pr-8',
             'bg-surfaceDefault shadow-basicMd',
-            'shadow-inset z-1 hidden w-[500px] shrink-0 md:block',
-            'border-r-1 border-solid border-borderSubdued',
-            'overflow-y-auto'
+            'shadow-inset z-1 hidden min-w-[420px] max-w-[450px] shrink-0 md:block',
+            'overflow-y-auto border-r-1 border-solid border-borderSubdued',
+            styles.Overlay,
+            styles.OverlayActive
           )}
         >
-          <OutputWindowHeader factorData={list} indicator={indicator} />
+          {/* State-level header with only close button (no icon/title) */}
+          <div className="mb-1 flex items-start justify-end ">
+            <Button onClick={onClose} kind="tertiary" aria-label={t('close')}>
+              <Icon source={Icons.cross} />
+            </Button>
+          </div>
 
-          <Divider className="mt-2" />
-          <RenderSidebarContent />
+          {/* <Divider className="mt-2" /> */}
+          <AboutIndicator IndicatorData={list} />
         </aside>
       </MediaRendering>
       <MediaRendering minWidth={null} maxWidth="1023">
@@ -67,101 +75,14 @@ export function DefaultWindow({
       </MediaRendering>
     </>
   );
-
-  function RenderSidebarContent() {
-    return (
-      <>
-        <div className="mb-5 flex flex-col">
-          <Text variant="headingMd" fontWeight="bold" className=" mt-3">
-            {boundary === 'district'
-              ? 'HIGH RISK DISTRICTS'
-              : 'HIGH RISK REVENUE CIRCLES'}
-          </Text>
-          {chartData && (
-            <div className="flex flex-col pt-3">
-              {chartData
-                .slice(0, 5)
-                .map((item: any, index: React.Key | null | undefined): any => (
-                  <DistrictBar
-                    key={index}
-                    district={item[boundary]}
-                    value={item[indicator]['value']}
-                  />
-                ))}
-            </div>
-          )}
-          <br />
-
-          <div className="mt-2">
-            {list.map((indicator, index) => (
-              <IndicatorDescription
-                key={index}
-                title={indicator.title}
-                slug={indicator.slug}
-                desc={indicator.description}
-              />
-            ))}
-          </div>
-
-          <br />
-          <br />
-          <a
-            className="flex flex-row items-center gap-2"
-            href={learnMoreLink}
-            onClick={(event: any) => handleRedirect(event, learnMoreLink)}
-          >
-            <Icon source={Icons.link} color="interactive" />
-            <Text
-              variant="headingMd"
-              fontWeight="bold"
-              // className="mt-4"
-              color="interactive"
-            >
-              LEARN MORE
-            </Text>
-          </a>
-        </div>
-      </>
-    );
-  }
 }
 
-export const DistrictBar = ({
-  district,
-  value,
+export const AboutIndicator = ({
+  IndicatorData,
 }: {
-  district: string;
-  value: string;
+  IndicatorData: { title: string; slug: string; description: string }[];
 }) => {
-  const score = parseInt(value);
-  return (
-    <div className="mb-1 flex items-center gap-2 pl-20">
-      <div className=" basis-1/4">
-        <Text variant="bodySm" fontWeight="medium">
-          {district}
-        </Text>
-      </div>
-
-      <div className=" basis-2/4">
-        <ProgressBar
-          size="small"
-          customColor={RiskColorMap[score]}
-          value={(score / 5) * 100}
-        />
-      </div>
-    </div>
-  );
-};
-
-export const IndicatorDescription = ({
-  title,
-  slug,
-  desc,
-}: {
-  title: string;
-  slug: string;
-  desc: string;
-}) => {
+  const t = useTranslations('analytics.about');
   const IconMap: { [key: string]: React.ReactNode } = {
     'risk-score': <RiskScore color={'#000000'} />,
     vulnerability: <Vulnerability color={'#000000'} />,
@@ -169,37 +90,94 @@ export const IndicatorDescription = ({
     exposure: <Exposure color={'#000000'} />,
     'government-response': <GovtResponse color={'#000000'} />,
   };
-
   return (
-    <div className="flex flex-col">
-      <div className="mb-2 mt-3 flex items-center">
-        {IconMap[slug] || <Ellipse color="#000000" />}
-        <Text fontWeight="bold" variant="headingMd" className="pl-2">
-          {title}
+    <div className="mx-1 mb-5 flex flex-col">
+      <Text variant="headingMd" fontWeight="bold" className="mb-5 uppercase">
+        {t('heading')}
+      </Text>
+      <div className="flex flex-row items-start gap-2">
+        <div className="flex flex-col">
+          <Text variant="headingMd" fontWeight="semibold">
+            {t('overallRisk')}
+          </Text>
+          <Text color="subdued">{t('description')}</Text>
+        </div>
+        <div className="flex h-full items-start justify-start">
+          <Icon
+            source={Icons.IconSwimming}
+            // color={'default'}
+            stroke={2}
+            size={28}
+            className="text-[#000]"
+          />
+        </div>
+      </div>
+      {IndicatorData.length > 1 && (
+        <Text className="my-4" variant="bodyLg">
+          {t('calculation')}
         </Text>
-        {slug !== 'risk-score' && (
-          <NavLink
-            className="ml-auto flex gap-2"
-            href={`/datasets/?category=${title}`}
+      )}
+      <div className="flex flex-col items-start gap-4 p-3">
+        {IndicatorData.slice(1)?.map((indicator, index) => (
+          <div
+            key={indicator.slug ?? index}
+            className="flex flex-row items-start gap-2"
           >
-            <Icon source={Icons.link} color="interactive" />
-            <Text color="interactive">Link to the datasets</Text>
-          </NavLink>
+            <Text variant="headingMd" fontWeight="semibold">
+              {index + 1 >= 1 && index + 1 < 10
+                ? `0${index + 1}.`
+                : `${index + 1}.`}
+            </Text>
+            <div className="flex flex-row items-start gap-4">
+              <div className="flex flex-col gap-1">
+                <Text variant="headingMd" fontWeight="semibold">
+                  {indicator.title}
+                </Text>
+                <Text color="subdued">{indicator.description}</Text>
+              </div>
+              <div className="flex h-full items-start justify-start">
+                {IconMap[indicator.slug] || <Ellipse color="#000000" />}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Read the user guide CTA */}
+      <div className="mt-4 flex w-full flex-col justify-end gap-4">
+        {userManualLink && (
+          <a
+            href={userManualLink}
+            target="_blank"
+            className="rounded-lg flex h-12 w-full items-center justify-between gap-2 rounded-2 bg-[#F6F6F7] px-3 py-3"
+          >
+            <Text
+              variant="bodyMd"
+              fontWeight="semibold"
+              className="text-[#3E7844]"
+            >
+              {t('userGuideLink')}
+            </Text>
+            <Icon source={Icons.IconArrowUpRight} className="text-[#3E7844]" />
+          </a>
+        )}
+        {docsLink && (
+          <a
+            href={docsLink}
+            target="_blank"
+            className="rounded-lg flex h-12 w-full items-center justify-between gap-2 rounded-2 bg-[#F6F6F7] px-3 py-3"
+          >
+            <Text
+              variant="bodyMd"
+              fontWeight="semibold"
+              className="text-[#3E7844]"
+            >
+              {t('docsLink')}
+            </Text>
+            <Icon source={Icons.IconArrowUpRight} className="text-[#3E7844]" />
+          </a>
         )}
       </div>
-      <Text>{desc}</Text>
-      {slug === 'government-response' && (
-        <a
-          className="mt-2 flex gap-2"
-          target="_blank"
-          href={
-            'https://superset.civicdatalab.in/superset/dashboard/flood-tenders-assam/ '
-          }
-        >
-          <Text color="interactive">View procurement data dashboard</Text>
-          <Icon source={Icons.externalLink} color="interactive" />
-        </a>
-      )}
     </div>
   );
 };

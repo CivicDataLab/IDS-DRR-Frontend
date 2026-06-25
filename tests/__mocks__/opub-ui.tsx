@@ -143,8 +143,86 @@ export const MultiMonthPicker = ({
 );
 
 export const Icon = ({ source, ...props }: any) => (
-  <span data-testid="icon" {...props} />
+  <span data-testid="icon" data-icon={source} {...props} />
 );
+
+export const SearchInput = ({
+  label,
+  placeholder,
+  onSubmit,
+  onClear,
+  onChange,
+  defaultValue,
+}: any) => (
+  <div>
+    <label>{label}</label>
+    <input
+      placeholder={placeholder}
+      aria-label={label}
+      defaultValue={defaultValue}
+      onChange={(e) => onChange?.(e.target.value)}
+    />
+    <button type="button" onClick={() => onSubmit?.('flood')}>
+      search
+    </button>
+    <button type="button" onClick={() => onClear?.('')}>
+      clear
+    </button>
+  </div>
+);
+
+export const Tag = ({ children, ...props }: any) => (
+  <span data-testid="tag" {...props}>
+    {children}
+  </span>
+);
+
+export const CheckboxGroup = ({ name, options, value, onChange }: any) => (
+  <div data-testid={`checkbox-group-${name}`}>
+    {options?.map((opt: { label: string; value: string }) => (
+      <label key={opt.value}>
+        <input
+          type="checkbox"
+          checked={value?.includes(opt.value)}
+          onChange={() => {
+            const next = value?.includes(opt.value)
+              ? value.filter((v: string) => v !== opt.value)
+              : [...(value || []), opt.value];
+            onChange(next);
+          }}
+        />
+        {opt.label}
+      </label>
+    ))}
+  </div>
+);
+
+export const Tray = ({ trigger, children, open }: any) => (
+  <div data-testid="tray" data-open={String(open)}>
+    {trigger}
+    {open ? children : null}
+  </div>
+);
+
+export const Pill = ({ children, onRemove }: any) => (
+  <span data-testid="pill">
+    {children}
+    <button type="button" aria-label="remove filter" onClick={onRemove}>
+      x
+    </button>
+  </span>
+);
+
+export const Breadcrumb = ({ children, className }: any) => (
+  <nav className={className}>{children}</nav>
+);
+export const BreadcrumbList = ({ children }: any) => <ol>{children}</ol>;
+export const BreadcrumbItem = ({ children }: any) => <li>{children}</li>;
+export const BreadcrumbLink = ({ href, children }: any) => (
+  <a href={href}>{children}</a>
+);
+export const BreadcrumbPage = ({ children }: any) => <span>{children}</span>;
+export const BreadcrumbSeparator = () => <span>/</span>;
 
 export const RadioGroup = ({
   children,
@@ -243,37 +321,81 @@ export const ProgressBar = ({ size, customColor, value }: any) => (
   </div>
 );
 
-export const Tooltip = ({ content, children }: any) => (
-  <div data-testid="tooltip">
-    {children}
-    <div data-testid="tooltip-content">{content}</div>
-  </div>
+export const Tooltip = Object.assign(
+  ({ content, children }: any) => (
+    <div data-testid="tooltip">
+      {children}
+      <div data-testid="tooltip-content">{content}</div>
+    </div>
+  ),
+  {
+    Provider: ({ children }: any) => <>{children}</>,
+  }
 );
+
+export const Toaster = () => <div data-testid="toaster" />;
 
 export const Accordion = ({
   children,
   type,
   defaultValue,
   collapsible,
+  value,
+  onValueChange,
 }: any) => (
   <div
     data-testid="accordion"
     data-type={type}
     data-default={defaultValue}
     data-collapsible={collapsible}
+    data-value={value}
+  >
+    {React.Children.map(children, (child) =>
+      React.isValidElement(child)
+        ? React.cloneElement(child as React.ReactElement, {
+            openValue: value ?? defaultValue,
+            onValueChange,
+          } as React.Attributes)
+        : child
+    )}
+  </div>
+);
+
+export const AccordionItem = ({
+  children,
+  value,
+  className,
+  openValue,
+  onValueChange,
+}: any) => (
+  <div data-testid="accordion-item" data-value={value} className={className}>
+    {React.Children.map(children, (child) =>
+      React.isValidElement(child)
+        ? React.cloneElement(child as React.ReactElement, {
+            itemValue: value,
+            openValue,
+            onValueChange,
+          } as React.Attributes)
+        : child
+    )}
+  </div>
+);
+
+export const AccordionTrigger = ({
+  children,
+  itemValue,
+  onValueChange,
+  openValue,
+}: any) => (
+  <button
+    type="button"
+    data-testid="accordion-trigger"
+    onClick={() =>
+      onValueChange?.(openValue === itemValue ? '' : itemValue)
+    }
   >
     {children}
-  </div>
-);
-
-export const AccordionItem = ({ children, value, className }: any) => (
-  <div data-testid="accordion-item" data-value={value} className={className}>
-    {children}
-  </div>
-);
-
-export const AccordionTrigger = ({ children }: any) => (
-  <button data-testid="accordion-trigger">{children}</button>
+  </button>
 );
 
 export const AccordionContent = ({ children, className }: any) => (
@@ -282,12 +404,57 @@ export const AccordionContent = ({ children, className }: any) => (
   </div>
 );
 
-export const Menu = ({ children, trigger }: any) => (
+export const IconButton = ({ onClick, disabled, children, icon: IconComp }: any) => (
+  <button type="button" onClick={onClick} disabled={disabled}>
+    {IconComp ? <span data-testid="icon-button-icon" /> : null}
+    {children}
+  </button>
+);
+
+export const Menu = ({ children, trigger, items }: any) => (
   <div data-testid="menu">
     {trigger}
+    {items?.map((item: { content: string; onAction?: () => void }, index: number) => (
+      <button key={index} type="button" onClick={item.onAction}>
+        {item.content}
+      </button>
+    ))}
     <div data-testid="menu-content">{children}</div>
   </div>
 );
+
+export const Drawer = ({ open, children }: any) =>
+  open ? <div data-testid="drawer">{children}</div> : null;
+
+export const DrawerContent = ({ children }: any) => <div>{children}</div>;
+export const DrawerHeader = ({ children, className }: any) => (
+  <div className={className}>{children}</div>
+);
+export const DrawerTitle = ({ children, className }: any) => (
+  <div className={className}>{children}</div>
+);
+export const DrawerDescription = ({ children, className }: any) => (
+  <div className={className}>{children}</div>
+);
+export const DrawerFooter = ({ children, className }: any) => (
+  <div className={className}>{children}</div>
+);
+export const DrawerClose = ({ children, onClick, asChild }: any) => {
+  if (asChild && React.isValidElement(children)) {
+    const child = children as React.ReactElement<{ onClick?: () => void }>;
+    return React.cloneElement(child, {
+      onClick: () => {
+        child.props.onClick?.();
+        onClick?.();
+      },
+    });
+  }
+  return (
+    <button type="button" onClick={onClick}>
+      {children}
+    </button>
+  );
+};
 
 export const Divider = ({ className }: any) => (
   <hr data-testid="divider" className={className} />

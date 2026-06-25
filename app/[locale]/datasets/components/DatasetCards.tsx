@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { Button, Tag, Text, Tooltip } from 'opub-ui';
 
-import { formatReferenceDate } from '@/lib/utils';
+import { routes } from '@/lib/routes';
+import { useFormatPeriod } from '@/hooks/use-format-period';
 
 interface MetadataItem {
   label: string;
@@ -27,6 +29,9 @@ interface Dataset {
 }
 
 const Cards = ({ data }: { data: Dataset }) => {
+  const t = useTranslations('datasets');
+  const tCommon = useTranslations('common');
+  const formatPeriod = useFormatPeriod();
   function getMetadataValue(data: Dataset, label: string): string | null {
     const metadataEntry = data.metadata.find(
       (entry) => entry.metadata_item.label === label
@@ -56,12 +61,16 @@ const Cards = ({ data }: { data: Dataset }) => {
 
   return (
     <div className="mb-6 border-b-2 border-solid border-baseGraySlateSolid4">
-      <Link href={`/datasets/${data.id}`} passHref>
-        <div className="w-full cursor-pointer rounded-1 bg-surfaceDefault p-4 shadow-elementCard">
+      <Link href={routes.datasetDetail(data.id)} passHref>
+        <article
+          aria-labelledby={`dataset-${data.id}-title`}
+          className="w-full cursor-pointer rounded-1 bg-surfaceDefault p-4 shadow-elementCard"
+        >
           <div>
             <div className="flex flex-col flex-wrap items-start gap-3 lg:flex-row lg:gap-6">
               <div className="flex  flex-col flex-wrap items-start gap-3 p-0 lg:w-2/5">
                 <Text
+                  id={`dataset-${data.id}-title`}
                   className="text-textSubdued"
                   variant="headingLg"
                   as="p"
@@ -76,7 +85,7 @@ const Cards = ({ data }: { data: Dataset }) => {
                   variant="headingSm"
                   fontWeight="medium"
                 >
-                  Source: {getMetadataValue(data, 'Source') || 'NA'}
+                  {t('labels.source')}{getMetadataValue(data, 'Source') || tCommon('na')}
                 </Text>
                 <span className="flex flex-col items-start gap-1">
                   <div className=" flex flex-col gap-2  lg:flex-row">
@@ -86,8 +95,7 @@ const Cards = ({ data }: { data: Dataset }) => {
                       variant="bodySm"
                       fontWeight="regular"
                     >
-                      Last Updated:{' '}
-                      {getMetadataValue(data, 'Last Updated') || 'NA'}
+                      {t('labels.lastUpdated')}{getMetadataValue(data, 'Last Updated') || tCommon('na')}
                     </Text>
                     <Text
                       color="default"
@@ -103,8 +111,7 @@ const Cards = ({ data }: { data: Dataset }) => {
                       variant="bodySm"
                       fontWeight="regular"
                     >
-                      Update Frequency:{' '}
-                      {getMetadataValue(data, 'Update Frequency') || 'NA'}
+                      {t('labels.updateFrequency')}{getMetadataValue(data, 'Update Frequency') || tCommon('na')}
                     </Text>
                   </div>
                   <Text
@@ -113,13 +120,10 @@ const Cards = ({ data }: { data: Dataset }) => {
                     variant="bodySm"
                     fontWeight="regular"
                   >
-                    Reference Period:{' '}
-                    {formatReferenceDate(
-                      getMetadataValue(data, 'Period From')
-                    ) || 'NA'}{' '}
-                    to{' '}
-                    {formatReferenceDate(getMetadataValue(data, 'Period To')) ||
-                      'NA'}
+                    {t('labels.referencePeriod')}{t('periodRange', {
+                      from: formatPeriod(getMetadataValue(data, 'Period From')),
+                      to: formatPeriod(getMetadataValue(data, 'Period To')),
+                    })}
                   </Text>
                 </span>
               </div>
@@ -151,7 +155,7 @@ const Cards = ({ data }: { data: Dataset }) => {
                         size="slim"
                         kind="tertiary"
                       >
-                        {showMore ? 'Show less' : 'Show more'}
+                        {showMore ? t('showLess') : t('showMore')}
                       </Button>
                     </div>
                   )}
@@ -188,7 +192,7 @@ const Cards = ({ data }: { data: Dataset }) => {
               )}
             </div>
           </div>
-        </div>
+        </article>
       </Link>
     </div>
   );

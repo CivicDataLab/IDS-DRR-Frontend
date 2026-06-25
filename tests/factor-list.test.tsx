@@ -1,16 +1,8 @@
 import React from 'react';
-import {
-  FactorList,
-  getIcon,
-} from '@/app/[locale]/[state]/analytics/components/factor-list';
-import {
-  Exposure,
-  FloodHazard,
-  GovtResponse,
-  RiskScore,
-  Vulnerability,
-} from '@/public/FactorIcons';
+import { FactorList } from '@/app/[locale]/[state]/analytics/components/factor-list';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+
+import { makeState } from './fixtures';
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
@@ -73,8 +65,17 @@ jest.mock('@/lib/api', () => ({
 // Mock @/lib/utils
 jest.mock('@/lib/utils', () => ({
   cn: (...classes: any[]) => classes.filter(Boolean).join(' '),
-  copyCurrentURL: jest.fn(),
   downloadStateReport: jest.fn(),
+}));
+
+jest.mock('@/hooks/use-copy-url', () => ({
+  useCopyURL: () => jest.fn(),
+}));
+
+// The download button is gated on features.reports; turn it on so the test
+// tree includes it.
+jest.mock('@/config/site', () => ({
+  features: { reports: true },
 }));
 
 // Mock @/components/icons
@@ -104,8 +105,8 @@ jest.mock('@/components/media-rendering', () => ({
   },
 }));
 
-// Mock @/public/FactorIcons
-jest.mock('@/public/FactorIcons', () => ({
+// Mock @/components/FactorIcons
+jest.mock('@/components/FactorIcons', () => ({
   RiskScore: ({ color }: any) => (
     <div data-testid="risk-score-icon" data-color={color} />
   ),
@@ -149,10 +150,10 @@ jest.mock('@/app/[locale]/[state]/analytics/utils/utils', () => ({
 }));
 
 describe('FactorList', () => {
-  const mockCurrentState = {
+  const mockCurrentState = makeState({
     code: 'AS',
     name: 'Assam',
-  };
+  });
 
   const mockIndicatorData = [
     {
@@ -342,7 +343,7 @@ describe('FactorList', () => {
       error: null,
     });
 
-    const differentState = { code: 'HP', name: 'Himachal Pradesh' };
+    const differentState = makeState({ code: 'HP', name: 'Himachal Pradesh' });
     render(<FactorList currentState={differentState} />);
 
     expect(screen.getByText('ACTIONS')).toBeInTheDocument();
@@ -369,34 +370,3 @@ describe('FactorList', () => {
   });
 });
 
-describe('getIcon', () => {
-  it('returns correct icon for risk-score', () => {
-    const icon = getIcon('risk-score');
-    expect(icon.type).toBe(RiskScore);
-  });
-
-  it('returns correct icon for vulnerability', () => {
-    const icon = getIcon('vulnerability');
-    expect(icon.type).toBe(Vulnerability);
-  });
-
-  it('returns correct icon for flood-hazard', () => {
-    const icon = getIcon('flood-hazard');
-    expect(icon.type).toBe(FloodHazard);
-  });
-
-  it('returns correct icon for exposure', () => {
-    const icon = getIcon('exposure');
-    expect(icon.type).toBe(Exposure);
-  });
-
-  it('returns correct icon for government-response', () => {
-    const icon = getIcon('government-response');
-    expect(icon.type).toBe(GovtResponse);
-  });
-
-  it('returns default icon for unknown slug', () => {
-    const icon = getIcon('unknown-slug');
-    expect(icon.type).toBe(RiskScore); // default case
-  });
-});

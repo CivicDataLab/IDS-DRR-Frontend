@@ -2,15 +2,21 @@
 
 import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { useKeyDetect } from '@/hooks/use-key-detect';
-import { MainConfig } from '@/types';
+import { Credits, PartnerLogos } from '@/config/branding';
+import { languages, locales, logo, mainNav } from '@/config/site';
+import { useTranslations } from 'next-intl';
 import { IconButton, Text } from 'opub-ui';
 
-import { handleRedirect } from '@/lib/utils';
-import { Icons } from '@/components/icons';
+import { routes } from '@/lib/routes';
+import Icons from '@/components/icons';
+import { TranslateDropdown } from './langSelect/lang-select';
+import { LocaleDropdown } from './langSelect/locale-select';
 
-export function MobileNav({ data }: { data: MainConfig }) {
+export function MobileNav({ prefLangCookie }: { prefLangCookie: string }) {
+  const t = useTranslations('nav');
+  const tSite = useTranslations('site');
   const [open, setOpen] = React.useState(false);
   const toggleMenu = () => {
     setOpen((prevState) => !prevState);
@@ -41,14 +47,15 @@ export function MobileNav({ data }: { data: MainConfig }) {
     <>
       <header className="sticky top-0 z-2">
         <div className=" flex items-center justify-between bg-backgroundSolidDark px-5 py-3 text-textOnBGDefault ">
-          <Link href={data.homeUrl}>
+          <Link href={routes.home}>
             <div className="flex items-center gap-2">
-              <Image
-                src="/logo/IDS-Platform-Logo.png"
-                width={245}
-                height={24}
-                alt="IDS-DRR Logo"
-              />
+              {logo && (
+                <Image
+                  src={logo}
+                  alt={t('homeAlt', { name: tSite('name') })}
+                  className="h-6 w-auto"
+                />
+              )}
               <div className="flex flex-col gap-1"></div>
             </div>
           </Link>
@@ -58,81 +65,49 @@ export function MobileNav({ data }: { data: MainConfig }) {
             onClick={() => setOpen((e) => !e)}
             color="onBgDefault"
           >
-            Menu
+            {t('menu')}
           </IconButton>
         </div>
       </header>
       {open && (
         <div
-          className="fixed z-10 flex h-[95vh] w-[100vw] flex-shrink-0 flex-col items-start justify-between border-t-1 border-solid border-baseGraySlateSolid11 bg-backgroundSolidDark px-5 py-8 text-textOnBGDefault"
+          className="fixed z-10 top-12 flex h-[95vh] w-[100vw] flex-shrink-0 flex-col items-start justify-between border-t-1 border-solid border-baseGraySlateSolid11 bg-backgroundSolidDark px-5 py-8 text-textOnBGDefault"
           style={{ zIndex: '100009' }}
         >
-          <div className="">
+          <div className="flex flex-row-reverse w-full justify-between">
+            {languages.length > 0 ? (
+              <div className="mt-2">
+                <TranslateDropdown prefLangCookie={prefLangCookie} />
+              </div>
+            ) : locales.length > 1 ? (
+              <div className="mt-2">
+                <LocaleDropdown />
+              </div>
+            ) : null}
             <div className="flex w-full items-center gap-3 p-3 pr-5">
-              {data.mainNav.length > 0 && (
+              {mainNav.length > 0 && (
                 <div>
-                  {data.mainNav.map((link) => (
+                  {mainNav.map((link) => (
                     <ExploreLink
-                      key={link.title}
+                      key={link.key}
                       href={link.href || ''}
-                      text={link.title || ''}
+                      text={t(`links.${link.key}`)}
                       onClick={toggleMenu}
                     />
                   ))}
                 </div>
               )}
+            
             </div>
           </div>
-          <footer className="flex flex-col flex-wrap items-start gap-1 self-stretch bg-backgroundSolidDark px-5 py-4">
-            <div className="flex flex-col items-center justify-center gap-4 self-center">
-              <div>
-                <Text variant="headingSmSpaced" color="onBgDefault">
-                  <strong>
-                    made with{' '}
-                    <span className=" text-baseRedSolid11">&#10084; </span> in
-                    india️
-                  </strong>{' '}
-                </Text>
-                <Text
-                  variant="bodySm"
-                  color="onBgDefault"
-                  className="mt-2 block md:mt-3"
-                >
-                  A DataSpace product by{' '}
-                  <a
-                    // size="slim"
-                    className=" font text-baseIndigoSolid1 underline"
-                    // kind="tertiary"
-                    onClick={(event) =>
-                      handleRedirect(event, 'https://civicdatalab.in/')
-                    }
-                  >
-                    CivicDataLab
-                  </a>
-                </Text>
+          {(Credits || PartnerLogos) && (
+            <footer className="flex flex-col flex-wrap items-start gap-1 self-stretch bg-backgroundSolidDark px-5 py-4">
+              <div className="flex flex-col items-center justify-center gap-4 self-center">
+                {Credits && <Credits />}
+                {PartnerLogos && <PartnerLogos />}
               </div>
-              <div className="flex items-center">
-                <Image
-                  src="/logo/cdlofficiallogo.png"
-                  width={64}
-                  height={64}
-                  alt="CivicDataLab Logo"
-                  className="object-contain"
-                />
-                <Image
-                  src="/logo/ocp.png"
-                  width={164}
-                  height={50}
-                  alt="OCP Logo"
-                  className="object-contain"
-                  style={{
-                    width: '164',
-                    height: '50',
-                  }}
-                />
-              </div>
-            </div>
-          </footer>
+            </footer>
+          )}
         </div>
       )}
     </>

@@ -1,19 +1,16 @@
 import React from 'react';
-import {
-  AnalyticsSideBarLayout,
-  IndicatorListWrapper,
-} from '@/app/[locale]/[state]/analytics/components/analytics-sidebar-layout';
+import { AnalyticsSideBarLayout } from '@/app/[locale]/[state]/analytics/components/analytics-sidebar-layout';
 import { fireEvent, render, screen } from '@testing-library/react';
+
+import { makeState } from './fixtures';
 
 // Mock opub-ui components
 jest.mock('opub-ui');
 
-// Mock next/navigation
+// The component uses next-intl's locale-aware useRouter via @/i18n/navigation.
 const mockPush = jest.fn();
-jest.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: mockPush,
-  }),
+jest.mock('@/i18n/navigation', () => ({
+  useRouter: () => ({ push: mockPush }),
 }));
 
 // Mock components
@@ -43,15 +40,15 @@ jest.mock('@tanstack/react-query', () => ({
 }));
 
 describe('AnalyticsSideBarLayout', () => {
-  const mockCurrentState = {
-    code: 'AS',
-    slug: 'assam',
-    name: 'Assam',
-  };
+  const mockCurrentState = makeState({
+    code: 'SA',
+    slug: 'state-alpha',
+    name: 'Alpha State',
+  });
 
   const mockStatesList = [
-    { code: 'AS', slug: 'assam', name: 'Assam' },
-    { code: 'HP', slug: 'himachal-pradesh', name: 'Himachal Pradesh' },
+    makeState({ code: 'SA', slug: 'state-alpha', name: 'Alpha State' }),
+    makeState({ code: 'SB', slug: 'state-beta', name: 'Beta State' }),
   ];
 
   beforeEach(() => {
@@ -86,66 +83,22 @@ describe('AnalyticsSideBarLayout', () => {
     expect(screen.getByText('INDICATORS')).toBeInTheDocument();
     expect(screen.getByTestId('factor-list')).toBeInTheDocument();
   });
-});
 
-describe('IndicatorListWrapper', () => {
-  const mockCurrentState = {
-    code: 'AS',
-    slug: 'assam',
-    name: 'Assam',
-  };
-
-  const mockStatesList = [
-    { code: 'AS', slug: 'assam', name: 'Assam' },
-    { code: 'HP', slug: 'himachal-pradesh', name: 'Himachal Pradesh' },
-  ];
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('renders state selector with correct options', () => {
+  it('navigates to the selected state on change', () => {
     render(
-      <IndicatorListWrapper
+      <AnalyticsSideBarLayout
         currentState={mockCurrentState}
         statesList={mockStatesList}
-      />
+      >
+        <div>Test Content</div>
+      </AnalyticsSideBarLayout>
     );
 
     const stateSelect = screen.getByRole('combobox');
-    expect(stateSelect).toBeInTheDocument();
-
-    // Check if options are rendered
-    expect(screen.getByText('Assam')).toBeInTheDocument();
-    expect(screen.getByText('Himachal Pradesh')).toBeInTheDocument();
-  });
-
-  it('handles state selection change', () => {
-    render(
-      <IndicatorListWrapper
-        currentState={mockCurrentState}
-        statesList={mockStatesList}
-      />
-    );
-
-    const stateSelect = screen.getByRole('combobox');
-    fireEvent.change(stateSelect, { target: { value: 'himachal-pradesh' } });
+    fireEvent.change(stateSelect, { target: { value: 'state-beta' } });
 
     expect(mockPush).toHaveBeenCalledWith(
-      expect.stringContaining('/himachal-pradesh/analytics/')
+      '/state-beta/analytics/?indicator=risk-score&view=map'
     );
-  });
-
-  it('renders factor list with current state', () => {
-    render(
-      <IndicatorListWrapper
-        currentState={mockCurrentState}
-        statesList={mockStatesList}
-      />
-    );
-
-    const factorList = screen.getByTestId('factor-list');
-    expect(factorList).toBeInTheDocument();
-    expect(factorList).toHaveAttribute('data-state', 'AS');
   });
 });

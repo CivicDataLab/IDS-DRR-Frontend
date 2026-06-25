@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
@@ -6,33 +8,37 @@ import {
   GovtResponse,
   RiskScore,
   Vulnerability,
-} from '@/public/FactorIcons';
+} from '@/components/FactorIcons';
 import { useQuery } from '@tanstack/react-query';
 import { useQueryState } from 'next-usequerystate';
+import { useTranslations } from 'next-intl';
 import { Button, Icon, Menu, Select, Text, Tooltip } from 'opub-ui';
 
-import { ANALYTICS_INDICATORS_BY_CATEGORY } from '@/config/graphql/analaytics-queries';
+import {
+  ANALYTICS_INDICATORS_BY_CATEGORY,
+  type IndicatorCategory,
+  type State,
+} from '@/config/graphql/analaytics-queries';
+import { features } from '@/config/site';
 import { GraphQL } from '@/lib/api';
-import { cn, copyCurrentURL, downloadStateReport } from '@/lib/utils';
+import { routes } from '@/lib/routes';
+import { cn, downloadStateReport } from '@/lib/utils';
+import { useCopyURL } from '@/hooks/use-copy-url';
+import { useStateName } from '@/hooks/use-state-name';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import { getLatestDate } from '../utils/utils';
 import RadioButton from './RadioButton';
 import styles from './styles.module.scss';
 
-interface TreeNode {
-  slug: string;
-  name: string;
-  description: string;
-  children: TreeNode[];
-}
+type TreeNode = IndicatorCategory;
 
 interface NestedSidebarProps {
   data: TreeNode[];
   indicator: string | null;
 }
 
-export function getIcon(slug: string) {
+function getIcon(slug: string) {
   switch (slug) {
     case 'risk-score':
       return <RiskScore color="#000000" />;
@@ -49,10 +55,15 @@ export function getIcon(slug: string) {
   }
 }
 
-export function FactorList({ currentState }: any) {
+export function FactorList({ currentState }: { currentState: State }) {
+  const t = useTranslations('analytics');
+  const tCommon = useTranslations('common');
+  const stateName = useStateName();
+  const copyURL = useCopyURL();
   const searchParams = useSearchParams();
   const indicator = searchParams.get('indicator');
   const time_period = searchParams.get('time-period');
+  const view = searchParams.get('view') || 'map';
 
   const [, setIndicatorSelected] = useQueryState('indicator');
 
@@ -78,6 +89,44 @@ export function FactorList({ currentState }: any) {
   });
 
   const indicatorNodes = indicatorsQuery?.data?.indicatorsByCategory;
+
+  const filteredIndicatorNodes = React.useMemo(() => {
+    const filterRecursively = (nodes: TreeNode[]): TreeNode[] => {
+      return nodes?.map((node) => {
+        if (node.slug === 'government-response' && node.children) {
+          const isMapLike = view === 'map' || view === 'table';
+          const isChart = view === 'chart';
+
+          const filteredChildren =
+            isMapLike
+              ? node.children.filter((child) =>
+                  String(child.slug).includes('fy-cumsum')
+                )
+              : isChart
+                ? node.children.filter(
+                    (child) => !String(child.slug).includes('fy-cumsum')
+                  )
+                : node.children;
+
+          return {
+            ...node,
+            children: filteredChildren.map((child) => ({
+              ...child,
+              children: child.children
+                ? filterRecursively(child.children)
+                : child.children,
+            })),
+          };
+        }
+
+        return node.children
+          ? { ...node, children: filterRecursively(node.children) }
+          : node;
+      });
+    };
+
+    return indicatorNodes ? filterRecursively(indicatorNodes) : [];
+  }, [indicatorNodes, view]);
 
   useEffect(() => {
     setSelectedIndicator(indicator || '');
@@ -122,7 +171,9 @@ export function FactorList({ currentState }: any) {
             name="boundary-select"
             labelInline
             options={
-              indicatorsQuery.isFetched ? flattenIndicators(indicatorNodes) : []
+                  indicatorsQuery.isFetched
+                    ? flattenIndicators(filteredIndicatorNodes)
+                    : []
             }
           />
         )}
@@ -131,13 +182,16 @@ export function FactorList({ currentState }: any) {
         {/* DESKTOP  */}
         <div className={cn(styles.FactorList)}>
           {indicatorsQuery.isFetched && (
-            <NestedSidebar data={indicatorNodes} indicator={indicator} />
+            <NestedSidebar
+              data={filteredIndicatorNodes}
+              indicator={indicator}
+            />
           )}
 
           <hr className="m-6" />
           <div className="flex flex-col gap-4 px-6">
             <Text className="text-textSubdued" fontWeight="bold">
-              ACTIONS
+              {t('sidebar.actions')}
             </Text>{' '}
             <Menu
               trigger={
@@ -148,123 +202,109 @@ export function FactorList({ currentState }: any) {
                 >
                   <div className="flex items-center gap-2">
                     <Icon source={Icons.share} />
-                    <Text variant="bodyMd">Share</Text>
+                    <Text variant="bodyMd">{t('actions.share.label')}</Text>
                   </div>
                 </Button>
               }
               items={[
                 {
-                  content: 'Facebook',
+                  content: tCommon('social.facebook'),
                   icon: Icons.IconBrandFacebook,
 
                   onAction: () => {
-                    const confirmation = window.confirm(
-                      `You are being redirected to "${`https://www.facebook.com/sharer/sharer.php?u=${currentURL}/`}". `
-                    );
-                    if (confirmation) {
-                      window.open(
-                        `https://www.facebook.com/sharer/sharer.php?u=${currentURL}/`,
-                        '_blank'
-                      );
+                    const url = `https://www.facebook.com/sharer/sharer.php?u=${currentURL}/`;
+                    if (window.confirm(tCommon('redirectConfirm', { url }))) {
+                      window.open(url, '_blank');
                     }
                   },
                 },
                 {
-                  content: 'LinkedIn',
+                  content: tCommon('social.linkedin'),
                   icon: Icons.IconBrandLinkedin,
                   onAction: () => {
-                    const confirmation = window.confirm(
-                      `You are being redirected to "${`https://www.linkedin.com/feed/?shareActive=true&text=${currentURL}`}`
-                    );
-                    if (confirmation) {
-                      window.open(
-                        `https://www.linkedin.com/feed/?shareActive=true&text=${currentURL}`,
-                        '_blank'
-                      );
+                    const url = `https://www.linkedin.com/feed/?shareActive=true&text=${currentURL}`;
+                    if (window.confirm(tCommon('redirectConfirm', { url }))) {
+                      window.open(url, '_blank');
                     }
                   },
                 },
                 {
-                  content: 'Twitter',
+                  content: tCommon('social.twitter'),
                   icon: Icons.IconBrandX,
                   onAction: () => {
-                    const confirmation = window.confirm(
-                      `You are being redirected to "${`https://twitter.com/intent/tweet?url=${currentURL}/`}". `
-                    );
-                    if (confirmation) {
-                      window.open(
-                        `https://twitter.com/intent/tweet?url=${currentURL}/`,
-                        '_blank'
-                      );
+                    const url = `https://twitter.com/intent/tweet?url=${currentURL}/`;
+                    if (window.confirm(tCommon('redirectConfirm', { url }))) {
+                      window.open(url, '_blank');
                     }
                   },
                 },
                 {
-                  content: 'Copy Link',
+                  content: tCommon('copy.trigger'),
                   icon: Icons.link,
-                  onAction: () => copyCurrentURL(),
+                  onAction: () => copyURL(),
                 },
               ]}
             />
-            {downloadReportLoading ? (
-              <Icon
-                source={Icons.loader}
-                data-testid="loader-icon"
-                className="animate-spin"
-              />
-            ) : (
-              <Button
-                className="self-start"
-                onClick={async () => {
-                  const confirmation = window.confirm(
-                    `Do you want to download the report for "${currentState.name}"?`
-                  );
-                  if (confirmation) {
-                    try {
-                      if (!time_period) {
-                        throw new Error('Time period is not defined');
-                      }
+            {features.reports &&
+              (downloadReportLoading ? (
+                <Icon
+                  source={Icons.loader}
+                  data-testid="loader-icon"
+                  className="animate-spin"
+                />
+              ) : (
+                <Button
+                  className="self-start"
+                  onClick={async () => {
+                    const confirmation = window.confirm(
+                      t('actions.download.confirm', { name: stateName(currentState.slug, currentState.name) })
+                    );
+                    if (confirmation) {
+                      try {
+                        if (!time_period) {
+                          throw new Error('Time period is not defined');
+                        }
 
-                      let time_period_array = time_period?.split(
-                        ','
-                      ) as string[];
+                        const time_period_array = time_period?.split(
+                          ','
+                        ) as string[];
 
-                      let time_period_latest;
+                        let time_period_latest;
 
-                      if (time_period_array?.length > 1) {
-                        let time_period_latest_date = new Date(
-                          getLatestDate(time_period_array) as string
+                        if (time_period_array?.length > 1) {
+                          const time_period_latest_date = new Date(
+                            getLatestDate(time_period_array) as string
+                          );
+                          time_period_latest =
+                            `${time_period_latest_date.getFullYear()}_${String(time_period_latest_date.getMonth() + 1).padStart(2, '0')}` as string;
+                        } else {
+                          time_period_latest = time_period;
+                        }
+
+                        setDownloadReportLoading(true);
+                        await downloadStateReport(
+                          routes.report(currentState.code, time_period_latest),
+                          `${currentState.name}-Report`
                         );
-                        time_period_latest =
-                          `${time_period_latest_date.getFullYear()}_${String(time_period_latest_date.getMonth() + 1).padStart(2, '0')}` as string;
-                      } else {
-                        time_period_latest = time_period;
+                      } catch (error) {
+                        alert(t('actions.download.error', { error: String(error) }));
+                      } finally {
+                        setDownloadReportLoading(false);
                       }
-
-                      setDownloadReportLoading(true);
-                      await downloadStateReport(
-                        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/report?geo_code=${currentState.code}&time_period=${time_period_latest}`,
-                        `${currentState.name}-Report`
-                      );
-                    } catch (error) {
-                      alert(`Error Downloading Report. ${error}`);
-                    } finally {
-                      setDownloadReportLoading(false);
                     }
-                  }
-                }}
-                monochrome={true}
-                kind="tertiary"
+                  }}
+                  monochrome={true}
+                  kind="tertiary"
 
-                // disabled={downloadReportLoading}
-              >
-                <div className="flex items-center gap-2">
-                  <Icon source={Icons.download} />
+                  // disabled={downloadReportLoading}
+                >
+                  <div className="flex items-center gap-2">
+                    <Icon source={Icons.download} />
 
-                  <Text variant="bodyMd">Download Report</Text>
-                </div>
-              </Button>
-            )}
+                    <Text variant="bodyMd">{t('actions.download.label')}</Text>
+                  </div>
+                </Button>
+              ))}
           </div>
         </div>
       </MediaRendering>
@@ -360,7 +400,7 @@ const NestedSidebarItem: React.FC<{
       </div>
       {hasChildren && isExpanded && (
         <div className={cn('relative', level === 0 && 'ml-4')}>
-          {node.children.map((child) => (
+          {node.children?.map((child) => (
             <NestedSidebarItem
               key={child.slug}
               node={child}

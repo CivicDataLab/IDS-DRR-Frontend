@@ -29,6 +29,7 @@ iframe.skiptranslate {
 .opub-popup {
   border-radius: var(--border-radius-1);
   background-color: #fff !important;
+  pointer-events: none;
 }
 
 .leaflet-attribution-flag {

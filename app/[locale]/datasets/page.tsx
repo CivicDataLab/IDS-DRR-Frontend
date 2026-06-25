@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useEffect, useReducer, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { captureException } from '@sentry/nextjs';
+import { useTranslations } from 'next-intl';
 import {
   Button,
   Pill,
@@ -14,6 +15,7 @@ import {
 } from 'opub-ui';
 
 import { fetchDatasets } from '@/lib/api';
+import { type JsonScalar } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import BreadCrumbs from './components/BreadCrumbs';
 import Card from './components/DatasetCards';
@@ -173,8 +175,11 @@ const useUrlParams = (
 };
 
 const DatasetsListing = () => {
+  const t = useTranslations('datasets');
+  const tNav = useTranslations('nav');
+  const tCommon = useTranslations('common');
   const [facets, setFacets] = useState<{
-    results: any[];
+    results: unknown[];
     total: number;
     aggregations: Aggregations;
   } | null>(null);
@@ -189,10 +194,10 @@ const DatasetsListing = () => {
   useEffect(() => {
     if (variables) {
       fetchDatasets(variables)
-        .then((res: any) => {
+        .then((res: JsonScalar) => {
           setFacets(res);
         })
-        .catch((err: any) => {
+        .catch((err: unknown) => {
           captureException(err);
           console.error(err);
         });
@@ -237,14 +242,14 @@ const DatasetsListing = () => {
   );
 
   return (
-    <main className="bg-surfaceDefault">
+    <div className="bg-surfaceDefault">
       <BreadCrumbs
         data={[
-          { href: '/', label: 'Home' },
-          { href: '#', label: 'Datasets' },
+          { href: '/', label: tNav('links.home') },
+          { href: '#', label: tNav('links.datasets') },
         ]}
       />
-      {datasetDetails.length < 0 ? (
+      {!facets ? (
         <div className="flex h-96 items-center justify-center">
           <Spinner />
         </div>
@@ -254,15 +259,15 @@ const DatasetsListing = () => {
             <div className=" flex flex-wrap items-center gap-4 whitespace-nowrap align-middle lg:flex-nowrap">
               <div>
                 <Text>
-                  Showing {datasetDetails?.length} of {count} Datasets
+                  {t('count', { count: datasetDetails?.length, total: count })}
                 </Text>
               </div>
-              <div className=" w-full max-w-[550px] md:block">
+              <div role="search" className=" w-full max-w-[550px] md:block">
                 <SearchInput
-                  label="Search"
+                  label={t('search.label')}
                   name="Search"
                   className={cn(Styles.Search)}
-                  placeholder="Search datasets"
+                  placeholder={t('search.placeholder')}
                   onSubmit={(value) => handleSearch(value)}
                   onClear={(value) => handleSearch(value)}
                   withButton={true}
@@ -271,7 +276,7 @@ const DatasetsListing = () => {
             </div>
             <div className="flex items-center gap-2">
               <Text variant="bodyLg" className="font-bold">
-                Sort by:
+                {t('sort.label')}
               </Text>
               <Select
                 label=""
@@ -280,11 +285,11 @@ const DatasetsListing = () => {
                 onChange={handleSortChange}
                 options={[
                   {
-                    label: 'Recent',
+                    label: t('sort.order.recent'),
                     value: 'recent',
                   },
                   {
-                    label: 'Alphabetical',
+                    label: t('sort.order.alphabetical'),
                     value: 'alphabetical',
                   },
                 ]}
@@ -300,7 +305,7 @@ const DatasetsListing = () => {
                   className="lg:hidden"
                   onClick={() => setOpen(true)}
                 >
-                  Filter
+                  {tCommon('filters.trigger')}
                 </Button>
               }
             >
@@ -313,13 +318,17 @@ const DatasetsListing = () => {
             </Tray>
           </div>
           <div className="row flex gap-5 bg-surfaceDefault pb-10">
-            <div className="hidden min-w-64 max-w-64 lg:block">
+            <aside
+              aria-labelledby="datasets-filter-heading"
+              className="hidden min-w-64 max-w-64 lg:block"
+            >
               <Filter
+                headingId="datasets-filter-heading"
                 options={filterOptions}
                 setSelectedOptions={handleFilterChange}
                 selectedOptions={queryParams.filters}
               />
-            </div>
+            </aside>
 
             <div className="flex w-full flex-col px-2">
               <div className="flex gap-2 border-b-2 border-solid border-baseGraySlateSolid4 pb-4">
@@ -346,17 +355,22 @@ const DatasetsListing = () => {
                     onPageChange={handlePageChange}
                     onPageSizeChange={handlePageSizeChange}
                   >
-                    {datasetDetails.map((item: any, index: any) => (
+                    {datasetDetails.map((item: JsonScalar, index: number) => (
                       <Card key={index} data={item} />
                     ))}
                   </GraphqlPagination>
+                )}
+                {facets && datasetDetails?.length === 0 && (
+                  <div className="flex flex-col items-center gap-2 py-16 text-center">
+                    <Text variant="headingMd">{t('empty')}</Text>
+                  </div>
                 )}
               </div>
             </div>
           </div>
         </section>
       )}
-    </main>
+    </div>
   );
 };
 

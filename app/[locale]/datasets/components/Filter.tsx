@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Accordion,
   AccordionContent,
@@ -11,13 +12,15 @@ import {
 } from 'opub-ui';
 
 import { toTitleCase } from '@/lib/utils';
-import { Icons } from '@/components/icons';
+import Icons from '@/components/icons';
 
 interface FilterProps {
   setOpen?: (isOpen: boolean) => void;
   options: Record<string, { label: string; value: string }[]>;
   setSelectedOptions: (category: string, values: string[]) => void;
   selectedOptions: Record<string, string[]>;
+  /** id for the heading, so a wrapping landmark can aria-labelledby it */
+  headingId?: string;
 }
 
 const Filter: React.FC<FilterProps> = ({
@@ -25,7 +28,9 @@ const Filter: React.FC<FilterProps> = ({
   options,
   setSelectedOptions,
   selectedOptions,
+  headingId,
 }) => {
+  const t = useTranslations('common.filters');
   const handleReset = () => {
     Object.keys(options).forEach((category) => {
       setSelectedOptions(category, []); // Reset selected options for each category
@@ -37,11 +42,13 @@ const Filter: React.FC<FilterProps> = ({
       <div className="mb-5 flex justify-between">
         <div className="flex w-full justify-between">
           <div>
-            <Text variant="headingMd">Filters</Text>
+            <Text id={headingId} variant="headingMd">
+              {t('heading')}
+            </Text>
           </div>
           <div>
             <Button kind="tertiary" onClick={handleReset}>
-              Reset
+              {t('reset')}
             </Button>
           </div>
         </div>

@@ -4,7 +4,15 @@ import './RadioButton.scss';
 
 import { Text } from 'opub-ui';
 
-const RadioButton = (props: any) => {
+interface RadioButtonProps {
+  id: string;
+  value: string;
+  label: string;
+  isSelected: boolean;
+  changed: (value: string) => void;
+}
+
+const RadioButton = (props: RadioButtonProps) => {
   return (
     <div className="RadioButton">
       <input

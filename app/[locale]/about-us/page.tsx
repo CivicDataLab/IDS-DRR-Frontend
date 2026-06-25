@@ -1,19 +1,8 @@
-import {
-  About,
-  CollaboratingPartner,
-  Introduction,
-  SupportedBy,
-  TheTeam,
-} from './components';
+import { notFound } from 'next/navigation';
 
-export default function aboutUs() {
-  return (
-    <main className=" bg-baseGreenSolid5">
-      <About />
-      <Introduction />
-      <CollaboratingPartner />
-      <SupportedBy />
-      <TheTeam />
-    </main>
-  );
+import { AboutPage } from '@/config/branding';
+
+export default function Page() {
+  if (!AboutPage) notFound();
+  return <AboutPage />;
 }

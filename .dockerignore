@@ -1,0 +1,13 @@
+# Dotfiles
+**/.*
+!**/.env.development
+
+# Docker
+**/Dockerfile*
+
+# Documentation
+**/README.md
+**/LICENSE
+
+# Generated files
+**/node_modules

@@ -3,14 +3,8 @@ import Script from 'next/script';
 import { IconWorld } from '@tabler/icons-react';
 import { Select } from 'opub-ui';
 
+import { languages } from '@/config/site';
 import styles from './styles.module.scss';
-
-// Languages dropdown list of languages and codes for Google Translate
-const languages = [
-  { label: 'English', value: 'en' },
-  { label: 'हिन्दी', value: 'hi' },
-  { label: 'অসমীয়া', value: 'as' },
-];
 
 export function TranslateDropdown({
   prefLangCookie,
@@ -25,7 +19,7 @@ export function TranslateDropdown({
       const decoded = decodeURIComponent(cookie || '/en/');
       const parts = decoded.split('/');
       return parts.length > 2 ? parts[2] : 'en';
-    } catch (error) {
+    } catch {
       return 'en';
     }
   };
@@ -41,6 +35,7 @@ export function TranslateDropdown({
   }, [prefLangCookie]);
 
   const googleTranslateElementInit = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Google Translate runtime global
     new (window as any).google.translate.TranslateElement(
       {
         pageLanguage: 'en',
@@ -52,6 +47,7 @@ export function TranslateDropdown({
   };
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Google Translate runtime global
     (window as any).googleTranslateElementInit = googleTranslateElementInit;
   }, []);
 
@@ -70,7 +66,11 @@ export function TranslateDropdown({
 
   return (
     <div>
-      <div id="google_translate_element" className="invisible h-px w-px"></div>
+      <div
+        id="google_translate_element"
+        aria-hidden="true"
+        className="invisible h-px w-px"
+      ></div>
 
       <Select
         name="lang-select"

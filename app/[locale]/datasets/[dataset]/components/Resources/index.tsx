@@ -1,19 +1,24 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
+import { useFormatter, useTranslations } from 'next-intl';
 import { Button, Spinner, Tag, Text } from 'opub-ui';
 
-import { DATASET_RESOURCES_QUERY } from '@/config/graphql/dataset-queries';
+import {
+  DATASET_RESOURCES_QUERY,
+  type DatasetResource,
+} from '@/config/graphql/dataset-queries';
 import { GraphQL } from '@/lib/api';
-import { formatDate } from '@/lib/utils';
 
 const Resources = () => {
+  const t = useTranslations('datasets');
+  const format = useFormatter();
   const params = useParams();
 
-  const { data, isLoading }: { data: any; isLoading: boolean } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [`resources_${params.dataset}`],
     queryFn: () =>
       GraphQL(
@@ -59,13 +64,13 @@ const Resources = () => {
         <div className="mt-8 flex justify-center">
           <Spinner />
         </div>
-      ) : data && data?.datasetResources?.length > 0 ? (
+      ) : (data?.datasetResources?.length ?? 0) > 0 ? (
         <>
           <Text variant="headingLg" className="mx-6 lg:mx-0">
-            Downloadable Resources
+            {t('detail.resources.heading')}
           </Text>
           <div className="mx-6 mt-5 flex flex-col gap-8 bg-surfaceDefault p-6  lg:mx-0">
-            {data?.datasetResources.map((item: any, index: number) => (
+            {data?.datasetResources?.map((item: DatasetResource, index) => (
               <div
                 key={index}
                 className="flex flex-col gap-4  lg:flex-row lg:justify-between"
@@ -73,11 +78,11 @@ const Resources = () => {
                 <div className="gap flex flex-col lg:w-4/5">
                   <div className="item flex flex-wrap items-center gap-2">
                     <Text variant="headingMd">{item.name}</Text>
-                    <Tag>{item.fileDetails.format}</Tag>
+                    <Tag>{item.fileDetails?.format}</Tag>
                   </div>
                   <div>
-                    <Text>Updated: </Text>
-                    <Text>{formatDate(item.modified)}</Text>
+                    <Text>{t('labels.updated')}</Text>
+                    <Text>{format.dateTime(new Date(item.modified), 'longDate')}</Text>
                   </div>
                   <div className="flex flex-col">
                     <div
@@ -96,7 +101,7 @@ const Resources = () => {
                         size="slim"
                         kind="tertiary"
                       >
-                        {showMore[index] ? 'Show less' : 'Show more'}
+                        {showMore[index] ? t('showLess') : t('showMore')}
                       </Button>
                     )}
                   </div>
@@ -108,7 +113,7 @@ const Resources = () => {
                     className="flex w-fit justify-center"
                   >
                     <Button className=" bg-[#71E57DB2] font-Bold text-basePureBlack hover:bg-[#71E57DB2] hover:text-basePureBlack">
-                      Download
+                      {t('detail.resources.download')}
                     </Button>
                   </Link>
                 </div>

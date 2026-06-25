@@ -1,12 +1,25 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { parseDate } from '@internationalized/date';
 import { parseAsString, useQueryState } from 'next-usequerystate';
-import { Button, Icon, RadioGroup, RadioItem, YearCalendar } from 'opub-ui';
+import { useTranslations } from 'next-intl';
+import {
+  Button,
+  Icon,
+  MultiSelectYearCalendar,
+  RadioGroup,
+  RadioItem,
+  YearCalendar,
+} from 'opub-ui';
+import type { CalendarDate, DateValue } from '@internationalized/date';
 
-import { formatDate } from '@/lib/utils';
+import { type State } from '@/config/graphql/analaytics-queries';
+import { routes, type AnalyticsView } from '@/lib/routes';
+import { type JsonScalar } from '@/lib/types';
+import { toISODate } from '@/lib/utils';
 import Icons from '@/components/icons';
 import {
   MobileFilterBox,
@@ -19,15 +32,19 @@ export function FilterComp({
   currentSelectedState,
   districtGeographiesData,
   revenueGeographiesData,
+  monthMulti = false,
   // getDistrictOptions,
 }: {
   timePeriod: string;
   timePeriods: string[];
-  districtGeographiesData: any;
-  revenueGeographiesData: any;
-  currentSelectedState: any;
+  districtGeographiesData: JsonScalar;
+  revenueGeographiesData: JsonScalar;
+  currentSelectedState: State | null;
+  monthMulti?: boolean;
   // getDistrictOptions: any;
 }) {
+  const t = useTranslations('analytics.filters');
+  const tCommon = useTranslations('common');
   interface Option {
     disabled?: boolean;
     value: string;
@@ -122,7 +139,7 @@ export function FilterComp({
     //   type: 'radio-button',
     // },
     {
-      title: 'District',
+      title: t('division.title'),
       value: 'district',
       // options: getDistrictOptions(),
       options:
@@ -135,20 +152,20 @@ export function FilterComp({
       type: 'radio-button',
     },
     {
-      title: 'Revenue-circle',
+      title: t('subdivision.title'),
       value: 'revenue-circle',
       // options: getRevenueOptions(),
       options:
         revenueGeographiesData?.data?.getDistrictRevCircle?.[regionName]?.map(
           (circle: { code: string; [key: string]: string }) => ({
-            label: circle[currentSelectedState.child_type],
+            label: circle[currentSelectedState?.child_type ?? ''],
             value: circle.code,
           })
         ) || [],
       type: 'radio-button',
     },
     {
-      title: 'Month',
+      title: t('month.title'),
       value: 'month',
       type: 'month-picker',
     },
@@ -160,7 +177,7 @@ export function FilterComp({
         className="m-0 ml-auto border-1 border-solid border-[#8C9196]"
         kind="tertiary"
         onClick={toggleDrawer}
-        aria-label="filter"
+        aria-label={tCommon('filters.trigger')}
       >
         <Icon source={Icons.filter} />
       </Button>
@@ -184,6 +201,7 @@ export function FilterComp({
             timePeriodData={timePeriods}
             timePeriodSelected={timePeriodSelected}
             setTimePeriodSelected={setTimePeriodSelected}
+            monthMulti={monthMulti}
           />
         </MobileFilterContent>
       </MobileFilterBox>
@@ -191,7 +209,7 @@ export function FilterComp({
   );
 }
 
-export const RenderOptions = ({
+const RenderOptions = ({
   filterOptions,
   selectedOption,
   regionSelected,
@@ -201,7 +219,20 @@ export const RenderOptions = ({
   timePeriodData,
   timePeriodSelected,
   setTimePeriodSelected,
-}: any) => {
+  monthMulti = false,
+}: {
+  filterOptions: JsonScalar;
+  selectedOption: string;
+  regionSelected: string;
+  setRegionSelected: (value: string) => void;
+  revenueSelected: string;
+  setRevenueSelected: (value: string) => void;
+  timePeriodData: JsonScalar;
+  timePeriodSelected: string;
+  setTimePeriodSelected: (value: string) => void;
+  monthMulti?: boolean;
+}) => {
+  const t = useTranslations('analytics.filters');
   const [selectedState, setSelectedState] = useState('');
   const router = useRouter();
 
@@ -229,7 +260,10 @@ export const RenderOptions = ({
         normalizedTimePeriods[0] ||
         `${new Date().getFullYear()}_${new Date().getMonth() + 1}`;
       router.push(
-        `/${selectedValue}/analytics/?indicator=risk-score&time-period=${latestTimePeriod}&view=${view}`
+        routes.analytics(selectedValue, {
+          view: view as AnalyticsView,
+          timePeriod: latestTimePeriod,
+        })
       );
       // console.log('---Selected State ---', selectedState);
     } else if (value === 'district') {
@@ -243,14 +277,14 @@ export const RenderOptions = ({
 
   const datesArray = normalizedTimePeriods.map((date: string) => {
     const [year, month] = date.split('_');
-    return new Date(parseInt(year), parseInt(month));
+    return new Date(Date.UTC(parseInt(year), parseInt(month) - 1));
   });
-  const timestamps = datesArray.map((date: any) => date.getTime());
+  const timestamps = datesArray.map((date: Date) => date.getTime());
   if (timestamps.length > 0) {
     const minTimestamp = Math.min(...timestamps);
     const maxTimestamp = Math.max(...timestamps);
-    minDate = formatDate(minTimestamp, true);
-    maxDate = formatDate(maxTimestamp, true);
+    minDate = toISODate(minTimestamp);
+    maxDate = toISODate(maxTimestamp);
   } else {
     const [year, month] = (timePeriodSelected || '2023_08').split('_');
     minDate = `${year}-${month}-01`;
@@ -272,9 +306,9 @@ export const RenderOptions = ({
           }
         >
           {value === 'revenue-circle' && !regionSelected ? (
-            <div>Please select a district</div>
+            <div>{t('subdivision.emptyPrompt')}</div>
           ) : (
-            options.map((item: any, idx: any) =>
+            options.map((item: JsonScalar, idx: number) =>
               item.type === 'group' ? (
                 <div
                   key={idx}
@@ -296,6 +330,53 @@ export const RenderOptions = ({
         </RadioGroup>
       );
     case 'month-picker':
+      if (monthMulti) {
+        const selectedDates: CalendarDate[] = (timePeriodSelected || '')
+          .split(',')
+          .filter(Boolean)
+          .map((p) => {
+            const [year, month] = p.split('_');
+            if (!year || !month) return undefined;
+            return parseDate(
+              `${year}-${month.padStart(2, '0')}-01`
+            ) as CalendarDate;
+          })
+          .filter((d): d is CalendarDate => d !== undefined);
+        const periodYears = normalizedTimePeriods
+          .map((p: string) => parseInt(p.split('_')[0], 10))
+          .filter((y: number) => !isNaN(y));
+        const yearRange =
+          periodYears.length > 0
+            ? {
+                start: Math.min(...periodYears),
+                end: Math.max(...periodYears),
+              }
+            : undefined;
+        return (
+          <div className="self-center">
+            <MultiSelectYearCalendar
+              value={selectedDates}
+              yearRange={yearRange}
+              onChange={(dates: DateValue[]) => {
+                if (!dates || dates.length === 0) {
+                  setTimePeriodSelected('');
+                  return;
+                }
+                setTimePeriodSelected(
+                  dates
+                    .map(
+                      (d) =>
+                        `${d.year}_${
+                          d.month < 10 ? `0${d.month}` : `${d.month}`
+                        }`
+                    )
+                    .join(',')
+                );
+              }}
+            />
+          </div>
+        );
+      }
       return (
         <div className=" self-center">
           <YearCalendar

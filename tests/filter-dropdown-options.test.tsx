@@ -5,6 +5,8 @@ import FilterDropdownOptions, {
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { makeState } from './fixtures';
+
 // Mock next-usequerystate
 const mockSetDistrictCode = jest.fn();
 const mockSetRevenueCode = jest.fn();
@@ -33,33 +35,11 @@ jest.mock('opub-ui');
 
 // Mock utility functions
 jest.mock('@/lib/utils', () => ({
-  formatDate: jest.fn((timestamp: number, isHyphenated: boolean) => {
-    const date = new Date(timestamp);
-    if (isNaN(date.getTime())) {
-      return '2023-01-01'; // Return default date for invalid timestamps
-    }
-    return isHyphenated
-      ? date.toISOString().split('T')[0]
-      : date.toLocaleDateString('en-US', {
-          month: 'long',
-          day: 'numeric',
-          year: 'numeric',
-        });
-  }),
   toTitleCase: jest.fn((str: string) => {
     if (!str) return '';
     return str
       .toLowerCase()
       .replace(/\b\w/g, (char: string) => char.toUpperCase());
-  }),
-}));
-
-jest.mock('@/app/[locale]/[state]/analytics/utils/utils', () => ({
-  getLatestDate: jest.fn((dates: string[]) => {
-    if (!dates || dates.length === 0) return '2023-08-01';
-    const latest = dates.sort().pop();
-    const [year, month] = latest!.split('_');
-    return `${year}-${month.padStart(2, '0')}-01`;
   }),
 }));
 
@@ -72,9 +52,9 @@ jest.mock('@internationalized/date', () => ({
 }));
 
 const defaultProps = {
-  currentSelectedState: {
+  currentSelectedState: makeState({
     child_type: 'revenue-circle',
-  },
+  }),
   RevCircleDropdownOptions: [
     { label: 'Revenue Circle 1', value: 'rc1', districtCode: 'D001' },
     { label: 'Revenue Circle 2', value: 'rc2', districtCode: 'D001' },
@@ -85,16 +65,7 @@ const defaultProps = {
     { label: 'District 2', value: 'D002' },
   ],
   monthMulti: false,
-  timeLimits: {
-    data: {
-      getDataTimePeriods: [
-        { value: '2023_01' },
-        { value: '2023_02' },
-        { value: '2023_03' },
-        { value: '2023_12' },
-      ],
-    },
-  },
+  timeLimits: ['2023_01', '2023_02', '2023_03', '2023_12'],
 };
 
 describe('FilterDropdownOptions', () => {
@@ -114,7 +85,7 @@ describe('FilterDropdownOptions', () => {
     it('renders with correct labels', () => {
       render(<FilterDropdownOptions {...defaultProps} />);
 
-      expect(screen.getByLabelText('Select District')).toBeInTheDocument();
+      expect(screen.getByLabelText('Select Division')).toBeInTheDocument();
       expect(
         screen.getByLabelText('Select Revenue-Circle')
       ).toBeInTheDocument();
@@ -140,7 +111,7 @@ describe('FilterDropdownOptions', () => {
       const options = districtSelect.querySelectorAll('option');
 
       expect(options).toHaveLength(3); // Including "Select a district" option
-      expect(options[0]).toHaveTextContent('Select a district');
+      expect(options[0]).toHaveTextContent('Select a division');
       expect(options[1]).toHaveTextContent('District 1');
       expect(options[2]).toHaveTextContent('District 2');
     });
@@ -184,7 +155,7 @@ describe('FilterDropdownOptions', () => {
       const revenueSelect = screen.getByTestId('revenue-circle-select');
       const options = revenueSelect.querySelectorAll('option');
 
-      expect(options[0]).toHaveTextContent('Select a district to enable');
+      expect(options[0]).toHaveTextContent('Select a division to enable');
     });
 
     it('filters revenue circles based on selected district', async () => {
@@ -284,7 +255,7 @@ describe('FilterDropdownOptions', () => {
     it('handles timeLimits without data', () => {
       const propsWithoutTimeLimits = {
         ...defaultProps,
-        timeLimits: {},
+        timeLimits: [],
       };
 
       render(<FilterDropdownOptions {...propsWithoutTimeLimits} />);
@@ -369,7 +340,7 @@ describe('FilterDropdownOptions', () => {
     it('handles currentSelectedState without child_type', () => {
       const propsWithoutChildType = {
         ...defaultProps,
-        currentSelectedState: {},
+        currentSelectedState: makeState(),
       };
 
       render(<FilterDropdownOptions {...propsWithoutChildType} />);
@@ -378,17 +349,22 @@ describe('FilterDropdownOptions', () => {
       expect(screen.getByTestId('revenue-circle-select')).toBeInTheDocument();
     });
 
+    it('handles currentSelectedState with child_type: null (backend contract for states without grandchildren)', () => {
+      const propsWithNullChildType = {
+        ...defaultProps,
+        currentSelectedState: makeState({ child_type: null }),
+      };
+
+      render(<FilterDropdownOptions {...propsWithNullChildType} />);
+
+      // toTitleCase(null) must not throw; fallback word is used in the label.
+      expect(screen.getByLabelText(/Select Region/)).toBeInTheDocument();
+    });
+
     it('handles timeLimits with invalid date format', () => {
       const propsWithInvalidDates = {
         ...defaultProps,
-        timeLimits: {
-          data: {
-            getDataTimePeriods: [
-              { value: 'invalid_date' },
-              { value: '2023_01' },
-            ],
-          },
-        },
+        timeLimits: ['invalid_date', '2023_01'],
       };
 
       // Should render without throwing error due to our mock handling invalid dates
@@ -459,7 +435,7 @@ describe('FilterDropdownOptions', () => {
     it('has proper ARIA labels', () => {
       render(<FilterDropdownOptions {...defaultProps} />);
 
-      expect(screen.getByLabelText('Select District')).toBeInTheDocument();
+      expect(screen.getByLabelText('Select Division')).toBeInTheDocument();
       expect(
         screen.getByLabelText('Select Revenue-Circle')
       ).toBeInTheDocument();

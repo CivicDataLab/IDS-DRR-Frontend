@@ -5,6 +5,7 @@ import {
   IconChevronsLeft,
   IconChevronsRight,
 } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
 import { IconButton, Select, Text } from 'opub-ui';
 
 const pageSizeOptions = [5, 10, 20];
@@ -24,6 +25,7 @@ const Footer: React.FC<FooterProps> = ({
   onPageChange,
   onPageSizeChange,
 }) => {
+  const t = useTranslations('datasets.pagination');
   const totalPages = Math.ceil(totalRows / pageSize);
 
   const handlePrevClick = () => {
@@ -38,8 +40,8 @@ const Footer: React.FC<FooterProps> = ({
     }
   };
 
-  const handlePageSizeChange = (event: any) => {
-    const newSize = parseInt(event as string);
+  const handlePageSizeChange = (event: string) => {
+    const newSize = parseInt(event);
     if (!isNaN(newSize) && newSize > 0) {
       onPageSizeChange(newSize);
     }
@@ -49,7 +51,7 @@ const Footer: React.FC<FooterProps> = ({
     <div className="flex w-auto items-center gap-8 overflow-x-auto  bg-baseGraySlateSolid3 px-4 py-2 sm:px-6 sm:py-4 md:justify-end lg:justify-end">
       <Select
         labelInline
-        label="Rows: "
+        label={t('rows')}
         options={pageSizeOptions.map((value) => ({
           value: String(value),
           label: String(value),
@@ -62,10 +64,9 @@ const Footer: React.FC<FooterProps> = ({
       />
 
       <div className="hidden md:block lg:block">
-        <Text
-          noBreak
-          variant="bodyMd"
-        >{`Page ${currentPage} of ${totalPages}`}</Text>
+        <Text noBreak variant="bodyMd">
+          {t('page', { current: currentPage, total: totalPages })}
+        </Text>
       </div>
       <div className="md:hidden lg:hidden">
         <Text noBreak variant="bodyMd">{`${currentPage}/${totalPages}`}</Text>
@@ -76,28 +77,28 @@ const Footer: React.FC<FooterProps> = ({
           disabled={currentPage === 1}
           icon={IconChevronsLeft}
         >
-          First Page
+          {t('first')}
         </IconButton>
         <IconButton
           onClick={handlePrevClick}
           disabled={currentPage === 1}
           icon={IconChevronLeft}
         >
-          Previous Page
+          {t('previous')}
         </IconButton>
         <IconButton
           onClick={handleNextClick}
           disabled={currentPage === totalPages}
           icon={IconChevronRight}
         >
-          Next Page
+          {t('next')}
         </IconButton>
         <IconButton
           onClick={() => onPageChange(totalPages)}
           disabled={currentPage === totalPages}
           icon={IconChevronsRight}
         >
-          Last Page
+          {t('last')}
         </IconButton>
       </div>
     </div>

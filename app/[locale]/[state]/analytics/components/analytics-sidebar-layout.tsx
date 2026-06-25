@@ -1,12 +1,13 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
+import { useRouter } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { Select, Spinner, Text } from 'opub-ui';
 
-import { ANALYTICS_TIME_PERIODS } from '@/config/graphql/analaytics-queries';
-import { GraphQL } from '@/lib/api';
+import { type State } from '@/config/graphql/analaytics-queries';
+import { useStateName } from '@/hooks/use-state-name';
+import { routes } from '@/lib/routes';
 import { cn } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
 import { FactorList } from './factor-list';
@@ -14,8 +15,8 @@ import styles from './styles.module.scss';
 
 interface DashboardLayoutProps {
   children?: React.ReactNode;
-  currentState: any;
-  statesList: any;
+  currentState: State;
+  statesList: State[];
 }
 
 export function AnalyticsSideBarLayout({
@@ -23,6 +24,7 @@ export function AnalyticsSideBarLayout({
   currentState,
   statesList,
 }: DashboardLayoutProps) {
+  const tCommon = useTranslations('common');
   const [isClient, setIsClient] = React.useState(false);
 
   // To prevent a hydration mismatch fix:https://nextjs.org/docs/messages/react-hydration-error.
@@ -35,7 +37,7 @@ export function AnalyticsSideBarLayout({
       fallback={
         <div className="flex h-[100vh] flex-col  place-content-center items-center">
           <Spinner color="highlight" />
-          <Text>Loading...</Text>
+          <Text>{tCommon('loading')}</Text>
         </div>
       }
     >
@@ -46,43 +48,35 @@ export function AnalyticsSideBarLayout({
             statesList={statesList}
             currentState={currentState}
           />
-          <main className={cn(styles.Main)}>{children}</main>
+          <div className={cn(styles.Main)}>{children}</div>
         </div>
       ) : (
         <div className="flex h-[100vh] flex-col  place-content-center items-center">
           <Spinner color="highlight" />
-          <Text>Loading...</Text>
+          <Text>{tCommon('loading')}</Text>
         </div>
       )}
     </React.Suspense>
   );
 }
 
-export function IndicatorListWrapper({ statesList, currentState }: any) {
+function IndicatorListWrapper({
+  statesList,
+  currentState,
+}: {
+  statesList: State[];
+  currentState: State;
+}) {
+  const t = useTranslations('analytics.sidebar');
   const router = useRouter();
-
-  const timePeriods = useQuery({
-    queryKey: [`timePeriods`],
-    queryFn: () =>
-      GraphQL(
-        `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_TIME_PERIODS
-      ),
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
-
-  // Get the latest time period (first item in the array, which is the most recent)
-  const latestTimePeriod =
-    timePeriods.data?.getDataTimePeriods[0]?.value ||
-    `${new Date().getFullYear()}_${new Date().getMonth() + 1}`;
+  const stateName = useStateName();
 
   return (
     <React.Fragment>
       {/* DESKTOP  */}
       <MediaRendering minWidth="1024" maxWidth={null}>
         <aside
+          aria-labelledby="analytics-sidebar-heading"
           className={cn(
             'overflow-hidden bg-surfaceDefault pr-0 shadow-basicMd',
             'shadow-inset z-1 hidden shrink-0 basis-[320px] bg-[#F4FBF5] md:block',
@@ -100,8 +94,12 @@ export function IndicatorListWrapper({ statesList, currentState }: any) {
             ></span>
             <div>
               <div className="mb-5 pl-4">
-                <Text className="text-textSubdued" fontWeight="bold">
-                  ANALYTICS DASHBOARD
+                <Text
+                  id="analytics-sidebar-heading"
+                  className="text-textSubdued"
+                  fontWeight="bold"
+                >
+                  {t('heading')}
                 </Text>
               </div>
 
@@ -110,23 +108,21 @@ export function IndicatorListWrapper({ statesList, currentState }: any) {
                   name={'State'}
                   label={''}
                   value={currentState?.slug}
-                  options={statesList.map((state: any) => {
+                  options={statesList.map((state) => {
                     return {
-                      label: state.name,
+                      label: stateName(state.slug, state.name),
                       value: state.slug,
                     };
                   })}
-                  onChange={(e) => {
-                    router.push(
-                      `/${e}/analytics/?indicator=risk-score&view=map`
-                    );
+                  onChange={(slug) => {
+                    router.push(routes.analytics(slug));
                   }}
                 />
               </div>
 
               <div className="mb-5 pl-4">
                 <Text className="text-textSubdued" fontWeight="bold">
-                  INDICATORS
+                  {t('indicators')}
                 </Text>
               </div>
 

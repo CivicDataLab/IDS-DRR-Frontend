@@ -23,35 +23,46 @@ jest.mock('next/image', () => ({
   },
 }));
 
-// Mock next/link to render an anchor tag directly
-jest.mock('next/link', () => ({
-  __esModule: true,
-  default: ({ href, children, ...rest }: any) => (
+// Mock @/i18n/navigation's locale-aware Link as a plain anchor for tests.
+jest.mock('@/i18n/navigation', () => ({
+  Link: ({ href, children, ...rest }: any) => (
     <a href={typeof href === 'string' ? href : href?.pathname} {...rest}>
       {children}
     </a>
   ),
 }));
 
-// Mock the constants
-jest.mock('@/config/consts', () => ({
-  AnalyticsQuickLinksText:
-    'Explore flood-risk profiles at the district and sub-district level across states in India, developed using the IDS-DRR data model',
-  AnalyticsURL: '/analytics/?indicator=risk-score&view=map',
-}));
+/** Generic deployment-agnostic state fixtures (not tied to ids-drr-branding). */
+const mockStatesConfig = [
+  { name: 'Alpha State', slug: 'state-alpha', icon: '/test/alpha.svg', status: 'active' },
+  { name: 'Beta State', slug: 'state-beta', icon: '/test/beta.svg', status: 'active' },
+  { name: 'Gamma State', slug: 'state-gamma', icon: '/test/gamma.svg', status: 'active' },
+  { name: 'Delta State', slug: 'state-delta', icon: '/test/delta.svg', status: 'active' },
+  { name: 'Epsilon State', slug: 'state-epsilon', icon: '/test/epsilon.svg', status: 'active' },
+] as const;
 
-const mockedStates = [
-  { slug: 'assam', latest_time_period: '2025_03' },
-  { slug: 'himachal-pradesh', latest_time_period: '2025_06' },
-  { slug: 'odisha', latest_time_period: '2024_11' },
-  { slug: 'bihar', latest_time_period: '2024_12' },
-  { slug: 'uttar-pradesh', latest_time_period: '2025_01' },
+const mockedApiStates = [
+  { slug: 'state-alpha', latest_time_period: '2025_03' },
+  { slug: 'state-beta', latest_time_period: '2025_06' },
+  { slug: 'state-gamma', latest_time_period: '2024_11' },
+  { slug: 'state-delta', latest_time_period: '2024_12' },
+  { slug: 'state-epsilon', latest_time_period: '2025_01' },
 ];
+
+jest.mock('@/config/site', () => ({
+  states: [
+    { name: 'Alpha State', slug: 'state-alpha', icon: '/test/alpha.svg', status: 'active' },
+    { name: 'Beta State', slug: 'state-beta', icon: '/test/beta.svg', status: 'active' },
+    { name: 'Gamma State', slug: 'state-gamma', icon: '/test/gamma.svg', status: 'active' },
+    { name: 'Delta State', slug: 'state-delta', icon: '/test/delta.svg', status: 'active' },
+    { name: 'Epsilon State', slug: 'state-epsilon', icon: '/test/epsilon.svg', status: 'active' },
+  ],
+}));
 
 jest.mock('@tanstack/react-query', () => ({
   useQuery: jest.fn(() => ({
     data: {
-      getStates: mockedStates,
+      getStates: mockedApiStates,
     },
   })),
 }));
@@ -66,12 +77,11 @@ describe('QuickLinks Component', () => {
   //   delete process.env.TIME_PERIOD;
   // });
 
-  it('renders the main section with correct aria-label', () => {
+  it('renders the main section labelled by its heading', () => {
     render(<QuickLinks />);
 
-    const section = screen.getByRole('region', {
-      name: 'Quick links to deep dive into different states',
-    });
+    // aria-labelledby points at the visible heading's id, so the accessible name matches the heading text.
+    const section = screen.getByRole('region', { name: 'Analytics Dashboard' });
     expect(section).toBeInTheDocument();
   });
 
@@ -83,7 +93,7 @@ describe('QuickLinks Component', () => {
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        'Explore flood-risk profiles at the district and sub-district level across states in India, developed using the IDS-DRR data model'
+        'Explore risk profiles across regions, developed using the underlying data model'
       )
     ).toBeInTheDocument();
   });
@@ -99,47 +109,29 @@ describe('QuickLinks Component', () => {
   it('renders all state cards with correct information', () => {
     render(<QuickLinks />);
 
-    // Check for all state names
-    expect(screen.getByText('Assam')).toBeInTheDocument();
-    expect(screen.getByText('Himachal Pradesh')).toBeInTheDocument();
-    expect(screen.getByText('Odisha')).toBeInTheDocument();
-    expect(screen.getByText('Bihar')).toBeInTheDocument();
-    expect(screen.getByText('Uttar Pradesh')).toBeInTheDocument();
+    mockStatesConfig.forEach(({ name }) => {
+      expect(screen.getByText(name)).toBeInTheDocument();
+    });
   });
 
-  it('renders state cards with correct images and alt text', () => {
+  it('renders state card icons as decorative', () => {
     render(<QuickLinks />);
 
-    // Check for state images with correct alt text
-    expect(
-      screen.getByAltText('assam state boundary image')
-    ).toBeInTheDocument();
-    expect(screen.getByAltText('HP state boundary image')).toBeInTheDocument();
-    expect(
-      screen.getByAltText('Odisha state boundary image')
-    ).toBeInTheDocument();
-    expect(
-      screen.getByAltText('Bihar state boundary image')
-    ).toBeInTheDocument();
-    expect(screen.getByAltText('UP state boundary image')).toBeInTheDocument();
+    // State icons are decorative (alt=""). The accessible name comes from the adjacent state-name heading,
+    // so screen readers don't announce the icon twice.
+    const images = screen.getAllByRole('presentation');
+    expect(images.length).toBeGreaterThan(0);
+    images.forEach((img) => expect(img).toHaveAttribute('alt', ''));
   });
 
   it('renders state cards with correct navigation links', () => {
     render(<QuickLinks />);
 
-    const stateCards = [
-      { name: /Assam/i, slug: 'assam' },
-      { name: /Himachal Pradesh/i, slug: 'himachal-pradesh' },
-      { name: /Odisha/i, slug: 'odisha' },
-      { name: /Bihar/i, slug: 'bihar' },
-      { name: /Uttar Pradesh/i, slug: 'uttar-pradesh' },
-    ];
-
-    stateCards.forEach(({ name, slug }) => {
-      const matchedState = mockedStates.find((state) => state.slug === slug);
+    mockStatesConfig.forEach(({ name, slug }) => {
+      const matchedState = mockedApiStates.find((state) => state.slug === slug);
       expect(matchedState).toBeDefined();
 
-      const link = screen.getByRole('link', { name });
+      const link = screen.getByRole('link', { name: new RegExp(name, 'i') });
       expect(link).toHaveAttribute(
         'href',
         `/${slug}/analytics/?indicator=risk-score&view=map&time-period=${matchedState?.latest_time_period}`
@@ -240,12 +232,10 @@ describe('QuickLinks Component', () => {
   it('maintains accessibility with proper ARIA labels', () => {
     render(<QuickLinks />);
 
-    // Main section should have descriptive aria-label
+    // Section uses aria-labelledby pointing at the heading id so the
+    // accessible name stays in sync with the heading automatically.
     const section = screen.getByRole('region');
-    expect(section).toHaveAttribute(
-      'aria-label',
-      'Quick links to deep dive into different states'
-    );
+    expect(section).toHaveAttribute('aria-labelledby', 'home-analytics-heading');
 
     // Navigation buttons should be accessible
     expect(screen.getByTestId('carousel-previous')).toBeInTheDocument();

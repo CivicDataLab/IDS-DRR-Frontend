@@ -2,6 +2,8 @@ import React from 'react';
 import { AnalyticsMobileLayout } from '@/app/[locale]/[state]/analytics/components/analytics-mobile-layout';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { makeIndicator, makeState } from './fixtures';
+
 // Mock opub-ui components
 jest.mock('opub-ui');
 
@@ -130,9 +132,12 @@ jest.mock(
 // Mock utils
 jest.mock('@/lib/utils', () => ({
   cn: (...classes: string[]) => classes.filter(Boolean).join(' '),
-  copyCurrentURL: jest.fn(),
   downloadStateReport: jest.fn(),
-  formatDate: jest.fn((timestamp) => '2023-08-01'),
+  toISODate: jest.fn((timestamp) => '2023-08-01'),
+}));
+
+jest.mock('@/hooks/use-copy-url', () => ({
+  useCopyURL: () => jest.fn(),
 }));
 
 // Mock utils
@@ -222,25 +227,16 @@ describe('AnalyticsMobileLayout', () => {
     { name: 'Revenue Circle 1', code: 'RC001', districtCode: 'DIST001' },
     { name: 'Revenue Circle 2', code: 'RC002', districtCode: 'DIST001' },
   ];
-  const mockTimePeriods = {
-    data: {
-      getDataTimePeriods: [
-        { value: '2023_01' },
-        { value: '2023_02' },
-        { value: '2023_03' },
-        { value: '2023_08' },
-      ],
-    },
-  };
+  const mockTimePeriods = ['2023_01', '2023_02', '2023_03', '2023_08'];
   const mockIndicatorsData = {
     data: {
       indicators: [
-        {
+        makeIndicator({
           name: 'Risk Score',
           slug: 'risk-score',
-          unit: 'score',
+          unit__name: 'score',
           short_description: 'Overall risk assessment',
-        },
+        }),
       ],
     },
   };
@@ -256,13 +252,14 @@ describe('AnalyticsMobileLayout', () => {
     },
     isLoading: false,
   };
-  const mockCurrentSelectedState = {
+  const mockCurrentSelectedState = makeState({
     code: 'AS',
     name: 'Assam',
-  };
+    slug: 'assam',
+  });
   const mockStatesList = [
-    { code: 'AS', name: 'Assam' },
-    { code: 'HP', name: 'Himachal Pradesh' },
+    mockCurrentSelectedState,
+    makeState({ code: 'HP', name: 'Himachal Pradesh', slug: 'himachal-pradesh' }),
   ];
 
   beforeEach(() => {
@@ -279,7 +276,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -299,7 +297,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -341,7 +340,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -379,7 +379,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -417,7 +418,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -438,7 +440,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -462,7 +465,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -485,7 +489,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -519,7 +524,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={[]}
         revenueGeographiesData={[]}
         timePeriods={mockTimePeriods}
-        indicatorsData={{ data: { indicators: [] } }}
+        mapIndicatorsData={{ data: { indicators: [] } }}
+        aboutIndicatorsData={{ data: { indicators: [] } }}
         tableData={{ data: { tableData: [] }, isLoading: false }}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -539,7 +545,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -551,10 +558,7 @@ describe('AnalyticsMobileLayout', () => {
   });
 
   it('handles different current states', () => {
-    const differentState = {
-      code: 'HP',
-      name: 'Himachal Pradesh',
-    };
+    const differentState = makeState({ code: 'HP', name: 'Himachal Pradesh' });
 
     render(
       <AnalyticsMobileLayout
@@ -565,7 +569,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={differentState}
         statesList={mockStatesList}
@@ -594,7 +599,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -632,7 +638,8 @@ describe('AnalyticsMobileLayout', () => {
         districtGeographiesData={mockDistrictGeographiesData}
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
-        indicatorsData={mockIndicatorsData}
+        mapIndicatorsData={mockIndicatorsData}
+        aboutIndicatorsData={mockIndicatorsData}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}

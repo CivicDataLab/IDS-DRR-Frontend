@@ -5,20 +5,22 @@
   "scripts": {
     "dev": "npm run generate & next dev",
     "build": "graphql-codegen --require dotenv/config --config ./config/codegen.ts & next build",
-    "postbuild": "next-sitemap --config ./next-sitemap.config.js",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "next lint --max-warnings=0 --report-unused-disable-directives-severity error",
+    "knip": "knip",
     "build:tokens": "node ./config/tokens/generate.mjs",
     "postbuild:tokens": "node ./config/tokens/copy.js",
     "generate": "graphql-codegen --require dotenv/config --config ./config/codegen.ts --watch",
     "clean": "rm -rf node_modules package-lock.json",
     "test": "jest",
-    "test:watch": "jest - watch",
-    "test:coverage": "jest - coverage"
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@graphql-typed-document-node/core": "^3.2.0",
-    "@sentry/nextjs": "^8.32.0",
+    "@internationalized/date": "^3.8.2",
+    "@sentry/nextjs": "^10.49.0",
     "@tabler/icons-react": "^3.35.0",
     "@tanstack/react-query": "^5.89.0",
     "@types/node": "^20.1.3",
@@ -26,35 +28,26 @@
     "@types/react-dom": "19.1.9",
     "d3-scale": "^4.0.2",
     "d3-scale-chromatic": "^3.1.0",
-    "dom-to-image": "^2.6.0",
+    "echarts": "^5.5.1",
     "echarts-for-react": "^3.0.2",
     "graphql": "^16.6.0",
-    "graphql-request": "5.1.0",
-    "graphql-tag": "^2.12.6",
-    "leaflet": "^1.9.4",
-    "next": "15.5.9",
-    "next-intl": "^3.4.0",
-    "next-sitemap": "^4.2.3",
+    "graphql-request": "^7.4.0",
+    "ids-drr-branding": "file:./branding-stub",
+    "ids-drr-branding-types": "github:CivicDataLab/ids-drr-branding-types",
+    "next": "15.5.18",
+    "next-intl": "^4.9.2",
     "next-usequerystate": "^1.20.0",
-    "nextjs-toploader": "^1.3.2",
-    "opub-ui": "^0.4.24",
+    "nprogress": "^0.2.0",
+    "opub-ui": "^0.5.1",
     "react": "^19.1.1",
-    "react-aria": "3.22.0",
+    "react-aria": "^3.43.1",
     "react-dom": "^19.1.1",
-    "react-error-boundary": "^4.0.11",
-    "react-select": "^5.8.0",
     "sass": "^1.69.5",
-    "sharp": "^0.33.2",
-    "tailwindcss-animate": "^1.0.7",
-    "usehooks-ts": "^3.1.1",
-    "zustand": "^4.4.1"
+    "sharp": "^0.33.2"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "3.3.1",
-    "@graphql-codegen/client-preset": "3.0.1",
-    "@graphql-codegen/typescript": "^3.0.4",
-    "@graphql-codegen/typescript-graphql-request": "^4.5.9",
-    "@graphql-codegen/typescript-operations": "^3.0.4",
+    "@graphql-codegen/cli": "7.1.0",
+    "@graphql-codegen/client-preset": "6.0.1",
     "@ianvs/prettier-plugin-sort-imports": "^4.1.1",
     "@jest/globals": "^30.1.1",
     "@testing-library/dom": "^10.4.1",
@@ -63,19 +56,18 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/d3-scale": "^4.0.8",
     "@types/d3-scale-chromatic": "^3.0.3",
-    "@types/dom-to-image": "^2.6.5",
     "@types/jest": "^30.0.0",
-    "@types/leaflet": "^1.9.8",
     "@types/nprogress": "^0.2.3",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/eslint-plugin": "^8.60.0",
     "autoprefixer": "^10.4.14",
-    "color2k": "^2.0.2",
     "dotenv": "^16.4.5",
     "encoding": "^0.1.13",
     "eslint": "^8.57.0",
     "eslint-config-next": "15.5.2",
+    "fs-extra": "^11.2.0",
     "jest": "^30.1.1",
     "jest-environment-jsdom": "^30.1.1",
+    "knip": "^6.7.0",
     "postcss": "^8.4.23",
     "prettier": "^3.2.4",
     "prettier-plugin-tailwindcss": "^0.5.11",
@@ -83,11 +75,79 @@
     "tailwind-merge": "^1.12.0",
     "tailwindcss": "^3.3.2",
     "ts-jest": "^29.4.1",
-    "ts-node": "^10.9.2",
     "typescript": "^5.0.4"
   },
   "overrides": {
     "@types/react": "19.1.12",
     "@types/react-dom": "19.1.9"
+  },
+  "eslintConfig": {
+    "ignorePatterns": [
+      "**/generated/**/*.ts"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "next"
+    ],
+    "rules": {
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "warn"
+      ],
+      "@typescript-eslint/no-explicit-any": "error"
+    },
+    "overrides": [
+      {
+        "files": [
+          "tests/**"
+        ],
+        "rules": {
+          "@typescript-eslint/no-explicit-any": "off"
+        }
+      }
+    ]
+  },
+  "postcss": {
+    "plugins": {
+      "tailwindcss": {},
+      "autoprefixer": {}
+    }
+  },
+  "prettier": {
+    "endOfLine": "lf",
+    "semi": true,
+    "trailingComma": "es5",
+    "printWidth": 80,
+    "tabWidth": 2,
+    "useTabs": false,
+    "singleQuote": true,
+    "importOrder": [
+      "<BUILTIN_MODULES>",
+      "^(react/(.*)$)|^(react$)",
+      "^(next/(.*)$)|^(next$)",
+      "<THIRD_PARTY_MODULES>",
+      "",
+      "^types$",
+      "^@local/(.*)$",
+      "^@/config/(.*)$",
+      "^@/lib/(.*)$",
+      "^@/components/(.*)$",
+      "^@/styles/(.*)$",
+      "^[./]"
+    ],
+    "importOrderParserPlugins": [
+      "typescript",
+      "jsx",
+      "decorators-legacy"
+    ],
+    "plugins": [
+      "@ianvs/prettier-plugin-sort-imports",
+      "prettier-plugin-tailwindcss"
+    ],
+    "tailwindFunctions": [
+      "clsx",
+      "cn"
+    ]
   }
 }

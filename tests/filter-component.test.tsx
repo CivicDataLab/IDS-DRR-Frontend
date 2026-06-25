@@ -3,17 +3,20 @@ import { FilterComp } from '@/app/[locale]/[state]/analytics/components/filter-c
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-// Mock next/navigation
-// const mockPush = jest.fn();
+import { makeState } from './fixtures';
+
+// FilterComp keeps useSearchParams on next/navigation but pulls useRouter
+// from next-intl via @/i18n/navigation, so each mock targets its source.
 const mockParams = jest.fn();
 const mockSearchParams = jest.fn();
 
 jest.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: () => {},
-  }),
   useParams: () => mockParams(),
   useSearchParams: () => mockSearchParams(),
+}));
+
+jest.mock('@/i18n/navigation', () => ({
+  useRouter: () => ({ push: () => {} }),
 }));
 
 // Mock next-usequerystate
@@ -80,18 +83,12 @@ jest.mock('@/components/MobileFilterBox', () => ({
 
 // Mock utility functions
 jest.mock('@/lib/utils', () => ({
-  formatDate: jest.fn((timestamp: number, isHyphenated: boolean) => {
+  toISODate: jest.fn((timestamp: number) => {
     const date = new Date(timestamp);
     if (isNaN(date.getTime())) {
       return '2023-01-01'; // Return default date for invalid timestamps
     }
-    return isHyphenated
-      ? date.toISOString().split('T')[0]
-      : date.toLocaleDateString('en-US', {
-          month: 'long',
-          day: 'numeric',
-          year: 'numeric',
-        });
+    return date.toISOString().split('T')[0];
   }),
 }));
 
@@ -105,19 +102,10 @@ jest.mock('@internationalized/date', () => ({
 
 const defaultProps = {
   timePeriod: '2023_08',
-  timePeriods: {
-    data: {
-      getDataTimePeriods: [
-        { value: '2023_01' },
-        { value: '2023_02' },
-        { value: '2023_03' },
-        { value: '2023_12' },
-      ],
-    },
-  },
-  currentSelectedState: {
+  timePeriods: ['2023_01', '2023_02', '2023_03', '2023_12'],
+  currentSelectedState: makeState({
     child_type: 'revenue-circle',
-  },
+  }),
   statesList: [
     { name: 'State 1', slug: 'state-1' },
     { name: 'State 2', slug: 'state-2' },
@@ -238,7 +226,7 @@ describe('FilterComp', () => {
       const selectRevenueButton = screen.getByText('Select Revenue');
       await user.click(selectRevenueButton);
 
-      expect(screen.getByText('Please select a district')).toBeInTheDocument();
+      expect(screen.getByText('Please select a division')).toBeInTheDocument();
     });
 
     it('renders month filter options when drawer is open', async () => {
@@ -314,7 +302,7 @@ describe('FilterComp', () => {
       await user.click(selectRevenueButton);
 
       // Verify that revenue circle filter is accessible
-      expect(screen.getByText('Please select a district')).toBeInTheDocument();
+      expect(screen.getByText('Please select a division')).toBeInTheDocument();
 
       // The revenue options should be available after district selection
       // This tests the basic functionality without requiring specific revenue items
@@ -474,11 +462,7 @@ describe('FilterComp', () => {
     it('handles empty time periods data', () => {
       const propsWithEmptyTimePeriods = {
         ...defaultProps,
-        timePeriods: {
-          data: {
-            getDataTimePeriods: [],
-          },
-        },
+        timePeriods: [],
       };
 
       render(<FilterComp {...propsWithEmptyTimePeriods} />);

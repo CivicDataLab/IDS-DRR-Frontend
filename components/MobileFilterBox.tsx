@@ -1,10 +1,10 @@
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Button,
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
@@ -38,26 +38,27 @@ export const MobileFilterBox = ({
   handleClearFilters: () => void;
   toggleDrawerCallback: () => void;
 }) => {
+  const t = useTranslations('common.filters');
   const toggleDrawer = () => {
     toggleDrawerCallback();
   };
 
   return (
     <Drawer open={open}>
-      <DrawerContent>
+      <DrawerContent aria-describedby={undefined}>
         <DrawerHeader className=" h-[56px] border-b-1 border-solid border-[#C9CCCF]">
           <DrawerTitle className="flex justify-between ">
-            <Text variant="headingMd">Filters</Text>
+            <Text variant="headingMd">{t('heading')}</Text>
             <IconButton
               icon={Icons.cross}
               onClick={toggleDrawer}
               color="default"
             >
-              Close
+              {t('close')}
             </IconButton>
           </DrawerTitle>
         </DrawerHeader>
-        <DrawerDescription className="flex h-[276px]">
+        <div className="flex h-[276px]">
           <div className="flex flex-col items-start gap-3 border-x-1 border-solid border-borderSubdued px-2 py-4">
             {filterOptions.map(
               (item: { value: string; title: string }, index: number) => (
@@ -83,7 +84,7 @@ export const MobileFilterBox = ({
               {children}
             </div>
           </MobileFilterContent>
-        </DrawerDescription>
+        </div>
         <DrawerFooter className="flex flex-row border-t-1 border-solid border-[#BDBDBD]">
           <Button
             onClick={handleClearFilters}
@@ -91,7 +92,7 @@ export const MobileFilterBox = ({
             size="large"
           >
             <Text variant="bodyLg" fontWeight="bold" color="default">
-              Clear All
+              {t('clearAll')}
             </Text>
           </Button>
           <DrawerClose onClick={toggleDrawer} asChild>
@@ -101,7 +102,7 @@ export const MobileFilterBox = ({
               size="large"
             >
               <Text variant="bodyLg" fontWeight="bold" color="default">
-                Apply
+                {t('apply')}
               </Text>
             </Button>
           </DrawerClose>
@@ -111,4 +112,8 @@ export const MobileFilterBox = ({
   );
 };
 
-export const MobileFilterContent = ({ children }: any) => <>{children}</>;
+export const MobileFilterContent = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => <>{children}</>;

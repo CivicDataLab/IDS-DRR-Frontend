@@ -11,19 +11,31 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * 3. It does not support dead code elimination, so it will add unused operations.
  *
  * Therefore it is highly recommended to use the babel or swc plugin for production.
+ * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
-const documents = {
+type Documents = {
+    "\n  query revCircleViewData(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n    $geoFilter: GeoFilter!\n  ) {\n    revCircleViewData(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": typeof types.RevCircleViewDataDocument,
+    "\n  query districtViewData(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n    $geoFilter: GeoFilter!\n  ) {\n    districtViewData(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": typeof types.DistrictViewDataDocument,
+    "\n  query indicators($indcFilter: IndicatorFilter, $stateCode: String) {\n    indicators(indcFilter: $indcFilter, stateCode: $stateCode) {\n      name\n      slug\n      short_description\n      long_description\n      unit__name\n      IDS_dataSpace\n    }\n  }\n": typeof types.IndicatorsDocument,
+    "\n  query indicatorsByCategory($stateCode: String) {\n    indicatorsByCategory(stateCode: $stateCode) {\n      slug\n      name\n      description\n      IDS_dataSpace\n      children {\n        slug\n        name\n        description\n        IDS_dataSpace\n        children {\n          slug\n          name\n          description\n          IDS_dataSpace\n        }\n      }\n    }\n  }\n": typeof types.IndicatorsByCategoryDocument,
+    "\n  query dataTimePeriods {\n    getDataTimePeriods {\n      value\n    }\n  }\n": typeof types.DataTimePeriodsDocument,
+    "\n  query getDistrictRevCircle($geoFilter: GeoFilter!) {\n    getDistrictRevCircle(geoFilter: $geoFilter)\n  }\n": typeof types.GetDistrictRevCircleDocument,
+    "\n  query revenueCircleMapData(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n    $geoFilter: GeoFilter\n  ) {\n    revCircleMapData(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": typeof types.RevenueCircleMapDataDocument,
+    "\n  query districtMapData(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n    $geoFilter: GeoFilter\n  ) {\n    districtMapData(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": typeof types.DistrictMapDataDocument,
+    "\n  query tableData(\n    $indcFilter: IndicatorFilter\n    $dataFilter: DataFilter\n    $geoFilter: GeoFilter\n  ) {\n    tableData(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": typeof types.TableDataDocument,
+    "\n  query getStatesList {\n    getStates {\n      name\n      slug\n      code\n      center\n      bounds\n      child_type\n      resource_id\n      time_periods\n      latest_time_period\n    }\n  }\n": typeof types.GetStatesListDocument,
+};
+const documents: Documents = {
     "\n  query revCircleViewData(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n    $geoFilter: GeoFilter!\n  ) {\n    revCircleViewData(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": types.RevCircleViewDataDocument,
     "\n  query districtViewData(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n    $geoFilter: GeoFilter!\n  ) {\n    districtViewData(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": types.DistrictViewDataDocument,
-    "\n  query indicators($indcFilter: IndicatorFilter) {\n    indicators(indcFilter: $indcFilter)\n  }\n": types.IndicatorsDocument,
-    "\n  query indicatorsByCategory($stateCode: String) {\n    indicatorsByCategory(stateCode: $stateCode)\n  }\n": types.IndicatorsByCategoryDocument,
+    "\n  query indicators($indcFilter: IndicatorFilter, $stateCode: String) {\n    indicators(indcFilter: $indcFilter, stateCode: $stateCode) {\n      name\n      slug\n      short_description\n      long_description\n      unit__name\n      IDS_dataSpace\n    }\n  }\n": types.IndicatorsDocument,
+    "\n  query indicatorsByCategory($stateCode: String) {\n    indicatorsByCategory(stateCode: $stateCode) {\n      slug\n      name\n      description\n      IDS_dataSpace\n      children {\n        slug\n        name\n        description\n        IDS_dataSpace\n        children {\n          slug\n          name\n          description\n          IDS_dataSpace\n        }\n      }\n    }\n  }\n": types.IndicatorsByCategoryDocument,
     "\n  query dataTimePeriods {\n    getDataTimePeriods {\n      value\n    }\n  }\n": types.DataTimePeriodsDocument,
     "\n  query getDistrictRevCircle($geoFilter: GeoFilter!) {\n    getDistrictRevCircle(geoFilter: $geoFilter)\n  }\n": types.GetDistrictRevCircleDocument,
     "\n  query revenueCircleMapData(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n    $geoFilter: GeoFilter\n  ) {\n    revCircleMapData(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": types.RevenueCircleMapDataDocument,
     "\n  query districtMapData(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n    $geoFilter: GeoFilter\n  ) {\n    districtMapData(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": types.DistrictMapDataDocument,
     "\n  query tableData(\n    $indcFilter: IndicatorFilter\n    $dataFilter: DataFilter\n    $geoFilter: GeoFilter\n  ) {\n    tableData(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": types.TableDataDocument,
-    "\n  query getTimeTrends(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n    $geoFilter: GeoFilter!\n  ) {\n    getTimeTrends(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n": types.GetTimeTrendsDocument,
-    "\n  query getStatesList {\n    getStates\n  }\n": types.GetStatesListDocument,
+    "\n  query getStatesList {\n    getStates {\n      name\n      slug\n      code\n      center\n      bounds\n      child_type\n      resource_id\n      time_periods\n      latest_time_period\n    }\n  }\n": types.GetStatesListDocument,
 };
 
 /**
@@ -51,11 +63,11 @@ export function graphql(source: "\n  query districtViewData(\n    $indcFilter: I
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query indicators($indcFilter: IndicatorFilter) {\n    indicators(indcFilter: $indcFilter)\n  }\n"): (typeof documents)["\n  query indicators($indcFilter: IndicatorFilter) {\n    indicators(indcFilter: $indcFilter)\n  }\n"];
+export function graphql(source: "\n  query indicators($indcFilter: IndicatorFilter, $stateCode: String) {\n    indicators(indcFilter: $indcFilter, stateCode: $stateCode) {\n      name\n      slug\n      short_description\n      long_description\n      unit__name\n      IDS_dataSpace\n    }\n  }\n"): (typeof documents)["\n  query indicators($indcFilter: IndicatorFilter, $stateCode: String) {\n    indicators(indcFilter: $indcFilter, stateCode: $stateCode) {\n      name\n      slug\n      short_description\n      long_description\n      unit__name\n      IDS_dataSpace\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query indicatorsByCategory($stateCode: String) {\n    indicatorsByCategory(stateCode: $stateCode)\n  }\n"): (typeof documents)["\n  query indicatorsByCategory($stateCode: String) {\n    indicatorsByCategory(stateCode: $stateCode)\n  }\n"];
+export function graphql(source: "\n  query indicatorsByCategory($stateCode: String) {\n    indicatorsByCategory(stateCode: $stateCode) {\n      slug\n      name\n      description\n      IDS_dataSpace\n      children {\n        slug\n        name\n        description\n        IDS_dataSpace\n        children {\n          slug\n          name\n          description\n          IDS_dataSpace\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query indicatorsByCategory($stateCode: String) {\n    indicatorsByCategory(stateCode: $stateCode) {\n      slug\n      name\n      description\n      IDS_dataSpace\n      children {\n        slug\n        name\n        description\n        IDS_dataSpace\n        children {\n          slug\n          name\n          description\n          IDS_dataSpace\n        }\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -79,11 +91,7 @@ export function graphql(source: "\n  query tableData(\n    $indcFilter: Indicato
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query getTimeTrends(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n    $geoFilter: GeoFilter!\n  ) {\n    getTimeTrends(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n"): (typeof documents)["\n  query getTimeTrends(\n    $indcFilter: IndicatorFilter!\n    $dataFilter: DataFilter!\n    $geoFilter: GeoFilter!\n  ) {\n    getTimeTrends(\n      indcFilter: $indcFilter\n      dataFilter: $dataFilter\n      geoFilter: $geoFilter\n    )\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  query getStatesList {\n    getStates\n  }\n"): (typeof documents)["\n  query getStatesList {\n    getStates\n  }\n"];
+export function graphql(source: "\n  query getStatesList {\n    getStates {\n      name\n      slug\n      code\n      center\n      bounds\n      child_type\n      resource_id\n      time_periods\n      latest_time_period\n    }\n  }\n"): (typeof documents)["\n  query getStatesList {\n    getStates {\n      name\n      slug\n      code\n      center\n      bounds\n      child_type\n      resource_id\n      time_periods\n      latest_time_period\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

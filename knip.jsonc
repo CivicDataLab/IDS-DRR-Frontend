@@ -1,0 +1,27 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  // Files knip can't see as "used" because they're referenced by
+  // non-TS mechanisms (package.json scripts, CSS @imports, etc.).
+  "ignore": [
+    // Consumed by `graphql-codegen --config ./config/codegen.ts` in the
+    // `generate`/`build` npm scripts.
+    // graphql-codegen output, over which we don't have full control.
+    "gql/generated/**",
+    // @import'd by styles/globals.css (knip doesn't follow CSS imports).
+    "styles/tokens/_variables.css",
+  ],
+  "ignoreDependencies": [
+    // `graphql-codegen --require dotenv/config` in npm scripts.
+    "dotenv",
+    // Peer dep of node-fetch-like packages pulled in transitively;
+    // keeping it avoids peer-dep warnings across the dep tree.
+    "encoding",
+    // Used by Next.js internally for image optimization when installed;
+    // not imported directly from source.
+    "sharp",
+    // Jest internals — referenced via jest config / runtime, not via
+    // direct source imports knip can trace.
+    "@jest/globals",
+    "ts-jest",
+  ],
+}
