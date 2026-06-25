@@ -21,7 +21,7 @@ function ModuleHubCard({
   stateSlug: string;
   hazardModule: Module;
 }) {
-  const t = useTranslations('analytics.stateHub');
+  const t = useTranslations('analytics.hub');
   const tCommon = useTranslations('common');
   const { districtCount, isLoading, veryHighRiskCount } = useModuleHubStats(
     stateSlug,
@@ -44,14 +44,14 @@ function ModuleHubCard({
           <div className="flex flex-wrap gap-2">
             {districtCount != null && districtCount > 0 && (
               <Tag variation="filled">
-                {t('insightsAcrossDistricts', { count: districtCount })}
+                {t('insightsAcrossDivisions', { count: districtCount })}
               </Tag>
             )}
             {veryHighRiskCount != null &&
               veryHighRiskCount > 0 &&
               !isLoading && (
                 <Tag variation="filled" fillColor="#FFF4F4" textColor="red">
-                  {t('veryHighRiskDistricts', { count: veryHighRiskCount })}
+                  {t('veryHighRiskDivisions', { count: veryHighRiskCount })}
                 </Tag>
               )}
             {isLoading && (
@@ -75,7 +75,7 @@ function ModuleHubCard({
 
 export default function StatePage() {
   const params = useParams();
-  const t = useTranslations('analytics.stateHub');
+  const t = useTranslations('analytics.hub');
   const stateName = useStateName();
   const state = states.find((s) => s.slug === params.state);
 
@@ -91,7 +91,7 @@ export default function StatePage() {
         </Text>
         <Text variant="bodyLg">{t('intro')}</Text>
         <Text variant="bodyLg" fontWeight="semibold">
-          {t('selectDisaster')}
+          {t('tagline')}
         </Text>
       </div>
       <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 ">
@@ -107,45 +107,6 @@ export default function StatePage() {
           }
         })}
       </div>
-      {/* <div
-        className="mt-10 box-border flex w-full items-start gap-3 rounded-1 border-1 border-solid border-actionSecondaryCriticalDepressed bg-actionSecondaryCriticalDefault p-5"
-        // role="alert"
-      >
-        <IconAlertTriangle className="h-6 w-6 shrink-0 text-iconDefault" />
-        <div className="flex min-w-0 flex-1 flex-col items-start gap-2">
-          <Text variant="bodyMd" fontWeight="bold" className="text-textMedium">
-            Kamrup Metro
-            <Text
-              variant="bodyMd"
-              fontWeight="regular"
-              className="pl-1 text-textMedium"
-            >
-              was at Very High Risk of BOTH heat and floods in several months of
-              2026.
-            </Text>
-          </Text>
-          <Text variant="bodyMd" fontWeight="bold" className="text-textMedium">
-            Dibrugarh
-            <Text
-              variant="bodyMd"
-              fontWeight="regular"
-              className="pl-1 text-textMedium"
-            >
-              is the distract ranked highest for heat risk.{' '}
-            </Text>
-          </Text>
-          <Text variant="bodyMd" fontWeight="bold" className="text-textMedium">
-            Bajali{' '}
-            <Text
-              variant="bodyMd"
-              fontWeight="regular"
-              className="pl-1 text-textMedium"
-            >
-              is the distract ranked highest for flood risk.
-            </Text>
-          </Text>
-        </div>
-      </div> */}
       <div
         className="mt-6 box-border flex w-full items-start gap-3 rounded-1 border-1 border-baseGreenSolid6 bg-baseGreenSolid4 p-5"
         role="note"
@@ -153,13 +114,13 @@ export default function StatePage() {
         <IconInfoCircle className="h-6 w-6 shrink-0 text-iconDefault" />
         <div className="flex min-w-0 flex-1 flex-col items-start gap-2">
           <Text variant="bodyMd" fontWeight="bold" className="text-textMedium">
-            {t('notes.districtAnalytics.label')}
+            {t('notes.divisionAnalytics.label')}
             <Text
               variant="bodyMd"
               fontWeight="regular"
-              className="pl-2 text-textMedium"
+              className="pl-1 text-textMedium"
             >
-              {t('notes.districtAnalytics.description')}
+              {t('notes.divisionAnalytics.description')}
             </Text>
           </Text>
 
@@ -168,7 +129,7 @@ export default function StatePage() {
             <Text
               variant="bodyMd"
               fontWeight="regular"
-              className="pl-2 text-textMedium"
+              className="pl-1 text-textMedium"
             >
               {t('notes.heatPilot.description')}
             </Text>

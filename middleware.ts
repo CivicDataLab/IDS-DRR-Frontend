@@ -12,7 +12,6 @@ const STATIC_SEGMENTS = new Set([
   'datasets',
   'about-us',
   'glossary',
-  'raster-test',
   'api',
   ...locales,
 ]);

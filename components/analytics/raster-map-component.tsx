@@ -215,7 +215,7 @@ export function RasterMapComponent({
               ? `${formatted} ${indicatorUnit}`
               : formatted;
           } else if (result.value == null) {
-            valueText = tMap('noDataInPixel');
+            valueText = tMap('noDataAtPoint');
           }
 
           popup.setContent(

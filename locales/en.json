@@ -140,7 +140,7 @@
       "loading": "Loading map data...",
       "error": "Error loading map data.",
       "noData": "No data available for this period.",
-      "noDataInPixel": "No data available.",
+      "noDataAtPoint": "No data available.",
       "ariaLabel": "Risk map",
       "aggregated": "Aggregated",
       "localized": "Localized",
@@ -212,21 +212,21 @@
         "error": "Error downloading report: {error}"
       }
     },
-    "stateHub": {
+    "hub": {
       "heading": "{stateName} Analytics Dashboards",
       "intro": "IDS-DRR provides data analytics for multiple disasters and climate extremes.",
-      "selectDisaster": "Select a disaster type to begin your analysis.",
+      "tagline": "Select a disaster type to begin your analysis.",
       "explore": "Explore",
-      "insightsAcrossDistricts": "Insights across {count} districts",
-      "veryHighRiskDistricts": "{count} Very High Risk districts",
+      "insightsAcrossDivisions": "Insights across {count} divisions",
+      "veryHighRiskDivisions": "{count} Very High Risk divisions",
       "notes": {
-        "districtAnalytics": {
-          "label": "District-level analytics:",
-          "description": "Each disaster type presents a state-centric view with drill-down capabilities to individual districts or sub-districts. The IDS-DRR model analyses data across various metrics to provide risk insights. Read more from our Resources."
+        "divisionAnalytics": {
+          "label": "Division-level analytics: ",
+          "description": "Each disaster type presents a state-centric view with drill-down capabilities to individual divisions or subdivisions. The IDS-DRR model analyses data across various metrics to provide risk insights. Read more from our Resources."
         },
         "heatPilot": {
-          "label": "Heat Analytics (Pilot):",
-          "description": "Each pilot district has historical heat data across datasets, with risk insights to support informed, evidence-based decisions."
+          "label": "Heat Analytics (Pilot): ",
+          "description": "Each pilot division has historical heat data across datasets, with risk insights to support informed, evidence-based decisions."
         }
       }
     }
