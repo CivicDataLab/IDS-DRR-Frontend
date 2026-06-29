@@ -1,15 +1,22 @@
 import {
   parseDate,
-  type CalendarDate,
   type DateValue,
 } from '@internationalized/date';
-import { parseAsString, useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
+import { parseAsString, useQueryState } from 'next-usequerystate';
 import { MonthPicker, MultiMonthPicker, Select } from 'opub-ui';
 
 import { type State } from '@/config/graphql/analaytics-queries';
+import { hasSubDistrictSupport } from '@/lib/state-map-config';
 import { toTitleCase } from '@/lib/utils';
-import { getLatestDate, safeParseDate } from '../utils/utils';
+import { getLatestDate } from '@/lib/analytics/utils';
+import { useAnalyticsModule } from '@/hooks/use-analytics-module';
+
+/** `YYYY_MM` → CalendarDate for MonthPicker (same pattern as filter-component). */
+function parsePeriodForPicker(period: string) {
+  const [year, month] = period.split('_');
+  return parseDate(`${year}-${month.padStart(2, '0')}-01`);
+}
 
 export interface Option {
   disabled?: boolean;
@@ -24,13 +31,19 @@ export default function FilterDropdownOptions({
   DistrictDropDownOption,
   monthMulti = false,
   timeLimits,
+  withSubDistrictSupport: withSubDistrictSupportProp,
 }: {
   currentSelectedState: State;
   RevCircleDropdownOptions: Option[];
   DistrictDropDownOption: Option[];
   monthMulti?: boolean;
   timeLimits: string[];
+  withSubDistrictSupport?: boolean;
 }) {
+  const analyticsModule = useAnalyticsModule();
+  const withSubDistrictSupport =
+    withSubDistrictSupportProp ??
+    hasSubDistrictSupport(currentSelectedState?.slug, analyticsModule);
   const t = useTranslations('analytics.filters');
   // console.log('timeLimits', timeLimits);
   const [districtCode, setDistrictCode] = useQueryState(
@@ -68,17 +81,11 @@ export default function FilterDropdownOptions({
   }
 
   const minValue = minPeriod
-    ? (() => {
-        const [y, m] = minPeriod!.split('_');
-        return parseDate(`${y}-${m}-01`);
-      })()
+    ? parsePeriodForPicker(minPeriod)
     : parseDate('2023-01-04');
 
   const maxValue = maxPeriod
-    ? (() => {
-        const [y, m] = maxPeriod!.split('_');
-        return parseDate(`${y}-${m}-01`);
-      })()
+    ? parsePeriodForPicker(maxPeriod)
     : parseDate('2023-01-04');
 
   const [selectedTimePeriod, setSelectedTimePeriod] = useQueryState<string[]>(
@@ -101,7 +108,8 @@ export default function FilterDropdownOptions({
   ]);
 
   const childTypeLabel =
-    toTitleCase(currentSelectedState.child_type) || t('subdivision.defaultType');
+    toTitleCase(currentSelectedState.child_type) ||
+    t('subdivision.defaultType');
   const revenueOptions = sanitizeOptions([
     {
       label: !districtCode
@@ -129,8 +137,7 @@ export default function FilterDropdownOptions({
       fallback = '2023_01';
     }
 
-    const [year, month] = fallback.split('_');
-    return parseDate(`${year}-${month?.padStart(2, '0')}-01`);
+    return parsePeriodForPicker(fallback);
   };
 
   // Compute a controlled value for MonthPicker so it stays in sync with URL updates.
@@ -139,7 +146,7 @@ export default function FilterDropdownOptions({
   const hasExplicitEmptyTimePeriod = timePeriod === '';
   const monthPickerValue =
     periods.length > 0
-      ? safeParseDate(getLatestDate(periods) || '2023-08-01')
+      ? parsePeriodForPicker(getLatestDate(periods))
       : hasExplicitEmptyTimePeriod
         ? undefined
         : getDefaultDate(timePeriod);
@@ -159,17 +166,19 @@ export default function FilterDropdownOptions({
           options={districtOptions}
         />
 
-        <Select
-          label={t('subdivision.label', { type: childTypeLabel })}
-          value={revenueCode || ''}
-          name="revenue-circle-select"
-          className="flex-1"
-          disabled={!districtCode}
-          onChange={(e) => {
-            setRevenueCode(e, { shallow: false });
-          }}
-          options={revenueOptions}
-        />
+        {withSubDistrictSupport && (
+          <Select
+            label={t('subdivision.label', { type: childTypeLabel })}
+            value={revenueCode || ''}
+            name="revenue-circle-select"
+            className="flex-1"
+            disabled={!districtCode}
+            onChange={(e) => {
+              setRevenueCode(e, { shallow: false });
+            }}
+            options={revenueOptions}
+          />
+        )}
 
         <div className="flex-1">
           {monthMulti ? (
@@ -178,11 +187,8 @@ export default function FilterDropdownOptions({
               // name="time-period-select"
               // className="flex-1"
               selectedValues={periods
-                .map((timePeriod: string) => {
-                  const [year, month] = timePeriod.split('_');
-                  return safeParseDate(`${year}-${month?.padStart(2, '0')}-01`);
-                })
-                .filter((d): d is CalendarDate => d !== undefined)}
+                .filter((p) => /^\d{4}_\d{2}$/.test(p))
+                .map((p) => getDefaultDate(p))}
               // defaultValues={getDefaultDate(timePeriod || '')}
               label={t('month.labelMulti')}
               minValue={minValue}

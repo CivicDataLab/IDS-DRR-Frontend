@@ -34,11 +34,36 @@ jest.mock('@/i18n/navigation', () => ({
 
 /** Generic deployment-agnostic state fixtures (not tied to ids-drr-branding). */
 const mockStatesConfig = [
-  { name: 'Alpha State', slug: 'state-alpha', icon: '/test/alpha.svg', status: 'active' },
-  { name: 'Beta State', slug: 'state-beta', icon: '/test/beta.svg', status: 'active' },
-  { name: 'Gamma State', slug: 'state-gamma', icon: '/test/gamma.svg', status: 'active' },
-  { name: 'Delta State', slug: 'state-delta', icon: '/test/delta.svg', status: 'active' },
-  { name: 'Epsilon State', slug: 'state-epsilon', icon: '/test/epsilon.svg', status: 'active' },
+  {
+    name: 'Alpha State',
+    slug: 'state-alpha',
+    icon: '/test/alpha.svg',
+    status: 'active',
+  },
+  {
+    name: 'Beta State',
+    slug: 'state-beta',
+    icon: '/test/beta.svg',
+    status: 'active',
+  },
+  {
+    name: 'Gamma State',
+    slug: 'state-gamma',
+    icon: '/test/gamma.svg',
+    status: 'active',
+  },
+  {
+    name: 'Delta State',
+    slug: 'state-delta',
+    icon: '/test/delta.svg',
+    status: 'active',
+  },
+  {
+    name: 'Epsilon State',
+    slug: 'state-epsilon',
+    icon: '/test/epsilon.svg',
+    status: 'active',
+  },
 ] as const;
 
 const mockedApiStates = [
@@ -49,13 +74,59 @@ const mockedApiStates = [
   { slug: 'state-epsilon', latest_time_period: '2025_01' },
 ];
 
+const floodModule = {
+  slug: 'flood',
+  status: 'active',
+  name: 'Flood',
+} as const;
+
+const heatModule = {
+  slug: 'heat',
+  status: 'inactive',
+  name: 'Heat',
+} as const;
+
+jest.mock('@/lib/state-map-config', () => ({
+  getStateBranding: jest.fn((slug: string | undefined) => {
+    if (!slug) return undefined;
+    const { states } = jest.requireMock('@/config/site');
+    return states.find((state: { slug: string }) => state.slug === slug);
+  }),
+  hasSubDistrictSupport: jest.fn(() => true),
+}));
+
 jest.mock('@/config/site', () => ({
   states: [
-    { name: 'Alpha State', slug: 'state-alpha', icon: '/test/alpha.svg', status: 'active' },
-    { name: 'Beta State', slug: 'state-beta', icon: '/test/beta.svg', status: 'active' },
-    { name: 'Gamma State', slug: 'state-gamma', icon: '/test/gamma.svg', status: 'active' },
-    { name: 'Delta State', slug: 'state-delta', icon: '/test/delta.svg', status: 'active' },
-    { name: 'Epsilon State', slug: 'state-epsilon', icon: '/test/epsilon.svg', status: 'active' },
+    {
+      name: 'Alpha State',
+      slug: 'state-alpha',
+      icon: '/test/alpha.svg',
+      status: 'active',
+    },
+    {
+      name: 'Beta State',
+      slug: 'state-beta',
+      icon: '/test/beta.svg',
+      status: 'active',
+    },
+    {
+      name: 'Gamma State',
+      slug: 'state-gamma',
+      icon: '/test/gamma.svg',
+      status: 'active',
+    },
+    {
+      name: 'Delta State',
+      slug: 'state-delta',
+      icon: '/test/delta.svg',
+      status: 'active',
+    },
+    {
+      name: 'Epsilon State',
+      slug: 'state-epsilon',
+      icon: '/test/epsilon.svg',
+      status: 'active',
+    },
   ],
 }));
 
@@ -68,6 +139,13 @@ jest.mock('@tanstack/react-query', () => ({
 }));
 
 describe('QuickLinks Component', () => {
+  afterEach(() => {
+    const { states } = jest.requireMock('@/config/site');
+    states.forEach((state: { modules?: unknown }) => {
+      delete state.modules;
+    });
+  });
+
   // beforeEach(() => {
   //   // Set environment variable for consistent testing
   //   process.env.TIME_PERIOD = '2024';
@@ -124,18 +202,35 @@ describe('QuickLinks Component', () => {
     images.forEach((img) => expect(img).toHaveAttribute('alt', ''));
   });
 
+  it('links to state hub when multiple modules are configured', () => {
+    const { states } = jest.requireMock('@/config/site');
+    states[0].modules = [floodModule, heatModule];
+
+    render(<QuickLinks />);
+
+    const link = screen.getByRole('link', { name: /Alpha State/i });
+    expect(link).toHaveAttribute('href', '/state-alpha');
+  });
+
+  it('links directly to analytics when only one module is configured', () => {
+    const { states } = jest.requireMock('@/config/site');
+    states[0].modules = [floodModule];
+
+    render(<QuickLinks />);
+
+    const link = screen.getByRole('link', { name: /Alpha State/i });
+    expect(link).toHaveAttribute(
+      'href',
+      '/state-alpha/flood/analytics/?indicator=risk-score&view=map'
+    );
+  });
+
   it('renders state cards with correct navigation links', () => {
     render(<QuickLinks />);
 
     mockStatesConfig.forEach(({ name, slug }) => {
-      const matchedState = mockedApiStates.find((state) => state.slug === slug);
-      expect(matchedState).toBeDefined();
-
       const link = screen.getByRole('link', { name: new RegExp(name, 'i') });
-      expect(link).toHaveAttribute(
-        'href',
-        `/${slug}/analytics/?indicator=risk-score&view=map&time-period=${matchedState?.latest_time_period}`
-      );
+      expect(link).toHaveAttribute('href', `/${slug}`);
     });
   });
 
@@ -235,7 +330,10 @@ describe('QuickLinks Component', () => {
     // Section uses aria-labelledby pointing at the heading id so the
     // accessible name stays in sync with the heading automatically.
     const section = screen.getByRole('region');
-    expect(section).toHaveAttribute('aria-labelledby', 'home-analytics-heading');
+    expect(section).toHaveAttribute(
+      'aria-labelledby',
+      'home-analytics-heading'
+    );
 
     // Navigation buttons should be accessible
     expect(screen.getByTestId('carousel-previous')).toBeInTheDocument();

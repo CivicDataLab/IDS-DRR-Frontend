@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useRouter } from '@/i18n/navigation';
 import { parseDate } from '@internationalized/date';
-import { parseAsString, useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
+import type { CalendarDate, DateValue } from '@internationalized/date';
+import { parseAsString, useQueryState } from 'next-usequerystate';
 import {
   Button,
   Icon,
@@ -14,13 +15,15 @@ import {
   RadioItem,
   YearCalendar,
 } from 'opub-ui';
-import type { CalendarDate, DateValue } from '@internationalized/date';
 
 import { type State } from '@/config/graphql/analaytics-queries';
-import { routes, type AnalyticsView } from '@/lib/routes';
+import { analyticsRouteForState } from '@/lib/analytics/build-route';
+import { type AnalyticsView } from '@/lib/routes';
+import { hasSubDistrictSupport } from '@/lib/state-map-config';
 import { type JsonScalar } from '@/lib/types';
 import { toISODate } from '@/lib/utils';
 import Icons from '@/components/icons';
+import { useAnalyticsModule } from '@/hooks/use-analytics-module';
 import {
   MobileFilterBox,
   MobileFilterContent,
@@ -58,6 +61,11 @@ export function FilterComp({
     type: string;
   }[];
   const router = useRouter();
+  const analyticsModule = useAnalyticsModule();
+  const withSubDistrictSupport = hasSubDistrictSupport(
+    currentSelectedState?.slug,
+    analyticsModule
+  );
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -151,19 +159,23 @@ export function FilterComp({
         ) || [],
       type: 'radio-button',
     },
-    {
-      title: t('subdivision.title'),
-      value: 'revenue-circle',
-      // options: getRevenueOptions(),
-      options:
-        revenueGeographiesData?.data?.getDistrictRevCircle?.[regionName]?.map(
-          (circle: { code: string; [key: string]: string }) => ({
-            label: circle[currentSelectedState?.child_type ?? ''],
-            value: circle.code,
-          })
-        ) || [],
-      type: 'radio-button',
-    },
+    ...(withSubDistrictSupport
+      ? [
+          {
+            title: t('subdivision.title'),
+            value: 'revenue-circle',
+            // options: getRevenueOptions(),
+            options:
+              revenueGeographiesData?.data?.getDistrictRevCircle?.[
+                regionName
+              ]?.map((circle: { code: string; [key: string]: string }) => ({
+                label: circle[currentSelectedState?.child_type ?? ''],
+                value: circle.code,
+              })) || [],
+            type: 'radio-button',
+          },
+        ]
+      : []),
     {
       title: t('month.title'),
       value: 'month',
@@ -235,6 +247,10 @@ const RenderOptions = ({
   const t = useTranslations('analytics.filters');
   const [selectedState, setSelectedState] = useState('');
   const router = useRouter();
+  const params = useParams();
+  const analyticsModule = useAnalyticsModule();
+  const moduleFromPath =
+    typeof params.module === 'string' ? params.module : undefined;
 
   const findSelectedValue = filterOptions.filter(
     (opt: { value: string }) => opt.value === selectedOption
@@ -260,10 +276,14 @@ const RenderOptions = ({
         normalizedTimePeriods[0] ||
         `${new Date().getFullYear()}_${new Date().getMonth() + 1}`;
       router.push(
-        routes.analytics(selectedValue, {
-          view: view as AnalyticsView,
-          timePeriod: latestTimePeriod,
-        })
+        analyticsRouteForState(
+          selectedValue,
+          moduleFromPath ?? analyticsModule,
+          {
+            view: view as AnalyticsView,
+            timePeriod: latestTimePeriod,
+          }
+        )
       );
       // console.log('---Selected State ---', selectedState);
     } else if (value === 'district') {

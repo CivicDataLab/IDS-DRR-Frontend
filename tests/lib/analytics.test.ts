@@ -1,11 +1,6 @@
-import { Factors, isRiskLevel, RiskColorMap } from '@/lib/analytics';
+import { isRiskLevel, RiskColorMap } from '@/lib/analytics';
 
 describe('analytics constants', () => {
-  it('exports score-style factor slugs', () => {
-    expect(Factors).toContain('risk-score');
-    expect(Factors).toHaveLength(5);
-  });
-
   it('maps each risk level to colors', () => {
     for (const level of ['1', '2', '3', '4', '5'] as const) {
       expect(RiskColorMap[level].backgroundColor).toBeTruthy();

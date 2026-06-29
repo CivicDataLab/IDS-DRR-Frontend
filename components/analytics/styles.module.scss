@@ -25,39 +25,6 @@
   min-width: 430px;
 }
 
-.mobileOverlay {
-  position: absolute;
-  bottom: -100%; /* Initially off-screen */
-  z-index: 100001;
-  height: calc(100dvh - 86%);
-  opacity: 95%;
-  box-shadow: var(--shadow-basic-md);
-  transition:
-    bottom 0.4s ease,
-    height 0.4s ease;
-
-  width: 100%;
-  max-width: 380px;
-  min-width: 300px;
-}
-
-// .mobileOverlayActive {
-//   bottom: 86px;
-//   right: 0;
-// }
-
-// .expandedOverlay {
-//   bottom: 86px;
-//   height: calc(100dvh - 160px);
-// }
-
-// @media (max-width: 480px) {
-//   .mobileOverlay {
-//     max-width: 100%;
-//     min-width: 280px;
-//   }
-// }
-
 .bottomDrawer {
   position: absolute;
   // bottom: -100%;
@@ -212,6 +179,108 @@
     transform: rotate(180deg);
   }
 }
+.analyticsHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  gap: 10px;
+  min-height: 48px;
+  align-self: stretch;
+}
+
+.analyticsIndicatorTitle {
+  flex: none;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.2;
+  color: #000000;
+}
+
+.analyticsViewTabs {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: flex-start;
+  margin-left: auto;
+  overflow-x: auto;
+  filter: drop-shadow(0px 1px 1px rgba(31, 33, 36, 0.1));
+  border-radius: 2px;
+  flex: none;
+  padding: 0 !important;
+  background: none !important;
+  border: none !important;
+}
+
+.analyticsViewTabsGroup {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.analyticsViewTab {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 24px 8px 20px !important;
+  gap: 10px;
+  height: 36px;
+  min-height: 36px;
+  background: #ffffff !important;
+  box-shadow: inset -1px 0 0 #e4e5e7 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  cursor: pointer;
+  flex: none;
+
+  &[data-state='active'] {
+    background: #d7f0da !important;
+  }
+
+  // opub-ui wraps tab children in Text (p)
+  > p,
+  > span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+  }
+}
+
+.analyticsViewTabActive,
+.analyticsViewTab[data-state='active'] {
+  background: #d7f0da !important;
+}
+
+.analyticsViewTabContent {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.analyticsViewTabLabel {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  color: #11181c;
+  white-space: nowrap;
+}
+
+.analyticsViewTabActive .analyticsViewTabLabel,
+.analyticsViewTab[data-state='active'] .analyticsViewTabLabel {
+  font-weight: 600;
+  color: #202223;
+}
+
+.analyticsViewTabActive :global(.OPub-Icon),
+.analyticsViewTab[data-state='active'] :global(.OPub-Icon) {
+  color: #202223;
+}
+
 .TabItem {
   --active-color: rgba(150, 231, 158, 0.5);
   --active-border-color: #479c4f;

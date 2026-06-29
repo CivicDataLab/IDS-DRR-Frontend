@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import { useAnalyticsModule } from '@/hooks/use-analytics-module';
+import { useFormatNumber } from '@/hooks/use-format-number';
 import { useWindowSize } from '@/hooks/use-window-size';
 import * as d3 from 'd3-scale';
 import { interpolateBlues } from 'd3-scale-chromatic';
@@ -13,12 +15,13 @@ import {
   type State,
 } from '@/config/graphql/analaytics-queries';
 import { states, tileLayers } from '@/config/site';
-import { useFormatNumber } from '@/hooks/use-format-number';
-import { Factors, isRiskLevel } from '@/lib/analytics';
+import { isRiskLevel } from '@/lib/analytics';
+import { isScoreIndicator } from '@/lib/analytics/factor-role';
+import { getFactorNameBySlug, getUnitsBySlug } from '@/lib/analytics/utils';
+import { hasSubDistrictSupport } from '@/lib/state-map-config';
 import { type JsonScalar } from '@/lib/types';
 import Icons from '@/components/icons';
 import MapChart from '@/components/MapChart';
-import { getFactorNameBySlug, getUnitsBySlug } from '../utils/utils';
 
 export const MapComponent = ({
   indicator,
@@ -49,6 +52,11 @@ export const MapComponent = ({
   const tCommon = useTranslations('common');
   const tMap = useTranslations('analytics.map');
   const formatNumber = useFormatNumber();
+  const analyticsModule = useAnalyticsModule();
+  const withSubDistrictSupport = hasSubDistrictSupport(
+    currentSelectedState?.slug,
+    analyticsModule
+  );
 
   const translatedTileLayers = React.useMemo<TileLayers | undefined>(() => {
     if (!tileLayers) return undefined;
@@ -56,10 +64,7 @@ export const MapComponent = ({
       Object.entries(tileLayers).map(([key, layer]) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic next-intl key, guarded by tMap.has
         const translationKey = `layers.${key}` as any;
-        return [
-          tMap.has(translationKey) ? tMap(translationKey) : key,
-          layer,
-        ];
+        return [tMap.has(translationKey) ? tMap(translationKey) : key, layer];
       })
     ) as TileLayers;
   }, [tMap]);
@@ -92,20 +97,43 @@ export const MapComponent = ({
   const districtCode = params.get('district-code');
 
   const mapFeatures = React.useMemo(() => {
-    if (!districtCode) return mapData?.features;
-    return (revenueMapData?.features || []).filter(
-      (feature: { properties: { [x: string]: string } }) =>
-        feature.properties['district-code'] === districtCode
-    );
-  }, [districtCode, mapData?.features, revenueMapData?.features]);
+    if (withSubDistrictSupport && districtCode) {
+      return (revenueMapData?.features || []).filter(
+        (feature: { properties: { [x: string]: string } }) =>
+          feature.properties['district-code'] === districtCode
+      );
+    }
+    if (!withSubDistrictSupport && districtCode) {
+      return (mapData?.features || []).filter(
+        (feature: { properties: { [x: string]: string } }) =>
+          feature.properties.code === districtCode
+      );
+    }
+    return mapData?.features;
+  }, [
+    districtCode,
+    mapData?.features,
+    revenueMapData?.features,
+    withSubDistrictSupport,
+  ]);
+
+  // Keep choropleth colors stable when focusing a single district without
+  // sub-district drill-down — the scale must use the full state range, not
+  // the lone visible feature.
+  const colorScaleFeatures = React.useMemo(() => {
+    if (!withSubDistrictSupport && districtCode) {
+      return mapData?.features;
+    }
+    return mapFeatures;
+  }, [districtCode, mapData?.features, mapFeatures, withSubDistrictSupport]);
 
   const { width } = useWindowSize();
   const isMobile = width < 1023;
 
   const values = [];
-  for (let i = 0; i < mapFeatures?.length; i++) {
-    if (mapFeatures[i].properties[indicator] == null) continue;
-    values.push(mapFeatures[i].properties[indicator]);
+  for (let i = 0; i < colorScaleFeatures?.length; i++) {
+    if (colorScaleFeatures[i].properties[indicator] == null) continue;
+    values.push(colorScaleFeatures[i].properties[indicator]);
   }
 
   const customLegendData: { label: string; color: string }[] = [];
@@ -124,7 +152,7 @@ export const MapComponent = ({
         .interpolator(interpolateBlues)
     : () => NO_DATA_FILL;
 
-  if (hasData && !Factors.includes(indicator) && !allZeros) {
+  if (hasData && !isScoreIndicator(indicator) && !allZeros) {
     const min = Math.min(...values);
     const max = Math.max(...values);
     const step = (max - min) / 3;
@@ -164,7 +192,7 @@ export const MapComponent = ({
     });
   }
 
-  if (!hasData && !Factors.includes(indicator)) {
+  if (!hasData && !isScoreIndicator(indicator)) {
     customLegendData.push({
       color: NO_DATA_FILL,
       label: tMap('noData'),
@@ -213,14 +241,18 @@ export const MapComponent = ({
   };
 
   const onMapClick = ({ layerCode }: { layerCode: string }) => {
-    if (!districtCode) {
+    if (!withSubDistrictSupport) {
       setRegion(layerCode);
+      return;
     }
 
-    if (districtCode) {
-      setRevenueRegion(layerCode);
-      setRegion(districtCode);
+    if (!districtCode) {
+      setRegion(layerCode);
+      return;
     }
+
+    setRevenueRegion(layerCode);
+    setRegion(districtCode);
   };
 
   function EnablePopup({
@@ -241,8 +273,8 @@ export const MapComponent = ({
           return `
       <div>
       <strong>${regionName.toUpperCase()}</strong><br/>
-      <span>${getFactorNameBySlug(indicatorsData, indicator)} : <span style="color: ${colorMap[riskValue]}; text-transform: ${Factors.includes(indicator) && 'uppercase'}; font-weight: bold;">${
-        Factors.includes(indicator)
+      <span>${getFactorNameBySlug(indicatorsData, indicator)} : <span style="color: ${colorMap[riskValue]}; text-transform: ${isScoreIndicator(indicator) && 'uppercase'}; font-weight: bold;">${
+        isScoreIndicator(indicator)
           ? riskText
           : riskValue == null
             ? tCommon('na')
@@ -269,7 +301,7 @@ export const MapComponent = ({
   const safeApply = React.useCallback(
     (apply: () => void) => {
       requestAnimationFrame(() => {
-        map.invalidateSize();
+        map?.invalidateSize();
         const size = map.getSize();
         if (!size.x || !size.y) return;
         apply();
@@ -287,10 +319,9 @@ export const MapComponent = ({
     [isOutputPaneOpen, isMobile]
   );
 
-  // Fit to the selected district.
+  // Fit to the selected district (vector parity with raster drill-down).
   const fittedDistrictRef = React.useRef<string | null>(null);
   React.useEffect(() => {
-    // Reset if user returns to state-level.
     if (!districtCode) {
       fittedDistrictRef.current = null;
       return;
@@ -306,13 +337,26 @@ export const MapComponent = ({
     );
     if (!feature?.properties?.bounds) return;
     map.whenReady(() =>
-      safeApply(() => map.fitBounds(feature.properties.bounds, fitBoundsOptions))
+      safeApply(() =>
+        map.fitBounds(feature.properties.bounds, fitBoundsOptions)
+      )
     );
-  }, [districtCode, map, mapData?.features, isOutputPaneOpen, isMobile, fitBoundsOptions, safeApply]);
+  }, [
+    districtCode,
+    withSubDistrictSupport,
+    map,
+    mapData?.features,
+    isOutputPaneOpen,
+    isMobile,
+    fitBoundsOptions,
+    safeApply,
+  ]);
 
   // Defer popup close so a quick edge re-entry (cursor wobbling across a
   // polygon's jagged boundary) doesn't tear down and rebuild the popup.
-  const popupCloseTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const popupCloseTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Leaflet layer ref
   const poppedLayerRef = React.useRef<any>(null);
   React.useEffect(
@@ -324,6 +368,7 @@ export const MapComponent = ({
 
   React.useEffect(() => {
     if (!map || !map.getContainer()) return;
+    // When a district is selected, keep the district zoom from the effect above.
     if (districtCode) return;
 
     map.whenReady(() =>
@@ -331,14 +376,25 @@ export const MapComponent = ({
         if (currentSelectedState?.bounds) {
           map.fitBounds(currentSelectedState.bounds, fitBoundsOptions);
         } else if (currentSelectedState?.center) {
-          const state = states.find((s) => s.slug === currentSelectedState.slug);
+          const state = states.find(
+            (s) => s.slug === currentSelectedState.slug
+          );
           map.setView(currentSelectedState.center, state?.zoom ?? 6);
         }
       })
     );
-  }, [map, districtCode, currentSelectedState, isOutputPaneOpen, isMobile, fitBoundsOptions, safeApply]);
+  }, [
+    map,
+    districtCode,
+    withSubDistrictSupport,
+    currentSelectedState,
+    isOutputPaneOpen,
+    isMobile,
+    fitBoundsOptions,
+    safeApply,
+  ]);
 
-  if (mapDataloading || revenueMapDataLoading)
+  if (mapDataloading || (withSubDistrictSupport && revenueMapDataLoading))
     return (
       <div className="flex h-full flex-col place-content-center items-center">
         <Spinner color="highlight" />
@@ -357,6 +413,14 @@ export const MapComponent = ({
   ];
 
   const stateConfig = states.find((s) => s.slug === currentSelectedState?.slug);
+  const mapCenter =
+    currentSelectedState?.center?.length === 2
+      ? (currentSelectedState.center as [number, number])
+      : undefined;
+  const showMapLegend = !(isMobile && isOutputPaneOpen);
+  const activeLegendData = isScoreIndicator(indicator)
+    ? legendData
+    : customLegendData;
 
   return (
     <>
@@ -378,7 +442,7 @@ export const MapComponent = ({
               onClick={onToggleOutputPane}
               className="border flex h-8 w-8 items-center justify-center border-borderSubdued bg-surfaceDefault shadow-basicSm"
             >
-              <Icon source={Icons.layoutSidebarRightCollapse} />
+              <Icon source={Icons.info} />
             </Button>
           </div>
         )}
@@ -387,32 +451,34 @@ export const MapComponent = ({
           tileLayers={translatedTileLayers}
           addlFeaturesArray={overlayFeatures ? [overlayFeatures] : []}
           addlFeaturesStyleArray={addlFeaturesStyleArray}
-          mapCenter={currentSelectedState?.center}
+          mapCenter={mapCenter}
           mapZoom={stateConfig?.zoom ?? 6}
           mapProperty={indicator}
           zoomOnClick={false}
-          isCustomColor={!Factors.includes(indicator)}
+          isCustomColor={!isScoreIndicator(indicator)}
           customColor={colorScale}
-          horizontalLegend={isMobile ? true : false}
+          horizontalLegend={isMobile && showMapLegend}
           legendHeading={{
-            heading: !Factors.includes(indicator)
-              ? `${getFactorNameBySlug(indicatorsData, indicator)} ${
-                  getUnitsBySlug(indicatorsData, indicator) &&
-                  `${
-                    getUnitsBySlug(indicatorsData, indicator).includes('(')
-                      ? ` ${getUnitsBySlug(indicatorsData, indicator)}`
-                      : ` (${getUnitsBySlug(indicatorsData, indicator)})`
+            heading:
+              showMapLegend && !isScoreIndicator(indicator)
+                ? `${getFactorNameBySlug(indicatorsData, indicator)} ${
+                    getUnitsBySlug(indicatorsData, indicator) &&
+                    `${
+                      getUnitsBySlug(indicatorsData, indicator).includes('(')
+                        ? ` ${getUnitsBySlug(indicatorsData, indicator)}`
+                        : ` (${getUnitsBySlug(indicatorsData, indicator)})`
+                    }`
                   }`
-                }`
-              : '',
+                : '',
           }}
-          legendData={
-            Factors.includes(indicator) ? legendData : customLegendData
-          }
+          legendData={showMapLegend ? activeLegendData : undefined}
           {...(() => {
             // Pair minZoom/maxZoom: setting one without the other makes Leaflet
             // throw "Attempted to load an infinite number of tiles."
-            if (stateConfig?.minZoom === undefined && stateConfig?.maxZoom === undefined) {
+            if (
+              stateConfig?.minZoom === undefined &&
+              stateConfig?.maxZoom === undefined
+            ) {
               return {};
             }
             return {
@@ -440,7 +506,7 @@ export const MapComponent = ({
             const regionName = layer.feature?.properties.name;
             const riskValue = layer.feature?.properties?.[indicator];
             const riskKey = String(riskValue);
-            const riskText = Factors.includes(indicator)
+            const riskText = isScoreIndicator(indicator)
               ? isRiskLevel(riskKey)
                 ? tRisk(riskKey)
                 : tCommon('na')
@@ -450,7 +516,7 @@ export const MapComponent = ({
                     indicatorsData,
                     indicator
                   )}`;
-            // const riskText = Factors.includes(indicator)
+            // const riskText = isScoreIndicator(indicator)
             //   ? RiskText[riskValue]?.indicatorText
             //   : `${riskValue} ${getUnitsBySlug(indicatorsData, indicator)}`;
             poppedLayerRef.current = layer;
@@ -463,7 +529,8 @@ export const MapComponent = ({
             popupCloseTimerRef.current = setTimeout(() => {
               layer.closePopup();
               layer.unbindPopup();
-              if (poppedLayerRef.current === layer) poppedLayerRef.current = null;
+              if (poppedLayerRef.current === layer)
+                poppedLayerRef.current = null;
               popupCloseTimerRef.current = null;
             }, 100);
           }}

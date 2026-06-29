@@ -2,29 +2,32 @@
 
 import React, { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useAnalyticsModule } from '@/hooks/use-analytics-module';
+import { useCopyURL } from '@/hooks/use-copy-url';
 import { useLockBody } from '@/hooks/use-lock-body';
 import { useStateName } from '@/hooks/use-state-name';
-import { parseAsString, useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
+import { parseAsString, useQueryState } from 'next-usequerystate';
 import { Button, Icon, Menu, Text } from 'opub-ui';
 
 import {
   type Indicator,
+  type IndicatorCategory,
   type State,
 } from '@/config/graphql/analaytics-queries';
 import { features } from '@/config/site';
+import { getLatestDate } from '@/lib/analytics/utils';
 import { routes } from '@/lib/routes';
+import { hasSubDistrictSupport } from '@/lib/state-map-config';
 import { type JsonScalar } from '@/lib/types';
 import { cn, downloadStateReport } from '@/lib/utils';
-import { useCopyURL } from '@/hooks/use-copy-url';
 import Icons from '@/components/icons';
-import { getLatestDate } from '../utils/utils';
 import { OutputWindowComponent } from './analytics-layout';
 import { ChartView } from './chart-view';
 import { AboutIndicator } from './default-output-window';
 import { FactorList } from './factor-list';
 import { FilterComp } from './filter-component';
-import { MapComponent } from './map-component';
+import { MapViewPanel } from './map-view-panel';
 import { TableComponent } from './table-component';
 
 interface Option {
@@ -37,26 +40,28 @@ interface Option {
 export function AnalyticsMobileLayout({
   timePeriod,
   indicator,
+  indicatorCategories,
   mapData,
   revenueMapData,
   districtGeographiesData,
   revenueGeographiesData,
   timePeriods,
   mapIndicatorsData,
-  aboutIndicatorsData,
+  aboutIndicators,
   tableData,
   currentSelectedState,
   statesList,
 }: {
   timePeriod: string;
   indicator: string;
+  indicatorCategories?: IndicatorCategory[];
   mapData: JsonScalar;
   revenueMapData: JsonScalar;
   districtGeographiesData: JsonScalar;
   revenueGeographiesData: JsonScalar;
   timePeriods: string[];
   mapIndicatorsData: { data?: { indicators: Indicator[] } } | undefined;
-  aboutIndicatorsData: { data?: { indicators: Indicator[] } } | undefined;
+  aboutIndicators?: Indicator[];
   tableData: JsonScalar;
   currentSelectedState: State;
   statesList: State[];
@@ -64,6 +69,11 @@ export function AnalyticsMobileLayout({
   const t = useTranslations('analytics');
   const tCommon = useTranslations('common');
   const stateName = useStateName();
+  const analyticsModule = useAnalyticsModule();
+  const withSubDistrictSupport = hasSubDistrictSupport(
+    currentSelectedState?.slug,
+    analyticsModule
+  );
   const copyURL = useCopyURL();
   //Remove default page scroll to make only the content scrollable
   useLockBody();
@@ -114,8 +124,10 @@ export function AnalyticsMobileLayout({
     parseAsString.withDefault('map')
   );
   const searchParams = useSearchParams();
-  const region =
-    searchParams.get('revenue-code') || searchParams.get('district-code');
+  const isMapView = !view || view === 'map';
+  const districtCode = searchParams.get('district-code');
+  const revenueCode = searchParams.get('revenue-code');
+  const region = revenueCode || districtCode;
 
   // Initialize dropdown options
   const RevCircleDropdownOptions: Option[] = [{ label: '', value: '' }];
@@ -164,13 +176,9 @@ export function AnalyticsMobileLayout({
   // Sync time period from URL on component mount
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const processedTime = getLatestDate(
-      params.get('time-period')?.split(',') || []
-    )?.split('-');
-
-    const timePeriod = processedTime
-      ? `${processedTime[0]}_${processedTime[1]}`
-      : process.env.NEXT_PUBLIC_TIME_PERIOD;
+    const timePeriod =
+      getLatestDate(params.get('time-period')?.split(',') || []) ||
+      process.env.NEXT_PUBLIC_TIME_PERIOD;
 
     if (timePeriod) {
       setTimePeriod(timePeriod);
@@ -183,35 +191,46 @@ export function AnalyticsMobileLayout({
   const [isOutputPaneOpen, setIsOutputPaneOpen] = useState(true);
 
   const indicatorListForAbout = React.useMemo(() => {
-    const raw = aboutIndicatorsData?.data?.indicators || [];
-    const uniqueBySlug = new Map<string, Indicator>();
+    const raw = aboutIndicators ?? [];
 
-    for (const item of raw) {
-      if (!item?.slug) continue;
-      if (!uniqueBySlug.has(item.slug)) {
-        uniqueBySlug.set(item.slug, item);
-      }
-    }
-
-    return Array.from(uniqueBySlug.values()).map((item) => ({
+    return raw.map((item) => ({
       title: item?.name,
       slug: item?.slug,
-      description: item?.short_description || item?.long_description || tCommon('na'),
+      description:
+        item?.short_description || item?.long_description || tCommon('na'),
     }));
-  }, [aboutIndicatorsData?.data?.indicators, tCommon]);
+  }, [aboutIndicators, tCommon]);
 
-  // Re-open mobile output pane when selection/filters change in map view
+  // Auto-open mobile output pane when a district or sub-district is selected in
+  // map view (including on indicator or time-period changes). At state level,
+  // respect the user's close preference.
   React.useEffect(() => {
     if (view !== 'map') return;
-    setIsOutputPaneOpen(true);
-  }, [view, indicator, timePeriodSelected, region]);
+    const hasDistrictOrSubDistrict =
+      Boolean(districtCode) || (withSubDistrictSupport && Boolean(revenueCode));
+    if (hasDistrictOrSubDistrict) {
+      setIsOutputPaneOpen(true);
+    }
+  }, [
+    view,
+    districtCode,
+    revenueCode,
+    withSubDistrictSupport,
+    indicator,
+    timePeriodSelected,
+  ]);
 
   const RenderView = ({ selectedView }: { selectedView: string }) => {
     switch (selectedView) {
       case 'map':
         return (
-          <MapComponent
+          <MapViewPanel
             indicator={indicator}
+            indicatorCategories={indicatorCategories}
+            analyticsModule={analyticsModule}
+            timePeriod={timePeriod}
+            districtCode={districtCode}
+            revenueCode={revenueCode}
             mapDataloading={mapData?.isFetching}
             revenueMapDataLoading={revenueMapData?.isFetching}
             indicatorsData={mapIndicatorsData?.data?.indicators}
@@ -220,6 +239,7 @@ export function AnalyticsMobileLayout({
             revenueMapData={revenueMapData?.data?.revCircleMapData}
             mapData={mapData?.data?.districtMapData}
             currentSelectedState={currentSelectedState}
+            isOutputPaneOpen={isOutputPaneOpen}
           />
         );
 
@@ -231,6 +251,7 @@ export function AnalyticsMobileLayout({
               RevCircleDropdownOptions={RevCircleDropdownOptions}
               DistrictDropDownOption={DistrictDropDownOption}
               timeLimits={timePeriods}
+              withSubDistrictSupport={withSubDistrictSupport}
             />
           </div>
         );
@@ -278,17 +299,16 @@ export function AnalyticsMobileLayout({
 
         {mapData.isLoading ? (
           <div className="p-4 text-center">{t('map.loading')}</div>
-        ) : mapData.isError || revenueMapData.isError ? (
-          <div className="text-red-500 p-4 text-center">
-            {t('map.error')}
-          </div>
+        ) : mapData.isError ||
+          (withSubDistrictSupport && revenueMapData.isError) ? (
+          <div className="text-red-500 p-4 text-center">{t('map.error')}</div>
         ) : (
           <RenderView selectedView={view} />
         )}
       </div>
 
       {/* <OutputWindowComponent /> */}
-      {view === 'map' && !isOutputPaneOpen && (
+      {isMapView && !isOutputPaneOpen && (
         <div className="absolute right-6 top-[140px] z-[1001]">
           <Button
             kind="tertiary"
@@ -296,12 +316,12 @@ export function AnalyticsMobileLayout({
             className="border flex h-8 w-8 items-center justify-center border-borderSubdued bg-surfaceDefault shadow-basicSm"
             aria-label={t('detail.open')}
           >
-            <Icon source={Icons.layoutSidebarRightCollapse} />
+            <Icon source={Icons.info} />
           </Button>
         </div>
       )}
 
-      {view === 'map' &&
+      {isMapView &&
         isOutputPaneOpen &&
         (region !== null && region.length > 0 ? (
           <OutputWindowComponent
@@ -310,7 +330,7 @@ export function AnalyticsMobileLayout({
             onClose={() => setIsOutputPaneOpen(false)}
           />
         ) : (
-          <div className="fixed bottom-[8vh] left-0 right-0 z-[1000] max-h-[70vh] overflow-y-auto border-t-1 border-solid border-borderSubdued bg-surfaceDefault px-4 py-3">
+          <div className="fixed bottom-[8vh] left-0 right-0 z-[10050] max-h-[70vh] overflow-y-auto border-t-1 border-solid border-borderSubdued bg-surfaceDefault px-4 py-3">
             <div className="mb-2 flex justify-end">
               <Button
                 onClick={() => setIsOutputPaneOpen(false)}
@@ -376,12 +396,18 @@ export function AnalyticsMobileLayout({
                         onAction: () => {
                           const confirmation = window.confirm(
                             t('actions.download.confirm', {
-                              name: stateName(currentSelectedState.slug, currentSelectedState.name),
+                              name: stateName(
+                                currentSelectedState.slug,
+                                currentSelectedState.name
+                              ),
                             })
                           );
                           if (confirmation) {
                             downloadStateReport(
-                              routes.report(currentSelectedState.code, timePeriodSelected),
+                              routes.report(
+                                currentSelectedState.code,
+                                timePeriodSelected
+                              ),
                               `${currentSelectedState.name}-Report`
                             );
                           }

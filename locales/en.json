@@ -81,6 +81,8 @@
     "analytics": {
       "heading": "Analytics Dashboard",
       "description": "Explore risk profiles across regions, developed using the underlying data model",
+      "emptyPrompt": "Select a state to explore",
+      "available": "Analytics available:",
       "comingSoon": "Coming Soon"
     },
     "datasets": {
@@ -138,7 +140,13 @@
       "loading": "Loading map data...",
       "error": "Error loading map data.",
       "noData": "No data available for this period.",
-      "ariaLabel": "Risk map"
+      "noDataAtPoint": "No data available.",
+      "ariaLabel": "Risk map",
+      "aggregated": "Aggregated",
+      "localized": "Localized",
+      "rasterError": "Unable to load raster layer.",
+      "rasterValueError": "Unable to read value at this location.",
+      "rasterOutsideArea": "No data at this location."
     },
     "chart": {
       "axes": {
@@ -190,7 +198,7 @@
       "heading": "Know your risk indicators",
       "overallRisk": "Overall Risk",
       "description": "Risk of disasters is a function of - hazard vulnerability, exposure & coping capacity",
-      "calculation": "Overall Risk is calculated using:",
+      "calculation": "{name} is calculated using:",
       "userGuideLink": "Read the user guide",
       "docsLink": "Read the documentation"
     },
@@ -202,6 +210,24 @@
         "label": "Download Report",
         "confirm": "Do you want to download the report for \"{name}\"?",
         "error": "Error downloading report: {error}"
+      }
+    },
+    "hub": {
+      "heading": "{stateName} Analytics Dashboards",
+      "description": "IDS-DRR provides data analytics for multiple disasters and climate extremes.",
+      "emptyPrompt": "Select a disaster type to begin your analysis.",
+      "explore": "Explore",
+      "insights": "Insights across {count} divisions",
+      "veryHighRiskCount": "{count} Very High Risk divisions",
+      "notes": {
+        "divisionAnalytics": {
+          "label": "Division-level analytics: ",
+          "description": "Each disaster type presents a state-centric view with drill-down capabilities to individual divisions or subdivisions. The IDS-DRR model analyses data across various metrics to provide risk insights. Read more from our Resources."
+        },
+        "heat": {
+          "label": "Heat Analytics (Pilot): ",
+          "description": "Each pilot division has historical heat data across datasets, with risk insights to support informed, evidence-based decisions."
+        }
       }
     }
   },

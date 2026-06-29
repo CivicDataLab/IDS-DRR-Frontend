@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapComponent } from '@/app/[locale]/[state]/analytics/components/map-component';
+import { MapComponent } from '@/components/analytics/map-component';
 import { render, screen } from '@testing-library/react';
 
 import { makeIndicator, makeState } from './fixtures';
@@ -27,7 +27,7 @@ jest.mock('@/components/MapChart', () => ({
 }));
 
 // Mock utils
-jest.mock('@/app/[locale]/[state]/analytics/utils/utils', () => ({
+jest.mock('@/lib/analytics/utils', () => ({
   getFactorNameBySlug: jest.fn((factorData, slug) => `Factor ${slug}`),
   getUnitsBySlug: jest.fn((slug) => `units-${slug}`),
 }));
@@ -36,9 +36,6 @@ jest.mock('@/hooks/use-format-number', () => ({
   useFormatNumber: () => (value: number | string) => `formatted-${value}`,
 }));
 
-jest.mock('@/lib/analytics', () => ({
-  Factors: ['risk-score', 'exposure', 'vulnerability'],
-}));
 
 global.fetch = jest.fn(() =>
   Promise.resolve({

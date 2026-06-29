@@ -1,15 +1,16 @@
 'use client';
 
 import React from 'react';
+import { useStateName } from '@/hooks/use-state-name';
 import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { Select, Spinner, Text } from 'opub-ui';
 
 import { type State } from '@/config/graphql/analaytics-queries';
-import { useStateName } from '@/hooks/use-state-name';
-import { routes } from '@/lib/routes';
+import { analyticsRouteForState } from '@/lib/analytics/build-route';
 import { cn } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
+import { useAnalyticsModule } from '@/hooks/use-analytics-module';
 import { FactorList } from './factor-list';
 import styles from './styles.module.scss';
 
@@ -70,6 +71,7 @@ function IndicatorListWrapper({
   const t = useTranslations('analytics.sidebar');
   const router = useRouter();
   const stateName = useStateName();
+  const analyticsModule = useAnalyticsModule();
 
   return (
     <React.Fragment>
@@ -115,7 +117,7 @@ function IndicatorListWrapper({
                     };
                   })}
                   onChange={(slug) => {
-                    router.push(routes.analytics(slug));
+                    router.push(analyticsRouteForState(slug, analyticsModule));
                   }}
                 />
               </div>

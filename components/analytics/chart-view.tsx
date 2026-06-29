@@ -4,8 +4,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import ReactECharts from 'echarts-for-react';
-import { parseAsString, useQueryState } from 'next-usequerystate';
 import { useTranslations } from 'next-intl';
+import { parseAsString, useQueryState } from 'next-usequerystate';
 import { Spinner, Text } from 'opub-ui';
 
 import {
@@ -13,10 +13,11 @@ import {
   type IndicatorCategory,
   type State,
 } from '@/config/graphql/analaytics-queries';
-import { Factors } from '@/lib/analytics';
+import { isScoreIndicator } from '@/lib/analytics/factor-role';
 import { GraphQL } from '@/lib/api';
 import { toTitleCase } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
+import { useAnalyticsModule } from '@/hooks/use-analytics-module';
 import FilterDropdownOptions, { Option } from './filter-dropdown-options';
 
 export const ChartView = ({
@@ -24,11 +25,13 @@ export const ChartView = ({
   RevCircleDropdownOptions,
   DistrictDropDownOption,
   timeLimits,
+  withSubDistrictSupport,
 }: {
   currentSelectedState: State;
   RevCircleDropdownOptions: Option[];
   DistrictDropDownOption: Option[];
   timeLimits: string[];
+  withSubDistrictSupport?: boolean;
 }) => {
   const t = useTranslations('analytics');
   const tCommon = useTranslations('common');
@@ -47,6 +50,7 @@ export const ChartView = ({
     parseAsString.withDefault('')
   );
   const [revenueCode] = useQueryState('revenue-code');
+  const analyticsModule = useAnalyticsModule();
 
   const value_mapping_list = useMemo(
     () => [
@@ -97,13 +101,17 @@ export const ChartView = ({
   );
 
   const indicatorsQuery = useQuery({
-    queryKey: [`indicatorsByCategory_${currentSelectedState.code}`],
+    queryKey: [
+      `indicatorsByCategory_${currentSelectedState.code}_${analyticsModule}`,
+    ],
     queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
         ANALYTICS_INDICATORS_BY_CATEGORY,
         {
+          parentId: null,
           stateCode: currentSelectedState?.code,
+          module: analyticsModule,
         }
       ),
     refetchOnMount: false,
@@ -138,14 +146,16 @@ export const ChartView = ({
                 field_name: indicator,
                 color: '#222136',
                 label: toTitleCase(indicator).replaceAll('-', ' '),
-                ...(Factors.includes(indicator)
+                ...(isScoreIndicator(indicator)
                   ? {
                       value_mapping: value_mapping_list,
                     }
                   : {}),
               },
             ],
-      y_axis_label: Factors.includes(indicator) ? t('chart.axes.score') : t('chart.axes.units'),
+      y_axis_label: isScoreIndicator(indicator)
+        ? t('chart.axes.score')
+        : t('chart.axes.units'),
       // aggregate_type: 'SUM',
       show_legend: true,
       filters: [
@@ -233,6 +243,7 @@ export const ChartView = ({
           DistrictDropDownOption={DistrictDropDownOption}
           timeLimits={timeLimits}
           monthMulti={true}
+          withSubDistrictSupport={withSubDistrictSupport}
         />
       </MediaRendering>
 

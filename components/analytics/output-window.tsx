@@ -2,17 +2,11 @@
 
 import React, { useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
-import {
-  Exposure,
-  FloodHazard,
-  GovtResponse,
-  RiskScore,
-  Vulnerability,
-} from '@/components/FactorIcons';
-import { InfoSquare } from '@/components/InfoCircle';
+import { useAnalyticsModule } from '@/hooks/use-analytics-module';
+import { useFormatNumber } from '@/hooks/use-format-number';
 import { useQuery } from '@tanstack/react-query';
-import { useQueryState } from 'next-usequerystate';
 import { useFormatter, useTranslations } from 'next-intl';
+import { useQueryState } from 'next-usequerystate';
 import { Button, Icon, Text, Tooltip } from 'opub-ui';
 
 import {
@@ -20,17 +14,29 @@ import {
   type Indicator,
   type State,
 } from '@/config/graphql/analaytics-queries';
+import { docsLink } from '@/config/site';
+import { getFactorIcon } from '@/lib/analytics/factor-icon';
+import { getFactorRole, isScoreIndicator } from '@/lib/analytics/factor-role';
+import { isRootRiskIndicator } from '@/lib/analytics/root-indicator';
+import { getFactorNameBySlug, getLatestDate } from '@/lib/analytics/utils';
 import { GraphQL } from '@/lib/api';
 import { type JsonScalar } from '@/lib/types';
-import { docsLink } from '@/config/site';
-import { useFormatNumber } from '@/hooks/use-format-number';
-import { Factors } from '@/lib/analytics';
 import { cn, parsePeriodString } from '@/lib/utils';
 import Icons from '@/components/icons';
+import { InfoSquare } from '@/components/InfoCircle';
 import { MediaRendering } from '@/components/media-rendering';
-import { getFactorNameBySlug, getLatestDate } from '../utils/utils';
+import { IndicatorDescriptionCard } from './default-output-window';
 import { ScoreInfo } from './score-info';
 import styles from './styles.module.scss';
+
+/**
+ * Factor icon for an indicator, or nothing for non-factor (raw metric) slugs.
+ * Keyed by canonical role, so any hazard resolves without a per-hazard map —
+ * replaces the former hardcoded, hazard-specific `IconMap`.
+ */
+function factorIcon(slug: string) {
+  return getFactorRole(slug) ? getFactorIcon(slug) : null;
+}
 
 export function OutputWindow({
   data,
@@ -54,23 +60,23 @@ export function OutputWindow({
   const format = useFormatter();
   const formatNumber = useFormatNumber();
   const searchParams = useSearchParams();
-  const processedTime = getLatestDate(
-    searchParams.get('time-period')?.split(',') || []
-  )?.split('-');
 
-  const sourceDataLink = useMemo(()=>{
-    if((indicatorDescriptions?.length ?? 0) > 0){
+  const sourceDataLink = useMemo(() => {
+    if ((indicatorDescriptions?.length ?? 0) > 0) {
       return indicatorDescriptions?.[0]?.IDS_dataSpace;
     }
     return undefined;
   }, [indicatorDescriptions]);
-  
+
+  const analyticsModule = useAnalyticsModule();
+
   const timePeriods = useQuery({
-    queryKey: [`timePeriods`],
+    queryKey: [`timePeriods`, analyticsModule],
     queryFn: () =>
       GraphQL(
         `${process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}/graphql`,
-        ANALYTICS_TIME_PERIODS
+        ANALYTICS_TIME_PERIODS,
+        { module: analyticsModule }
       ),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
@@ -81,9 +87,9 @@ export function OutputWindow({
     timePeriods.data?.getDataTimePeriods[0]?.value ||
     process.env.NEXT_PUBLIC_TIME_PERIOD;
 
-  const timePeriod = processedTime
-    ? `${processedTime[0]}_${processedTime[1]}`
-    : (latestTimePeriod as string);
+  const timePeriod =
+    getLatestDate(searchParams.get('time-period')?.split(',') || []) ||
+    (latestTimePeriod as string);
 
   const timePeriodDate = parsePeriodString(timePeriod);
   const formattedTimePeriod = timePeriodDate
@@ -91,19 +97,12 @@ export function OutputWindow({
     : '';
   const region = searchParams.get('district-code') || '';
   const view = searchParams.get('view') || '';
+  const isMapView = !view || view === 'map';
 
   const RevenueRegion = searchParams.get('revenue-code') || '';
-  // Sub indicators under "Overall Flood Risk"
-  const parentIndicatorSlugs = [
-    'risk-score',
-    'flood-hazard',
-    'exposure',
-    'vulnerability',
-    'government-response',
-  ];
-  const isParentIndicator = Boolean(
-    indicator && parentIndicatorSlugs.includes(indicator)
-  );
+  // A "parent" indicator is the root risk score or one of its pillar factors
+  // (hazard/exposure/vulnerability/government-response), for any hazard module.
+  const isParentIndicator = Boolean(indicator && getFactorRole(indicator));
 
   const [revenueCode, setDistrictCode] = useQueryState('district-code');
   const [districtCode, setRevenueCode] = useQueryState('revenue-code');
@@ -127,16 +126,17 @@ export function OutputWindow({
     const descriptionObject = indicatorDescriptions?.find(
       (desc) => desc.slug === indicatorSlug
     );
-    return descriptionObject ? descriptionObject.long_description : tCommon('na');
+    if (!descriptionObject) return tCommon('na');
+    return (
+      descriptionObject.long_description ||
+      descriptionObject.short_description ||
+      tCommon('na')
+    );
   }
 
-  const IconMap: { [key: string]: React.ReactNode } = {
-    'risk-score': <RiskScore color={'#000'} />,
-    vulnerability: <Vulnerability color={'#000'} />,
-    'flood-hazard': <FloodHazard color={'#000'} />,
-    exposure: <Exposure color={'#000'} />,
-    'government-response': <GovtResponse color={'#000'} />,
-  };
+  const selectedIndicatorDescription = indicator
+    ? getDescription(indicator)
+    : '';
 
   const colorMap: { [key: number]: string } = {
     1: 'text-mapRiskVeryLow',
@@ -165,7 +165,7 @@ export function OutputWindow({
             styles.Overlay,
             region !== null &&
               region.length > 0 &&
-              view === 'map' &&
+              isMapView &&
               styles.OverlayActive
           )}
         >
@@ -183,11 +183,7 @@ export function OutputWindow({
             >
               <Icon source={Icons.back} />
             </Button>
-            <Button
-              onClick={onClose}
-              kind="tertiary"
-              aria-label={t('close')}
-            >
+            <Button onClick={onClose} kind="tertiary" aria-label={t('close')}>
               <Icon source={Icons.cross} />
             </Button>
           </div>
@@ -226,33 +222,36 @@ export function OutputWindow({
               <Text variant="bodyMd" color="subdued" fontWeight="regular">
                 {indicator === 'government-response' ||
                 indicator.includes('fy-cumsum')
-                  ? t('cumulativeFiscalYearUntil', { date: formattedTimePeriod })
+                  ? t('cumulativeFiscalYearUntil', {
+                      date: formattedTimePeriod,
+                    })
                   : t('calculatedFor', { date: formattedTimePeriod })}
               </Text>
             </div>
           </div>
-          {/* //--------  */}
+
           <section className="mt-4">
             {DataBasedOnBoundary.map((data: JsonScalar, index: number) => (
               <div key={`boundary-${index}`} className="mb-4">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    {IconMap[indicator]}
+                    {factorIcon(indicator)}
                     <Text
                       variant="bodyLg"
                       fontWeight={
-                        indicator === 'risk-score' ? 'bold' : 'regular'
+                        isRootRiskIndicator(indicator) ? 'bold' : 'regular'
                       }
                     >
                       {getFactorNameBySlug(indicatorDescriptions, indicator)}
                     </Text>
-                    {!Factors.includes(indicator) && (
+                    {!isScoreIndicator(indicator) && (
                       <Text variant="bodyMd" fontWeight="bold">
                         {/* {data[indicator]['value']} */}
                         {formatNumber(data[indicator]['value'])}
                       </Text>
                     )}
                   </div>
+
                   <div className="flex items-center gap-4">
                     <Text
                       className={cn(
@@ -261,8 +260,12 @@ export function OutputWindow({
                       )}
                       fontWeight="semibold"
                     >
-                      {Factors.includes(indicator) &&
-                        tRisk(String(parseInt(data[indicator]['value'])) as RiskLevel)}
+                      {isScoreIndicator(indicator) &&
+                        tRisk(
+                          String(
+                            parseInt(data[indicator]['value'])
+                          ) as RiskLevel
+                        )}
                     </Text>
                     <Tooltip
                       content={
@@ -279,7 +282,14 @@ export function OutputWindow({
                     </Tooltip>
                   </div>
                 </div>
-                {Factors.includes(indicator) && (
+                {region && selectedIndicatorDescription !== tCommon('na') && (
+                  <div className="mt-4">
+                    <IndicatorDescriptionCard
+                      description={selectedIndicatorDescription}
+                    />
+                  </div>
+                )}
+                {isScoreIndicator(indicator) && (
                   <div className="mt-5 flex flex-col gap-2">
                     <Text className="text-baseGraySlateSolid11">
                       {t('contributingIndicators', {
@@ -293,7 +303,6 @@ export function OutputWindow({
                       factorData={indicatorDescriptions}
                       data={data}
                       boundary={boundary}
-                      IconMap={IconMap}
                       indicator={indicator}
                       getDescription={getDescription}
                     />
@@ -301,11 +310,13 @@ export function OutputWindow({
                 )}
               </div>
             ))}
-              {(docsLink || (sourceDataLink && !isParentIndicator)) && (
-                <div className="px-1 py-3">
+            {(docsLink || (sourceDataLink && !isParentIndicator)) && (
+              <div className="px-1 py-3">
                 {/* TODO: Add the source data link here dynamically from api */}
                 <a
-                  href={isParentIndicator ? docsLink :  sourceDataLink??docsLink}
+                  href={
+                    isParentIndicator ? docsLink : (sourceDataLink ?? docsLink)
+                  }
                   target="_blank"
                   rel="noopener noreferrer"
                   className="rounded-lg flex h-12 w-full items-center justify-between gap-2 rounded-2 bg-[#F6F6F7] px-3 py-3"
@@ -325,14 +336,14 @@ export function OutputWindow({
                   />
                 </a>
               </div>
-              )}
+            )}
           </section>
         </aside>
       </MediaRendering>
       <MediaRendering minWidth={null} maxWidth="1024">
         {/* MOBILE  */}
 
-        {view === 'map' && (
+        {isMapView && (
           <>
             {/* Apply conditional class for visibility */}
             <div
@@ -419,6 +430,14 @@ export function OutputWindow({
                 </div>
               </div>
 
+              {region && selectedIndicatorDescription !== tCommon('na') && (
+                <div className="mt-4">
+                  <IndicatorDescriptionCard
+                    description={selectedIndicatorDescription}
+                  />
+                </div>
+              )}
+
               {/* Aside content */}
               <section className="mt-4">
                 {region !== null &&
@@ -427,11 +446,13 @@ export function OutputWindow({
                     <div key={`boundary-${index}`} className="mb-4">
                       <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
-                          {IconMap[indicator]}
+                          {factorIcon(indicator)}
                           <Text
                             variant="bodyLg"
                             fontWeight={
-                              indicator === 'risk-score' ? 'bold' : 'regular'
+                              isRootRiskIndicator(indicator)
+                                ? 'bold'
+                                : 'regular'
                             }
                           >
                             {getFactorNameBySlug(
@@ -439,7 +460,7 @@ export function OutputWindow({
                               indicator
                             )}
                           </Text>
-                          {!Factors.includes(indicator) && (
+                          {!isScoreIndicator(indicator) && (
                             <Text variant="bodyMd" fontWeight="bold">
                               {formatNumber(data[indicator]['value'])}
                               {/* {data[indicator]['value']} */}
@@ -454,8 +475,12 @@ export function OutputWindow({
                             )}
                             fontWeight="semibold"
                           >
-                            {Factors.includes(indicator) &&
-                              tRisk(String(parseInt(data[indicator]['value'])) as RiskLevel)}
+                            {isScoreIndicator(indicator) &&
+                              tRisk(
+                                String(
+                                  parseInt(data[indicator]['value'])
+                                ) as RiskLevel
+                              )}
                           </Text>
                           <Tooltip
                             content={
@@ -472,7 +497,7 @@ export function OutputWindow({
                           </Tooltip>
                         </div>
                       </div>
-                      {Factors.includes(indicator) && (
+                      {isScoreIndicator(indicator) && (
                         <div className="mt-5 flex flex-col gap-2">
                           <Text className="text-baseGraySlateSolid11">
                             {t('contributingIndicators', {
@@ -486,7 +511,6 @@ export function OutputWindow({
                             factorData={indicatorDescriptions}
                             data={data}
                             boundary={boundary}
-                            IconMap={IconMap}
                             indicator={indicator}
                             getDescription={getDescription}
                           />
@@ -509,14 +533,12 @@ function OtherFactorScores({
   boundary,
   indicator,
   getDescription,
-  IconMap,
 }: {
   factorData: Indicator[] | undefined;
   data: JsonScalar;
   boundary: string;
   indicator: string;
   getDescription: (slug: string) => string | null | undefined;
-  IconMap: { [key: string]: React.ReactNode };
 }) {
   const clonedData = structuredClone(data);
   delete clonedData[boundary];
@@ -533,10 +555,12 @@ function OtherFactorScores({
   ).map((scoreType) => (
     <div key={scoreType} className=" flex items-center gap-4">
       {/* //change  */}
-      <div className="flex-shrink-0">
-        <div className="h-6 w-6">{IconMap[scoreType]}</div>
-      </div>
-      {indicator === 'risk-score' && (
+      {getFactorRole(scoreType) && (
+        <div className="flex-shrink-0">
+          <div className="h-6 w-6 ">{factorIcon(scoreType)}</div>
+        </div>
+      )}
+      {isRootRiskIndicator(indicator) && (
         <Text className="shrink-1 min-w-[200px]">
           {getFactorNameBySlug(factorData, scoreType)}
         </Text>
@@ -544,7 +568,7 @@ function OtherFactorScores({
       <ScoreInfo
         indicator={indicator}
         label={
-          indicator === 'risk-score'
+          isRootRiskIndicator(indicator)
             ? getFactorNameBySlug(factorData, scoreType)
             : data?.[scoreType]['title']
         }

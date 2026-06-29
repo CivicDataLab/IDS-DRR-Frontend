@@ -8,6 +8,7 @@ import type {
   TileLayers,
 } from 'ids-drr-branding-types';
 
+import { stateQuickLink } from '@/lib/analytics/build-route';
 import { routes } from '@/lib/routes';
 
 // Arrays
@@ -68,7 +69,12 @@ export const siteUrl =
 export const mainNav: { key: NavLinkKey; href: string }[] = [
   { key: 'home', href: routes.home },
   ...(defaultState
-    ? [{ key: 'analytics' as const, href: routes.analytics(defaultState.slug) }]
+    ? [
+        {
+          key: 'analytics' as const,
+          href: stateQuickLink(defaultState.slug),
+        },
+      ]
     : []),
   ...(features.datasets
     ? [{ key: 'datasets' as const, href: routes.datasets() }]

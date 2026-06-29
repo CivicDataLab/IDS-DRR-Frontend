@@ -1,5 +1,5 @@
 import React from 'react';
-import { OutputWindow } from '@/app/[locale]/[state]/analytics/components/output-window';
+import { OutputWindow } from '@/components/analytics/output-window';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -162,6 +162,9 @@ describe('OutputWindow', () => {
     expect(screen.getAllByText('Kamrup Division').length).toBeGreaterThan(0);
     expect(screen.getAllByText('High Risk').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Overall Flood Risk').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Overall risk description').length).toBeGreaterThan(
+      0
+    );
   });
 
   it('lists contributing indicators for risk-score', () => {

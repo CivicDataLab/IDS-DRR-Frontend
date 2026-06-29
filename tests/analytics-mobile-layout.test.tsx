@@ -1,5 +1,5 @@
 import React from 'react';
-import { AnalyticsMobileLayout } from '@/app/[locale]/[state]/analytics/components/analytics-mobile-layout';
+import { AnalyticsMobileLayout } from '@/components/analytics/analytics-mobile-layout';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { makeIndicator, makeState } from './fixtures';
@@ -51,7 +51,7 @@ jest.mock('@/hooks/use-lock-body', () => ({
 
 // Mock components
 jest.mock(
-  '@/app/[locale]/[state]/analytics/components/analytics-layout',
+  '@/components/analytics/analytics-layout',
   () => ({
     OutputWindowComponent: ({
       data,
@@ -71,7 +71,7 @@ jest.mock(
   })
 );
 
-jest.mock('@/app/[locale]/[state]/analytics/components/chart-view', () => ({
+jest.mock('@/components/analytics/chart-view', () => ({
   ChartView: ({
     currentSelectedState,
     RevCircleDropdownOptions,
@@ -80,7 +80,7 @@ jest.mock('@/app/[locale]/[state]/analytics/components/chart-view', () => ({
   }: any) => <div data-testid="chart-view-component">Chart View Component</div>,
 }));
 
-jest.mock('@/app/[locale]/[state]/analytics/components/factor-list', () => ({
+jest.mock('@/components/analytics/factor-list', () => ({
   FactorList: ({ currentState }: any) => (
     <div data-testid="factor-list-component" data-state={currentState?.code}>
       Factor List Component
@@ -89,7 +89,7 @@ jest.mock('@/app/[locale]/[state]/analytics/components/factor-list', () => ({
 }));
 
 jest.mock(
-  '@/app/[locale]/[state]/analytics/components/filter-component',
+  '@/components/analytics/filter-component',
   () => ({
     FilterComp: ({
       currentSelectedState,
@@ -100,26 +100,16 @@ jest.mock(
   })
 );
 
-jest.mock('@/app/[locale]/[state]/analytics/components/map-component', () => ({
-  MapComponent: ({
-    indicator,
-    mapDataloading,
-    indicatorsData,
-    revenueMapDataLoading,
-    mapData,
-    revenueMapData,
-    setRegion,
-    setRevenueRegion,
-    currentSelectedState,
-  }: any) => (
+jest.mock('@/components/analytics/map-view-panel', () => ({
+  MapViewPanel: ({ indicator }: any) => (
     <div data-testid="map-component" data-indicator={indicator}>
-      Map Component
+      Map View Panel
     </div>
   ),
 }));
 
 jest.mock(
-  '@/app/[locale]/[state]/analytics/components/table-component',
+  '@/components/analytics/table-component',
   () => ({
     TableComponent: ({ data, isLoading }: any) => (
       <div data-testid="table-component" data-loading={isLoading}>
@@ -141,8 +131,8 @@ jest.mock('@/hooks/use-copy-url', () => ({
 }));
 
 // Mock utils
-jest.mock('@/app/[locale]/[state]/analytics/utils/utils', () => ({
-  getLatestDate: jest.fn((dates) => '2023-08-01'),
+jest.mock('@/lib/analytics/utils', () => ({
+  getLatestDate: jest.fn((dates) => '2023_08'),
 }));
 
 // Mock icons
@@ -277,7 +267,7 @@ describe('AnalyticsMobileLayout', () => {
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
         mapIndicatorsData={mockIndicatorsData}
-        aboutIndicatorsData={mockIndicatorsData}
+        aboutIndicators={mockIndicatorsData.data.indicators}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -298,7 +288,7 @@ describe('AnalyticsMobileLayout', () => {
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
         mapIndicatorsData={mockIndicatorsData}
-        aboutIndicatorsData={mockIndicatorsData}
+        aboutIndicators={mockIndicatorsData.data.indicators}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -341,7 +331,7 @@ describe('AnalyticsMobileLayout', () => {
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
         mapIndicatorsData={mockIndicatorsData}
-        aboutIndicatorsData={mockIndicatorsData}
+        aboutIndicators={mockIndicatorsData.data.indicators}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -380,7 +370,7 @@ describe('AnalyticsMobileLayout', () => {
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
         mapIndicatorsData={mockIndicatorsData}
-        aboutIndicatorsData={mockIndicatorsData}
+        aboutIndicators={mockIndicatorsData.data.indicators}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -419,7 +409,7 @@ describe('AnalyticsMobileLayout', () => {
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
         mapIndicatorsData={mockIndicatorsData}
-        aboutIndicatorsData={mockIndicatorsData}
+        aboutIndicators={mockIndicatorsData.data.indicators}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -441,7 +431,7 @@ describe('AnalyticsMobileLayout', () => {
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
         mapIndicatorsData={mockIndicatorsData}
-        aboutIndicatorsData={mockIndicatorsData}
+        aboutIndicators={mockIndicatorsData.data.indicators}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -466,7 +456,7 @@ describe('AnalyticsMobileLayout', () => {
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
         mapIndicatorsData={mockIndicatorsData}
-        aboutIndicatorsData={mockIndicatorsData}
+        aboutIndicators={mockIndicatorsData.data.indicators}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -490,7 +480,7 @@ describe('AnalyticsMobileLayout', () => {
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
         mapIndicatorsData={mockIndicatorsData}
-        aboutIndicatorsData={mockIndicatorsData}
+        aboutIndicators={mockIndicatorsData.data.indicators}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -525,7 +515,7 @@ describe('AnalyticsMobileLayout', () => {
         revenueGeographiesData={[]}
         timePeriods={mockTimePeriods}
         mapIndicatorsData={{ data: { indicators: [] } }}
-        aboutIndicatorsData={{ data: { indicators: [] } }}
+        aboutIndicators={[]}
         tableData={{ data: { tableData: [] }, isLoading: false }}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -546,7 +536,7 @@ describe('AnalyticsMobileLayout', () => {
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
         mapIndicatorsData={mockIndicatorsData}
-        aboutIndicatorsData={mockIndicatorsData}
+        aboutIndicators={mockIndicatorsData.data.indicators}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -570,7 +560,7 @@ describe('AnalyticsMobileLayout', () => {
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
         mapIndicatorsData={mockIndicatorsData}
-        aboutIndicatorsData={mockIndicatorsData}
+        aboutIndicators={mockIndicatorsData.data.indicators}
         tableData={mockTableData}
         currentSelectedState={differentState}
         statesList={mockStatesList}
@@ -600,7 +590,7 @@ describe('AnalyticsMobileLayout', () => {
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
         mapIndicatorsData={mockIndicatorsData}
-        aboutIndicatorsData={mockIndicatorsData}
+        aboutIndicators={mockIndicatorsData.data.indicators}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}
@@ -639,7 +629,7 @@ describe('AnalyticsMobileLayout', () => {
         revenueGeographiesData={mockRevenueGeographiesData}
         timePeriods={mockTimePeriods}
         mapIndicatorsData={mockIndicatorsData}
-        aboutIndicatorsData={mockIndicatorsData}
+        aboutIndicators={mockIndicatorsData.data.indicators}
         tableData={mockTableData}
         currentSelectedState={mockCurrentSelectedState}
         statesList={mockStatesList}

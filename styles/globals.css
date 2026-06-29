@@ -35,3 +35,9 @@ iframe.skiptranslate {
 .leaflet-attribution-flag {
   display: none !important;
 }
+
+/* Ensure react-leaflet maps are visible when parent controls height */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+}
