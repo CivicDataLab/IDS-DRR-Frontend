@@ -136,9 +136,7 @@ export function AnalyticsMainLayout() {
   const resolvedUrlTimePeriod = rawTimePeriodParam
     ? getLatestDate(rawTimePeriodParam?.split(',') || [])
     : null;
-  const normalizedUrlTimePeriod = resolvedUrlTimePeriod
-    ? `${resolvedUrlTimePeriod.split('-')[0]}_${resolvedUrlTimePeriod.split('-')[1]}`
-    : null;
+  const normalizedUrlTimePeriod = resolvedUrlTimePeriod;
   const hasExplicitTimePeriodParam =
     timePeriodParam !== null && timePeriodParam !== '';
 
@@ -571,12 +569,25 @@ export function AnalyticsMainLayout() {
     }
   }, [withSubDistrictSupport, revenueCode, setRevenueCode]);
 
-  // Whenever indicator / district / revenue circle / time period changes in map view,
-  // auto-open the right-hand pane if it was closed.
+  // Auto-open the output pane when a district or sub-district is selected in map
+  // view (including on indicator or time-period changes). At state level, respect
+  // the user's close preference.
   useEffect(() => {
     if (!isMapView) return;
-    setIsOutputPaneOpen(true);
-  }, [isMapView, indicator, region, revenueCode, timePeriodSelected]);
+    const hasDistrictOrSubDistrict =
+      Boolean(districtCode) ||
+      (withSubDistrictSupport && Boolean(revenueCode));
+    if (hasDistrictOrSubDistrict) {
+      setIsOutputPaneOpen(true);
+    }
+  }, [
+    isMapView,
+    districtCode,
+    revenueCode,
+    withSubDistrictSupport,
+    indicator,
+    timePeriodSelected,
+  ]);
 
   const indicatorName = getFactorNameBySlug(
     renderedIndicatorsData ?? mapIndicatorsData?.data?.indicators,
@@ -629,7 +640,7 @@ export function AnalyticsMainLayout() {
           revenueGeographiesData={revenueGeographiesData}
           timePeriods={timeLimitsForPicker}
           mapIndicatorsData={mapIndicatorsData}
-          aboutIndicatorsData={aboutIndicatorsData}
+          aboutIndicators={uniqueAboutIndicators}
           tableData={tableData}
           currentSelectedState={currentSelectedState}
           statesList={statesListData.data?.getStates || []}

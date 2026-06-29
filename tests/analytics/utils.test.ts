@@ -40,14 +40,12 @@ describe('getLatestDate', () => {
     process.env.NEXT_PUBLIC_TIME_PERIOD = originalEnv;
   });
 
-  it('returns the latest valid period as YYYY-MM-01', () => {
-    expect(getLatestDate(['2024_11', '2025_03', '2024_12'])).toBe(
-      '2025-03-01'
-    );
+  it('returns the latest valid period as YYYY_MM', () => {
+    expect(getLatestDate(['2024_11', '2025_03', '2024_12'])).toBe('2025_03');
   });
 
   it('ignores malformed date strings', () => {
-    expect(getLatestDate(['invalid', '2025_06', 'bad'])).toBe('2025-06-01');
+    expect(getLatestDate(['invalid', '2025_06', 'bad'])).toBe('2025_06');
   });
 
   it('falls back to env when no valid dates exist', () => {

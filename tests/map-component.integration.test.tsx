@@ -75,11 +75,18 @@ jest.mock('@/components/MapChart', () => {
         props.setMap?.(mockMap);
       }, [props.setMap]);
 
+      const sampleValue = props.features?.[0]?.properties?.exposure;
+      const scaleColor =
+        props.isCustomColor && typeof sampleValue === 'number'
+          ? props.customColor?.(sampleValue)
+          : undefined;
+
       return (
         <div
           data-testid="map-chart"
           data-legend-count={props.legendData?.length}
           data-feature-count={props.features?.length ?? 0}
+          data-scale-color={scaleColor}
         >
           <button
             type="button"
@@ -379,5 +386,68 @@ describe('MapComponent integration', () => {
       'data-feature-count',
       '1'
     );
+  });
+
+  it('keeps choropleth colors stable when focusing a district without sub-district support', () => {
+    jest.mocked(hasSubDistrictSupport).mockReturnValue(false);
+
+    const { unmount } = render(
+      <MapComponent
+        {...baseProps}
+        indicator="exposure"
+        mapData={districtFeatures}
+        revenueMapData={revenueFeatures}
+      />
+    );
+
+    const fullMapColor = screen.getByTestId('map-chart').getAttribute(
+      'data-scale-color'
+    );
+    unmount();
+
+    window.history.pushState(
+      {},
+      '',
+      '/assam/heat/analytics?district-code=AS-01'
+    );
+
+    render(
+      <MapComponent
+        {...baseProps}
+        indicator="exposure"
+        mapData={districtFeatures}
+        revenueMapData={revenueFeatures}
+      />
+    );
+
+    expect(screen.getByTestId('map-chart')).toHaveAttribute(
+      'data-feature-count',
+      '1'
+    );
+    expect(screen.getByTestId('map-chart').getAttribute('data-scale-color')).toBe(
+      fullMapColor
+    );
+  });
+
+  it('hides map legend on mobile when the output overlay is open', () => {
+    const useWindowSize = jest.requireMock('@/hooks/use-window-size')
+      .useWindowSize as jest.Mock;
+    useWindowSize.mockReturnValue({ width: 800, height: 600 });
+
+    render(
+      <MapComponent
+        {...baseProps}
+        indicator="risk-score"
+        mapData={districtFeatures}
+        revenueMapData={revenueFeatures}
+        isOutputPaneOpen
+      />
+    );
+
+    expect(screen.getByTestId('map-chart')).not.toHaveAttribute(
+      'data-legend-count'
+    );
+
+    useWindowSize.mockReturnValue({ width: 1200, height: 800 });
   });
 });

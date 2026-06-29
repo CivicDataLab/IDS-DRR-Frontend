@@ -92,8 +92,7 @@ jest.mock('@/components/analytics/output-window', () => ({
 
 // Mock getLatestDate utility
 jest.mock('@/lib/analytics/utils', () => ({
-  getLatestDate: (arr: string[]) =>
-    arr[arr.length - 1]?.replace('_', '-') || null,
+  getLatestDate: (arr: string[]) => arr[arr.length - 1] || null,
   getFactorNameBySlug: (
     factorData: { slug: string; name?: string }[] | undefined,
     slug: string

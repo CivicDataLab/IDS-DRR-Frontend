@@ -85,7 +85,7 @@ export const QuickLinks = () => {
                       className={cn(
                         'flex h-40 w-full gap-4 rounded-2 bg-surfaceDefault p-4 shadow-elementCard',
                         multiModule
-                          ? 'flex-row items-center md:h-32'
+                          ? 'flex-row items-center md:h-40 lg:h-32'
                           : 'flex-col items-center justify-center text-center'
                       )}
                     >
@@ -111,7 +111,7 @@ export const QuickLinks = () => {
                             <Text variant="bodyMd" color="subdued">
                               {t('available')}
                             </Text>
-                            <div className="flex flex-wrap gap-x-3 gap-y-1">
+                            <div className="flex flex-wrap gap-x-2 gap-y-1">
                               {activeModules.map((module: Module) => (
                                 <span
                                   key={module.slug}

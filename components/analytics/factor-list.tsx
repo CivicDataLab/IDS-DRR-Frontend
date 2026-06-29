@@ -281,11 +281,9 @@ export function FactorList({ currentState }: { currentState: State }) {
                         let time_period_latest;
 
                         if (time_period_array?.length > 1) {
-                          const time_period_latest_date = new Date(
-                            getLatestDate(time_period_array) as string
-                          );
-                          time_period_latest =
-                            `${time_period_latest_date.getFullYear()}_${String(time_period_latest_date.getMonth() + 1).padStart(2, '0')}` as string;
+                          time_period_latest = getLatestDate(
+                            time_period_array
+                          ) as string;
                         } else {
                           time_period_latest = time_period;
                         }

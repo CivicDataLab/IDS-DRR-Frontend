@@ -16,26 +16,26 @@ export function getUnitsBySlug(
   return factorName?.[0]?.unit__name || '';
 }
 
+/** Returns the latest `YYYY_MM` period from a list (canonical API/URL format). */
 export const getLatestDate = (dateStrings: string[]) => {
-  const valid = (dateStrings || []).filter((dateStr) => /^\d{4}_\d{2}$/.test(dateStr));
+  const valid = (dateStrings || []).filter((dateStr) =>
+    /^\d{4}_\d{2}$/.test(dateStr)
+  );
 
   if (valid.length === 0) {
-    return process.env.NEXT_PUBLIC_TIME_PERIOD; // Handle empty array case
+    return process.env.NEXT_PUBLIC_TIME_PERIOD || '2023_01';
   }
 
-  // Convert each 'yyyy_mm' string to a Date object
   const dates = valid.map((dateStr) => {
-    const [year, month] = dateStr.split('_'); // Split into year and month
-    return new Date(parseInt(year), parseInt(month) - 1); // Create a Date object (month is 0-indexed in JavaScript)
+    const [year, month] = dateStr.split('_');
+    return new Date(parseInt(year, 10), parseInt(month, 10) - 1);
   });
 
-  // Find the latest date
   const latestDate = new Date(
     Math.max(...dates.map((date) => date.getTime()))
   );
 
-  // Convert the latest Date back to 'yyyy_mm' format
   const year = latestDate.getFullYear();
-  const month = String(latestDate.getMonth() + 1).padStart(2, '0'); // Add leading zero for single-digit months
-  return `${year}-${month}-01`;
+  const month = String(latestDate.getMonth() + 1).padStart(2, '0');
+  return `${year}_${month}`;
 };

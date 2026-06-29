@@ -117,13 +117,23 @@ export const MapComponent = ({
     withSubDistrictSupport,
   ]);
 
+  // Keep choropleth colors stable when focusing a single district without
+  // sub-district drill-down — the scale must use the full state range, not
+  // the lone visible feature.
+  const colorScaleFeatures = React.useMemo(() => {
+    if (!withSubDistrictSupport && districtCode) {
+      return mapData?.features;
+    }
+    return mapFeatures;
+  }, [districtCode, mapData?.features, mapFeatures, withSubDistrictSupport]);
+
   const { width } = useWindowSize();
   const isMobile = width < 1023;
 
   const values = [];
-  for (let i = 0; i < mapFeatures?.length; i++) {
-    if (mapFeatures[i].properties[indicator] == null) continue;
-    values.push(mapFeatures[i].properties[indicator]);
+  for (let i = 0; i < colorScaleFeatures?.length; i++) {
+    if (colorScaleFeatures[i].properties[indicator] == null) continue;
+    values.push(colorScaleFeatures[i].properties[indicator]);
   }
 
   const customLegendData: { label: string; color: string }[] = [];
@@ -407,6 +417,10 @@ export const MapComponent = ({
     currentSelectedState?.center?.length === 2
       ? (currentSelectedState.center as [number, number])
       : undefined;
+  const showMapLegend = !(isMobile && isOutputPaneOpen);
+  const activeLegendData = isScoreIndicator(indicator)
+    ? legendData
+    : customLegendData;
 
   return (
     <>
@@ -428,7 +442,7 @@ export const MapComponent = ({
               onClick={onToggleOutputPane}
               className="border flex h-8 w-8 items-center justify-center border-borderSubdued bg-surfaceDefault shadow-basicSm"
             >
-              <Icon source={Icons.layoutSidebarRightCollapse} />
+              <Icon source={Icons.info} />
             </Button>
           </div>
         )}
@@ -443,22 +457,21 @@ export const MapComponent = ({
           zoomOnClick={false}
           isCustomColor={!isScoreIndicator(indicator)}
           customColor={colorScale}
-          horizontalLegend={isMobile ? true : false}
+          horizontalLegend={isMobile && showMapLegend}
           legendHeading={{
-            heading: !isScoreIndicator(indicator)
-              ? `${getFactorNameBySlug(indicatorsData, indicator)} ${
-                  getUnitsBySlug(indicatorsData, indicator) &&
-                  `${
-                    getUnitsBySlug(indicatorsData, indicator).includes('(')
-                      ? ` ${getUnitsBySlug(indicatorsData, indicator)}`
-                      : ` (${getUnitsBySlug(indicatorsData, indicator)})`
+            heading:
+              showMapLegend && !isScoreIndicator(indicator)
+                ? `${getFactorNameBySlug(indicatorsData, indicator)} ${
+                    getUnitsBySlug(indicatorsData, indicator) &&
+                    `${
+                      getUnitsBySlug(indicatorsData, indicator).includes('(')
+                        ? ` ${getUnitsBySlug(indicatorsData, indicator)}`
+                        : ` (${getUnitsBySlug(indicatorsData, indicator)})`
+                    }`
                   }`
-                }`
-              : '',
+                : '',
           }}
-          legendData={
-            isScoreIndicator(indicator) ? legendData : customLegendData
-          }
+          legendData={showMapLegend ? activeLegendData : undefined}
           {...(() => {
             // Pair minZoom/maxZoom: setting one without the other makes Leaflet
             // throw "Attempted to load an infinite number of tiles."

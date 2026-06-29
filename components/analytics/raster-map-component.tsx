@@ -308,7 +308,7 @@ export function RasterMapComponent({
             onClick={onToggleOutputPane}
             className="border flex h-8 w-8 items-center justify-center border-borderSubdued bg-surfaceDefault shadow-basicSm"
           >
-            <Icon source={Icons.layoutSidebarRightCollapse} />
+            <Icon source={Icons.info} />
           </Button>
         </div>
       )}

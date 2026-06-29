@@ -60,9 +60,6 @@ export function OutputWindow({
   const format = useFormatter();
   const formatNumber = useFormatNumber();
   const searchParams = useSearchParams();
-  const processedTime = getLatestDate(
-    searchParams.get('time-period')?.split(',') || []
-  )?.split('-');
 
   const sourceDataLink = useMemo(() => {
     if ((indicatorDescriptions?.length ?? 0) > 0) {
@@ -90,9 +87,9 @@ export function OutputWindow({
     timePeriods.data?.getDataTimePeriods[0]?.value ||
     process.env.NEXT_PUBLIC_TIME_PERIOD;
 
-  const timePeriod = processedTime
-    ? `${processedTime[0]}_${processedTime[1]}`
-    : (latestTimePeriod as string);
+  const timePeriod =
+    getLatestDate(searchParams.get('time-period')?.split(',') || []) ||
+    (latestTimePeriod as string);
 
   const timePeriodDate = parsePeriodString(timePeriod);
   const formattedTimePeriod = timePeriodDate

@@ -25,39 +25,6 @@
   min-width: 430px;
 }
 
-.mobileOverlay {
-  position: absolute;
-  bottom: -100%; /* Initially off-screen */
-  z-index: 100001;
-  height: calc(100dvh - 86%);
-  opacity: 95%;
-  box-shadow: var(--shadow-basic-md);
-  transition:
-    bottom 0.4s ease,
-    height 0.4s ease;
-
-  width: 100%;
-  max-width: 380px;
-  min-width: 300px;
-}
-
-// .mobileOverlayActive {
-//   bottom: 86px;
-//   right: 0;
-// }
-
-// .expandedOverlay {
-//   bottom: 86px;
-//   height: calc(100dvh - 160px);
-// }
-
-// @media (max-width: 480px) {
-//   .mobileOverlay {
-//     max-width: 100%;
-//     min-width: 280px;
-//   }
-// }
-
 .bottomDrawer {
   position: absolute;
   // bottom: -100%;

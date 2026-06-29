@@ -12,6 +12,12 @@ import { toTitleCase } from '@/lib/utils';
 import { getLatestDate } from '@/lib/analytics/utils';
 import { useAnalyticsModule } from '@/hooks/use-analytics-module';
 
+/** `YYYY_MM` → CalendarDate for MonthPicker (same pattern as filter-component). */
+function parsePeriodForPicker(period: string) {
+  const [year, month] = period.split('_');
+  return parseDate(`${year}-${month.padStart(2, '0')}-01`);
+}
+
 export interface Option {
   disabled?: boolean;
   value: string;
@@ -75,17 +81,11 @@ export default function FilterDropdownOptions({
   }
 
   const minValue = minPeriod
-    ? (() => {
-        const [y, m] = minPeriod!.split('_');
-        return parseDate(`${y}-${m}-01`);
-      })()
+    ? parsePeriodForPicker(minPeriod)
     : parseDate('2023-01-04');
 
   const maxValue = maxPeriod
-    ? (() => {
-        const [y, m] = maxPeriod!.split('_');
-        return parseDate(`${y}-${m}-01`);
-      })()
+    ? parsePeriodForPicker(maxPeriod)
     : parseDate('2023-01-04');
 
   const [selectedTimePeriod, setSelectedTimePeriod] = useQueryState<string[]>(
@@ -137,8 +137,7 @@ export default function FilterDropdownOptions({
       fallback = '2023_01';
     }
 
-    const [year, month] = fallback.split('_');
-    return parseDate(`${year}-${month?.padStart(2, '0')}-01`);
+    return parsePeriodForPicker(fallback);
   };
 
   // Compute a controlled value for MonthPicker so it stays in sync with URL updates.
@@ -147,7 +146,7 @@ export default function FilterDropdownOptions({
   const hasExplicitEmptyTimePeriod = timePeriod === '';
   const monthPickerValue =
     periods.length > 0
-      ? parseDate(getLatestDate(periods) || '2023-08-01')
+      ? parsePeriodForPicker(getLatestDate(periods))
       : hasExplicitEmptyTimePeriod
         ? undefined
         : getDefaultDate(timePeriod);
