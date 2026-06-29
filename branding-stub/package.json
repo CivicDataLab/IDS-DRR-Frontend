@@ -10,6 +10,6 @@
     "**/*.scss"
   ],
   "dependencies": {
-    "ids-drr-branding-types": "github:CivicDataLab/ids-drr-branding-types#multi-modules"
+    "ids-drr-branding-types": "github:CivicDataLab/ids-drr-branding-types"
   }
 }
