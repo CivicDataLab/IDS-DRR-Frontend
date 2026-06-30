@@ -19,7 +19,7 @@ export function MapLayerToggle({ value, onChange, className }: Props) {
   return (
     <div
       className={cn(
-        'rounded-md border absolute left-12 top-4 z-[1000] flex flex gap-2 overflow-hidden border-borderSubdued shadow-basicSm',
+        'rounded-md border absolute left-12 top-20 z-[1000] flex flex gap-2 overflow-hidden border-borderSubdued shadow-basicSm lg:top-4',
         className
       )}
     >

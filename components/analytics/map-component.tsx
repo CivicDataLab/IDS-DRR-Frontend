@@ -17,8 +17,8 @@ import {
 import { states, tileLayers } from '@/config/site';
 import { isRiskLevel } from '@/lib/analytics';
 import { isScoreIndicator } from '@/lib/analytics/factor-role';
-import { getFactorNameBySlug, getUnitsBySlug } from '@/lib/analytics/utils';
 import { hasSubDistrictSupport } from '@/lib/analytics/module-config';
+import { getFactorNameBySlug, getUnitsBySlug } from '@/lib/analytics/utils';
 import { type JsonScalar } from '@/lib/types';
 import Icons from '@/components/icons';
 import MapChart from '@/components/MapChart';
@@ -540,7 +540,7 @@ export const MapComponent = ({
           fillOpacity={1}
           setMap={setMap}
           resetZoom
-          scroolWheelZoom={false}
+          scroolWheelZoom={true}
           // height="75vh"
         />{' '}
       </div>{' '}
