@@ -19,7 +19,7 @@ import {
 import { type State } from '@/config/graphql/analaytics-queries';
 import { analyticsRouteForState } from '@/lib/analytics/build-route';
 import { type AnalyticsView } from '@/lib/routes';
-import { hasSubDistrictSupport } from '@/lib/state-map-config';
+import { hasSubDistrictSupport } from '@/lib/analytics/module-config';
 import { type JsonScalar } from '@/lib/types';
 import { toISODate } from '@/lib/utils';
 import Icons from '@/components/icons';

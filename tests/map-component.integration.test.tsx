@@ -1,6 +1,6 @@
 import React from 'react';
 import { MapComponent } from '@/components/analytics/map-component';
-import { hasSubDistrictSupport } from '@/lib/state-map-config';
+import { hasSubDistrictSupport } from '@/lib/analytics/module-config';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { makeIndicator, makeState } from './fixtures';
@@ -24,7 +24,8 @@ jest.mock('@/lib/analytics/utils', () => ({
   getUnitsBySlug: jest.fn(() => 'mm'),
 }));
 
-jest.mock('@/lib/state-map-config', () => ({
+jest.mock('@/lib/analytics/module-config', () => ({
+  ...jest.requireActual('@/lib/analytics/module-config'),
   hasSubDistrictSupport: jest.fn(() => true),
 }));
 

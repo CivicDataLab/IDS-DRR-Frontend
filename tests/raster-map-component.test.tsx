@@ -20,8 +20,8 @@ jest.mock('@/lib/analytics/utils', () => ({
   getUnitsBySlug: () => '°C',
 }));
 
-jest.mock('@/lib/state-map-config', () => ({
-  ...jest.requireActual('@/lib/state-map-config'),
+jest.mock('@/lib/analytics/module-config', () => ({
+  ...jest.requireActual('@/lib/analytics/module-config'),
   hasSubDistrictSupport: () => false,
 }));
 

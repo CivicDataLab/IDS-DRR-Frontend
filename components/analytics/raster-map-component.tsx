@@ -14,6 +14,7 @@ import {
   type State,
 } from '@/config/graphql/analaytics-queries';
 import { tileLayers } from '@/config/site';
+import { hasSubDistrictSupport } from '@/lib/analytics/module-config';
 import { getFactorNameBySlug, getUnitsBySlug } from '@/lib/analytics/utils';
 import {
   borderFeaturesFromMetadata,
@@ -24,7 +25,6 @@ import {
   resolveTileUrl,
   type RasterMetadata,
 } from '@/lib/raster';
-import { hasSubDistrictSupport } from '@/lib/state-map-config';
 import { type JsonScalar } from '@/lib/types';
 import Icons from '@/components/icons';
 import MapChart from '@/components/MapChart';
@@ -320,7 +320,7 @@ export function RasterMapComponent({
         mapProperty={indicator}
         zoomOnClick={false}
         resetZoom
-        scroolWheelZoom={false}
+        scroolWheelZoom={true}
         fillOpacity={0}
         mapDataFn={() => 'transparent'}
         click={onDistrictClick}

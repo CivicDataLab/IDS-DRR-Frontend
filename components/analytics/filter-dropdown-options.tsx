@@ -7,7 +7,7 @@ import { parseAsString, useQueryState } from 'next-usequerystate';
 import { MonthPicker, MultiMonthPicker, Select } from 'opub-ui';
 
 import { type State } from '@/config/graphql/analaytics-queries';
-import { hasSubDistrictSupport } from '@/lib/state-map-config';
+import { hasSubDistrictSupport } from '@/lib/analytics/module-config';
 import { toTitleCase } from '@/lib/utils';
 import { getLatestDate } from '@/lib/analytics/utils';
 import { useAnalyticsModule } from '@/hooks/use-analytics-module';
