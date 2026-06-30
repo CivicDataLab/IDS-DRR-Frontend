@@ -320,7 +320,7 @@ export function RasterMapComponent({
         mapProperty={indicator}
         zoomOnClick={false}
         resetZoom
-        scroolWheelZoom={false}
+        scroolWheelZoom={true}
         fillOpacity={0}
         mapDataFn={() => 'transparent'}
         click={onDistrictClick}
