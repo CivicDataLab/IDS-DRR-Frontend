@@ -16,9 +16,13 @@ import {
   type State,
 } from '@/config/graphql/analaytics-queries';
 import { features } from '@/config/site';
+import {
+  hasSubDistrictSupport,
+  isModuleReportDownloadable,
+  isModuleViewEnabled,
+} from '@/lib/analytics/module-config';
 import { getLatestDate } from '@/lib/analytics/utils';
-import { routes } from '@/lib/routes';
-import { hasSubDistrictSupport } from '@/lib/state-map-config';
+import { ANALYTICS_VIEWS, routes } from '@/lib/routes';
 import { type JsonScalar } from '@/lib/types';
 import { cn, downloadStateReport } from '@/lib/utils';
 import Icons from '@/components/icons';
@@ -74,6 +78,10 @@ export function AnalyticsMobileLayout({
     currentSelectedState?.slug,
     analyticsModule
   );
+  const downloadReportEnabled = isModuleReportDownloadable(
+    currentSelectedState.slug,
+    analyticsModule
+  );
   const copyURL = useCopyURL();
   //Remove default page scroll to make only the content scrollable
   useLockBody();
@@ -88,34 +96,23 @@ export function AnalyticsMobileLayout({
     parseAsString.withDefault(timePeriod)
   );
 
+  const viewButtonConfig = {
+    map: { icon: Icons.IconMap, title: t('views.map') },
+    chart: { icon: Icons.IconChartBar, title: t('views.chart') },
+    table: { icon: Icons.IconTableAlias, title: t('views.table') },
+  } as const;
+
   const buttons = [
-    {
-      icon: Icons.IconMap,
-      title: t('views.map'),
-      value: 'map',
-      disabled: false,
-    },
-    ...(features.chart
-      ? [
-          {
-            icon: Icons.IconChartBar,
-            title: t('views.chart'),
-            value: 'chart',
-            disabled: false,
-          },
-        ]
-      : []),
-    {
-      icon: Icons.IconTableAlias,
-      title: t('views.table'),
-      value: 'table',
-      disabled: false,
-    },
+    ...ANALYTICS_VIEWS.filter((tabValue) =>
+      isModuleViewEnabled(currentSelectedState.slug, analyticsModule, tabValue)
+    ).map((tabValue) => ({
+      ...viewButtonConfig[tabValue],
+      value: tabValue,
+    })),
     {
       icon: Icons.IconDots,
       title: t('views.more'),
       value: 'more',
-      disabled: false,
     },
   ];
 
@@ -123,6 +120,21 @@ export function AnalyticsMobileLayout({
     'view',
     parseAsString.withDefault('map')
   );
+
+  React.useEffect(() => {
+    if (!view || view === 'map' || view === 'more') return;
+    if (
+      isModuleViewEnabled(
+        currentSelectedState.slug,
+        analyticsModule,
+        view as 'chart' | 'table'
+      )
+    ) {
+      return;
+    }
+    setView('map', { shallow: true });
+  }, [view, currentSelectedState.slug, analyticsModule, setView]);
+
   const searchParams = useSearchParams();
   const isMapView = !view || view === 'map';
   const districtCode = searchParams.get('district-code');
@@ -244,6 +256,15 @@ export function AnalyticsMobileLayout({
         );
 
       case 'chart':
+        if (
+          !isModuleViewEnabled(
+            currentSelectedState.slug,
+            analyticsModule,
+            'chart'
+          )
+        ) {
+          return null;
+        }
         return (
           <div className="pt-[84px]">
             <ChartView
@@ -353,28 +374,21 @@ export function AnalyticsMobileLayout({
               trigger={
                 <Button
                   size="slim"
-                  className={cn(
-                    'basis-1/3 border-t-1 py-4',
-                    button.disabled && 'cursor-not-allowed opacity-50'
-                  )}
+                  className="basis-1/3 border-t-1 py-4"
                   kind="tertiary"
-                  disabled={button.disabled}
                 >
                   <div className="flex flex-col items-center justify-center gap-1 bg-baseIndigoSolid1 ">
                     <Icon
                       source={button.icon}
                       size={24}
                       stroke={activeButton === button.value ? 3 : 2}
-                      className={button.disabled ? 'opacity-50' : ''}
                     />
                     <Text
                       variant="headingMd"
                       fontWeight={
                         activeButton === button.value ? 'bold' : 'medium'
                       }
-                      className={
-                        button.disabled ? 'opacity-50' : 'text-textSubdued'
-                      }
+                      className="text-textSubdued"
                     >
                       {button.title}
                     </Text>
@@ -393,6 +407,7 @@ export function AnalyticsMobileLayout({
                       {
                         content: t('actions.download.label'),
                         icon: Icons.download,
+                        disabled: !downloadReportEnabled,
                         onAction: () => {
                           const confirmation = window.confirm(
                             t('actions.download.confirm', {
@@ -422,32 +437,23 @@ export function AnalyticsMobileLayout({
             <Button
               key={index}
               size="slim"
-              className={cn(
-                'basis-1/3 border-t-1 py-4',
-                button.disabled && 'cursor-not-allowed opacity-50'
-              )}
+              className="basis-1/3 border-t-1 py-4"
               kind="tertiary"
               onClick={() => {
-                if (!button.disabled) {
-                  setActiveButton(button.value);
-                  setView(button.value, { shallow: false });
-                }
+                setActiveButton(button.value);
+                setView(button.value, { shallow: false });
               }}
-              disabled={button.disabled}
             >
               <div className="flex flex-col items-center justify-center gap-1 bg-baseIndigoSolid1 ">
                 <Icon
                   source={button.icon}
                   size={24}
                   stroke={activeButton === button.value ? 3 : 2}
-                  className={button.disabled ? 'opacity-50' : ''}
                 />
                 <Text
                   variant="headingMd"
                   fontWeight={activeButton === button.value ? 'bold' : 'medium'}
-                  className={
-                    button.disabled ? 'opacity-50' : 'text-textSubdued'
-                  }
+                  className="text-textSubdued"
                 >
                   {button.title}
                 </Text>

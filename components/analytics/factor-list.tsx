@@ -16,18 +16,19 @@ import {
   type State,
 } from '@/config/graphql/analaytics-queries';
 import { features } from '@/config/site';
+import { getFactorIcon } from '@/lib/analytics/factor-icon';
 import {
   areAllIndicatorLeaves,
   collectBranchSlugs,
   groupIndicatorsByCategory,
   shouldShowIndicatorCategories,
 } from '@/lib/analytics/indicator-tree';
+import { isModuleReportDownloadable } from '@/lib/analytics/module-config';
+import { isRootRiskIndicator } from '@/lib/analytics/root-indicator';
 import { getLatestDate } from '@/lib/analytics/utils';
 import { GraphQL } from '@/lib/api';
 import { routes } from '@/lib/routes';
 import { cn, downloadStateReport } from '@/lib/utils';
-import { getFactorIcon } from '@/lib/analytics/factor-icon';
-import { isRootRiskIndicator } from '@/lib/analytics/root-indicator';
 import Icons from '@/components/icons';
 import { MediaRendering } from '@/components/media-rendering';
 import RadioButton from './RadioButton';
@@ -52,7 +53,6 @@ function isDescendantSelected(
     false
   );
 }
-
 
 export function FactorList({ currentState }: { currentState: State }) {
   const t = useTranslations('analytics');
@@ -163,6 +163,11 @@ export function FactorList({ currentState }: { currentState: State }) {
     return options;
   };
 
+  const downloadButtonDisabled = !isModuleReportDownloadable(
+    currentState.slug,
+    analyticsModule
+  );
+
   return (
     <>
       <MediaRendering minWidth={null} maxWidth="1023">
@@ -263,6 +268,7 @@ export function FactorList({ currentState }: { currentState: State }) {
                 <Button
                   className="self-start"
                   onClick={async () => {
+                    if (downloadButtonDisabled) return;
                     const confirmation = window.confirm(
                       t('actions.download.confirm', {
                         name: stateName(currentState.slug, currentState.name),
@@ -304,13 +310,24 @@ export function FactorList({ currentState }: { currentState: State }) {
                   }}
                   monochrome={true}
                   kind="tertiary"
-
-                  // disabled={downloadReportLoading}
+                  disabled={downloadButtonDisabled}
                 >
-                  <div className="flex items-center gap-2">
-                    <Icon source={Icons.download} />
-
-                    <Text variant="bodyMd">{t('actions.download.label')}</Text>
+                  <div className="relative flex w-full items-center gap-2">
+                    <Icon
+                      source={Icons.download}
+                      color={downloadButtonDisabled ? 'disabled' : 'default'}
+                    />
+                    <Text
+                      variant="bodyMd"
+                      color={downloadButtonDisabled ? 'disabled' : 'default'}
+                    >
+                      {t('actions.download.label')}
+                    </Text>
+                    {downloadButtonDisabled && (
+                      <span className="font-medium py-0.2 absolute -right-24 top-0 inline-flex items-center gap-x-1.5 rounded-full bg-surfaceDefault px-1 text-[12px] text-textDefault">
+                        {t('views.comingSoon')}
+                      </span>
+                    )}
                   </div>
                 </Button>
               ))}

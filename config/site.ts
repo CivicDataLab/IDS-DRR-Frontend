@@ -9,6 +9,7 @@ import type {
 } from 'ids-drr-branding-types';
 
 import { stateQuickLink } from '@/lib/analytics/build-route';
+import { features } from '@/config/features';
 import { routes } from '@/lib/routes';
 
 // Arrays
@@ -48,15 +49,7 @@ export const messages: Record<
 > = config.messages ?? {};
 
 // Feature flags
-const dataSpaceEnabled = Boolean(process.env.NEXT_PUBLIC_BACKEND_URL);
-export const features = {
-  chart: dataSpaceEnabled,
-  datasets: dataSpaceEnabled,
-  aboutUs: config.features?.aboutUs ?? false,
-  reports: config.features?.reports ?? false,
-  privacyPolicy: config.features?.privacyPolicy ?? false,
-  glossary: Boolean(config.glossaryCsv),
-};
+export { features } from '@/config/features';
 
 // Navigation
 const defaultState = states.find((s) => s.status === 'active');

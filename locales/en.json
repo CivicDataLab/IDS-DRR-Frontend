@@ -113,7 +113,8 @@
         "map": "Map View",
         "chart": "Chart View",
         "table": "Table View"
-      }
+      },
+      "comingSoon": "Coming soon"
     },
     "filters": {
       "division": {
@@ -215,14 +216,14 @@
     "hub": {
       "heading": "{stateName} Analytics Dashboards",
       "description": "IDS-DRR provides data analytics for multiple disasters and climate extremes.",
-      "emptyPrompt": "Select a disaster type to begin your analysis.",
+      "emptyPrompt": "Select a disaster type to explore the risk profiles across various regions along with supporting data.",
       "explore": "Explore",
-      "insights": "Insights across {count} divisions",
-      "veryHighRiskCount": "{count} Very High Risk divisions",
+      "insights": "Insights across {count} regions",
+      "veryHighRiskCount": "{count} Very High Risk regions",
       "notes": {
         "divisionAnalytics": {
-          "label": "Division-level analytics: ",
-          "description": "Each disaster type presents a state-centric view with drill-down capabilities to individual divisions or subdivisions. The IDS-DRR model analyses data across various metrics to provide risk insights. Read more from our Resources."
+          "label": "Regional-level analytics: ",
+          "description": "Each disaster type presents a state-centric view with drill-down capabilities to individual regions or sub-regions. The IDS-DRR model analyses data across various metrics to provide risk insights."
         },
         "heat": {
           "label": "Heat Analytics (Pilot): ",

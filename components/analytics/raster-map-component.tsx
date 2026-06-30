@@ -24,7 +24,7 @@ import {
   resolveTileUrl,
   type RasterMetadata,
 } from '@/lib/raster';
-import { hasSubDistrictSupport } from '@/lib/state-map-config';
+import { hasSubDistrictSupport } from '@/lib/analytics/module-config';
 import { type JsonScalar } from '@/lib/types';
 import Icons from '@/components/icons';
 import MapChart from '@/components/MapChart';

@@ -1,5 +1,6 @@
-import type { Module } from 'ids-drr-branding-types';
+import type { AnalyticsView, Module } from 'ids-drr-branding-types';
 
+import { features } from '@/config/features';
 import { getStateBranding } from '@/lib/state-map-config';
 
 /**
@@ -47,4 +48,37 @@ export function getModuleBranding(
   return getStateBranding(stateSlug)?.modules?.find(
     (module) => module.slug === moduleSlug
   );
+}
+
+/** Whether an analytics view is enabled for a module (from branding + deployment). */
+export function isModuleViewEnabled(
+  stateSlug: string | undefined,
+  moduleSlug: string,
+  view: AnalyticsView
+): boolean {
+  const configured = getModuleBranding(stateSlug, moduleSlug)?.views?.[view];
+
+  if (configured === 'active') return true;
+  if (configured === 'inactive') return false;
+
+  if (view === 'chart') return Boolean(features.chart);
+  return true;
+}
+
+/** Defaults to downloadable unless branding sets `isReportDownloadable: false`. */
+export function isModuleReportDownloadable(
+  stateSlug: string | undefined,
+  moduleSlug: string
+): boolean {
+  return (
+    getModuleBranding(stateSlug, moduleSlug)?.isReportDownloadable !== false
+  );
+}
+
+/** Whether the module supports sub-district map drill-down. */
+export function hasSubDistrictSupport(
+  stateSlug: string | undefined,
+  moduleSlug: string = 'flood'
+): boolean {
+  return getModuleBranding(stateSlug, moduleSlug)?.withSubDistrictSupport ?? true;
 }

@@ -23,12 +23,15 @@ import {
   type IndicatorCategory,
   type State,
 } from '@/config/graphql/analaytics-queries';
-import { features } from '@/config/site';
 import { getFactorRole } from '@/lib/analytics/factor-role';
 import { getRootIndicatorSlug } from '@/lib/analytics/root-indicator';
 import { getFactorNameBySlug, getLatestDate } from '@/lib/analytics/utils';
+import {
+  hasSubDistrictSupport,
+  isModuleViewEnabled,
+} from '@/lib/analytics/module-config';
 import { GraphQL } from '@/lib/api';
-import { hasSubDistrictSupport } from '@/lib/state-map-config';
+import { ANALYTICS_VIEWS } from '@/lib/routes';
 import { type JsonScalar } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import Icons from '@/components/icons';
@@ -193,6 +196,22 @@ export function AnalyticsMainLayout() {
       .filter((slug: string) => slug && slug.includes('fy-cumsum'));
     return new Set(cumulative);
   }, [indicatorsByCategoryData?.data?.indicatorsByCategory, rootIndicatorSlug]);
+
+  const isChartViewEnabled = isModuleViewEnabled(
+    stateSlug,
+    analyticsModule,
+    'chart'
+  );
+
+  useEffect(() => {
+    if (!view || view === 'map') return;
+    if (
+      isModuleViewEnabled(stateSlug, analyticsModule, view as 'chart' | 'table')
+    ) {
+      return;
+    }
+    setView('map', { shallow: true });
+  }, [view, stateSlug, analyticsModule, setView]);
 
   // Keep govt-response subindicator compatible with selected view:
   // - map/table view => cumulative (*-fy-cumsum)
@@ -575,8 +594,7 @@ export function AnalyticsMainLayout() {
   useEffect(() => {
     if (!isMapView) return;
     const hasDistrictOrSubDistrict =
-      Boolean(districtCode) ||
-      (withSubDistrictSupport && Boolean(revenueCode));
+      Boolean(districtCode) || (withSubDistrictSupport && Boolean(revenueCode));
     if (hasDistrictOrSubDistrict) {
       setIsOutputPaneOpen(true);
     }
@@ -594,27 +612,26 @@ export function AnalyticsMainLayout() {
     indicator
   );
 
-  const viewTabs = [
-    {
-      value: 'map',
-      icon: Icons.IconMap,
-      label: t('views.long.map'),
-    },
-    ...(features.chart
-      ? [
-          {
-            value: 'chart',
-            icon: Icons.IconChartBar,
-            label: t('views.long.chart'),
-          },
-        ]
-      : []),
-    {
-      value: 'table',
-      icon: Icons.IconTableAlias,
-      label: t('views.long.table'),
-    },
-  ];
+  const viewTabs = ANALYTICS_VIEWS.filter((tabValue) =>
+    isModuleViewEnabled(stateSlug, analyticsModule, tabValue)
+  ).map((tabValue) => {
+    const icons = {
+      map: Icons.IconMap,
+      chart: Icons.IconChartBar,
+      table: Icons.IconTableAlias,
+    } as const;
+    const labels = {
+      map: t('views.long.map'),
+      chart: t('views.long.chart'),
+      table: t('views.long.table'),
+    } as const;
+
+    return {
+      value: tabValue,
+      icon: icons[tabValue],
+      label: labels[tabValue],
+    };
+  });
 
   if (!currentSelectedState) {
     return (
@@ -811,7 +828,7 @@ export function AnalyticsMainLayout() {
                 )}
               </div>
             </TabPanel>
-            {features.chart && (
+            {isChartViewEnabled && (
               <TabPanel value="chart">
                 {/* <div className=" mt-2 h-[calc(100dvh_-_140px)]"> */}
                 <div className="mt-2 h-full overflow-hidden">
