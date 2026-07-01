@@ -224,10 +224,6 @@
         "divisionAnalytics": {
           "label": "Regional-level analytics: ",
           "description": "Each disaster type presents a state-centric view with drill-down capabilities to individual regions or sub-regions. The IDS-DRR model analyses data across various metrics to provide risk insights."
-        },
-        "heat": {
-          "label": "Heat Analytics (Pilot): ",
-          "description": "Each pilot division has historical heat data across datasets, with risk insights to support informed, evidence-based decisions."
         }
       }
     }

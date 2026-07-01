@@ -123,17 +123,6 @@ export default function StatePage() {
               {t('notes.divisionAnalytics.description')}
             </Text>
           </Text>
-
-          <Text variant="bodyMd" fontWeight="bold" className="text-textMedium">
-            {t('notes.heat.label')}
-            <Text
-              variant="bodyMd"
-              fontWeight="regular"
-              className="pl-1 text-textMedium"
-            >
-              {t('notes.heat.description')}
-            </Text>
-          </Text>
         </div>
       </div>
     </div>
