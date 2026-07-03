@@ -37,6 +37,16 @@ export type RasterMetadata = {
   value_max?: number;
 };
 
+type RasterErrorResponse = {
+  error?: string;
+};
+
+async function throwIfRasterError(res: Response, context: string): Promise<void> {
+  if (res.ok) return;
+  const { error } = (await res.json()) as RasterErrorResponse;
+  throw new Error(error ?? `Raster ${context} ${res.status}`);
+}
+
 function rasterApiBase(): string {
   const base = process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL ?? '';
   return base.replace(/\/$/, '');
@@ -97,9 +107,7 @@ export async function fetchRasterMetadata(
   }
 
   const res = await fetch(buildRasterMetadataUrl(params));
-  if (!res.ok) {
-    throw new Error(`Raster metadata ${res.status}: ${await res.text()}`);
-  }
+  await throwIfRasterError(res, 'metadata');
 
   return (await res.json()) as RasterMetadata;
 }
@@ -113,9 +121,7 @@ export async function fetchRasterValue(
   }
 
   const res = await fetch(buildRasterValueUrl(params));
-  if (!res.ok) {
-    throw new Error(`Raster value ${res.status}: ${await res.text()}`);
-  }
+  await throwIfRasterError(res, 'value');
 
   return (await res.json()) as RasterValueResponse;
 }
