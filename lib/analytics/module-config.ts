@@ -80,5 +80,7 @@ export function hasSubDistrictSupport(
   stateSlug: string | undefined,
   moduleSlug: string = 'flood'
 ): boolean {
-  return getModuleBranding(stateSlug, moduleSlug)?.withSubDistrictSupport ?? true;
+  return (
+    getModuleBranding(stateSlug, moduleSlug)?.withSubDistrictSupport ?? true
+  );
 }
