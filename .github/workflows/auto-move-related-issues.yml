@@ -4,6 +4,11 @@ on:
     types: [closed]
     branches: ['dev']
 
+permissions:
+  contents: read
+  issues: read
+  repository-projects: write
+
 jobs:
   auto-move-related-issue:
     runs-on: ubuntu-latest
