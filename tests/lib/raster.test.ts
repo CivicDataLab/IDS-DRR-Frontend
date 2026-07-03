@@ -78,15 +78,18 @@ describe('raster helpers', () => {
   });
 
   it('resolves tile URLs against the API base', () => {
-    expect(resolveTileUrl('https://tiles.example/{z}/{x}/{y}.png', 'http://localhost:8000')).toBe(
-      'https://tiles.example/{z}/{x}/{y}.png'
-    );
-    expect(resolveTileUrl('/tiles/{z}/{x}/{y}.png', 'http://localhost:8000')).toBe(
-      'http://localhost:8000/tiles/{z}/{x}/{y}.png'
-    );
-    expect(resolveTileUrl('tiles/{z}/{x}/{y}.png', 'http://localhost:8000')).toBe(
-      'http://localhost:8000/tiles/{z}/{x}/{y}.png'
-    );
+    expect(
+      resolveTileUrl(
+        'https://tiles.example/{z}/{x}/{y}.png',
+        'http://localhost:8000'
+      )
+    ).toBe('https://tiles.example/{z}/{x}/{y}.png');
+    expect(
+      resolveTileUrl('/tiles/{z}/{x}/{y}.png', 'http://localhost:8000')
+    ).toBe('http://localhost:8000/tiles/{z}/{x}/{y}.png');
+    expect(
+      resolveTileUrl('tiles/{z}/{x}/{y}.png', 'http://localhost:8000')
+    ).toBe('http://localhost:8000/tiles/{z}/{x}/{y}.png');
   });
 
   it('converts API bounds to leaflet bounds', () => {
@@ -178,11 +181,33 @@ describe('raster helpers', () => {
     process.env.NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL = original;
   });
 
+  it('throws with the backend error message from a JSON body', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 404,
+      json: async () => ({
+        error:
+          "No raster data for state '21' in 'heat' indicator 'land-surface-temperature' at period '2026_06'.",
+      }),
+    }) as unknown as typeof fetch;
+
+    await expect(
+      fetchRasterMetadata({
+        module: 'heat',
+        indicator: 'land-surface-temperature',
+        geography_code: '21',
+        period: '2026_06',
+      })
+    ).rejects.toThrow(
+      "No raster data for state '21' in 'heat' indicator 'land-surface-temperature' at period '2026_06'."
+    );
+  });
+
   it('throws when the raster API responds with an error', async () => {
     global.fetch = jest.fn().mockResolvedValue({
       ok: false,
       status: 503,
-      text: async () => 'service unavailable',
+      json: async () => ({ error: 'service unavailable' }),
     }) as unknown as typeof fetch;
 
     await expect(
@@ -192,6 +217,6 @@ describe('raster helpers', () => {
         geography_code: '21',
         period: '2024_10',
       })
-    ).rejects.toThrow('Raster metadata 503: service unavailable');
+    ).rejects.toThrow('service unavailable');
   });
 });

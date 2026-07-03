@@ -1,7 +1,7 @@
 import React from 'react';
-import { RasterMapComponent } from '@/components/analytics/raster-map-component';
 import { render, screen, waitFor } from '@testing-library/react';
 
+import { RasterMapComponent } from '@/components/analytics/raster-map-component';
 import { makeState } from './fixtures';
 
 const mockFetchRasterMetadata = jest.fn();
@@ -109,7 +109,9 @@ describe('RasterMapComponent', () => {
     render(<RasterMapComponent {...baseProps} />);
 
     await waitFor(() => {
-      expect(screen.getByText('Unable to load raster layer.')).toBeInTheDocument();
+      expect(
+        screen.getByText('Unable to load raster layer.')
+      ).toBeInTheDocument();
     });
     expect(screen.getByText('Raster unavailable')).toBeInTheDocument();
   });
