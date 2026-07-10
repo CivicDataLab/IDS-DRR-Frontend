@@ -191,7 +191,11 @@
 }
 
 .analyticsIndicatorTitle {
-  flex: none;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-weight: 600;
   font-size: 20px;
   line-height: 1.2;

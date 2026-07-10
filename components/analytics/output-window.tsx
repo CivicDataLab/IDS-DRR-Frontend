@@ -18,7 +18,7 @@ import { docsLink } from '@/config/site';
 import { getFactorIcon } from '@/lib/analytics/factor-icon';
 import { getFactorRole, isScoreIndicator } from '@/lib/analytics/factor-role';
 import { isRootRiskIndicator } from '@/lib/analytics/root-indicator';
-import { getFactorNameBySlug, getLatestDate } from '@/lib/analytics/utils';
+import { getFactorNameBySlug, getLatestDate, filterSubIndicatorsForView } from '@/lib/analytics/utils';
 import { GraphQL } from '@/lib/api';
 import { type JsonScalar } from '@/lib/types';
 import { cn, parsePeriodString } from '@/lib/utils';
@@ -304,6 +304,7 @@ export function OutputWindow({
                       data={data}
                       boundary={boundary}
                       indicator={indicator}
+                      view={view}
                       getDescription={getDescription}
                     />
                   </div>
@@ -512,6 +513,7 @@ export function OutputWindow({
                             data={data}
                             boundary={boundary}
                             indicator={indicator}
+                            view={view}
                             getDescription={getDescription}
                           />
                         </div>
@@ -532,12 +534,14 @@ function OtherFactorScores({
   data,
   boundary,
   indicator,
+  view,
   getDescription,
 }: {
   factorData: Indicator[] | undefined;
   data: JsonScalar;
   boundary: string;
   indicator: string;
+  view: string;
   getDescription: (slug: string) => string | null | undefined;
 }) {
   const clonedData = structuredClone(data);
@@ -547,12 +551,15 @@ function OtherFactorScores({
   delete clonedData['district'];
   delete clonedData['district-code'];
 
-  const FactorVariables = Object.keys(clonedData);
+  const FactorVariables = filterSubIndicatorsForView(
+    Object.keys(clonedData).filter(
+      (scoreType) => typeof data[scoreType] === 'object'
+    ),
+    view,
+    indicator
+  );
 
-  // TODO: Change the filteration to the factor specific structure for it to work with data having objects
-  return FactorVariables.filter(
-    (scoreType) => typeof data[scoreType] === 'object'
-  ).map((scoreType) => (
+  return FactorVariables.map((scoreType) => (
     <div key={scoreType} className=" flex items-center gap-4">
       {/* //change  */}
       {getFactorRole(scoreType) && (

@@ -42,7 +42,7 @@ export function MainNav({ prefLangCookie }: { prefLangCookie: string }) {
             </div>
           </NavLink>
         </div>
-        <div className="flex">
+        <div className="flex items-center gap-3 sm:gap-5">
           {mainNav.length > 0 && (
             <div className="flex shrink-0 flex-wrap items-center gap-3 sm:gap-5">
               {mainNav.map((link) => (
