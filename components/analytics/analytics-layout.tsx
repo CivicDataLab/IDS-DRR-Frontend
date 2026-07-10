@@ -607,9 +607,11 @@ export function AnalyticsMainLayout() {
     timePeriodSelected,
   ]);
 
+  // Use the lockstep slug/metadata pair so the header never shows the raw slug
+  // of a newly selected indicator before its name has loaded.
   const indicatorName = getFactorNameBySlug(
     renderedIndicatorsData ?? mapIndicatorsData?.data?.indicators,
-    indicator
+    renderedIndicator
   );
 
   const viewTabs = ANALYTICS_VIEWS.filter((tabValue) =>
@@ -672,7 +674,11 @@ export function AnalyticsMainLayout() {
             }
           >
             <div className={styles.analyticsHeader}>
-              <Text as="h2" className={styles.analyticsIndicatorTitle}>
+              <Text
+                as="h2"
+                className={styles.analyticsIndicatorTitle}
+                title={indicatorName}
+              >
                 {indicatorName}
               </Text>
               <TabList className={styles.analyticsViewTabs}>

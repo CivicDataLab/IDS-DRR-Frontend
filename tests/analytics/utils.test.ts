@@ -1,4 +1,5 @@
 import {
+  filterSubIndicatorsForView,
   getFactorNameBySlug,
   getLatestDate,
   getUnitsBySlug,
@@ -30,6 +31,52 @@ describe('getUnitsBySlug', () => {
   it('returns empty string when not found', () => {
     expect(getUnitsBySlug(factorData, 'unknown')).toBe('');
     expect(getUnitsBySlug(undefined, 'risk-score')).toBe('');
+  });
+});
+
+describe('filterSubIndicatorsForView', () => {
+  const govtResponseChildren = [
+    'total-tender-awarded-value',
+    'total-tender-awarded-value-fy-cumsum',
+    'restoration-measures-tenders-awarded-value',
+    'sdrf-sanctions-awarded-value-fy-cumsum',
+  ];
+
+  const riskScoreChildren = [
+    'flood-hazard',
+    'exposure',
+    'vulnerability',
+    'government-response',
+  ];
+
+  it('shows only cumsum variants in map view for government-response', () => {
+    expect(
+      filterSubIndicatorsForView(govtResponseChildren, 'map', 'government-response')
+    ).toEqual([
+      'total-tender-awarded-value-fy-cumsum',
+      'restoration-measures-tenders-awarded-value',
+      'sdrf-sanctions-awarded-value-fy-cumsum',
+    ]);
+  });
+
+  it('shows only monthly variants in chart view for government-response', () => {
+    expect(
+      filterSubIndicatorsForView(
+        govtResponseChildren,
+        'chart',
+        'government-response'
+      )
+    ).toEqual([
+      'total-tender-awarded-value',
+      'restoration-measures-tenders-awarded-value',
+      'sdrf-sanctions-awarded-value-fy-cumsum',
+    ]);
+  });
+
+  it('does not filter pillars when parent is risk-score', () => {
+    expect(
+      filterSubIndicatorsForView(riskScoreChildren, 'map', 'risk-score')
+    ).toEqual(riskScoreChildren);
   });
 });
 

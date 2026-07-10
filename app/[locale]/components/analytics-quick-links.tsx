@@ -50,18 +50,20 @@ export const QuickLinks = () => {
       </div>
       <Carousel
         aria-roledescription="carousel"
-        className="flex w-full items-center justify-center gap-2 px-2 md:px-14"
+        className="flex w-full items-center gap-2 px-2 md:px-14"
         opts={{ align: 'start' }}
       >
         <div className="shrink-0 rounded-1 bg-surfaceDefault">
           <CarouselPrevious />
         </div>
-        <CarouselContent
-          aria-live="polite"
-          className={`w-full ${
-            stateLinks.length === 1 ? 'flex justify-center' : ''
-          }`}
-        >
+        <div className="min-w-0 flex-1">
+          <CarouselContent
+            aria-live="polite"
+            className={cn(
+              'w-full',
+              stateLinks.length === 1 && 'flex justify-center'
+            )}
+          >
           {stateLinks.map((item) => {
             const modules = item.modules ?? [];
             const multiModule = modules.length > 1;
@@ -139,31 +141,34 @@ export const QuickLinks = () => {
                     </div>
                   </Link>
                 ) : (
-                  <div className="relative flex h-40 w-full flex-col items-center gap-4 rounded-2 bg-surfaceSubdued p-4 shadow-elementCard">
+                  <div className="flex h-40 w-full flex-col rounded-2 bg-surfaceSubdued p-4 text-center shadow-elementCard">
                     <Text
                       variant="bodyMd"
                       fontWeight="semibold"
-                      className="absolute left-3 top-3 rounded-2 bg-basePureBlack px-3 py-1 text-surfaceDefault"
+                      className="w-fit rounded-2 bg-basePureBlack px-3 py-1 text-surfaceDefault"
                     >
                       {t('comingSoon')}
                     </Text>
-                    <Image
-                      src={item.icon}
-                      alt=""
-                      className={cn(
-                        'h-20 w-20 shrink-0 object-contain',
-                        styles.inactiveStateIcon
-                      )}
-                    />
-                    <Text variant="headingLg" fontWeight="bold">
-                      {stateName(item.slug, item.name)}
-                    </Text>
+                    <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3">
+                      <Image
+                        src={item.icon}
+                        alt=""
+                        className={cn(
+                          'h-16 w-16 shrink-0 object-contain',
+                          styles.inactiveStateIcon
+                        )}
+                      />
+                      <Text variant="headingLg" fontWeight="bold">
+                        {stateName(item.slug, item.name)}
+                      </Text>
+                    </div>
                   </div>
                 )}
               </CarouselItem>
             );
           })}
-        </CarouselContent>
+          </CarouselContent>
+        </div>
         <div className="shrink-0 rounded-1 bg-surfaceDefault">
           <CarouselNext />
         </div>
