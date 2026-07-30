@@ -19,7 +19,7 @@ x-build-common: &build-common
   dockerfile: IDS-DRR-Frontend/Dockerfile
   args:
     CONTEXT_SUBDIR: IDS-DRR-Frontend
-    BRANDING_PACKAGE: ids-drr-branding
+    BRANDING_PACKAGE: ids-drr-india-branding
     NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL: ${NEXT_PUBLIC_DATA_MANAGEMENT_LAYER_URL}
     NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-}
     NEXT_PUBLIC_TIME_PERIOD: ${NEXT_PUBLIC_TIME_PERIOD:-}
@@ -37,7 +37,7 @@ services:
       - "${PORT:-3000}:3000"
     volumes:
       - .:/app
-      - ../ids-drr-branding:/app/branding-stub
+      - ../ids-drr-india-branding:/app/branding-stub
       - /app/node_modules
       - /app/.next
     working_dir: /app
