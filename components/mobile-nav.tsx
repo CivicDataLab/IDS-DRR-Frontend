@@ -2,19 +2,19 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { Link } from '@/i18n/navigation';
 import { useKeyDetect } from '@/hooks/use-key-detect';
-import { Credits, PartnerLogos } from '@/config/branding';
-import { languages, locales, logo, mainNav } from '@/config/site';
+import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { IconButton, Text } from 'opub-ui';
 
+import { Credits, PartnerLogos } from '@/config/branding';
+import { languages, locales, logo, mainNav } from '@/config/site';
 import { routes } from '@/lib/routes';
 import Icons from '@/components/icons';
 import { TranslateDropdown } from './langSelect/lang-select';
 import { LocaleDropdown } from './langSelect/locale-select';
 
-export function MobileNav({ prefLangCookie }: { prefLangCookie: string }) {
+export function MobileNav() {
   const t = useTranslations('nav');
   const tSite = useTranslations('site');
   const [open, setOpen] = React.useState(false);
@@ -45,7 +45,7 @@ export function MobileNav({ prefLangCookie }: { prefLangCookie: string }) {
 
   return (
     <>
-      <header className="sticky top-0 z-2">
+      <header className="sticky top-0 z-[1100]">
         <div className=" flex items-center justify-between bg-backgroundSolidDark px-5 py-3 text-textOnBGDefault ">
           <Link href={routes.home}>
             <div className="flex items-center gap-2">
@@ -71,13 +71,13 @@ export function MobileNav({ prefLangCookie }: { prefLangCookie: string }) {
       </header>
       {open && (
         <div
-          className="fixed z-10 top-12 flex h-[95vh] w-[100vw] flex-shrink-0 flex-col items-start justify-between border-t-1 border-solid border-baseGraySlateSolid11 bg-backgroundSolidDark px-5 py-8 text-textOnBGDefault"
+          className="fixed top-12 z-10 flex h-[95vh] w-[100vw] flex-shrink-0 flex-col items-start justify-between border-t-1 border-solid border-baseGraySlateSolid11 bg-backgroundSolidDark px-5 py-8 text-textOnBGDefault"
           style={{ zIndex: '100009' }}
         >
-          <div className="flex flex-row-reverse w-full justify-between">
+          <div className="flex w-full flex-row-reverse justify-between">
             {languages.length > 0 ? (
               <div className="mt-2">
-                <TranslateDropdown prefLangCookie={prefLangCookie} />
+                <TranslateDropdown />
               </div>
             ) : locales.length > 1 ? (
               <div className="mt-2">
@@ -97,7 +97,6 @@ export function MobileNav({ prefLangCookie }: { prefLangCookie: string }) {
                   ))}
                 </div>
               )}
-            
             </div>
           </div>
           {(Credits || PartnerLogos) && (

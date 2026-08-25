@@ -1,95 +1,75 @@
-import React, { useEffect, useState } from 'react';
-import Script from 'next/script';
-import { IconWorld } from '@tabler/icons-react';
-import { Select } from 'opub-ui';
+'use client';
+
+import React, { useEffect, useRef } from 'react';
 
 import { languages } from '@/config/site';
-import styles from './styles.module.scss';
 
-export function TranslateDropdown({
-  prefLangCookie,
-}: {
-  prefLangCookie: Promise<string> | string;
-}) {
-  const [selectedLang, setSelectedLang] = useState('en');
+const SCRIPT_ID = 'bhashini-translation-script';
+const WIDGET_ID = 'bhashini-translation';
+const SCRIPT_SRC =
+  'https://translation-plugin.bhashini.co.in/v3/website_translation_utility.js';
 
-  // Function to safely extract language from cookie
-  const getLangFromCookie = (cookie: string) => {
-    try {
-      const decoded = decodeURIComponent(cookie || '/en/');
-      const parts = decoded.split('/');
-      return parts.length > 2 ? parts[2] : 'en';
-    } catch {
-      return 'en';
-    }
-  };
+function showLanguageLabel(root: ParentNode) {
+  const icon = root.querySelector('.bhashini-dropdown-btn-icon');
+  if (!icon) return;
 
-  useEffect(() => {
-    if (prefLangCookie instanceof Promise) {
-      prefLangCookie
-        .then((cookie) => setSelectedLang(getLangFromCookie(cookie)))
-        .catch((err) => console.error('Failed to fetch lang cookie:', err));
-    } else {
-      setSelectedLang(getLangFromCookie(prefLangCookie));
-    }
-  }, [prefLangCookie]);
+  let text = icon.querySelector<HTMLElement>('.bhashini-dropdown-btn-text');
+  if (!text) {
+    text = document.createElement('span');
+    text.className = 'bhashini-dropdown-btn-text text-red';
+    icon.appendChild(text);
+  }
 
-  const googleTranslateElementInit = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Google Translate runtime global
-    new (window as any).google.translate.TranslateElement(
-      {
-        pageLanguage: 'en',
-        includedLanguages: languages.map((lang) => lang.value).join(','),
-        defaultLanguage: 'en',
-      },
-      'google_translate_element'
-    );
-  };
+  const code = localStorage.getItem('preferredLanguage') || 'en';
+  const label = languages.find((lang) => lang.value === code)?.label ?? code;
+  if (text.textContent !== label) {
+    text.textContent = label;
+  }
+}
+
+export function TranslateDropdown() {
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Google Translate runtime global
-    (window as any).googleTranslateElementInit = googleTranslateElementInit;
+    const container = containerRef.current;
+    if (!container) return;
+
+    const existing = document.getElementById(WIDGET_ID);
+    if (existing) {
+      existing.style.display = '';
+      container.appendChild(existing);
+    } else if (!document.getElementById(SCRIPT_ID)) {
+      const langCodes = languages.map((lang) => lang.value).join(',');
+      const script = document.createElement('script');
+      script.id = SCRIPT_ID;
+      script.src = SCRIPT_SRC;
+      script.async = true;
+      script.setAttribute('page-source-language', 'en');
+      script.setAttribute('translation-language-list', langCodes);
+      script.setAttribute('language_order', langCodes);
+      script.setAttribute('language-icon-color', '#ffffff');
+      document.body.appendChild(script);
+    }
+
+    const observer = new MutationObserver(() => showLanguageLabel(container));
+    observer.observe(container, { childList: true, subtree: true });
+    showLanguageLabel(container);
+
+    return () => {
+      observer.disconnect();
+      const widget = container.querySelector<HTMLElement>(`#${WIDGET_ID}`);
+      if (widget) {
+        widget.style.display = 'none';
+        document.body.appendChild(widget);
+      }
+    };
   }, []);
 
-  const changeLang = (value: string) => {
-    setSelectedLang(value); // Update state
-
-    // Update Google Translate dropdown
-    const element = document.querySelector(
-      '.goog-te-combo'
-    ) as HTMLSelectElement;
-    if (element) {
-      element.value = value;
-      element.dispatchEvent(new Event('change'));
-    }
-  };
-
   return (
-    <div>
-      <div
-        id="google_translate_element"
-        aria-hidden="true"
-        className="invisible h-px w-px"
-      ></div>
-
-      <Select
-        name="lang-select"
-        className={`notranslate ${styles.langSelectContainer}`}
-        options={languages}
-        label={
-          <div className="mr-2 flex justify-center">
-            <IconWorld color="white" />
-          </div>
-        }
-        labelInline
-        value={selectedLang}
-        onChange={changeLang}
-      />
-
-      <Script
-        src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-        strategy="afterInteractive"
-      />
-    </div>
+    <div
+      ref={containerRef}
+      className="bhashini-plugin-container bhashini-skip-translation"
+      data-testid="bhashini-plugin-container"
+    />
   );
 }

@@ -1,5 +1,6 @@
-import { MainNav } from '@/components/main-nav';
 import { render, screen } from '@testing-library/react';
+
+import { MainNav } from '@/components/main-nav';
 
 jest.mock('opub-ui');
 
@@ -28,7 +29,7 @@ jest.mock('@/components/langSelect/locale-select', () => ({
 
 describe('MainNav', () => {
   it('renders logo, navigation links, and locale dropdown', () => {
-    render(<MainNav prefLangCookie="en" />);
+    render(<MainNav />);
 
     expect(screen.getByRole('img')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Home' })).toBeInTheDocument();

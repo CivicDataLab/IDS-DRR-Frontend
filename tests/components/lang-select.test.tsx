@@ -1,14 +1,10 @@
-import { LocaleDropdown } from '@/components/langSelect/locale-select';
-import { TranslateDropdown } from '@/components/langSelect/lang-select';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-jest.mock('opub-ui');
+import { TranslateDropdown } from '@/components/langSelect/lang-select';
+import { LocaleDropdown } from '@/components/langSelect/locale-select';
 
-jest.mock('next/script', () => ({
-  __esModule: true,
-  default: () => null,
-}));
+jest.mock('opub-ui');
 
 jest.mock('@/config/site', () => ({
   languages: [
@@ -30,16 +26,75 @@ jest.mock('next-intl', () => ({
   useLocale: () => 'en',
 }));
 
+const SCRIPT_ID = 'bhashini-translation-script';
+const WIDGET_ID = 'bhashini-translation';
+const SCRIPT_SRC =
+  'https://translation-plugin.bhashini.co.in/v3/website_translation_utility.js';
+
+function cleanupBhashiniDom() {
+  document.getElementById(SCRIPT_ID)?.remove();
+  document.getElementById(WIDGET_ID)?.remove();
+  localStorage.clear();
+}
+
 describe('TranslateDropdown', () => {
-  it('initializes from the language cookie and changes language', async () => {
-    const user = userEvent.setup();
+  afterEach(() => {
+    cleanupBhashiniDom();
+  });
 
-    render(<TranslateDropdown prefLangCookie="/en/hi" />);
+  it('renders the plugin container and injects the script once', () => {
+    const { unmount } = render(<TranslateDropdown />);
 
-    expect(await screen.findByDisplayValue('Hindi')).toBeInTheDocument();
+    const container = screen.getByTestId('bhashini-plugin-container');
+    expect(container).toHaveClass('bhashini-plugin-container');
 
-    await user.selectOptions(screen.getByTestId('lang-select'), 'en');
-    expect(screen.getByTestId('lang-select')).toHaveValue('en');
+    const script = document.getElementById(SCRIPT_ID) as HTMLScriptElement;
+    expect(script).toBeTruthy();
+    expect(script.src).toBe(SCRIPT_SRC);
+    expect(script.getAttribute('page-source-language')).toBe('en');
+    expect(script.getAttribute('translation-language-list')).toBe('en,hi');
+    expect(script.getAttribute('language_order')).toBe('en,hi');
+    expect(script.getAttribute('language-icon-color')).toBe('#ffffff');
+
+    unmount();
+    render(<TranslateDropdown />);
+    expect(document.querySelectorAll(`#${SCRIPT_ID}`)).toHaveLength(1);
+  });
+
+  it('re-parents an existing widget when the nav remounts', () => {
+    const { unmount } = render(<TranslateDropdown />);
+
+    const widget = document.createElement('div');
+    widget.id = WIDGET_ID;
+    screen.getByTestId('bhashini-plugin-container').appendChild(widget);
+
+    unmount();
+    expect(document.body.contains(widget)).toBe(true);
+    expect(widget.style.display).toBe('none');
+
+    render(<TranslateDropdown />);
+    expect(
+      screen.getByTestId('bhashini-plugin-container').contains(widget)
+    ).toBe(true);
+    expect(widget.style.display).toBe('');
+  });
+
+  it('shows the selected language next to the Bhashini icon', async () => {
+    localStorage.setItem('preferredLanguage', 'hi');
+    render(<TranslateDropdown />);
+
+    const icon = document.createElement('div');
+    icon.className = 'bhashini-dropdown-btn-icon';
+    const widget = document.createElement('div');
+    widget.id = WIDGET_ID;
+    widget.appendChild(icon);
+    screen.getByTestId('bhashini-plugin-container').appendChild(widget);
+
+    await waitFor(() => {
+      expect(
+        icon.querySelector('.bhashini-dropdown-btn-text')
+      ).toHaveTextContent('Hindi');
+    });
   });
 });
 

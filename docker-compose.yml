@@ -24,7 +24,6 @@ x-build-common: &build-common
     NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-}
     NEXT_PUBLIC_TIME_PERIOD: ${NEXT_PUBLIC_TIME_PERIOD:-}
     NEXT_PUBLIC_GOOGLE_ANALYTICS_APP_ID: ${NEXT_PUBLIC_GOOGLE_ANALYTICS_APP_ID:-}
-    NEXT_PUBLIC_GOOGLE_TRANSLATE_KEY: ${NEXT_PUBLIC_GOOGLE_TRANSLATE_KEY:-}
     NEXT_PUBLIC_DOWNLOAD_REPORT_LINK: ${NEXT_PUBLIC_DOWNLOAD_REPORT_LINK:-}
 
 services:
@@ -34,7 +33,7 @@ services:
       target: dev
     image: ids-drr-frontend:dev
     ports:
-      - "${PORT:-3000}:3000"
+      - '${PORT:-3000}:3000'
     volumes:
       - .:/app
       - ../ids-drr-india-branding:/app/branding-stub
@@ -51,7 +50,7 @@ services:
       target: runner
     image: ids-drr-frontend:prod
     ports:
-      - "${PORT:-3000}:3000"
+      - '${PORT:-3000}:3000'
     env_file:
       - .env.production
     restart: unless-stopped
