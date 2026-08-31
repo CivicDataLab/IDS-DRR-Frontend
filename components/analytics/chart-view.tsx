@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useAnalyticsModule } from '@/hooks/use-analytics-module';
 import { useQuery } from '@tanstack/react-query';
 import ReactECharts from 'echarts-for-react';
 import { useTranslations } from 'next-intl';
@@ -17,7 +18,6 @@ import { isScoreIndicator } from '@/lib/analytics/factor-role';
 import { GraphQL } from '@/lib/api';
 import { toTitleCase } from '@/lib/utils';
 import { MediaRendering } from '@/components/media-rendering';
-import { useAnalyticsModule } from '@/hooks/use-analytics-module';
 import FilterDropdownOptions, { Option } from './filter-dropdown-options';
 
 export const ChartView = ({
@@ -296,7 +296,7 @@ export const ChartView = ({
                 </Text>
               </div>
             ) : (
-              <div className="h-full">
+              <div className="bhashini-skip-translation h-full">
                 <ReactECharts
                   option={chartData}
                   ref={chartRef}

@@ -8,14 +8,17 @@
 
 body {
   background-color: var(--background-solid-subdued);
-  /* Compensate the height issue due to hiding the default google pop up iframe */
-  position: static;
-  top: 0px !important;
 }
 
-/* Hide the default google pop up iframe */
-iframe.skiptranslate {
-  display: none !important;
+.bhashini-plugin-container .bhashini-dropdown-btn-text {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.bhashini-plugin-container .bhashini-dropdown-content {
+  right: 0 !important;
+  left: auto !important;
 }
 
 #nprogress .bar {

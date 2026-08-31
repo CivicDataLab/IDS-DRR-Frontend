@@ -12,7 +12,7 @@ import { TranslateDropdown } from './langSelect/lang-select';
 import { LocaleDropdown } from './langSelect/locale-select';
 import NavLink from './nav-link';
 
-export function MainNav({ prefLangCookie }: { prefLangCookie: string }) {
+export function MainNav() {
   const t = useTranslations('nav');
   const tSite = useTranslations('site');
   const { key, metaKey } = useKeyDetect();
@@ -25,7 +25,7 @@ export function MainNav({ prefLangCookie }: { prefLangCookie: string }) {
   }, [key, metaKey]);
 
   return (
-    <header className="shadow-top-bar z-2 bg-backgroundSolidDark px-6 py-3 shadow-elementTopNav sm:py-3">
+    <header className="shadow-top-bar z-[100000] bg-backgroundSolidDark px-6 py-3 shadow-elementTopNav sm:py-3">
       <div className="flex flex-wrap items-center justify-center gap-1 sm:justify-between">
         <div className="flex items-center gap-1">
           <NavLink href={routes.home}>
@@ -35,7 +35,7 @@ export function MainNav({ prefLangCookie }: { prefLangCookie: string }) {
                   src={logo}
                   alt={t('homeAlt', { name: tSite('name') })}
                   priority
-                  className="h-6 w-auto"
+                  className="bhashini-skip-translation h-6 w-auto"
                 />
               )}
               <div className="flex flex-col gap-1"></div>
@@ -56,7 +56,7 @@ export function MainNav({ prefLangCookie }: { prefLangCookie: string }) {
           )}
 
           {languages.length > 0 ? (
-            <TranslateDropdown prefLangCookie={prefLangCookie} />
+            <TranslateDropdown />
           ) : locales.length > 1 ? (
             <LocaleDropdown />
           ) : null}
