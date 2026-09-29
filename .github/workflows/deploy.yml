@@ -40,11 +40,11 @@ jobs:
     outputs:
       image: ${{ steps.meta.outputs.image }}
     steps:
-      - uses: actions/checkout@v6.0.3
+      - uses: actions/checkout@v7.0.1
         with:
           path: IDS-DRR-Frontend
 
-      - uses: actions/checkout@v6.0.3
+      - uses: actions/checkout@v7.0.1
         with:
           repository: ${{ vars.BRANDING_REPO || format('{0}/ids-drr-india-branding', github.repository_owner) }}
           ref: ${{ github.ref == 'refs/heads/main' && 'main' || 'dev' }}
