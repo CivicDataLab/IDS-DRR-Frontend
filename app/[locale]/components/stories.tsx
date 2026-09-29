@@ -40,11 +40,17 @@ export const Stories = () => {
           </Text>
         </div>
         <div>
-          <Carousel className="flex w-full items-center justify-between gap-2 px-2">
+          <Carousel
+            aria-roledescription="carousel"
+            className="flex w-full items-center justify-between gap-2 px-2"
+          >
             <div className="mr-2 rounded-1 bg-surfaceDefault">
               <CarouselPrevious />
             </div>
-            <CarouselContent className="flex w-full justify-between gap-4 pl-4 pr-1 lg:container lg:gap-6">
+            <CarouselContent
+              aria-live="polite"
+              className="flex w-full justify-between gap-4 pl-4 pr-1 lg:container lg:gap-6"
+            >
               {stories.map((story) => (
                 <CarouselItem
                   key={story.url}

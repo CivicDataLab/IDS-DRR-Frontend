@@ -242,14 +242,14 @@ const DatasetsListing = () => {
   );
 
   return (
-    <main className="bg-surfaceDefault">
+    <div className="bg-surfaceDefault">
       <BreadCrumbs
         data={[
           { href: '/', label: tNav('links.home') },
           { href: '#', label: tNav('links.datasets') },
         ]}
       />
-      {datasetDetails.length < 0 ? (
+      {!facets ? (
         <div className="flex h-96 items-center justify-center">
           <Spinner />
         </div>
@@ -262,7 +262,7 @@ const DatasetsListing = () => {
                   {t('count', { count: datasetDetails?.length, total: count })}
                 </Text>
               </div>
-              <div className=" w-full max-w-[550px] md:block">
+              <div role="search" className=" w-full max-w-[550px] md:block">
                 <SearchInput
                   label={t('search.label')}
                   name="Search"
@@ -318,13 +318,17 @@ const DatasetsListing = () => {
             </Tray>
           </div>
           <div className="row flex gap-5 bg-surfaceDefault pb-10">
-            <div className="hidden min-w-64 max-w-64 lg:block">
+            <aside
+              aria-labelledby="datasets-filter-heading"
+              className="hidden min-w-64 max-w-64 lg:block"
+            >
               <Filter
+                headingId="datasets-filter-heading"
                 options={filterOptions}
                 setSelectedOptions={handleFilterChange}
                 selectedOptions={queryParams.filters}
               />
-            </div>
+            </aside>
 
             <div className="flex w-full flex-col px-2">
               <div className="flex gap-2 border-b-2 border-solid border-baseGraySlateSolid4 pb-4">
@@ -356,12 +360,17 @@ const DatasetsListing = () => {
                     ))}
                   </GraphqlPagination>
                 )}
+                {facets && datasetDetails?.length === 0 && (
+                  <div className="flex flex-col items-center gap-2 py-16 text-center">
+                    <Text variant="headingMd">{t('empty')}</Text>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </section>
       )}
-    </main>
+    </div>
   );
 };
 

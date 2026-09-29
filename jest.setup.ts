@@ -1,6 +1,10 @@
 import '@testing-library/jest-dom';
 import { cleanup } from '@testing-library/react/pure';
 
+jest.mock('@/hooks/use-analytics-module', () => ({
+  useAnalyticsModule: () => 'flood',
+}));
+
 // The test harness re-exports RTL from /pure (no auto-cleanup); restore isolation.
 afterEach(() => {
   cleanup();

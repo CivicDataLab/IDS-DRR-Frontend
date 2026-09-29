@@ -1,6 +1,7 @@
 import React from 'react';
 import { Inter as FontSans } from 'next/font/google';
 import Script from 'next/script';
+import { formats } from '@/i18n/formats';
 import { NextIntlClientProvider } from 'next-intl';
 import {
   getMessages,
@@ -9,7 +10,6 @@ import {
 } from 'next-intl/server';
 
 import { Footer } from '@/config/branding';
-import { formats } from '@/i18n/formats';
 import {
   appleIcon,
   favicon,
@@ -17,7 +17,6 @@ import {
   openGraphImage,
   siteUrl,
 } from '@/config/site';
-import { getPrefLangCookie } from '@/lib/serverUtils';
 import { MainNav } from '@/components/main-nav';
 import { MediaRendering } from '@/components/media-rendering';
 import { MobileNav } from '@/components/mobile-nav';
@@ -46,7 +45,9 @@ export async function generateMetadata({
       template: `%s | ${name}`,
     },
     description,
-    keywords: t('keywords').split(',').map((k) => k.trim()),
+    keywords: t('keywords')
+      .split(',')
+      .map((k) => k.trim()),
     authors: [{ name: creator, url: creatorUrl }],
     creator,
     ...(siteUrl && {
@@ -86,9 +87,6 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
   const messages = await getMessages();
 
-  // Get the language preference from cookies
-  const prefLangCookie = await getPrefLangCookie();
-
   return (
     <html lang={locale}>
       <head>
@@ -125,14 +123,18 @@ export default async function LocaleLayout({
         )}
       </head>
       <body className={fontSans.className}>
-        <NextIntlClientProvider locale={locale} messages={messages} formats={formats}>
+        <NextIntlClientProvider
+          locale={locale}
+          messages={messages}
+          formats={formats}
+        >
           <Provider locale={locale}>
-            <div className="min-h-screen flex flex-col">
+            <div className="flex min-h-screen flex-col">
               <MediaRendering minWidth={null} maxWidth="1023">
-                <MobileNav prefLangCookie={prefLangCookie} />
+                <MobileNav />
               </MediaRendering>
               <MediaRendering minWidth="1024" maxWidth={null}>
-                <MainNav prefLangCookie={prefLangCookie} />
+                <MainNav />
               </MediaRendering>
 
               <main className="flex-1">{children}</main>

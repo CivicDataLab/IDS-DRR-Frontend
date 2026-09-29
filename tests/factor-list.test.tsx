@@ -1,6 +1,6 @@
 import React from 'react';
-import { FactorList } from '@/app/[locale]/[state]/analytics/components/factor-list';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { FactorList } from '@/components/analytics/factor-list';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 
 import { makeState } from './fixtures';
 
@@ -128,7 +128,7 @@ jest.mock('@/components/FactorIcons', () => ({
 }));
 
 // Mock RadioButton component
-jest.mock('@/app/[locale]/[state]/analytics/components/RadioButton', () => ({
+jest.mock('@/components/analytics/RadioButton', () => ({
   __esModule: true,
   default: ({ id, isSelected, changed, label, value }: any) => (
     <div data-testid={id} data-selected={isSelected}>
@@ -145,7 +145,7 @@ jest.mock('@/app/[locale]/[state]/analytics/components/RadioButton', () => ({
 }));
 
 // Mock utils
-jest.mock('@/app/[locale]/[state]/analytics/utils/utils', () => ({
+jest.mock('@/lib/analytics/utils', () => ({
   getLatestDate: jest.fn(),
 }));
 
@@ -314,6 +314,96 @@ describe('FactorList', () => {
     expect(screen.getByText('ACTIONS')).toBeInTheDocument();
   });
 
+  it('shows category labels only when multiple distinct categories exist', () => {
+    const { useQuery } = require('@tanstack/react-query');
+    useQuery.mockReturnValue({
+      data: {
+        indicatorsByCategory: [
+          {
+            slug: 'vulnerability',
+            name: 'Vulnerability',
+            description: 'Community vulnerability factors',
+            children: [
+              {
+                slug: 'coping-1',
+                name: 'Coping Indicator 1',
+                description: 'Coping 1',
+                category: 'COPING CAPACITY',
+                children: [],
+              },
+              {
+                slug: 'coping-2',
+                name: 'Coping Indicator 2',
+                description: 'Coping 2',
+                category: 'COPING CAPACITY',
+                children: [],
+              },
+              {
+                slug: 'sensitivity-1',
+                name: 'Sensitivity Indicator',
+                description: 'Sensitivity',
+                category: 'SENSITIVITY',
+                children: [],
+              },
+            ],
+          },
+        ],
+      },
+      isFetched: true,
+      isLoading: false,
+      error: null,
+    });
+
+    render(<FactorList currentState={mockCurrentState} />);
+    const desktop = screen.getByTestId('desktop-view');
+    fireEvent.click(within(desktop).getByText('Vulnerability'));
+
+    expect(within(desktop).getByText('COPING CAPACITY')).toBeInTheDocument();
+    expect(within(desktop).getByText('SENSITIVITY')).toBeInTheDocument();
+  });
+
+  it('hides category labels when all indicators share one category', () => {
+    const { useQuery } = require('@tanstack/react-query');
+    useQuery.mockReturnValue({
+      data: {
+        indicatorsByCategory: [
+          {
+            slug: 'vulnerability',
+            name: 'Vulnerability',
+            description: 'Community vulnerability factors',
+            children: [
+              {
+                slug: 'coping-1',
+                name: 'Coping Indicator 1',
+                description: 'Coping 1',
+                category: 'COPING CAPACITY',
+                children: [],
+              },
+              {
+                slug: 'coping-2',
+                name: 'Coping Indicator 2',
+                description: 'Coping 2',
+                category: 'COPING CAPACITY',
+                children: [],
+              },
+            ],
+          },
+        ],
+      },
+      isFetched: true,
+      isLoading: false,
+      error: null,
+    });
+
+    render(<FactorList currentState={mockCurrentState} />);
+    const desktop = screen.getByTestId('desktop-view');
+    fireEvent.click(within(desktop).getByText('Vulnerability'));
+
+    expect(within(desktop).queryByText('COPING CAPACITY')).not.toBeInTheDocument();
+    expect(within(desktop).getByText('Coping Indicator 1')).toBeInTheDocument();
+    expect(within(desktop).getByText('Coping Indicator 2')).toBeInTheDocument();
+  });
+
   it('calls useQuery with correct parameters', () => {
     const { useQuery } = require('@tanstack/react-query');
     useQuery.mockReturnValue({
@@ -326,7 +416,7 @@ describe('FactorList', () => {
     render(<FactorList currentState={mockCurrentState} />);
 
     expect(useQuery).toHaveBeenCalledWith({
-      queryKey: [`indicatorsByCategory_${mockCurrentState.code}`],
+      queryKey: [`indicatorsByCategory_${mockCurrentState.code}_flood`],
       queryFn: expect.any(Function),
       refetchOnMount: false,
       refetchOnWindowFocus: false,

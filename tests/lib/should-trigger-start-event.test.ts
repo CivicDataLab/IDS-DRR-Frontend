@@ -7,9 +7,9 @@ jest.mock('next/dist/client/add-base-path', () => ({
 }));
 
 const mockLocation = {
-  href: 'http://localhost:3000/assam/analytics?view=map',
+  href: 'http://localhost:3000/assam/flood/analytics?view=map',
   origin: 'http://localhost:3000',
-  pathname: '/assam/analytics',
+  pathname: '/assam/flood/analytics',
   search: '?view=map',
 };
 
@@ -32,7 +32,7 @@ describe('shouldTriggerStartEvent', () => {
   });
 
   it('returns false for the same URL', () => {
-    expect(shouldTriggerStartEvent('/assam/analytics?view=map')).toBe(false);
+    expect(shouldTriggerStartEvent('/assam/flood/analytics?view=map')).toBe(false);
   });
 
   it('returns false for external URLs', () => {

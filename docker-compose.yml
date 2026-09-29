@@ -1,8 +1,8 @@
 # docker-compose.yml — IDS-DRR-Frontend
 #
 # Prerequisites:
-#   Clone the India branding repo as a sibling directory:
-#     git clone https://github.com/CivicDataLab/ids-drr-india-branding.git ../ids-drr-india-branding
+#   Clone the branding repo as a sibling directory. For example:
+#     git clone https://github.com/CivicDataLab/ids-drr-india-branding.git ../ids-drr-branding
 #
 # Env files (gitignored — create these on the server):
 #   .env.development  — dev values
@@ -24,7 +24,6 @@ x-build-common: &build-common
     NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-}
     NEXT_PUBLIC_TIME_PERIOD: ${NEXT_PUBLIC_TIME_PERIOD:-}
     NEXT_PUBLIC_GOOGLE_ANALYTICS_APP_ID: ${NEXT_PUBLIC_GOOGLE_ANALYTICS_APP_ID:-}
-    NEXT_PUBLIC_GOOGLE_TRANSLATE_KEY: ${NEXT_PUBLIC_GOOGLE_TRANSLATE_KEY:-}
     NEXT_PUBLIC_DOWNLOAD_REPORT_LINK: ${NEXT_PUBLIC_DOWNLOAD_REPORT_LINK:-}
 
 services:
@@ -34,7 +33,7 @@ services:
       target: dev
     image: ids-drr-frontend:dev
     ports:
-      - "${PORT:-3000}:3000"
+      - '${PORT:-3000}:3000'
     volumes:
       - .:/app
       - ../ids-drr-india-branding:/app/branding-stub
@@ -51,7 +50,7 @@ services:
       target: runner
     image: ${GHCR_IMAGE:-ghcr.io/civicdatalab/ids-drr-frontend}:${IMAGE_TAG:-prod}
     ports:
-      - "${PORT:-3000}:3000"
+      - '${PORT:-3000}:3000'
     env_file:
       - .env.production
     restart: unless-stopped

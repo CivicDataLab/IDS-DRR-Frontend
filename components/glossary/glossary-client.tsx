@@ -77,7 +77,11 @@ export default function GlossaryClient({ terms }: Props) {
     const tagKey = selectedTag?.toLowerCase();
     return indexed.filter((item) => {
       if (tagKey && item.tag?.toLowerCase() !== tagKey) return false;
-      if (normalizedQuery && !item.term.toLowerCase().includes(normalizedQuery))
+      if (
+        normalizedQuery &&
+        !item.term.toLowerCase().includes(normalizedQuery) &&
+        !item.definition.toLowerCase().includes(normalizedQuery)
+      )
         return false;
       return true;
     });
@@ -97,12 +101,14 @@ export default function GlossaryClient({ terms }: Props) {
         onClear={() => setQuery('')}
       />
 
-      <div className="flex gap-2">
-        <div
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          aria-pressed={!selectedTag}
           onClick={() => {
             setSelectedTag(null);
           }}
-          className="cursor-pointer"
+          className="cursor-pointer appearance-none border-none bg-transparent p-0"
         >
           <Tag
             variation={'filled'}
@@ -111,17 +117,19 @@ export default function GlossaryClient({ terms }: Props) {
           >
             {tFilters('all')}
           </Tag>
-        </div>
+        </button>
         {tags.map((filter) => {
           const isActive = selectedTag?.toLowerCase() === filter.toLowerCase();
           return (
-            <div
+            <button
               key={filter}
+              type="button"
+              aria-pressed={isActive}
               onClick={() => {
                 setSelectedTag(filter);
                 setOpenSlug(null);
               }}
-              className="cursor-pointer"
+              className="cursor-pointer appearance-none border-none bg-transparent p-0"
             >
               <Tag
                 variation={'filled'}
@@ -129,7 +137,7 @@ export default function GlossaryClient({ terms }: Props) {
               >
                 {filter}
               </Tag>
-            </div>
+            </button>
           );
         })}
       </div>

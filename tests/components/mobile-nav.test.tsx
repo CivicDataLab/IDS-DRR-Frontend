@@ -1,5 +1,6 @@
-import { MobileNav } from '@/components/mobile-nav';
 import { fireEvent, render, screen } from '@testing-library/react';
+
+import { MobileNav } from '@/components/mobile-nav';
 
 jest.mock('opub-ui');
 
@@ -31,7 +32,7 @@ jest.mock('@/components/icons', () => ({
 
 describe('MobileNav', () => {
   it('opens the menu and renders navigation links', () => {
-    render(<MobileNav prefLangCookie="/en/en" />);
+    render(<MobileNav />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Menu' }));
 

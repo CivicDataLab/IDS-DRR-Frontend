@@ -89,13 +89,19 @@ const Resources = () => {
       </div>
       <div>
         {/* <Carousel className="flex w-full items-center justify-center"> */}
-        <Carousel className="flex w-full items-center justify-center gap-2 px-2">
+        <Carousel
+          aria-roledescription="carousel"
+          className="flex w-full items-center justify-center gap-2 px-2"
+        >
           <div className="mr-2 rounded-1 bg-surfaceDefault">
             <CarouselPrevious />
           </div>
           {data.length > 0 ? (
             // <CarouselContent className="container flex w-full gap-4 px-4 lg:gap-4 ">
-            <CarouselContent className="flex w-full justify-between gap-4  pl-4 pr-1 lg:container lg:gap-6">
+            <CarouselContent
+              aria-live="polite"
+              className="flex w-full justify-between gap-4  pl-4 pr-1 lg:container lg:gap-6"
+            >
               {resources.map((card) => (
                 <CarouselItem
                   key={card.url}

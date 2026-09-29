@@ -8,6 +8,8 @@ import type {
   TileLayers,
 } from 'ids-drr-branding-types';
 
+import { stateQuickLink } from '@/lib/analytics/build-route';
+import { features } from '@/config/features';
 import { routes } from '@/lib/routes';
 
 // Arrays
@@ -47,14 +49,7 @@ export const messages: Record<
 > = config.messages ?? {};
 
 // Feature flags
-const dataSpaceEnabled = Boolean(process.env.NEXT_PUBLIC_BACKEND_URL);
-export const features = {
-  chart: dataSpaceEnabled,
-  datasets: dataSpaceEnabled,
-  aboutUs: config.features?.aboutUs ?? false,
-  reports: config.features?.reports ?? false,
-  glossary: Boolean(config.glossaryCsv),
-};
+export { features } from '@/config/features';
 
 // Navigation
 const defaultState = states.find((s) => s.status === 'active');
@@ -67,7 +62,12 @@ export const siteUrl =
 export const mainNav: { key: NavLinkKey; href: string }[] = [
   { key: 'home', href: routes.home },
   ...(defaultState
-    ? [{ key: 'analytics' as const, href: routes.analytics(defaultState.slug) }]
+    ? [
+        {
+          key: 'analytics' as const,
+          href: stateQuickLink(defaultState.slug),
+        },
+      ]
     : []),
   ...(features.datasets
     ? [{ key: 'datasets' as const, href: routes.datasets() }]

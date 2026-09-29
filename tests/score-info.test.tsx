@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScoreInfo } from '@/app/[locale]/[state]/analytics/components/score-info';
+import { ScoreInfo } from '@/components/analytics/score-info';
 import { render, screen } from '@testing-library/react';
 
 jest.mock('opub-ui');
@@ -17,6 +17,11 @@ jest.mock('@/lib/analytics', () => ({
     '4': '#ff0000',
     '5': '#800000',
   },
+}));
+
+jest.mock('@/lib/analytics/root-indicator', () => ({
+  isRootRiskIndicator: (indicator: string) =>
+    indicator === 'risk-score' || indicator === 'heat-risk-score',
 }));
 
 describe('ScoreInfo', () => {
@@ -37,6 +42,20 @@ describe('ScoreInfo', () => {
     expect(progressBar).toBeInTheDocument();
     expect(progressBar).toHaveAttribute('data-value', '80');
     expect(progressBar).toHaveStyle({ backgroundColor: '#ff0000' });
+  });
+
+  it('renders progress bar for heat-risk-score indicator', () => {
+    render(
+      <ScoreInfo
+        label="Heat Risk Score"
+        value="4"
+        indicator="heat-risk-score"
+      />
+    );
+
+    const progressBar = screen.getByTestId('progress-bar');
+    expect(progressBar).toBeInTheDocument();
+    expect(progressBar).toHaveAttribute('data-value', '80');
   });
 
   it('renders formatted value for non-risk-score indicator', () => {

@@ -1,0 +1,328 @@
+.Main {
+  max-width: 100vw;
+  overflow-x: auto;
+  flex-grow: 1;
+  transition: transform var(--duration-400) ease 0s;
+}
+.FactorList {
+  margin-bottom: 18px;
+  @media (max-width: 1280px) {
+    overflow: hidden;
+  }
+}
+
+.Overlay {
+  position: absolute;
+  top: 145px;
+  right: -100%; /* Hide off-screen initially */
+  z-index: 99999;
+  height: calc(100dvh - 30%);
+  opacity: 90%;
+  box-shadow: var(--shadow-basic-md);
+  transition: right 0.4s ease; /* Smooth transition */
+  transition: right 0.4s ease;
+  max-width: 430px;
+  min-width: 430px;
+}
+
+.bottomDrawer {
+  position: absolute;
+  // bottom: -100%;
+  left: 0;
+  width: 100%;
+  height: 80%;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 99999;
+  box-shadow: var(--shadow-basic-md);
+  transition: bottom 0.4s ease;
+  overflow-y: auto;
+  transition: right 0.4s ease;
+  max-width: 430px;
+  min-width: 430px;
+}
+
+.OverlayActive {
+  right: 0;
+}
+
+.mobileOverlay {
+  position: absolute;
+  bottom: -100%; /* Initially off-screen */
+  z-index: 99999;
+  height: calc(100dvh - 86%);
+  opacity: 97%;
+  box-shadow: var(--shadow-basic-md);
+  transition:
+    bottom 0.4s ease,
+    height 0.4s ease;
+
+  width: 100%;
+  max-width: 380px;
+  min-width: 300px;
+}
+
+.mobileOverlayActive {
+  bottom: 8vh;
+  right: 3px;
+}
+
+.expandedOverlay {
+  // bottom: 8vh;
+  height: calc(100dvh - 63px - 8vh);
+}
+
+@media (max-width: 1023px) {
+  .mobileOverlay {
+    max-width: 100%;
+    min-width: 280px;
+    bottom: 8vh;
+  }
+}
+
+.bottomDrawer {
+  position: absolute;
+  // bottom: -100%;
+  left: 0;
+  width: 100%;
+  height: 80%;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 99999;
+  box-shadow: var(--shadow-basic-md);
+  transition: bottom 0.4s ease;
+  overflow-y: auto;
+}
+
+.drawerActive {
+  bottom: 0;
+}
+
+@media (min-width: 768px) {
+  .bottomDrawer {
+    height: 50%;
+  }
+}
+
+.IndicatorBtn {
+  display: inline-flex;
+  cursor: pointer;
+  outline: none;
+  vertical-align: middle;
+  text-decoration: none;
+  color: #fff;
+  border-radius: 40px;
+  padding: 12px;
+  -webkit-transition: width 0.5s;
+  transition: width 0.5s;
+}
+.IndicatorBtnText {
+  max-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  -webkit-transition:
+    color 0.25s 1.5s,
+    max-width 2s;
+  transition:
+    color ease-in-out 500ms,
+    max-width ease-in-out 500ms;
+  vertical-align: top;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.AccordionItem {
+  font-family: inherit;
+  cursor: pointer;
+  height: 25px;
+  width: 25px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border: none !important;
+  &[data-state='open'] > .AccordionChevron {
+    transform: rotate(180deg);
+  }
+}
+.RevenueBox {
+  height: 280px;
+  overflow-y: scroll;
+  border-radius: 0px 0px 4px 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+.TrendsBox {
+  height: 420px;
+  border-radius: 0px 0px 4px 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+.SidebarAccordionTitle {
+  display: flex;
+  padding-left: 8px;
+  padding-right: 8px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  align-self: stretch;
+  border-radius: 4px 4px 0px 0px;
+  background: rgba(150, 231, 158, 0.2);
+}
+.SidebarAccordionIcon {
+  font-family: inherit;
+  cursor: pointer;
+  height: 25px;
+  width: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(150, 231, 158, 0.02);
+  border: none !important;
+  &[data-state='open'] > .AccordionChevron {
+    transform: rotate(180deg);
+  }
+}
+.analyticsHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  gap: 10px;
+  min-height: 48px;
+  align-self: stretch;
+}
+
+.analyticsIndicatorTitle {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.2;
+  color: #000000;
+}
+
+.analyticsViewTabs {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: flex-start;
+  margin-left: auto;
+  overflow-x: auto;
+  filter: drop-shadow(0px 1px 1px rgba(31, 33, 36, 0.1));
+  border-radius: 2px;
+  flex: none;
+  padding: 0 !important;
+  background: none !important;
+  border: none !important;
+}
+
+.analyticsViewTabsGroup {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.analyticsViewTab {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 24px 8px 20px !important;
+  gap: 10px;
+  height: 36px;
+  min-height: 36px;
+  background: #ffffff !important;
+  box-shadow: inset -1px 0 0 #e4e5e7 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  cursor: pointer;
+  flex: none;
+
+  &[data-state='active'] {
+    background: #d7f0da !important;
+  }
+
+  // opub-ui wraps tab children in Text (p)
+  > p,
+  > span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+  }
+}
+
+.analyticsViewTabActive,
+.analyticsViewTab[data-state='active'] {
+  background: #d7f0da !important;
+}
+
+.analyticsViewTabContent {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.analyticsViewTabLabel {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  color: #11181c;
+  white-space: nowrap;
+}
+
+.analyticsViewTabActive .analyticsViewTabLabel,
+.analyticsViewTab[data-state='active'] .analyticsViewTabLabel {
+  font-weight: 600;
+  color: #202223;
+}
+
+.analyticsViewTabActive :global(.OPub-Icon),
+.analyticsViewTab[data-state='active'] :global(.OPub-Icon) {
+  color: #202223;
+}
+
+.TabItem {
+  --active-color: rgba(150, 231, 158, 0.5);
+  --active-border-color: #479c4f;
+  background: none;
+  border: 1px solid #000;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 4px;
+  flex-basis: 40%;
+}
+.TabItem:hover {
+  border-color: var(--active-border-color);
+  color: var(--active-border-color);
+}
+.TabItemActive,
+.TabItemActive:hover {
+  border-color: var(--active-border-color);
+  background-color: var(--active-color);
+  color: #202223;
+}
+
+.content {
+  padding: 6px;
+  text-align: center;
+}
+
+// .toggle-btn {
+//   position: absolute;
+//   top: -40px; /* Place the button above the container */
+//   left: 50%;
+//   transform: translateX(-50%);
+//   background-color: #007bff;
+//   color: white;
+//   border: none;
+//   padding: 10px 20px;
+//   cursor: pointer;
+// }
+
+.toggle-btn:focus {
+  outline: none;
+}

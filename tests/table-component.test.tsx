@@ -1,5 +1,5 @@
 import React from 'react';
-import { TableComponent } from '@/app/[locale]/[state]/analytics/components/table-component';
+import { TableComponent } from '@/components/analytics/table-component';
 import { render, screen } from '@testing-library/react';
 
 // Mock opub-ui components
@@ -10,9 +10,6 @@ jest.mock('@/hooks/use-format-number', () => ({
   useFormatNumber: () => (value: number | string) => `formatted-${value}`,
 }));
 
-jest.mock('@/lib/analytics', () => ({
-  Factors: ['risk-score', 'exposure', 'vulnerability'],
-}));
 
 describe('TableComponent', () => {
   const mockData = [

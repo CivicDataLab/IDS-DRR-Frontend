@@ -5,7 +5,6 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
@@ -46,7 +45,7 @@ export const MobileFilterBox = ({
 
   return (
     <Drawer open={open}>
-      <DrawerContent>
+      <DrawerContent aria-describedby={undefined}>
         <DrawerHeader className=" h-[56px] border-b-1 border-solid border-[#C9CCCF]">
           <DrawerTitle className="flex justify-between ">
             <Text variant="headingMd">{t('heading')}</Text>
@@ -59,7 +58,7 @@ export const MobileFilterBox = ({
             </IconButton>
           </DrawerTitle>
         </DrawerHeader>
-        <DrawerDescription className="flex h-[276px]">
+        <div className="flex h-[276px]">
           <div className="flex flex-col items-start gap-3 border-x-1 border-solid border-borderSubdued px-2 py-4">
             {filterOptions.map(
               (item: { value: string; title: string }, index: number) => (
@@ -85,7 +84,7 @@ export const MobileFilterBox = ({
               {children}
             </div>
           </MobileFilterContent>
-        </DrawerDescription>
+        </div>
         <DrawerFooter className="flex flex-row border-t-1 border-solid border-[#BDBDBD]">
           <Button
             onClick={handleClearFilters}

@@ -1,7 +1,7 @@
 import React from 'react';
 import FilterDropdownOptions, {
   Option,
-} from '@/app/[locale]/[state]/analytics/components/filter-dropdown-options';
+} from '@/components/analytics/filter-dropdown-options';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 

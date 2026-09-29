@@ -19,6 +19,8 @@ interface FilterProps {
   options: Record<string, { label: string; value: string }[]>;
   setSelectedOptions: (category: string, values: string[]) => void;
   selectedOptions: Record<string, string[]>;
+  /** id for the heading, so a wrapping landmark can aria-labelledby it */
+  headingId?: string;
 }
 
 const Filter: React.FC<FilterProps> = ({
@@ -26,6 +28,7 @@ const Filter: React.FC<FilterProps> = ({
   options,
   setSelectedOptions,
   selectedOptions,
+  headingId,
 }) => {
   const t = useTranslations('common.filters');
   const handleReset = () => {
@@ -39,7 +42,9 @@ const Filter: React.FC<FilterProps> = ({
       <div className="mb-5 flex justify-between">
         <div className="flex w-full justify-between">
           <div>
-            <Text variant="headingMd">{t('heading')}</Text>
+            <Text id={headingId} variant="headingMd">
+              {t('heading')}
+            </Text>
           </div>
           <div>
             <Button kind="tertiary" onClick={handleReset}>

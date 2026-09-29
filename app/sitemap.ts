@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 
 import { features, locales, siteUrl, states } from '@/config/site';
+import { getActiveModules, isModuleViewEnabled } from '@/lib/analytics/module-config';
 import { fetchDatasets } from '@/lib/api';
 import { ANALYTICS_VIEWS, routes } from '@/lib/routes';
 import { type JsonScalar } from '@/lib/types';
@@ -19,13 +20,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
 
     for (const state of activeStates) {
-      for (const view of ANALYTICS_VIEWS) {
-        entries.push({
-          url: `${siteUrl}/${locale}${routes.analytics(state.slug, { view })}`,
-          lastModified,
-          changeFrequency: 'daily',
-          priority: 1,
-        });
+      entries.push({
+        url: `${siteUrl}/${locale}${routes.state(state.slug)}`,
+        lastModified,
+        changeFrequency: 'weekly',
+        priority: 0.9,
+      });
+
+      const modules = getActiveModules(state.slug);
+      for (const analyticsModule of modules) {
+        for (const view of ANALYTICS_VIEWS) {
+          if (
+            !isModuleViewEnabled(state.slug, analyticsModule.slug, view)
+          ) {
+            continue;
+          }
+          entries.push({
+            url: `${siteUrl}/${locale}${routes.analytics(state.slug, analyticsModule.slug, { view })}`,
+            lastModified,
+            changeFrequency: 'daily',
+            priority: 1,
+          });
+        }
       }
     }
 
@@ -41,6 +57,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (features.aboutUs) {
       entries.push({
         url: `${siteUrl}/${locale}${routes.aboutUs}`,
+        lastModified,
+        changeFrequency: 'monthly',
+        priority: 0.5,
+      });
+    }
+
+    if (features.privacyPolicy) {
+      entries.push({
+        url: `${siteUrl}/${locale}${routes.privacyPolicy}`,
         lastModified,
         changeFrequency: 'monthly',
         priority: 0.5,

@@ -62,11 +62,15 @@ const Cards = ({ data }: { data: Dataset }) => {
   return (
     <div className="mb-6 border-b-2 border-solid border-baseGraySlateSolid4">
       <Link href={routes.datasetDetail(data.id)} passHref>
-        <div className="w-full cursor-pointer rounded-1 bg-surfaceDefault p-4 shadow-elementCard">
+        <article
+          aria-labelledby={`dataset-${data.id}-title`}
+          className="w-full cursor-pointer rounded-1 bg-surfaceDefault p-4 shadow-elementCard"
+        >
           <div>
             <div className="flex flex-col flex-wrap items-start gap-3 lg:flex-row lg:gap-6">
               <div className="flex  flex-col flex-wrap items-start gap-3 p-0 lg:w-2/5">
                 <Text
+                  id={`dataset-${data.id}-title`}
                   className="text-textSubdued"
                   variant="headingLg"
                   as="p"
@@ -188,7 +192,7 @@ const Cards = ({ data }: { data: Dataset }) => {
               )}
             </div>
           </div>
-        </div>
+        </article>
       </Link>
     </div>
   );
